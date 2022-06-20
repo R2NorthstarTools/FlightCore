@@ -1,0 +1,8 @@
+.*
+!.gitignore
+
+node_modules/
+target/
+
+dist/js/*.js
+dist/js/*.map

@@ -1,0 +1,21 @@
+{
+  "name": "tauri-app",
+  "scripts": {
+    "tauri": "tauri",
+    "localhost": "./node_modules/.bin/servor dist index.html 8080 --reload",
+    "ui-build": "./node_modules/.bin/rollup -c",
+    "ui-dev": "./node_modules/.bin/rollup -c -w & npm run localhost"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^1.0.1"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "@rollup/plugin-typescript": "^8.3.3",
+    "@tauri-apps/cli": "^1.0.0",
+    "rollup": "^2.75.6",
+    "servor": "^4.0.2",
+    "tslib": "^2.4.0",
+    "typescript": "^4.7.4"
+  }
+}

@@ -1,0 +1,1 @@
+Rust Tauri App Introduction from YouTube video: 
