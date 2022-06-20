@@ -1,0 +1,79 @@
+/* #region    --- Base */
+
+* {
+  /* best practice for application */
+  box-sizing: border-box;
+  /* To allow flex/grid box to shrink smaller than content. 
+		see: https://stackoverflow.com/a/36247448/686724 */
+  min-width: 0;
+  min-height: 0;
+  /* layout normalization */
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  /* make sure the canvas is the browser window */
+}
+
+html {
+  overflow: hidden;
+  /* prevent the browser 'bounce' (but will prevent screen scroll as well)*/
+}
+
+/* #endregion --- Base */
+
+div.hello {
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  padding: .5rem .5rem;
+  border: solid 1px #dedede;
+  color: #888;
+  font-size: 1.rem;
+}
+
+counter-button {
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  border: solid 1px hsl(210, 78%, 37%);
+  border-radius: 5px;
+  background: hsl(210, 90%, 76%);
+  padding: .875rem 3rem;
+  font-size: 1.5rem;
+}
+
+counter-button:active {
+  background: hsl(210, 90%, 84%);
+}
+
+counter-result {
+  border: solid 1px #dedede;
+  font-size: 1.5rem;
+  padding: 1.5rem 1rem;
+}
+
+backend-ping {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  border-radius: 3rem;
+  width: 1rem;
+  height: 1rem;
+  background-color: hsl(217, 100%, 50%);
+  transition: scale .125s;
+}
+
+backend-ping.on {
+  scale: 1.25;
+  background-color: hsl(120, 100%, 32%);
+}
