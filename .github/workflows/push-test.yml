@@ -29,8 +29,8 @@ jobs:
     - uses: tauri-apps/tauri-action@v0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Upload Build Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          path: |
-            src-tauri/target/release/bundle/*/*
+    - name: upload build artifact
+      uses: actions/upload-artifact@v2
+      with:
+        path: |
+          src-tauri/target/release/bundle/*/*
