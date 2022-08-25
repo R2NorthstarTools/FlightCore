@@ -33,4 +33,6 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         path: |
-          src-tauri/target/release/bundle/*/*
+          src-tauri/target/release/bundle/appimage/*.AppImage
+          src-tauri/target/release/bundle/deb/*.deb
+          src-tauri/target/release/bundle/msi/*.msi
