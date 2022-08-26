@@ -51,7 +51,7 @@
       "csp": null
     },
     "updater": {
-      "active": true,
+      "active": false,
       "pubkey": "",
       "endpoints": [
         "https://gist.githubusercontent.com/GeckoEidechse/a607a04213af58a0f6f98613b4bee863/raw/FlightCore-currentrelease.json"
