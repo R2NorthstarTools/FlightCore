@@ -3,8 +3,8 @@
   "scripts": {
     "tauri": "tauri",
     "localhost": "./node_modules/.bin/servor dist index.html 8080 --reload",
-    "ui-build": "./node_modules/.bin/rollup -c",
-    "ui-dev": "./node_modules/.bin/rollup -c -w & npm run localhost"
+    "ui-build": "./node_modules/.bin/rollup --config",
+    "ui-dev": "./node_modules/.bin/rollup --config --watch & npm run localhost"
   },
   "dependencies": {
     "@tauri-apps/api": "^1.0.2"
