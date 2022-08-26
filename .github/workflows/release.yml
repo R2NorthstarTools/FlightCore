@@ -41,6 +41,6 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          src-tauri/target/release/bundle/appimage/*.AppImage
-          src-tauri/target/release/bundle/deb/*.deb
-          src-tauri/target/release/bundle/msi/*.msi
+          src-tauri/target/release/bundle/appimage/*
+          src-tauri/target/release/bundle/deb/*
+          src-tauri/target/release/bundle/msi/*
