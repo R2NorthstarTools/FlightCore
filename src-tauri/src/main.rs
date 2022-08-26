@@ -15,6 +15,16 @@ use tokio::time::sleep;
 struct Counter(Arc<Mutex<i32>>);
 
 fn main() {
+    // Only enable Sentry crash logs on release
+    #[cfg(not(debug_assertions))]
+    let _guard = sentry::init((
+        "https://f833732deb2240b0b2dc4abce97d0f1d@o1374052.ingest.sentry.io/6692177",
+        sentry::ClientOptions {
+            release: sentry::release_name!(),
+            ..Default::default()
+        },
+    ));
+
     tauri::Builder::default()
         .setup(|app| {
             let app_handle = app.app_handle();
