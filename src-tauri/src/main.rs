@@ -29,7 +29,11 @@ fn main() {
             Ok(())
         })
         .manage(Counter(Default::default()))
-        .invoke_handler(tauri::generate_handler![hello_world, add_count])
+        .invoke_handler(tauri::generate_handler![
+            hello_world,
+            add_count,
+            force_panic
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -45,4 +49,10 @@ fn add_count(num: i32, counter: State<'_, Counter>) -> String {
     *val += num;
 
     format!("{val}")
+}
+
+#[tauri::command]
+/// This function's only use is to force a `panic!()`
+fn force_panic() {
+    panic!("Force panicked!");
 }

@@ -62,6 +62,15 @@ counter-result {
   padding: 1.5rem 1rem;
 }
 
+panic-button {
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  border: solid 1px;
+  border-radius: 5px;
+  padding: .875rem 3rem;
+}
+
 backend-ping {
   position: absolute;
   top: 1rem;
