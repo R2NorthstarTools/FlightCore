@@ -2,7 +2,21 @@ name: "test-on-push"
 on: [push, pull_request]
 
 jobs:
+  # Ensure version numbers in various places match up
+  ensure-same-version:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: install dependencies
+        run: |
+          pip install toml
+      - name: Run check
+        run: |
+          python3 scripts/check_version_numbers.py
+
+
   test-tauri:
+    needs: ensure-same-version
     strategy:
       fail-fast: false
       matrix:
@@ -39,6 +53,6 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         path: |
-          src-tauri/target/release/bundle/appimage/*.AppImage
-          src-tauri/target/release/bundle/deb/*.deb
-          src-tauri/target/release/bundle/msi/*.msi
+          src-tauri/target/release/bundle/appimage/*
+          src-tauri/target/release/bundle/deb/*
+          src-tauri/target/release/bundle/msi/*

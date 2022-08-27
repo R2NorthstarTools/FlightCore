@@ -4,7 +4,20 @@ on:
     types: [ created ]
 
 jobs:
+  # Ensure version numbers in various places match up
+  ensure-same-version:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: install dependencies
+        run: |
+          pip install toml
+      - name: Run check
+        run: |
+          python3 scripts/check_version_numbers.py --release ${{github.event.release.tag_name}}
+
   build:
+    needs: ensure-same-version
     strategy:
       fail-fast: false
       matrix:
@@ -37,6 +50,13 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+    - name: upload build artifact
+      uses: actions/upload-artifact@v2
+      with:
+        path: |
+          src-tauri/target/release/bundle/appimage/*
+          src-tauri/target/release/bundle/deb/*
+          src-tauri/target/release/bundle/msi/*
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
@@ -44,3 +64,19 @@ jobs:
           src-tauri/target/release/bundle/appimage/*
           src-tauri/target/release/bundle/deb/*
           src-tauri/target/release/bundle/msi/*
+
+  create-release-file:
+    needs: build
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/download-artifact@v3
+    - name: Create release file
+      run: |
+        python3 scripts/create-release-file.py --version ${{github.event.release.tag_name}}
+
+    - name: upload release file
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          latest-release.json
