@@ -56,22 +56,3 @@ jobs:
           src-tauri/target/release/bundle/appimage/*
           src-tauri/target/release/bundle/deb/*
           src-tauri/target/release/bundle/msi/*
-
-  create-release-file:
-    needs: test-tauri
-    runs-on: ubuntu-20.04
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/download-artifact@v3
-    - name: Create release file
-      run: |
-        ls -al
-        tree
-        python3 scripts/create-release-file.py --version v0.1.0
-        ls -al
-
-    - name: upload build artifact
-      uses: actions/upload-artifact@v2
-      with:
-        path: |
-          latest-release.json
