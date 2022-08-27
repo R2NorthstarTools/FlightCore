@@ -36,6 +36,20 @@ fn main() {
                 }
             });
 
+            let app_handle = app.app_handle();
+            tauri::async_runtime::spawn(async move {
+                // Checking install location inside a timed loop is a bad idea
+                // If the user has the game on a harddrive for example, it will prevent the harddrive from ever spinning down
+                // Instead, install location checks should be event based.
+                loop {
+                    sleep(Duration::from_millis(5000)).await;
+                    println!("sending install location");
+                    app_handle
+                        .emit_all("install-location-result", find_game_install_location())
+                        .unwrap();
+                }
+            });
+
             Ok(())
         })
         .manage(Counter(Default::default()))
@@ -46,6 +60,24 @@ fn main() {
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+fn find_game_install_location() -> String {
+    // Attempt parsing Steam library directly
+    match steamlocate::SteamDir::locate() {
+        Some(mut steamdir) => {
+            let titanfall2_steamid = 1237970;
+            match steamdir.app(&titanfall2_steamid) {
+                Some(app) => {
+                    println!("{:#?}", app);
+                    return app.path.to_str().unwrap().to_string();
+                }
+                None => println!("Couldn't locate Titanfall2"),
+            }
+        }
+        None => println!("Couldn't locate Steam on this computer!"),
+    }
+    "NOT FOUND".to_string()
 }
 
 #[tauri::command]
