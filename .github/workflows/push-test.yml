@@ -61,8 +61,8 @@ jobs:
     needs: test-tauri
     runs-on: ubuntu-20.04
     steps:
-    - uses: actions/download-artifact@v3
     - uses: actions/checkout@v2
+    - uses: actions/download-artifact@v3
     - name: Create release file
       run: |
         ls -al
