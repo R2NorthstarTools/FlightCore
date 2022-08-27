@@ -12,7 +12,8 @@ jobs:
           pip install toml
       - name: Run check
         run: |
-          python3 scripts/check_version_numbers.py
+          python3 scripts/check_version_numbers.py --release v0.2.0
+
 
   # test-tauri:
   #   strategy:
