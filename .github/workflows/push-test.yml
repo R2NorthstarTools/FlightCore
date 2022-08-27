@@ -55,3 +55,12 @@ jobs:
           src-tauri/target/release/bundle/appimage/*.AppImage
           src-tauri/target/release/bundle/deb/*.deb
           src-tauri/target/release/bundle/msi/*.msi
+
+  create-release-file:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/download-artifact@v3
+    - name: Show folder structure
+    - run: |
+        ls -al
+        tree
