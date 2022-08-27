@@ -1,4 +1,6 @@
+# FlightCore
 
+A [Northstar](https://northstar.tf/) installer, updater, and mod-manager
 
 ## Roadmap
 
