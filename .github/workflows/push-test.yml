@@ -61,6 +61,6 @@ jobs:
     steps:
     - uses: actions/download-artifact@v3
     - name: Show folder structure
-    - run: |
+      run: |
         ls -al
         tree
