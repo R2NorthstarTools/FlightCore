@@ -11,12 +11,18 @@ document.addEventListener("DOMContentLoaded", async function () {
     let pingEl = $("backend-ping")! as HTMLElement;
     let panicButtonEl = $("panic-button") as HTMLElement;
     let installLocationHolderEl = $("install-location-holder") as HTMLElement;
+    let versionNumberHolderEl = $("version-number-holder") as HTMLElement;
 
     // listen backend-ping event (from Tauri Rust App)
     listen("install-location-result", function (evt: TauriEvent<string>) {
         // alert(evt.payload);
         // result = evt as String;
         installLocationHolderEl.textContent = evt.payload;
+    })
+
+    // listen for version number ping
+    listen("current-version-ping", function (evt: TauriEvent<string>) {
+        versionNumberHolderEl.textContent = evt.payload;
     })
 
     // listen backend-ping event (from Tauri Rust App)

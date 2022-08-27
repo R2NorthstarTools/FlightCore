@@ -50,6 +50,21 @@ fn main() {
                 }
             });
 
+            let app_handle = app.app_handle();
+            tauri::async_runtime::spawn(async move {
+                // Sending current version inside a timed loop is a bad idea as it shouldn't change at runtime
+                // The reason this is currently done like this is cause I haven't figure out yet how to just send it once / read it in front-end
+                let version = env!("CARGO_PKG_VERSION");
+                loop {
+                    sleep(Duration::from_millis(1000)).await;
+                    println!("sending install location");
+                    println!("{}", version);
+                    app_handle
+                        .emit_all("current-version-ping", version)
+                        .unwrap();
+                }
+            });
+
             Ok(())
         })
         .manage(Counter(Default::default()))
