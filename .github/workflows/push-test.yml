@@ -67,7 +67,7 @@ jobs:
       run: |
         ls -al
         tree
-        python3 scripts/create-release-file.py
+        python3 scripts/create-release-file.py --version v0.1.0
         ls -al
 
     - name: upload build artifact
