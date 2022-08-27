@@ -57,6 +57,7 @@ jobs:
           src-tauri/target/release/bundle/msi/*.msi
 
   create-release-file:
+    needs: test-tauri
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/download-artifact@v3
