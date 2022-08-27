@@ -69,7 +69,7 @@ fn find_game_install_location() -> String {
             let titanfall2_steamid = 1237970;
             match steamdir.app(&titanfall2_steamid) {
                 Some(app) => {
-                    println!("{:#?}", app);
+                    // println!("{:#?}", app);
                     return app.path.to_str().unwrap().to_string();
                 }
                 None => println!("Couldn't locate Titanfall2"),
