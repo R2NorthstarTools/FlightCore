@@ -61,6 +61,25 @@ npm run tauri dev
 > `npm run localhost`
 > in two separate console windows
 
+### Tips
+
+Note that you can adjust the behaviour of Tauri windows in `tauri.conf.json`, e.g.
+
+```json
+"windows": [
+  {
+    "fullscreen": false,
+    "resizable": true,
+    "alwaysOnTop": true,
+    "x": 1200,
+    "y": 0,
+    "height": 500,
+    "width": 300,
+    "title": "FlightCore"
+  }
+]
+```
+
 ### Building
 
 Release builds are generally done via CI. To build locally, make sure typescript is compiled (`./node_modules/.bin/rollup --config`), then run `npm run tauri build`.
