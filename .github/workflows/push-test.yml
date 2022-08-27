@@ -16,6 +16,7 @@ jobs:
 
 
   test-tauri:
+    needs: ensure-same-version
     strategy:
       fail-fast: false
       matrix:
