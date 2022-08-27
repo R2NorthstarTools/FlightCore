@@ -75,8 +75,8 @@ jobs:
       run: |
         python3 scripts/create-release-file.py --version ${{github.event.release.tag_name}}
 
-    - name: upload build artifact
-      uses: actions/upload-artifact@v2
+    - name: upload release file
+      uses: softprops/action-gh-release@v1
       with:
-        path: |
+        files: |
           latest-release.json
