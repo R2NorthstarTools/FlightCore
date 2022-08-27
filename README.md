@@ -43,6 +43,37 @@ tauri::Builder::default()
 	.manage(arc_db)
 ```
 
+## Roadmap
+
+- [ ] General
+  - [ ] Icon
+  - [ ] CI builds
+  - [ ] Self updating
+  - [ ] Self detect if outdated
+  - [ ] Self update delivery
+    - [ ] CI/CD
+    - [ ] Flatpak (with CI to push flatpak update)
+    - [ ] Chocolatey (maybe?)
+    - [ ] Option to disable self-update (for Flatpak and Chocolatey)
+  - [ ] Display current version in UI window
+  - [x] Crash report uploading (sentry.io)
+- [ ] Northstar install/launch support
+  - [ ] 1-click to get to running Northstar
+  - [ ] Detect game install path
+    - [ ] Steam
+    - [ ] Origin
+    - [ ] EA
+  - [ ] Support for multiple release channels (GitHub + Thunderstore)
+  - [ ] Launch Northstar support via gamelauncher (Steam/Origin/EA)
+  - [ ] Read-out current version from exe and mods
+- [ ] Mod install support
+  - [ ] check mod validity
+  - [ ] mod update detection
+- Extra
+- [ ] "dev mode" -> PR install support
+- [ ] get list of installed mods and export as TXT
+
+
 ## Development
 
 Make sure you have the necessary dependencies installed: https://tauri.app/v1/guides/getting-started/prerequisites
@@ -74,3 +105,5 @@ npm run tauri dev
 ### Building
 
 Release builds are generally done via CI. To build locally, make sure typescript is compiled (`./node_modules/.bin/rollup --config`), then run `npm run tauri build`.
+
+## Old README (to be removed)
