@@ -2,6 +2,17 @@ name: "test-on-push"
 on: [push, pull_request]
 
 jobs:
+  # Ensure version numbers in various places match up
+  ensure-same-version:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: install dependencies
+        run: |
+          pip install toml
+      - name: Run check
+        run: |
+          python3 scripts/check_version_numbers.py
+
   test-tauri:
     strategy:
       fail-fast: false
