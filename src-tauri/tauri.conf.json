@@ -62,12 +62,7 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "FlightCore",
-        "alwaysOnTop": true,
-        "x": 1200,
-        "y": 0,
-        "height": 500,
-        "width": 300
+        "title": "FlightCore"
       }
     ]
   }
