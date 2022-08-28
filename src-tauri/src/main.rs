@@ -36,20 +36,6 @@ fn main() {
                 }
             });
 
-            let app_handle = app.app_handle();
-            tauri::async_runtime::spawn(async move {
-                // Checking install location inside a timed loop is a bad idea
-                // If the user has the game on a harddrive for example, it will prevent the harddrive from ever spinning down
-                // Instead, install location checks should be event based.
-                loop {
-                    sleep(Duration::from_millis(5000)).await;
-                    println!("sending install location");
-                    app_handle
-                        .emit_all("install-location-result", find_game_install_location())
-                        .unwrap();
-                }
-            });
-
             Ok(())
         })
         .manage(Counter(Default::default()))
@@ -57,12 +43,14 @@ fn main() {
             hello_world,
             add_count,
             force_panic,
+            find_game_install_location,
             get_version_number
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
 
+#[tauri::command]
 fn find_game_install_location() -> String {
     // Attempt parsing Steam library directly
     match steamlocate::SteamDir::locate() {
