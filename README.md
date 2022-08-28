@@ -28,9 +28,9 @@ A [Northstar](https://northstar.tf/) installer, updater, and mod-manager
 - [ ] Mod install support
   - [ ] check mod validity
   - [ ] mod update detection
-- Extra
-- [ ] "dev mode" -> PR install support
-- [ ] get list of installed mods and export as TXT
+- [ ] Extra
+  - [ ] "dev mode" -> PR install support
+  - [ ] get list of installed mods and export as TXT
 
 
 ## Development
