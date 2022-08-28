@@ -20,11 +20,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         installLocationHolderEl.textContent = evt.payload;
     })
 
-    // listen for version number ping
-    listen("current-version-ping", function (evt: TauriEvent<string>) {
-        versionNumberHolderEl.textContent = evt.payload;
-    })
-
     // listen backend-ping event (from Tauri Rust App)
     listen("backend-ping", function (evt: TauriEvent<any>) {
         pingEl.classList.add("on");
@@ -53,4 +48,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         await invoke("force_panic");
         alert("Never should have been able to get here!");
     });
+
+    // Run the following on initial page load
+    let version_number_string = await invoke("get_version_number") as string;
+    versionNumberHolderEl.textContent = version_number_string;
 })

@@ -50,28 +50,14 @@ fn main() {
                 }
             });
 
-            let app_handle = app.app_handle();
-            tauri::async_runtime::spawn(async move {
-                // Sending current version inside a timed loop is a bad idea as it shouldn't change at runtime
-                // The reason this is currently done like this is cause I haven't figure out yet how to just send it once / read it in front-end
-                let version = env!("CARGO_PKG_VERSION");
-                loop {
-                    sleep(Duration::from_millis(1000)).await;
-                    println!("sending install location");
-                    println!("{}", version);
-                    app_handle
-                        .emit_all("current-version-ping", version)
-                        .unwrap();
-                }
-            });
-
             Ok(())
         })
         .manage(Counter(Default::default()))
         .invoke_handler(tauri::generate_handler![
             hello_world,
             add_count,
-            force_panic
+            force_panic,
+            get_version_number
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -112,4 +98,11 @@ fn add_count(num: i32, counter: State<'_, Counter>) -> String {
 /// This function's only use is to force a `panic!()`
 fn force_panic() {
     panic!("Force panicked!");
+}
+
+#[tauri::command]
+/// Returns the current version number as a string
+fn get_version_number() -> String {
+    let version = env!("CARGO_PKG_VERSION");
+    format!("v{}", version)
 }
