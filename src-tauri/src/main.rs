@@ -66,7 +66,7 @@ fn find_game_install_location() -> String {
         }
         None => println!("Couldn't locate Steam on this computer!"),
     }
-    "NOT FOUND".to_string()
+    "".to_string()
 }
 
 #[tauri::command]

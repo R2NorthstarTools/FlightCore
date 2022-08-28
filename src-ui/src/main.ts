@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     let panicButtonEl = $("panic-button") as HTMLElement;
     let installLocationHolderEl = $("install-location-holder") as HTMLElement;
     let versionNumberHolderEl = $("version-number-holder") as HTMLElement;
+    let omniButtonEl = document.getElementById("omni-button") as HTMLElement;
 
     // listen backend-ping event (from Tauri Rust App)
     listen("backend-ping", function (evt: TauriEvent<any>) {
@@ -49,5 +50,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // Get install location
     let install_location = await invoke("find_game_install_location") as string;
-    installLocationHolderEl.textContent = install_location;
+    // Change omni-button content based on whether game install was found
+    if (install_location && install_location.length > 0) {
+        omniButtonEl.textContent = "Install";
+        installLocationHolderEl.textContent = install_location;
+    }
+    else {
+        omniButtonEl.textContent = "Find Titanfall2 install location";
+    }
 })
