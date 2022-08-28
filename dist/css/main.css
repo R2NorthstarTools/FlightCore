@@ -86,3 +86,11 @@ backend-ping.on {
   scale: 1.25;
   background-color: hsl(120, 100%, 32%);
 }
+
+button {
+  cursor: pointer;
+  border: solid 1px hsl(210, 78%, 37%);
+  border-radius: 5px;
+  padding: .875rem 3rem;
+  font-size: 1.5rem;
+}
