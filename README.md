@@ -32,8 +32,8 @@ A [Northstar](https://northstar.tf/) installer, updater, and mod-manager
   - [ ] "dev mode" -> PR install support
   - [ ] get list of installed mods and export as TXT
   - [ ] support r2mm links
-  - [ ] CloudFlare blocking debugger
-
+  - [ ] CloudFlare blocking debugger (in particular make sure to check IPv4)
+  - [ ] Open common config files
 ## Development
 
 Make sure you have the necessary dependencies installed: https://tauri.app/v1/guides/getting-started/prerequisites
