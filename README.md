@@ -31,7 +31,8 @@ A [Northstar](https://northstar.tf/) installer, updater, and mod-manager
 - [ ] Extra
   - [ ] "dev mode" -> PR install support
   - [ ] get list of installed mods and export as TXT
-
+  - [ ] support r2mm links
+  - [ ] CloudFlare blocking debugger
 
 ## Development
 
