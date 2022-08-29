@@ -62,6 +62,15 @@ document.addEventListener("DOMContentLoaded", async function () {
         omniButtonEl.textContent = "Install";
         installLocationHolderEl.textContent = install_location;
         globalState.gamepath = install_location;
+
+        // Check installed Northstar version if found
+        let northstar_version_number = await invoke("get_northstar_version_number_caller") as string;
+        if (northstar_version_number && northstar_version_number.length > 0) {
+            globalState.installed_northstar_version = northstar_version_number;
+            omniButtonEl.textContent = "Play"
+            // TODO check if version is newest
+        }
+        console.log(globalState);
     }
     else {
         omniButtonEl.textContent = "Find Titanfall2 install location";
