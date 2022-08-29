@@ -94,3 +94,8 @@ button {
   padding: .875rem 3rem;
   font-size: 1.5rem;
 }
+
+/* Assigned mainly to buttons that contain unimplemented functionality */
+.locked {
+  cursor: not-allowed;
+}
