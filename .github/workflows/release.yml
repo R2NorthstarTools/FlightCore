@@ -55,14 +55,12 @@ jobs:
       with:
         path: |
           src-tauri/target/release/bundle/appimage/*
-          src-tauri/target/release/bundle/deb/*
           src-tauri/target/release/bundle/msi/*
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
         files: |
           src-tauri/target/release/bundle/appimage/*
-          src-tauri/target/release/bundle/deb/*
           src-tauri/target/release/bundle/msi/*
 
   create-release-file:
