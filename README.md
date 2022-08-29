@@ -29,7 +29,9 @@ A [Northstar](https://northstar.tf/) installer, updater, and mod-manager
   - [ ] check mod validity
   - [ ] mod update detection
 - [ ] Extra
-  - [ ] "dev mode" -> PR install support
+  - [ ] "dev mode"
+    - [ ] PR install support
+  - [ ] Support multiple profiles
   - [ ] get list of installed mods and export as TXT
   - [ ] support r2mm links
   - [ ] CloudFlare blocking debugger (in particular make sure to check IPv4)
