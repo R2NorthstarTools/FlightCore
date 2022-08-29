@@ -3,6 +3,13 @@ import { listen, Event as TauriEvent } from "@tauri-apps/api/event";
 
 const $ = document.querySelector.bind(document);
 
+// Stores the overall state of the application
+var globalState = {
+    gamepath: "",
+    installed_northstar_version: "",
+    current_view: "" // Note sure if this is the right way to do it
+}
+
 document.addEventListener("DOMContentLoaded", async function () {
     // get the elements
     const helloEl = $("div.hello")! as HTMLElement;
@@ -54,6 +61,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (install_location && install_location.length > 0) {
         omniButtonEl.textContent = "Install";
         installLocationHolderEl.textContent = install_location;
+        globalState.gamepath = install_location;
     }
     else {
         omniButtonEl.textContent = "Find Titanfall2 install location";
