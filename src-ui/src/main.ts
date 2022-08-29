@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     versionNumberHolderEl.textContent = version_number_string;
 
     // Get install location
-    let install_location = await invoke("find_game_install_location") as string;
+    let install_location = await invoke("find_game_install_location_caller") as string;
     // Change omni-button content based on whether game install was found
     if (install_location && install_location.length > 0) {
         omniButtonEl.textContent = "Install";

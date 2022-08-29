@@ -10,6 +10,7 @@ use std::{
 
 use tauri::{Manager, State};
 use tokio::time::sleep;
+use anyhow::anyhow;
 
 #[derive(Default)]
 struct Counter(Arc<Mutex<i32>>);
@@ -43,7 +44,7 @@ fn main() {
             hello_world,
             add_count,
             force_panic,
-            find_game_install_location,
+            find_game_install_location_caller,
             get_version_number
         ])
         .run(tauri::generate_context!())
@@ -51,7 +52,19 @@ fn main() {
 }
 
 #[tauri::command]
-fn find_game_install_location() -> String {
+/// Wrapper for `find_game_install_location` as tauri doesn't allow passing `Result<>` types to front-end
+fn find_game_install_location_caller() -> String {
+    match find_game_install_location() {
+        Ok(path) => path,
+        Err(err) => {
+            println!("{}", err);
+            "".to_string()
+        }
+    }
+}
+
+/// Attempts to find the game install location
+fn find_game_install_location() -> Result<String, anyhow::Error> {
     // Attempt parsing Steam library directly
     match steamlocate::SteamDir::locate() {
         Some(mut steamdir) => {
@@ -59,14 +72,16 @@ fn find_game_install_location() -> String {
             match steamdir.app(&titanfall2_steamid) {
                 Some(app) => {
                     // println!("{:#?}", app);
-                    return app.path.to_str().unwrap().to_string();
+                    return Ok(app.path.to_str().unwrap().to_string());
                 }
                 None => println!("Couldn't locate Titanfall2"),
             }
         }
         None => println!("Couldn't locate Steam on this computer!"),
     }
-    "".to_string()
+    Err(anyhow!(
+        "Could not auto-detect game install location! Please enter it manually."
+    ))
 }
 
 #[tauri::command]
