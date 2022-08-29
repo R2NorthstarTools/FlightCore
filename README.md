@@ -8,6 +8,9 @@ A [Northstar](https://northstar.tf/) installer, updater, and mod-manager
   - [ ] Icon
   - [ ] CI builds
   - [ ] Self updating
+    - [x] ensure version sync with tauri.conf.json, cargo.toml
+    - [x] CI release
+    - [x] some scripts to create release JSON file
   - [ ] Self detect if outdated
   - [ ] Self update delivery
     - [ ] CI/CD
@@ -36,6 +39,7 @@ A [Northstar](https://northstar.tf/) installer, updater, and mod-manager
   - [ ] support r2mm links
   - [ ] CloudFlare blocking debugger (in particular make sure to check IPv4)
   - [ ] Open common config files
+
 ## Development
 
 Make sure you have the necessary dependencies installed: https://tauri.app/v1/guides/getting-started/prerequisites
