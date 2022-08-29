@@ -54,14 +54,14 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         path: |
-          src-tauri/target/release/bundle/appimage/*
-          src-tauri/target/release/bundle/msi/*
+          src-tauri/target/release/bundle/appimage/*AppImage*
+          src-tauri/target/release/bundle/msi/*msi*
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          src-tauri/target/release/bundle/appimage/*
-          src-tauri/target/release/bundle/msi/*
+          src-tauri/target/release/bundle/appimage/*AppImage*
+          src-tauri/target/release/bundle/msi/*msi*
 
   create-release-file:
     needs: build
