@@ -21,8 +21,8 @@ A [Northstar](https://northstar.tf/) installer, updater, and mod-manager
   - [x] Crash report uploading (sentry.io)
 - [ ] Northstar install/launch support
   - [ ] 1-click to get to running Northstar
-  - [ ] Detect game install path
-    - [ ] Steam
+  - [x] Detect game install path
+    - [x] Steam
     - [ ] Origin
     - [ ] EA
   - [ ] Support for multiple release channels (GitHub + Thunderstore)
@@ -31,13 +31,15 @@ A [Northstar](https://northstar.tf/) installer, updater, and mod-manager
 - [ ] Mod install support
   - [ ] check mod validity
   - [ ] mod update detection
+- [ ] Game repair functionality
+  - [ ] Button to disable all mods except vanilla
+  - [ ] CloudFlare blocking debugger (in particular make sure to check IPv4)
 - [ ] Extra
   - [ ] "dev mode"
     - [ ] PR install support
   - [ ] Support multiple profiles
   - [ ] get list of installed mods and export as TXT
   - [ ] support r2mm links
-  - [ ] CloudFlare blocking debugger (in particular make sure to check IPv4)
   - [ ] Open common config files
 
 ## Development
