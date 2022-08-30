@@ -56,14 +56,13 @@ fn main() {
 /// Wrapper for `find_game_install_location` as tauri doesn't allow passing `Result<>` types to front-end
 fn find_game_install_location_caller() -> String {
     match find_game_install_location() {
-        Ok(path) => path,
+        Ok((path, install_type)) => path,
         Err(err) => {
             println!("{}", err);
             "".to_string()
         }
     }
 }
-
 
 #[tauri::command]
 fn hello_world() -> String {
@@ -101,4 +100,3 @@ fn get_northstar_version_number_caller() -> String {
         }
     }
 }
-

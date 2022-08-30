@@ -1,5 +1,13 @@
 use anyhow::anyhow;
 
+#[derive(Debug)]
+pub enum InstallType {
+    STEAM,
+    ORIGIN,
+    EAPLAY,
+    UNKNOWN,
+}
+
 /// Check version number of a mod
 pub fn check_mod_version_number(path_to_mod_folder: String) -> Result<String, anyhow::Error> {
     // println!("{}", format!("{}/mod.json", path_to_mod_folder));
@@ -17,7 +25,7 @@ pub fn check_mod_version_number(path_to_mod_folder: String) -> Result<String, an
 }
 
 /// Attempts to find the game install location
-pub fn find_game_install_location() -> Result<String, anyhow::Error> {
+pub fn find_game_install_location() -> Result<(String, InstallType), anyhow::Error> {
     // Attempt parsing Steam library directly
     match steamlocate::SteamDir::locate() {
         Some(mut steamdir) => {
@@ -25,7 +33,7 @@ pub fn find_game_install_location() -> Result<String, anyhow::Error> {
             match steamdir.app(&titanfall2_steamid) {
                 Some(app) => {
                     // println!("{:#?}", app);
-                    return Ok(app.path.to_str().unwrap().to_string());
+                    return Ok((app.path.to_str().unwrap().to_string(), InstallType::STEAM));
                 }
                 None => println!("Couldn't locate Titanfall2"),
             }
@@ -39,12 +47,13 @@ pub fn find_game_install_location() -> Result<String, anyhow::Error> {
 
 /// Returns the current Northstar version number as a string
 pub fn get_northstar_version_number() -> Result<String, anyhow::Error> {
-    let install_location = match find_game_install_location() {
-        Ok(path) => path,
+    let (install_location, install_type) = match find_game_install_location() {
+        Ok((path, install_type)) => (path, install_type),
         Err(err) => return Err(err),
     };
 
     println!("{}", install_location);
+    println!("{:?}", install_type);
 
     // TODO:
     // Check if NorthstarLauncher.exe exists and check its version number
