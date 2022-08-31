@@ -46,7 +46,8 @@ fn main() {
             force_panic,
             find_game_install_location_caller,
             get_version_number,
-            get_northstar_version_number_caller
+            get_northstar_version_number_caller,
+            check_is_northstar_outdated
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -99,4 +100,10 @@ fn get_northstar_version_number_caller() -> String {
             "".to_string()
         }
     }
+}
+
+#[tauri::command]
+fn check_is_northstar_outdated() -> bool {
+    // TODO implement check
+    false
 }

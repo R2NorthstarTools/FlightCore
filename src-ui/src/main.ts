@@ -68,7 +68,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         if (northstar_version_number && northstar_version_number.length > 0) {
             globalState.installed_northstar_version = northstar_version_number;
             omniButtonEl.textContent = `Play (${northstar_version_number})`;
-            // TODO check if version is newest
+            let northstar_is_outdated = await invoke("check_is_northstar_outdated") as boolean;
+            if (northstar_is_outdated) {
+                omniButtonEl.textContent = "Update";
+            }
         }
         console.log(globalState);
     }
