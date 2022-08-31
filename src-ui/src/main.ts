@@ -1,5 +1,7 @@
 import { invoke } from "@tauri-apps/api";
 import { listen, Event as TauriEvent } from "@tauri-apps/api/event";
+import { open } from '@tauri-apps/api/dialog';
+import { appDir } from '@tauri-apps/api/path';
 
 const $ = document.querySelector.bind(document);
 
@@ -28,6 +30,43 @@ document.addEventListener("DOMContentLoaded", async function () {
             pingEl.classList.remove("on");
         }, 500);
     })
+
+    // omni button click
+    omniButtonEl.addEventListener("click", async function () {
+        // Check if Titanfall2 install path as found
+        let install_location = await invoke("find_game_install_location_caller") as string;
+        if (!(install_location && install_location.length > 0)) {
+            alert("Titanfall2 install not found");
+            // Open a selection dialog for directories
+            const selected = await open({
+                directory: true,
+                multiple: false,
+                defaultPath: await appDir(),
+            });
+            if (Array.isArray(selected)) {
+                // user selected multiple directories
+                alert("Please only select a single directory");
+            } else if (selected === null) {
+                // user cancelled the selection
+            } else {
+                // user selected a single directory
+                alert(selected);
+                
+                globalState.gamepath = selected;
+
+                // TODO Verify if valid Titanfall2 install location
+
+                // Update omni-button
+                omniButtonEl.textContent = "Install";
+
+                // TODO Check for Northstar install
+                // TODO Check for updated Northstar
+            }
+            return;
+        }
+
+        alert("TODO");
+    });
 
     // counter button click
     counterButtonEl.addEventListener("pointerup", async function () {
