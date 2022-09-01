@@ -8,7 +8,7 @@ use std::{
     time::Duration,
 };
 
-use app::{find_game_install_location, get_northstar_version_number};
+use app::{check_is_valid_game_path, find_game_install_location, get_northstar_version_number};
 use tauri::{Manager, State};
 use tokio::time::sleep;
 
@@ -47,7 +47,8 @@ fn main() {
             find_game_install_location_caller,
             get_version_number,
             get_northstar_version_number_caller,
-            check_is_northstar_outdated
+            check_is_northstar_outdated,
+            verify_install_location
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -106,4 +107,16 @@ fn get_northstar_version_number_caller() -> String {
 fn check_is_northstar_outdated() -> bool {
     // TODO implement check
     false
+}
+
+#[tauri::command]
+/// Checks if is valid Titanfall2 install based on certain conditions
+fn verify_install_location(game_path: String) -> bool {
+    match check_is_valid_game_path(&game_path) {
+        Ok(()) => true,
+        Err(err) => {
+            println!("{}", err);
+            false
+        }
+    }
 }

@@ -88,3 +88,16 @@ pub fn get_northstar_version_number() -> Result<String, anyhow::Error> {
 
     Ok(initial_version_number)
 }
+
+/// Checks whether the provided path is a valid Titanfall2 gamepath by checking against a certain set of criteria
+pub fn check_is_valid_game_path(game_install_path: &str) -> Result<(), anyhow::Error> {
+    let is_correct_game_path =
+        std::path::Path::new(&format!("{}/Titanfall2.exe", game_install_path)).exists();
+    println!("Titanfall2.exe exists in path? {}", is_correct_game_path);
+
+    // Exit early if wrong game path
+    if !is_correct_game_path {
+        return Err(anyhow!("Incorrect game path \"{}\"", game_install_path)); // Return error cause wrong game path
+    }
+    Ok(())
+}
