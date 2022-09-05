@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
                 // TODO Verify if valid Titanfall2 install location
-                let is_valid_titanfall2_install = await invoke("verify_install_location", { game_path: selected }) as boolean;
+                let is_valid_titanfall2_install = await invoke("verify_install_location", { gamePath: selected }) as boolean;
                 if (is_valid_titanfall2_install) {
                     globalState.gamepath = selected;
 
