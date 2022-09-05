@@ -25,6 +25,9 @@ A [Northstar](https://northstar.tf/) installer, updater, and mod-manager
     - [x] Steam
     - [ ] Origin
     - [ ] EA
+      -[ ] Handle read-only filesystem
+  - [x] Check if Northstar install is up-to-date
+  - [ ] 1-click updating Northstar
   - [ ] Support for multiple release channels (GitHub + Thunderstore)
   - [ ] Launch Northstar support via gamelauncher (Steam/Origin/EA)
   - [ ] Read-out current version from exe and mods
