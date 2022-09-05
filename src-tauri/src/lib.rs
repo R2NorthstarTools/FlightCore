@@ -47,6 +47,8 @@ pub fn find_game_install_location() -> Result<(String, InstallType), anyhow::Err
 
 /// Returns the current Northstar version number as a string
 pub fn get_northstar_version_number() -> Result<String, anyhow::Error> {
+    // TODO: if `find_game_install_location` is unable to find game_path then function will fail to detect
+    // Northstar install, even if game_path is known due to user entering it manually
     let (install_location, install_type) = match find_game_install_location() {
         Ok((path, install_type)) => (path, install_type),
         Err(err) => return Err(err),
