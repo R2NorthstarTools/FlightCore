@@ -104,9 +104,36 @@ fn get_northstar_version_number_caller() -> String {
 }
 
 #[tauri::command]
-fn check_is_northstar_outdated() -> bool {
-    // TODO implement check
-    false
+/// Checks if installed Northstar version is up-to-date
+/// false -> Northstar install is up-to-date
+/// true  -> Northstar install is outdated
+async fn check_is_northstar_outdated() -> bool {
+    let index = thermite::api::get_package_index().await.unwrap().to_vec();
+    let nmod = index
+        .iter()
+        .find(|f| f.name.to_lowercase() == "northstar")
+        .unwrap();
+        // .ok_or_else(|| anyhow!("Couldn't find Northstar on thunderstore???"))?;
+
+    dbg!(nmod);
+
+    let version_number = match get_northstar_version_number() {
+        Ok(version_number) => version_number,
+        Err(err) => {
+            println!("{}",err);
+            // If we fail to get new version just assume we are up-to-date
+            return false;
+        }
+    };
+
+    if version_number != nmod.version {
+        println!("Installed Northstar version outdated");
+        true
+    }
+    else {
+        println!("Installed Northstar version up-to-date");
+        false
+    }
 }
 
 #[tauri::command]
