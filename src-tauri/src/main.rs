@@ -4,6 +4,7 @@
 )]
 
 use std::{
+    env,
     sync::{Arc, Mutex},
     time::Duration,
 };
@@ -48,7 +49,8 @@ fn main() {
             get_version_number,
             get_northstar_version_number_caller,
             check_is_northstar_outdated,
-            verify_install_location
+            verify_install_location,
+            get_host_os
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -145,4 +147,10 @@ fn verify_install_location(game_path: String) -> bool {
             false
         }
     }
+}
+
+#[tauri::command]
+/// Returns identifier of host OS FlightCore is running on
+fn get_host_os() -> String {
+    env::consts::OS.to_string()
 }

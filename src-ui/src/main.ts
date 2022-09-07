@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     let installLocationHolderEl = $("install-location-holder") as HTMLElement;
     let versionNumberHolderEl = $("version-number-holder") as HTMLElement;
     let omniButtonEl = document.getElementById("omni-button") as HTMLElement;
+    let hostOsHolderEl = $("host-os-holder") as HTMLElement;
 
     // listen backend-ping event (from Tauri Rust App)
     listen("backend-ping", function (evt: TauriEvent<any>) {
@@ -108,7 +109,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     // Run the following on initial page load
     // Get version number
     let version_number_string = await invoke("get_version_number") as string;
-    versionNumberHolderEl.textContent = version_number_string;
+    // Get host OS
+    let host_os_string = await invoke("get_host_os") as string;
+    versionNumberHolderEl.textContent = `${version_number_string} (${host_os_string})`;
 
     // Get install location
     let install_location = await invoke("find_game_install_location_caller") as string;
