@@ -35,7 +35,8 @@ A [Northstar](https://northstar.tf/) installer, updater, and mod-manager
   - [ ] check mod validity
   - [ ] mod update detection
 - [ ] Game repair functionality
-  - [ ] Button to disable all mods except vanilla
+  - [ ] Button to disable all mods except core Northstar mods
+  - [ ] Check filesystem permissions (we wanna look for admin owned files etc)
   - [ ] CloudFlare blocking debugger (in particular make sure to check IPv4)
 - [ ] Extra
   - [ ] "dev mode"
