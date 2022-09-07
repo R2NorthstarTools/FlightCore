@@ -113,14 +113,14 @@ async fn check_is_northstar_outdated() -> bool {
         .iter()
         .find(|f| f.name.to_lowercase() == "northstar")
         .unwrap();
-        // .ok_or_else(|| anyhow!("Couldn't find Northstar on thunderstore???"))?;
+    // .ok_or_else(|| anyhow!("Couldn't find Northstar on thunderstore???"))?;
 
     dbg!(nmod);
 
     let version_number = match get_northstar_version_number() {
         Ok(version_number) => version_number,
         Err(err) => {
-            println!("{}",err);
+            println!("{}", err);
             // If we fail to get new version just assume we are up-to-date
             return false;
         }
@@ -129,8 +129,7 @@ async fn check_is_northstar_outdated() -> bool {
     if version_number != nmod.version {
         println!("Installed Northstar version outdated");
         true
-    }
-    else {
+    } else {
         println!("Installed Northstar version up-to-date");
         false
     }
