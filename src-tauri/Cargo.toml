@@ -25,7 +25,7 @@ steamlocate = "1.0.2"
 # Error messages
 anyhow = "1.0"
 # libthermite for Northstar/mod install handling
-libthermite = { git = "https://github.com/AnActualEmerald/papa", rev = "896dbec2d7eb59758c01a32006089dd7b6e48d5c" }
+libthermite = "0.1.0"
 
 [features]
 # by default Tauri runs in production mode

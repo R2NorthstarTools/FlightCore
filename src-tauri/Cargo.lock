@@ -1654,7 +1654,8 @@ dependencies = [
 [[package]]
 name = "libthermite"
 version = "0.1.0"
-source = "git+https://github.com/AnActualEmerald/papa?rev=896dbec2d7eb59758c01a32006089dd7b6e48d5c#896dbec2d7eb59758c01a32006089dd7b6e48d5c"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "62a6023e653df8290a99bfaadf4dc62936ee2a76e3e64747f34a223f64152b92"
 dependencies = [
  "directories",
  "futures-util",
@@ -1666,7 +1667,6 @@ dependencies = [
  "serde",
  "serde_json",
  "thiserror",
- "toml",
  "zip",
 ]
 
