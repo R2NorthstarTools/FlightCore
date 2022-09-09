@@ -146,11 +146,11 @@ fn extract(zip_file: std::fs::File, target: &std::path::Path) -> Result<()> {
 ///Checks cache, else downloads the latest version
 async fn do_install(nmod: &thermite::model::Mod, game_path: &std::path::Path) -> Result<()> {
     let filename = format!("northstar-{}.zip", nmod.version);
-    let download_directory = format!("{}/flightcore-temp-download-dir/", game_path.display());
+    let download_directory = format!("{}/___flightcore-temp-download-dir/", game_path.display());
 
     std::fs::create_dir_all(download_directory.clone())?;
 
-    let download_path = format!("{}/{}", download_directory, filename);
+    let download_path = format!("{}/{}", download_directory.clone(), filename);
     println!("{}", download_path);
 
     let nfile = thermite::core::actions::download_file(&nmod.url, download_path)
@@ -159,6 +159,11 @@ async fn do_install(nmod: &thermite::model::Mod, game_path: &std::path::Path) ->
 
     println!("Extracting Northstar...");
     extract(nfile, game_path)?;
+
+    // Delete old copy
+    println!("Delete temp folder again");
+    std::fs::remove_dir_all(download_directory).unwrap();
+
     println!("Done!");
 
     Ok(())
