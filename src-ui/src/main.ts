@@ -15,6 +15,18 @@ var globalState = {
     current_view: "" // Note sure if this is the right way to do it
 }
 
+async function get_northstar_version_number_and_set_button_accordingly(omniButtonEl: HTMLElement) {
+    let northstar_version_number = await invoke("get_northstar_version_number_caller") as string;
+    if (northstar_version_number && northstar_version_number.length > 0) {
+        globalState.installed_northstar_version = northstar_version_number;
+        omniButtonEl.textContent = `Play (${northstar_version_number})`;
+        let northstar_is_outdated = await invoke("check_is_northstar_outdated") as boolean;
+        if (northstar_is_outdated) {
+            omniButtonEl.textContent = button_update_string;
+        }
+    }
+}
+
 document.addEventListener("DOMContentLoaded", async function () {
     // get the elements
     // const helloEl = $("div.hello")! as HTMLElement;
@@ -66,16 +78,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         //             omniButtonEl.textContent = button_install_string;
 
         //             // Check for Northstar install
-        //             let northstar_version_number = await invoke("get_northstar_version_number_caller") as string;
-        //             if (northstar_version_number && northstar_version_number.length > 0) {
-        //                 globalState.installed_northstar_version = northstar_version_number;
-        //                 omniButtonEl.textContent = `Play (${northstar_version_number})`;
-        //                 // Check for updated Northstar
-        //                 let northstar_is_outdated = await invoke("check_is_northstar_outdated") as boolean;
-        //                 if (northstar_is_outdated) {
-        //                     omniButtonEl.textContent = button_update_string;
-        //                 }
-        //             }
+        //             get_northstar_version_number_and_set_button_accordingly();
         //         }
         //         else {
         //             // Not valid Titanfall2 install
@@ -91,17 +94,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 await invoke("install_northstar_caller", { gamePath: globalState.gamepath }) as boolean;
                 alert("Done?");
 
-                // TODO: move this to function
-                let northstar_version_number = await invoke("get_northstar_version_number_caller") as string;
-                if (northstar_version_number && northstar_version_number.length > 0) {
-                    globalState.installed_northstar_version = northstar_version_number;
-                    omniButtonEl.textContent = `Play (${northstar_version_number})`;
-                    let northstar_is_outdated = await invoke("check_is_northstar_outdated") as boolean;
-                    if (northstar_is_outdated) {
-                        omniButtonEl.textContent = button_update_string;
-                    }
-                }
-        
+                get_northstar_version_number_and_set_button_accordingly(omniButtonEl);
                 break;
             default:
                 alert("Not implemented yet");
@@ -146,15 +139,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         globalState.gamepath = install_location;
 
         // Check installed Northstar version if found
-        let northstar_version_number = await invoke("get_northstar_version_number_caller") as string;
-        if (northstar_version_number && northstar_version_number.length > 0) {
-            globalState.installed_northstar_version = northstar_version_number;
-            omniButtonEl.textContent = `${button_play_string} (${northstar_version_number})`;
-            let northstar_is_outdated = await invoke("check_is_northstar_outdated") as boolean;
-            if (northstar_is_outdated) {
-                omniButtonEl.textContent = button_update_string;
-            }
-        }
+        get_northstar_version_number_and_set_button_accordingly(omniButtonEl);
         console.log(globalState);
     }
     else {
