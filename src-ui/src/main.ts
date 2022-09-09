@@ -4,6 +4,9 @@ import { open } from '@tauri-apps/api/dialog';
 import { appDir } from '@tauri-apps/api/path';
 
 const $ = document.querySelector.bind(document);
+const button_install_string = "Install";
+const button_update_string = "Update";
+const button_play_string = "Play";
 
 // Stores the overall state of the application
 var globalState = {
@@ -60,7 +63,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         //             globalState.gamepath = selected;
 
         //             // Update omni-button
-        //             omniButtonEl.textContent = "Install";
+        //             omniButtonEl.textContent = button_install_string;
 
         //             // Check for Northstar install
         //             let northstar_version_number = await invoke("get_northstar_version_number_caller") as string;
@@ -70,7 +73,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         //                 // Check for updated Northstar
         //                 let northstar_is_outdated = await invoke("check_is_northstar_outdated") as boolean;
         //                 if (northstar_is_outdated) {
-        //                     omniButtonEl.textContent = "Update";
+        //                     omniButtonEl.textContent = button_update_string;
         //                 }
         //             }
         //         }
@@ -83,7 +86,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         // }
 
         switch (omniButtonEl.textContent) {
-            case "Install":
+            case button_install_string:
                 omniButtonEl.textContent = "Installing";
                 await invoke("install_northstar_caller", { gamePath: globalState.gamepath }) as boolean;
                 alert("Done?");
@@ -95,7 +98,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     omniButtonEl.textContent = `Play (${northstar_version_number})`;
                     let northstar_is_outdated = await invoke("check_is_northstar_outdated") as boolean;
                     if (northstar_is_outdated) {
-                        omniButtonEl.textContent = "Update";
+                        omniButtonEl.textContent = button_update_string;
                     }
                 }
         
@@ -138,7 +141,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     let install_location = await invoke("find_game_install_location_caller") as string;
     // Change omni-button content based on whether game install was found
     if (install_location && install_location.length > 0) {
-        omniButtonEl.textContent = "Install";
+        omniButtonEl.textContent = button_install_string;
         installLocationHolderEl.textContent = install_location;
         globalState.gamepath = install_location;
 
@@ -146,10 +149,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         let northstar_version_number = await invoke("get_northstar_version_number_caller") as string;
         if (northstar_version_number && northstar_version_number.length > 0) {
             globalState.installed_northstar_version = northstar_version_number;
-            omniButtonEl.textContent = `Play (${northstar_version_number})`;
+            omniButtonEl.textContent = `${button_play_string} (${northstar_version_number})`;
             let northstar_is_outdated = await invoke("check_is_northstar_outdated") as boolean;
             if (northstar_is_outdated) {
-                omniButtonEl.textContent = "Update";
+                omniButtonEl.textContent = button_update_string;
             }
         }
         console.log(globalState);
