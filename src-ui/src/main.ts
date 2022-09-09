@@ -4,7 +4,7 @@ import { open } from '@tauri-apps/api/dialog';
 import { appDir } from '@tauri-apps/api/path';
 
 const $ = document.querySelector.bind(document);
-const button_install_string = "Install";
+const button_install_string = "Install Northstar";
 const button_update_string = "Update";
 const button_play_string = "Play";
 
