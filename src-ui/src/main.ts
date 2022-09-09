@@ -83,6 +83,23 @@ document.addEventListener("DOMContentLoaded", async function () {
         // }
 
         switch (omniButtonEl.textContent) {
+            case "Install":
+                omniButtonEl.textContent = "Installing";
+                await invoke("install_northstar_caller", { gamePath: globalState.gamepath }) as boolean;
+                alert("Done?");
+
+                // TODO: move this to function
+                let northstar_version_number = await invoke("get_northstar_version_number_caller") as string;
+                if (northstar_version_number && northstar_version_number.length > 0) {
+                    globalState.installed_northstar_version = northstar_version_number;
+                    omniButtonEl.textContent = `Play (${northstar_version_number})`;
+                    let northstar_is_outdated = await invoke("check_is_northstar_outdated") as boolean;
+                    if (northstar_is_outdated) {
+                        omniButtonEl.textContent = "Update";
+                    }
+                }
+        
+                break;
             default:
                 alert("Not implemented yet");
                 break;
