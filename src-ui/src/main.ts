@@ -82,7 +82,11 @@ document.addEventListener("DOMContentLoaded", async function () {
         //     return;
         // }
 
-        alert("TODO");
+        switch (omniButtonEl.textContent) {
+            default:
+                alert("Not implemented yet");
+                break;
+        }
     });
 
     // // counter button click
