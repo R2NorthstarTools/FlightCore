@@ -5,8 +5,9 @@ import { appDir } from '@tauri-apps/api/path';
 
 const $ = document.querySelector.bind(document);
 const button_install_string = "Install Northstar";
-const button_update_string = "Update";
-const button_play_string = "Play";
+const button_update_string = "Update Northstar";
+const button_play_string = "Launch Northstar";
+const button_manual_find_string = "Manually find Titanfall2 install location";
 
 // Stores the overall state of the application
 var globalState = {
@@ -19,7 +20,7 @@ async function get_northstar_version_number_and_set_button_accordingly(omniButto
     let northstar_version_number = await invoke("get_northstar_version_number_caller") as string;
     if (northstar_version_number && northstar_version_number.length > 0) {
         globalState.installed_northstar_version = northstar_version_number;
-        omniButtonEl.textContent = `Play (${northstar_version_number})`;
+        omniButtonEl.textContent = `${button_play_string} (${northstar_version_number})`;
         let northstar_is_outdated = await invoke("check_is_northstar_outdated") as boolean;
         if (northstar_is_outdated) {
             omniButtonEl.textContent = button_update_string;
@@ -143,6 +144,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         console.log(globalState);
     }
     else {
-        omniButtonEl.textContent = "Find Titanfall2 install location";
+        omniButtonEl.textContent = button_manual_find_string;
     }
 })
