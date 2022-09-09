@@ -36,7 +36,7 @@ fn main() {
             tauri::async_runtime::spawn(async move {
                 loop {
                     sleep(Duration::from_millis(2000)).await;
-                    println!("sending backend ping");
+                    // println!("sending backend ping");
                     app_handle.emit_all("backend-ping", "ping").unwrap();
                 }
             });
