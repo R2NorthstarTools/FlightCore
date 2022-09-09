@@ -150,16 +150,12 @@ async fn do_install(nmod: &thermite::model::Mod, game_path: &std::path::Path) ->
 
     std::fs::create_dir_all(download_directory.clone())?;
 
-
     let download_path = format!("{}/{}", download_directory, filename);
     println!("{}", download_path);
 
-    let nfile = thermite::core::actions::download_file(
-        &nmod.url,
-        download_path,
-    )
-    .await
-    .unwrap();
+    let nfile = thermite::core::actions::download_file(&nmod.url, download_path)
+        .await
+        .unwrap();
 
     println!("Extracting Northstar...");
     extract(nfile, game_path)?;
