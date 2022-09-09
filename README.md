@@ -45,6 +45,8 @@ A [Northstar](https://northstar.tf/) installer, updater, and mod-manager
   - [ ] get list of installed mods and export as TXT
   - [ ] support r2mm links
   - [ ] Open common config files
+- [ ] Security
+  - [ ] Ensure when loading mod title, description etc from Thunderstore to escape HTML tags
 
 ## Development
 
