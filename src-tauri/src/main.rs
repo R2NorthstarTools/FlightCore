@@ -99,8 +99,8 @@ fn get_version_number() -> String {
 }
 
 #[tauri::command]
-fn get_northstar_version_number_caller() -> String {
-    match get_northstar_version_number() {
+fn get_northstar_version_number_caller(game_path: String) -> String {
+    match get_northstar_version_number(game_path) {
         Ok(version_number) => version_number,
         Err(err) => {
             println!("{}", err);
@@ -113,7 +113,7 @@ fn get_northstar_version_number_caller() -> String {
 /// Checks if installed Northstar version is up-to-date
 /// false -> Northstar install is up-to-date
 /// true  -> Northstar install is outdated
-async fn check_is_northstar_outdated() -> bool {
+async fn check_is_northstar_outdated(game_path: String) -> bool {
     let index = thermite::api::get_package_index().await.unwrap().to_vec();
     let nmod = index
         .iter()
@@ -123,7 +123,7 @@ async fn check_is_northstar_outdated() -> bool {
 
     dbg!(nmod);
 
-    let version_number = match get_northstar_version_number() {
+    let version_number = match get_northstar_version_number(game_path) {
         Ok(version_number) => version_number,
         Err(err) => {
             println!("{}", err);

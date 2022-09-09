@@ -7,7 +7,7 @@ const $ = document.querySelector.bind(document);
 const button_install_string = "Install Northstar";
 const button_update_string = "Update Northstar";
 const button_play_string = "Launch Northstar";
-const button_manual_find_string = "Manually find Titanfall2 install location";
+const button_manual_find_string = "Manually select Titanfall2 install location";
 
 // Stores the overall state of the application
 var globalState = {
@@ -17,13 +17,49 @@ var globalState = {
 }
 
 async function get_northstar_version_number_and_set_button_accordingly(omniButtonEl: HTMLElement) {
-    let northstar_version_number = await invoke("get_northstar_version_number_caller") as string;
+    let northstar_version_number = await invoke("get_northstar_version_number_caller", { gamePath: globalState.gamepath }) as string;
     if (northstar_version_number && northstar_version_number.length > 0) {
         globalState.installed_northstar_version = northstar_version_number;
         omniButtonEl.textContent = `${button_play_string} (${northstar_version_number})`;
-        let northstar_is_outdated = await invoke("check_is_northstar_outdated") as boolean;
+        let northstar_is_outdated = await invoke("check_is_northstar_outdated", { gamePath: globalState.gamepath }) as boolean;
         if (northstar_is_outdated) {
             omniButtonEl.textContent = button_update_string;
+        }
+    }
+}
+
+async function manually_find_titanfall2_install(omniButtonEl: HTMLElement) {
+    // Open a selection dialog for directories
+    const selected = await open({
+        directory: true,
+        multiple: false,
+        defaultPath: await appDir(),
+    });
+    if (Array.isArray(selected)) {
+        // user selected multiple directories
+        alert("Please only select a single directory");
+    } else if (selected === null) {
+        // user cancelled the selection
+    } else {
+        // user selected a single directory
+
+        // Verify if valid Titanfall2 install location
+        let is_valid_titanfall2_install = await invoke("verify_install_location", { gamePath: selected }) as boolean;
+        if (is_valid_titanfall2_install) {
+            globalState.gamepath = selected;
+
+            let installLocationHolderEl = $("install-location-holder") as HTMLElement;
+            installLocationHolderEl.textContent = globalState.gamepath;
+
+            // Update omni-button
+            omniButtonEl.textContent = button_install_string;
+
+            // Check for Northstar install
+            await get_northstar_version_number_and_set_button_accordingly(omniButtonEl);
+        }
+        else {
+            // Not valid Titanfall2 install
+            alert("Not a valid Titanfall2 install");
         }
     }
 }
@@ -50,46 +86,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // omni button click
     omniButtonEl.addEventListener("click", async function () {
-        // // Check if Titanfall2 install path as found
-        // let install_location = await invoke("find_game_install_location_caller") as string;
-        // if (!(install_location && install_location.length > 0)) {
-        //     alert("Titanfall2 install not found");
-        //     // Open a selection dialog for directories
-        //     const selected = await open({
-        //         directory: true,
-        //         multiple: false,
-        //         defaultPath: await appDir(),
-        //     });
-        //     if (Array.isArray(selected)) {
-        //         // user selected multiple directories
-        //         alert("Please only select a single directory");
-        //     } else if (selected === null) {
-        //         // user cancelled the selection
-        //     } else {
-        //         // user selected a single directory
-        //         alert(selected);
-
-
-        //         // TODO Verify if valid Titanfall2 install location
-        //         let is_valid_titanfall2_install = await invoke("verify_install_location", { gamePath: selected }) as boolean;
-        //         if (is_valid_titanfall2_install) {
-        //             globalState.gamepath = selected;
-
-        //             // Update omni-button
-        //             omniButtonEl.textContent = button_install_string;
-
-        //             // Check for Northstar install
-        //             get_northstar_version_number_and_set_button_accordingly();
-        //         }
-        //         else {
-        //             // Not valid Titanfall2 install
-        //             alert("Not a valid Titanfall2 install");
-        //         }
-        //     }
-        //     return;
-        // }
 
         switch (omniButtonEl.textContent) {
+            // Find Titanfall2 install manually
+            case button_manual_find_string:
+                manually_find_titanfall2_install(omniButtonEl);
+                break;
+            // Install Northstar
             case button_install_string:
                 omniButtonEl.textContent = "Installing";
                 await invoke("install_northstar_caller", { gamePath: globalState.gamepath }) as boolean;

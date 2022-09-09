@@ -1,4 +1,5 @@
 use anyhow::{anyhow, Context, Result};
+use thermite::install;
 use zip::ZipArchive;
 
 #[derive(Debug)]
@@ -47,16 +48,9 @@ pub fn find_game_install_location() -> Result<(String, InstallType), anyhow::Err
 }
 
 /// Returns the current Northstar version number as a string
-pub fn get_northstar_version_number() -> Result<String, anyhow::Error> {
-    // TODO: if `find_game_install_location` is unable to find game_path then function will fail to detect
-    // Northstar install, even if game_path is known due to user entering it manually
-    let (install_location, install_type) = match find_game_install_location() {
-        Ok((path, install_type)) => (path, install_type),
-        Err(err) => return Err(err),
-    };
-
-    println!("{}", install_location);
-    println!("{:?}", install_type);
+pub fn get_northstar_version_number(game_path: String) -> Result<String, anyhow::Error> {
+    println!("{}", game_path);
+    // println!("{:?}", install_type);
 
     // TODO:
     // Check if NorthstarLauncher.exe exists and check its version number
@@ -68,7 +62,7 @@ pub fn get_northstar_version_number() -> Result<String, anyhow::Error> {
     ];
     let initial_version_number = match check_mod_version_number(format!(
         "{}/{}/mods/{}",
-        install_location, profile_folder, core_mods[0]
+        game_path, profile_folder, core_mods[0]
     )) {
         Ok(version_number) => version_number,
         Err(err) => return Err(err),
@@ -77,7 +71,7 @@ pub fn get_northstar_version_number() -> Result<String, anyhow::Error> {
     for core_mod in core_mods {
         let current_version_number = match check_mod_version_number(format!(
             "{}/{}/mods/{}",
-            install_location, profile_folder, core_mod
+            game_path, profile_folder, core_mod
         )) {
             Ok(version_number) => version_number,
             Err(err) => return Err(err),
