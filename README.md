@@ -4,52 +4,7 @@ A [Northstar](https://northstar.tf/) installer, updater, and mod-manager
 
 ## Roadmap
 
-- [ ] General
-  - [ ] Icon
-  - [ ] CI builds
-  - [ ] Self updating
-    - [x] ensure version sync with tauri.conf.json, cargo.toml
-    - [x] CI release
-    - [x] some scripts to create release JSON file
-  - [ ] Self detect if outdated
-  - [ ] Self update delivery
-    - [ ] CI/CD
-    - [ ] Flatpak (with CI to push flatpak update)
-    - [ ] Chocolatey (maybe?)
-    - [ ] Option to disable self-update (for Flatpak and Chocolatey)
-  - [ ] Display current version in UI window
-  - [x] Crash report uploading (sentry.io)
-- [ ] Northstar install/launch support
-  - [ ] 1-click to get to running Northstar
-  - [ ] Detect game install path
-    - [x] Steam
-    - [x] Origin
-    - [ ] EA
-      -[ ] Handle read-only filesystem
-  - [x] Check if Northstar install is up-to-date
-  - [ ] 1-click updating Northstar
-  - [ ] Support for multiple release channels (GitHub + Thunderstore)
-  - [ ] Launch Northstar support via gamelauncher (Steam/Origin/EA)
-  - [ ] Read-out current version from exe and mods
-- [ ] Mod install support
-  - [ ] check mod validity
-  - [ ] mod update detection
-- [ ] Game repair functionality
-  - [ ] Button to disable all mods except core Northstar mods
-  - [ ] Check filesystem permissions (we wanna look for admin owned files etc)
-  - [ ] Northstar crash detection
-  - [ ] CloudFlare blocking debugger (in particular make sure to check IPv4)
-- [ ] Extra
-  - [ ] "dev mode"
-  - [ ] Show list of Northstar (org) contributors and GitHub profile pics in some about menu, similarly to how it's done for releases
-    - [ ] PR install support
-  - [ ] Localisations (waiting on "official way" to do it in Tauri before jumping to any custom toolkits)
-  - [ ] Support multiple profiles
-  - [ ] get list of installed mods and export as TXT
-  - [ ] support r2mm links
-  - [ ] Open common config files
-- [ ] Security
-  - [ ] Ensure when loading mod title, description etc from Thunderstore to escape HTML tags
+--> See https://github.com/GeckoEidechse/FlightCore/issues/1
 
 ## Development
 
