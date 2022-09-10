@@ -1656,9 +1656,9 @@ dependencies = [
 
 [[package]]
 name = "libthermite"
-version = "0.1.0"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "62a6023e653df8290a99bfaadf4dc62936ee2a76e3e64747f34a223f64152b92"
+checksum = "156adca05ee7790b3e499f56932ccc77a60860dbd32204a19007464f7b293f79"
 dependencies = [
  "directories",
  "futures-util",
