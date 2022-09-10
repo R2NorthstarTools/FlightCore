@@ -10,8 +10,8 @@ use std::{
 };
 
 use app::{
-    check_is_valid_game_path, find_game_install_location, get_northstar_version_number,
-    install_northstar, GameInstall, launch_northstar, get_host_os,
+    check_is_valid_game_path, find_game_install_location, get_host_os,
+    get_northstar_version_number, install_northstar, launch_northstar, GameInstall,
 };
 use tauri::{Manager, State};
 use tokio::time::sleep;
