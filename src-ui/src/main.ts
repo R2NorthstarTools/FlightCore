@@ -5,6 +5,7 @@ import { appDir } from '@tauri-apps/api/path';
 
 const $ = document.querySelector.bind(document);
 const button_install_string = "Install Northstar";
+const button_in_install_string = "Installing...";
 const button_update_string = "Update Northstar";
 const button_play_string = "Launch Northstar";
 const button_manual_find_string = "Manually select Titanfall2 install location";
@@ -103,7 +104,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 let install_northstar_result = invoke("install_northstar_caller", { gamePath: globalState.gamepath });
 
                 // Update button while installl process is run
-                omniButtonEl.textContent = "Installing...";
+                omniButtonEl.textContent = button_in_install_string;
 
                 await install_northstar_result.then((message) => {
                     console.log(message);
