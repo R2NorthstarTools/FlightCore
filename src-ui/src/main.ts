@@ -180,18 +180,27 @@ document.addEventListener("DOMContentLoaded", async function () {
     versionNumberHolderEl.textContent = `${version_number_string} (${host_os_string})`;
 
     // Get install location
-    let install_location = await invoke("find_game_install_location_caller") as string;
-    // Change omni-button content based on whether game install was found
-    if (install_location && install_location.length > 0) {
-        omniButtonEl.textContent = button_install_string;
-        installLocationHolderEl.value = install_location;
-        globalState.gamepath = install_location;
+    await invoke("find_game_install_location_caller", { gamePath: globalState.gamepath })
+        .then((game_path) => {
+            // Found some gamepath
 
-        // Check installed Northstar version if found
-        get_northstar_version_number_and_set_button_accordingly(omniButtonEl);
-        console.log(globalState);
-    }
-    else {
-        omniButtonEl.textContent = button_manual_find_string;
-    }
+            console.log(game_path);
+
+            // Change omni-button content based on whether game install was found
+            let game_path_str = game_path as string
+            omniButtonEl.textContent = button_install_string;
+            installLocationHolderEl.value = game_path_str;
+            globalState.gamepath = game_path_str;
+
+            // Check installed Northstar version if found
+            get_northstar_version_number_and_set_button_accordingly(omniButtonEl);
+            console.log(globalState);
+
+        })
+        .catch((error) => {
+            // Gamepath not found or other error
+            console.error(error);
+            alert(error);
+            omniButtonEl.textContent = button_manual_find_string;
+        });
 })
