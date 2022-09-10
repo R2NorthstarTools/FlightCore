@@ -87,6 +87,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     let panicButtonEl = $("panic-button") as HTMLElement;
     let installLocationHolderEl = document.getElementById("install-location-holder") as HTMLInputElement;
     let versionNumberHolderEl = $("version-number-holder") as HTMLElement;
+    let installTypeHolderEl = $("install-type-holder") as HTMLElement;
     let omniButtonEl = document.getElementById("omni-button") as HTMLElement;
 
     // listen backend-ping event (from Tauri Rust App)
@@ -195,8 +196,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             // Change omni-button content based on whether game install was found
             omniButtonEl.textContent = button_install_string;
+
             installLocationHolderEl.value = game_install_obj.game_path;
             globalState.gamepath = game_install_obj.game_path;
+
+            installTypeHolderEl.textContent = game_install_obj.install_type;
 
             // Check installed Northstar version if found
             get_northstar_version_number_and_set_button_accordingly(omniButtonEl);
