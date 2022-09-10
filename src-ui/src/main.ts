@@ -48,8 +48,8 @@ async function manually_find_titanfall2_install(omniButtonEl: HTMLElement) {
         if (is_valid_titanfall2_install) {
             globalState.gamepath = selected;
 
-            let installLocationHolderEl = $("install-location-holder") as HTMLElement;
-            installLocationHolderEl.textContent = globalState.gamepath;
+            let installLocationHolderEl = document.getElementById("install-location-holder") as HTMLInputElement;
+            installLocationHolderEl.value = globalState.gamepath;
 
             // Update omni-button
             omniButtonEl.textContent = button_install_string;
@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     // let counterResultEl = $("counter-result") as HTMLElement;
     let pingEl = $("backend-ping")! as HTMLElement;
     let panicButtonEl = $("panic-button") as HTMLElement;
-    let installLocationHolderEl = $("install-location-holder") as HTMLElement;
+    let installLocationHolderEl = document.getElementById("install-location-holder") as HTMLInputElement;
     let versionNumberHolderEl = $("version-number-holder") as HTMLElement;
     let omniButtonEl = document.getElementById("omni-button") as HTMLElement;
     let hostOsHolderEl = $("host-os-holder") as HTMLElement;
@@ -139,7 +139,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     // Change omni-button content based on whether game install was found
     if (install_location && install_location.length > 0) {
         omniButtonEl.textContent = button_install_string;
-        installLocationHolderEl.textContent = install_location;
+        installLocationHolderEl.value = install_location;
         globalState.gamepath = install_location;
 
         // Check installed Northstar version if found

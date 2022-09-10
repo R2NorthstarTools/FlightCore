@@ -99,3 +99,11 @@ button {
 .locked {
   cursor: not-allowed;
 }
+
+/**
+ * Stupid way to make text input field containing game_path big enough to show whole path.
+ * Optimally, this should be done dynamically
+ */
+input {
+  width: 400px;
+}
