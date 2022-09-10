@@ -4,7 +4,7 @@ use regex::Regex;
 use serde::{Deserialize, Serialize};
 use zip::ZipArchive;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum InstallType {
     STEAM,
     ORIGIN,
@@ -12,10 +12,10 @@ pub enum InstallType {
     UNKNOWN,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct GameInstall {
     game_path: String,
-    install_type: InstallType,
+    pub install_type: InstallType,
 }
 
 /// Check version number of a mod

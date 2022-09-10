@@ -55,7 +55,8 @@ fn main() {
             verify_install_location,
             get_host_os,
             install_northstar_caller,
-            update_northstar_caller
+            update_northstar_caller,
+            launch_northstar
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -186,4 +187,11 @@ async fn update_northstar_caller(game_path: String) -> Result<bool, String> {
             Err(err.to_string())
         }
     }
+}
+
+#[tauri::command]
+/// Launches Northstar
+fn launch_northstar(game_install: GameInstall) -> Result<String, String> {
+    dbg!(game_install.clone());
+    Err(format!("Not yet implemented for {:?} on {}", game_install.install_type, get_host_os()))
 }

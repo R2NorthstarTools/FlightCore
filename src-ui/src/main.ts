@@ -145,6 +145,23 @@ document.addEventListener("DOMContentLoaded", async function () {
                 get_northstar_version_number_and_set_button_accordingly(omniButtonEl);
                 break;
 
+            // Launch Northstar
+            case `${button_play_string} (${globalState.installed_northstar_version})`:
+                let game_install = {
+                    game_path: globalState.gamepath,
+                    install_type: installTypeHolderEl.textContent
+                } as GameInstall;
+                await invoke("launch_northstar", { gameInstall: game_install })
+                .then((message) => {
+                    console.log(message);
+                    alert(message);        
+                })
+                .catch((error) => {
+                    console.error(error);
+                    alert(error);
+                });
+                break;
+
             // Do nothing when clicked during install/update
             case button_in_update_string:
             case button_in_install_string:
