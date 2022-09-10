@@ -113,7 +113,7 @@ fn get_northstar_version_number_caller(game_path: String) -> String {
 /// Checks if installed Northstar version is up-to-date
 /// false -> Northstar install is up-to-date
 /// true  -> Northstar install is outdated
-async fn check_is_northstar_outdated(game_path: String) -> bool {
+async fn check_is_northstar_outdated(game_path: String) -> Result<bool, String> {
     let index = thermite::api::get_package_index().await.unwrap().to_vec();
     let nmod = index
         .iter()
@@ -128,16 +128,16 @@ async fn check_is_northstar_outdated(game_path: String) -> bool {
         Err(err) => {
             println!("{}", err);
             // If we fail to get new version just assume we are up-to-date
-            return false;
+            return Err(err.to_string());
         }
     };
 
     if version_number != nmod.version {
         println!("Installed Northstar version outdated");
-        true
+        Ok(true)
     } else {
         println!("Installed Northstar version up-to-date");
-        false
+        Ok(false)
     }
 }
 

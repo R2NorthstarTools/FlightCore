@@ -21,10 +21,17 @@ async function get_northstar_version_number_and_set_button_accordingly(omniButto
     if (northstar_version_number && northstar_version_number.length > 0) {
         globalState.installed_northstar_version = northstar_version_number;
         omniButtonEl.textContent = `${button_play_string} (${northstar_version_number})`;
-        let northstar_is_outdated = await invoke("check_is_northstar_outdated", { gamePath: globalState.gamepath }) as boolean;
-        if (northstar_is_outdated) {
-            omniButtonEl.textContent = button_update_string;
-        }
+        await invoke("check_is_northstar_outdated", { gamePath: globalState.gamepath })
+            .then((message) => {
+                console.log(message);
+                if (message) {
+                    omniButtonEl.textContent = button_update_string;
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                alert(error);
+            });
     }
 }
 
