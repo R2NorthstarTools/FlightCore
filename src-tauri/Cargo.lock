@@ -80,6 +80,8 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "libthermite",
+ "powershell_script",
+ "regex",
  "sentry",
  "serde",
  "serde_json",
@@ -2415,6 +2417,12 @@ dependencies = [
  "flate2",
  "miniz_oxide",
 ]
+
+[[package]]
+name = "powershell_script"
+version = "1.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "54bde2e1a395c0aee9423072d781610da37b7b120edf17d4da99f83d04f2cd54"
 
 [[package]]
 name = "ppv-lite86"

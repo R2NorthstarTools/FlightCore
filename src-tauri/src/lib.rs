@@ -1,5 +1,6 @@
 use anyhow::{anyhow, Context, Result};
-use thermite::install;
+use powershell_script::PsScriptBuilder;
+use regex::Regex;
 use zip::ZipArchive;
 
 #[derive(Debug)]
@@ -26,6 +27,39 @@ pub fn check_mod_version_number(path_to_mod_folder: String) -> Result<String, an
     Ok(mod_version_number.to_string())
 }
 
+#[cfg(target_os = "windows")]
+/// Runs a powershell command and parses output to get Titanfall2 install location on Origin
+fn windows_origin_install_location_detection() -> Result<String, anyhow::Error> {
+    dbg!();
+
+    // Run PowerShell command to get Titanfall2 Origin install path
+    let ps = PsScriptBuilder::new()
+        .no_profile(true)
+        .non_interactive(true)
+        .hidden(false)
+        .print_commands(false)
+        .build();
+    let output = ps.run(r#"Get-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Respawn\Titanfall2\ -Name "Install Dir""#).unwrap();
+
+    // Get command output as string
+    let string = output.stdout().unwrap();
+
+    // Regex the result out and return value accordingly
+    let regex = Regex::new(r"(?m)Install Dir.+: (.+)\r\n").unwrap();
+    let mut result = regex.captures_iter(&string);
+    match result.next() {
+        Some(mat) => {
+            let game_path = mat.get(1).map_or("", |m| m.as_str());
+            println!("{}", game_path);
+            match check_is_valid_game_path(game_path) {
+                Ok(()) => return Ok(game_path.to_owned()),
+                Err(err) => Err(err),
+            }
+        }
+        None => Err(anyhow!("No Origin install path found")),
+    }
+}
+
 /// Attempts to find the game install location
 pub fn find_game_install_location() -> Result<(String, InstallType), anyhow::Error> {
     // Attempt parsing Steam library directly
@@ -42,6 +76,16 @@ pub fn find_game_install_location() -> Result<(String, InstallType), anyhow::Err
         }
         None => println!("Couldn't locate Steam on this computer!"),
     }
+
+    // (On Windows only) try parsing Windows registry for Origin install path
+    #[cfg(target_os = "windows")]
+    match windows_origin_install_location_detection() {
+        Ok(game_path) => return Ok((game_path, InstallType::ORIGIN)),
+        Err(err) => {
+            println!("{}", err);
+        }
+    };
+
     Err(anyhow!(
         "Could not auto-detect game install location! Please enter it manually."
     ))
@@ -89,8 +133,7 @@ pub fn get_northstar_version_number(game_path: String) -> Result<String, anyhow:
 /// Checks whether the provided path is a valid Titanfall2 gamepath by checking against a certain set of criteria
 pub fn check_is_valid_game_path(game_install_path: &str) -> Result<(), anyhow::Error> {
     let path_to_titanfall2_exe = format!("{}/Titanfall2.exe", game_install_path);
-    let is_correct_game_path =
-        std::path::Path::new(&path_to_titanfall2_exe).exists();
+    let is_correct_game_path = std::path::Path::new(&path_to_titanfall2_exe).exists();
     println!("Titanfall2.exe exists in path? {}", is_correct_game_path);
 
     // Exit early if wrong game path
