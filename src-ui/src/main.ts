@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 get_northstar_version_number_and_set_button_accordingly(omniButtonEl);
                 break;
             default:
-                alert("Not implemented yet");
+                alert(`Not implemented yet: ${omniButtonEl.textContent}`);
                 break;
         }
     });
