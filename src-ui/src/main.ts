@@ -194,10 +194,9 @@ document.addEventListener("DOMContentLoaded", async function () {
             let game_install_obj = game_install as GameInstall;
 
             // Change omni-button content based on whether game install was found
-            let game_path_str = game_install_obj.game_path as string
             omniButtonEl.textContent = button_install_string;
-            installLocationHolderEl.value = game_path_str;
-            globalState.gamepath = game_path_str;
+            installLocationHolderEl.value = game_install_obj.game_path;
+            globalState.gamepath = game_install_obj.game_path;
 
             // Check installed Northstar version if found
             get_northstar_version_number_and_set_button_accordingly(omniButtonEl);
