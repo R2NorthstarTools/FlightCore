@@ -1,3 +1,5 @@
+use std::env;
+
 use anyhow::{anyhow, Context, Result};
 use powershell_script::PsScriptBuilder;
 use regex::Regex;
@@ -243,4 +245,9 @@ pub async fn install_northstar(game_path: &str) -> Result<String> {
         .unwrap();
 
     Ok(nmod.version.clone())
+}
+
+/// Returns identifier of host OS FlightCore is running on
+pub fn get_host_os() -> String {
+    env::consts::OS.to_string()
 }

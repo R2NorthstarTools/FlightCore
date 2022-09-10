@@ -12,7 +12,7 @@ use std::{
 use anyhow::anyhow;
 use app::{
     check_is_valid_game_path, find_game_install_location, get_northstar_version_number,
-    install_northstar, GameInstall, InstallType,
+    install_northstar, GameInstall, InstallType, get_host_os,
 };
 use tauri::{Manager, State};
 use tokio::time::sleep;
@@ -54,7 +54,7 @@ fn main() {
             get_northstar_version_number_caller,
             check_is_northstar_outdated,
             verify_install_location,
-            get_host_os,
+            get_host_os_caller,
             install_northstar_caller,
             update_northstar_caller,
             launch_northstar
@@ -158,8 +158,8 @@ fn verify_install_location(game_path: String) -> bool {
 
 #[tauri::command]
 /// Returns identifier of host OS FlightCore is running on
-fn get_host_os() -> String {
-    env::consts::OS.to_string()
+fn get_host_os_caller() -> String {
+    get_host_os()
 }
 
 #[tauri::command]

@@ -201,7 +201,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     // Get version number
     let version_number_string = await invoke("get_version_number") as string;
     // Get host OS
-    let host_os_string = await invoke("get_host_os") as string;
+    let host_os_string = await invoke("get_host_os_caller") as string;
     versionNumberHolderEl.textContent = `${version_number_string} (${host_os_string})`;
 
     // Get install location
