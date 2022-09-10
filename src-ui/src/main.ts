@@ -94,9 +94,19 @@ document.addEventListener("DOMContentLoaded", async function () {
                 break;
             // Install Northstar
             case button_install_string:
-                omniButtonEl.textContent = "Installing";
-                await invoke("install_northstar_caller", { gamePath: globalState.gamepath }) as boolean;
-                alert("Done?");
+                let install_northstar_result = invoke("install_northstar_caller", { gamePath: globalState.gamepath });
+
+                // Update button while installl process is run
+                omniButtonEl.textContent = "Installing...";
+
+                await install_northstar_result.then((message) => {
+                    console.log(message);
+                    alert("Done installing Northstar");
+                })
+                    .catch((error) => {
+                        console.error(error);
+                        alert(error);
+                    });
 
                 get_northstar_version_number_and_set_button_accordingly(omniButtonEl);
                 break;

@@ -161,13 +161,13 @@ fn get_host_os() -> String {
 
 #[tauri::command]
 /// Installs Northstar to the given path
-async fn install_northstar_caller(game_path: String) -> bool {
+async fn install_northstar_caller(game_path: String) -> Result<bool, String> {
     println!("Running");
     match install_northstar(&game_path).await {
-        Ok(_) => true,
+        Ok(_) => Ok(true),
         Err(err) => {
             println!("{}", err);
-            false
+            Err(err.to_string())
         }
     }
 }
