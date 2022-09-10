@@ -11,7 +11,7 @@ use std::{
 
 use app::{
     check_is_valid_game_path, find_game_install_location, get_northstar_version_number,
-    install_northstar,
+    install_northstar, GameInstall,
 };
 use tauri::{Manager, State};
 use tokio::time::sleep;
@@ -63,9 +63,9 @@ fn main() {
 
 #[tauri::command]
 /// Wrapper for `find_game_install_location` as tauri doesn't allow passing `Result<>` types to front-end
-fn find_game_install_location_caller() -> Result<String, String> {
+fn find_game_install_location_caller() -> Result<GameInstall, String> {
     match find_game_install_location() {
-        Ok((path, install_type)) => Ok(path),
+        Ok(game_install) => Ok(game_install),
         Err(err) => {
             println!("{}", err);
             Err(err.to_string())

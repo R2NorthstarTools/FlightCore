@@ -1,14 +1,21 @@
 use anyhow::{anyhow, Context, Result};
 use powershell_script::PsScriptBuilder;
 use regex::Regex;
+use serde::{Deserialize, Serialize};
 use zip::ZipArchive;
 
-#[derive(Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 pub enum InstallType {
     STEAM,
     ORIGIN,
     EAPLAY,
     UNKNOWN,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct GameInstall {
+    game_path: String,
+    install_type: InstallType,
 }
 
 /// Check version number of a mod
@@ -61,7 +68,7 @@ fn windows_origin_install_location_detection() -> Result<String, anyhow::Error> 
 }
 
 /// Attempts to find the game install location
-pub fn find_game_install_location() -> Result<(String, InstallType), anyhow::Error> {
+pub fn find_game_install_location() -> Result<GameInstall, anyhow::Error> {
     // Attempt parsing Steam library directly
     match steamlocate::SteamDir::locate() {
         Some(mut steamdir) => {
@@ -69,7 +76,11 @@ pub fn find_game_install_location() -> Result<(String, InstallType), anyhow::Err
             match steamdir.app(&titanfall2_steamid) {
                 Some(app) => {
                     // println!("{:#?}", app);
-                    return Ok((app.path.to_str().unwrap().to_string(), InstallType::STEAM));
+                    let game_install = GameInstall {
+                        game_path: app.path.to_str().unwrap().to_string(),
+                        install_type: InstallType::STEAM,
+                    };
+                    return Ok(game_install);
                 }
                 None => println!("Couldn't locate Titanfall2"),
             }
@@ -80,7 +91,13 @@ pub fn find_game_install_location() -> Result<(String, InstallType), anyhow::Err
     // (On Windows only) try parsing Windows registry for Origin install path
     #[cfg(target_os = "windows")]
     match windows_origin_install_location_detection() {
-        Ok(game_path) => return Ok((game_path, InstallType::ORIGIN)),
+        Ok(game_path) => {
+            let game_install = GameInstall {
+                game_path: game_path,
+                install_type: InstallType::ORIGIN,
+            };
+            return Ok(game_install);
+        }
         Err(err) => {
             println!("{}", err);
         }

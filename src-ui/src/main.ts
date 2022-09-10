@@ -11,6 +11,11 @@ const button_in_update_string = "Updating...";
 const button_play_string = "Launch Northstar";
 const button_manual_find_string = "Manually select Titanfall2 install location";
 
+interface GameInstall {
+    game_path: string;
+    install_type: number;
+  }
+
 // Stores the overall state of the application
 var globalState = {
     gamepath: "",
@@ -181,13 +186,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // Get install location
     await invoke("find_game_install_location_caller", { gamePath: globalState.gamepath })
-        .then((game_path) => {
+        .then((game_install) => {
             // Found some gamepath
 
-            console.log(game_path);
+            console.log(game_install);
+
+            let game_install_obj = game_install as GameInstall;
 
             // Change omni-button content based on whether game install was found
-            let game_path_str = game_path as string
+            let game_path_str = game_install_obj.game_path as string
             omniButtonEl.textContent = button_install_string;
             installLocationHolderEl.value = game_path_str;
             globalState.gamepath = game_path_str;
