@@ -54,7 +54,8 @@ fn main() {
             check_is_northstar_outdated,
             verify_install_location,
             get_host_os,
-            install_northstar_caller
+            install_northstar_caller,
+            update_northstar_caller
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -163,6 +164,21 @@ fn get_host_os() -> String {
 /// Installs Northstar to the given path
 async fn install_northstar_caller(game_path: String) -> Result<bool, String> {
     println!("Running");
+    match install_northstar(&game_path).await {
+        Ok(_) => Ok(true),
+        Err(err) => {
+            println!("{}", err);
+            Err(err.to_string())
+        }
+    }
+}
+
+#[tauri::command]
+/// Update Northstar install in the given path
+async fn update_northstar_caller(game_path: String) -> Result<bool, String> {
+    println!("Updating");
+
+    // Simply re-run install with up-to-date version for upate
     match install_northstar(&game_path).await {
         Ok(_) => Ok(true),
         Err(err) => {

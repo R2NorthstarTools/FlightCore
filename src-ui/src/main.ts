@@ -7,6 +7,7 @@ const $ = document.querySelector.bind(document);
 const button_install_string = "Install Northstar";
 const button_in_install_string = "Installing...";
 const button_update_string = "Update Northstar";
+const button_in_update_string = "Updating...";
 const button_play_string = "Launch Northstar";
 const button_manual_find_string = "Manually select Titanfall2 install location";
 
@@ -95,10 +96,12 @@ document.addEventListener("DOMContentLoaded", async function () {
     omniButtonEl.addEventListener("click", async function () {
 
         switch (omniButtonEl.textContent) {
+
             // Find Titanfall2 install manually
             case button_manual_find_string:
                 manually_find_titanfall2_install(omniButtonEl);
                 break;
+
             // Install Northstar
             case button_install_string:
                 let install_northstar_result = invoke("install_northstar_caller", { gamePath: globalState.gamepath });
@@ -117,6 +120,28 @@ document.addEventListener("DOMContentLoaded", async function () {
 
                 get_northstar_version_number_and_set_button_accordingly(omniButtonEl);
                 break;
+
+            // Update Northstar
+            case button_update_string:
+                let update_northstar_result = invoke("update_northstar_caller", { gamePath: globalState.gamepath });
+
+                // Update button while update process is run
+                omniButtonEl.textContent = button_in_update_string;
+
+                await update_northstar_result.then((message) => {
+                    console.log(message);
+                    alert("Done updating Northstar");
+                })
+                    .catch((error) => {
+                        console.error(error);
+                        alert(error);
+                    });
+
+                // Update button to display new version
+                get_northstar_version_number_and_set_button_accordingly(omniButtonEl);
+                break;
+
+            // Fallback
             default:
                 alert(`Not implemented yet: ${omniButtonEl.textContent}`);
                 break;
