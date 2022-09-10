@@ -141,6 +141,11 @@ document.addEventListener("DOMContentLoaded", async function () {
                 get_northstar_version_number_and_set_button_accordingly(omniButtonEl);
                 break;
 
+            // Do nothing when clicked during install/update
+            case button_in_update_string:
+            case button_in_install_string:
+                break;
+
             // Fallback
             default:
                 alert(`Not implemented yet: ${omniButtonEl.textContent}`);
