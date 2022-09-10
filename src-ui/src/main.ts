@@ -81,7 +81,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     let installLocationHolderEl = document.getElementById("install-location-holder") as HTMLInputElement;
     let versionNumberHolderEl = $("version-number-holder") as HTMLElement;
     let omniButtonEl = document.getElementById("omni-button") as HTMLElement;
-    let hostOsHolderEl = $("host-os-holder") as HTMLElement;
 
     // listen backend-ping event (from Tauri Rust App)
     listen("backend-ping", function (evt: TauriEvent<any>) {
