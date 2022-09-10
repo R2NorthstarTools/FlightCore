@@ -41,6 +41,7 @@ A [Northstar](https://northstar.tf/) installer, updater, and mod-manager
 - [ ] Extra
   - [ ] "dev mode"
     - [ ] PR install support
+  - [ ] Localisations (waiting on "official way" to do it in Tauri before jumping to any custom toolkits)
   - [ ] Support multiple profiles
   - [ ] get list of installed mods and export as TXT
   - [ ] support r2mm links
