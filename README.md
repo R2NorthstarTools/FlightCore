@@ -41,6 +41,7 @@ A [Northstar](https://northstar.tf/) installer, updater, and mod-manager
   - [ ] CloudFlare blocking debugger (in particular make sure to check IPv4)
 - [ ] Extra
   - [ ] "dev mode"
+  - [ ] Show list of Northstar (org) contributors and GitHub profile pics in some about menu, similarly to how it's done for releases
     - [ ] PR install support
   - [ ] Localisations (waiting on "official way" to do it in Tauri before jumping to any custom toolkits)
   - [ ] Support multiple profiles
