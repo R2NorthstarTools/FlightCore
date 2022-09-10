@@ -9,6 +9,7 @@ const button_in_install_string = "Installing...";
 const button_update_string = "Update Northstar";
 const button_in_update_string = "Updating...";
 const button_play_string = "Launch Northstar";
+const button_launched_string = "Launched Northstar";
 const button_manual_find_string = "Manually select Titanfall2 install location";
 
 interface GameInstall {
@@ -27,7 +28,7 @@ async function get_northstar_version_number_and_set_button_accordingly(omniButto
     let northstar_version_number = await invoke("get_northstar_version_number_caller", { gamePath: globalState.gamepath }) as string;
     if (northstar_version_number && northstar_version_number.length > 0) {
         globalState.installed_northstar_version = northstar_version_number;
-        omniButtonEl.textContent = `${button_play_string} (${northstar_version_number})`;
+        omniButtonEl.textContent = `${button_play_string} (v${northstar_version_number})`;
         await invoke("check_is_northstar_outdated", { gamePath: globalState.gamepath })
             .then((message) => {
                 console.log(message);
@@ -146,7 +147,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 break;
 
             // Launch Northstar
-            case `${button_play_string} (${globalState.installed_northstar_version})`:
+            case `${button_play_string} (v${globalState.installed_northstar_version})`:
                 let game_install = {
                     game_path: globalState.gamepath,
                     install_type: installTypeHolderEl.textContent
@@ -154,7 +155,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 await invoke("launch_northstar", { gameInstall: game_install })
                 .then((message) => {
                     console.log(message);
-                    alert(message);        
+                    omniButtonEl.textContent = `${button_launched_string} (v${globalState.installed_northstar_version})`;
                 })
                 .catch((error) => {
                     console.error(error);
@@ -162,9 +163,10 @@ document.addEventListener("DOMContentLoaded", async function () {
                 });
                 break;
 
-            // Do nothing when clicked during install/update
+            // Do nothing when clicked during install/update/game-launched
             case button_in_update_string:
             case button_in_install_string:
+            case `${button_launched_string} (v${globalState.installed_northstar_version})`:
                 break;
 
             // Fallback
