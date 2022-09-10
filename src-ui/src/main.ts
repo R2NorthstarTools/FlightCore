@@ -111,7 +111,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
                 await install_northstar_result.then((message) => {
                     console.log(message);
-                    alert("Done installing Northstar");
                 })
                     .catch((error) => {
                         console.error(error);
@@ -130,7 +129,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
                 await update_northstar_result.then((message) => {
                     console.log(message);
-                    alert("Done updating Northstar");
                 })
                     .catch((error) => {
                         console.error(error);
