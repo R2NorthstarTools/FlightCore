@@ -13,7 +13,7 @@ const button_manual_find_string = "Manually select Titanfall2 install location";
 
 interface GameInstall {
     game_path: string;
-    install_type: number;
+    install_type: string;
   }
 
 // Stores the overall state of the application
