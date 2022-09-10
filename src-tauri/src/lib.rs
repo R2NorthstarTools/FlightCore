@@ -269,6 +269,12 @@ pub fn launch_northstar(game_install: GameInstall) -> Result<String, String> {
         return Err(anyhow!("Couldn't access Titanfall2 directory").to_string());
     }
 
+    // Require Origin to be running to launch Northstar
+    let origin_is_running = check_origin_running();
+    if !origin_is_running {
+        return Err(anyhow!("Origin not running, start Origin before launching Northstar").to_string());
+    }
+
     // Only Windows with Steam or Origin are supported at the moment
     if host_os == "windows"
         && (matches!(game_install.install_type, InstallType::STEAM)
