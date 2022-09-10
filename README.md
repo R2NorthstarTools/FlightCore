@@ -21,9 +21,9 @@ A [Northstar](https://northstar.tf/) installer, updater, and mod-manager
   - [x] Crash report uploading (sentry.io)
 - [ ] Northstar install/launch support
   - [ ] 1-click to get to running Northstar
-  - [x] Detect game install path
+  - [ ] Detect game install path
     - [x] Steam
-    - [ ] Origin
+    - [x] Origin
     - [ ] EA
       -[ ] Handle read-only filesystem
   - [x] Check if Northstar install is up-to-date
