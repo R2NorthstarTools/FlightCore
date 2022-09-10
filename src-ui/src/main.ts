@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     game_path: globalState.gamepath,
                     install_type: installTypeHolderEl.textContent
                 } as GameInstall;
-                await invoke("launch_northstar", { gameInstall: game_install })
+                await invoke("launch_northstar_caller", { gameInstall: game_install })
                     .then((message) => {
                         console.log(message);
                         omniButtonEl.textContent = `${button_launched_string} (v${globalState.installed_northstar_version})`;

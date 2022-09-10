@@ -251,3 +251,40 @@ pub async fn install_northstar(game_path: &str) -> Result<String> {
 pub fn get_host_os() -> String {
     env::consts::OS.to_string()
 }
+
+pub fn launch_northstar(game_install: GameInstall) -> Result<String, String> {
+    dbg!(game_install.clone());
+
+    // Some safety checks before, should have more in the future
+    if get_northstar_version_number(game_install.game_path.clone()).is_err() {
+        return Err(anyhow!("Not all checks were met").to_string());
+    }
+
+    let host_os = get_host_os();
+
+    // Switch to Titanfall2 directory for launching
+    // NorthstarLauncher.exe expects to be run from that folder
+    if std::env::set_current_dir(game_install.game_path.clone()).is_err() {
+        // We failed to get to Titanfall2 directory
+        return Err(anyhow!("Couldn't access Titanfall2 directory").to_string());
+    }
+
+    // Only Windows with Steam or Origin are supported at the moment
+    if host_os == "windows"
+        && (matches!(game_install.install_type, InstallType::STEAM)
+            || matches!(game_install.install_type, InstallType::ORIGIN))
+    {
+        let _output =
+            std::process::Command::new(format!("{}/NorthstarLauncher.exe", game_install.game_path))
+                // .args(&["a", "b"])
+                .spawn()
+                .expect("failed to execute process");
+        return Ok("Launched game".to_string());
+    }
+
+    Err(format!(
+        "Not yet implemented for {:?} on {}",
+        game_install.install_type,
+        get_host_os()
+    ))
+}
