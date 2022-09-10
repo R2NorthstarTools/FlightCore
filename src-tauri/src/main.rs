@@ -10,7 +10,7 @@ use std::{
 };
 
 use app::{
-    check_is_valid_game_path, find_game_install_location, get_host_os,
+    check_is_valid_game_path, check_origin_running, find_game_install_location, get_host_os,
     get_northstar_version_number, install_northstar, launch_northstar, GameInstall,
 };
 use tauri::{Manager, State};
@@ -38,6 +38,15 @@ fn main() {
                     sleep(Duration::from_millis(2000)).await;
                     // println!("sending backend ping");
                     app_handle.emit_all("backend-ping", "ping").unwrap();
+                }
+            });
+            let app_handle = app.app_handle();
+            tauri::async_runtime::spawn(async move {
+                loop {
+                    sleep(Duration::from_millis(2000)).await;
+                    app_handle
+                        .emit_all("origin-running-ping", check_origin_running())
+                        .unwrap();
                 }
             });
 

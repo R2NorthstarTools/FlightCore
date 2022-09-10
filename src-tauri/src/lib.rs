@@ -288,3 +288,14 @@ pub fn launch_northstar(game_install: GameInstall) -> Result<String, String> {
         get_host_os()
     ))
 }
+
+use sysinfo::{System, SystemExt};
+pub fn check_origin_running() -> bool {
+    let s = System::new_all();
+    for _process in s.processes_by_name("Origin.exe") {
+        // check here if this is your process
+        // dbg!(process);
+        return true;
+    }
+    false
+}

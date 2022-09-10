@@ -90,6 +90,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     let versionNumberHolderEl = $("version-number-holder") as HTMLElement;
     let installTypeHolderEl = $("install-type-holder") as HTMLElement;
     let omniButtonEl = document.getElementById("omni-button") as HTMLElement;
+    let originRunningHolderEl = $("origin-running-holder") as HTMLElement;
 
     // listen backend-ping event (from Tauri Rust App)
     listen("backend-ping", function (evt: TauriEvent<any>) {
@@ -97,6 +98,18 @@ document.addEventListener("DOMContentLoaded", async function () {
         setTimeout(function () {
             pingEl.classList.remove("on");
         }, 500);
+    })
+
+    // listen origin-running-ping event (from Tauri Rust App)
+    listen("origin-running-ping", function (evt: TauriEvent<any>) {
+        let origin_is_running = evt.payload as boolean;
+        if (origin_is_running) {
+            originRunningHolderEl.textContent = "ORIGIN RUNNING";
+        }
+        else {
+            originRunningHolderEl.textContent = "ORIGIN NOT RUNNING";
+        }
+        console.log(evt.payload);
     })
 
     // omni button click

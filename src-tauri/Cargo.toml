@@ -32,6 +32,8 @@ zip = "0.6.2"
 powershell_script = "1.0.4"
 # Regex
 regex = "1.6.0"
+# Read out running application process names
+sysinfo = "0.26.2"
 
 [features]
 # by default Tauri runs in production mode
