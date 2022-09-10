@@ -222,5 +222,9 @@ fn launch_northstar(game_install: GameInstall) -> Result<String, String> {
         return Ok("Launched game".to_string());
     }
 
-    Err(format!("Not yet implemented for {:?} on {}", game_install.install_type, get_host_os()))
+    Err(format!(
+        "Not yet implemented for {:?} on {}",
+        game_install.install_type,
+        get_host_os()
+    ))
 }

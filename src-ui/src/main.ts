@@ -15,7 +15,7 @@ const button_manual_find_string = "Manually select Titanfall2 install location";
 interface GameInstall {
     game_path: string;
     install_type: string;
-  }
+}
 
 // Stores the overall state of the application
 var globalState = {
@@ -153,14 +153,14 @@ document.addEventListener("DOMContentLoaded", async function () {
                     install_type: installTypeHolderEl.textContent
                 } as GameInstall;
                 await invoke("launch_northstar", { gameInstall: game_install })
-                .then((message) => {
-                    console.log(message);
-                    omniButtonEl.textContent = `${button_launched_string} (v${globalState.installed_northstar_version})`;
-                })
-                .catch((error) => {
-                    console.error(error);
-                    alert(error);
-                });
+                    .then((message) => {
+                        console.log(message);
+                        omniButtonEl.textContent = `${button_launched_string} (v${globalState.installed_northstar_version})`;
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        alert(error);
+                    });
                 break;
 
             // Do nothing when clicked during install/update/game-launched
