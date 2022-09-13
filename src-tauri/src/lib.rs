@@ -272,7 +272,9 @@ pub fn launch_northstar(game_install: GameInstall) -> Result<String, String> {
     // Require Origin to be running to launch Northstar
     let origin_is_running = check_origin_running();
     if !origin_is_running {
-        return Err(anyhow!("Origin not running, start Origin before launching Northstar").to_string());
+        return Err(
+            anyhow!("Origin not running, start Origin before launching Northstar").to_string(),
+        );
     }
 
     // Only Windows with Steam or Origin are supported at the moment
