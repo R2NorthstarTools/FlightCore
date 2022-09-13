@@ -28,6 +28,11 @@ async function get_northstar_version_number_and_set_button_accordingly(omniButto
     let northstar_version_number = await invoke("get_northstar_version_number_caller", { gamePath: globalState.gamepath }) as string;
     if (northstar_version_number && northstar_version_number.length > 0) {
         globalState.installed_northstar_version = northstar_version_number;
+
+        // Show installed Northstar version
+        let northstarVersionHolderEl = $("northstar-version-holder") as HTMLElement;
+        northstarVersionHolderEl.textContent = `Installed Northstar version: v${globalState.installed_northstar_version}`;
+
         omniButtonEl.textContent = `${button_play_string} (v${northstar_version_number})`;
         await invoke("check_is_northstar_outdated", { gamePath: globalState.gamepath })
             .then((message) => {
@@ -91,6 +96,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     let installTypeHolderEl = $("install-type-holder") as HTMLElement;
     let omniButtonEl = document.getElementById("omni-button") as HTMLElement;
     let originRunningHolderEl = $("origin-running-holder") as HTMLElement;
+    let northstarVersionHolderEl = $("northstar-version-holder") as HTMLElement;
 
     // listen backend-ping event (from Tauri Rust App)
     listen("backend-ping", function (evt: TauriEvent<any>) {
