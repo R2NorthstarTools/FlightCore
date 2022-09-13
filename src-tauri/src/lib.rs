@@ -262,6 +262,18 @@ pub fn launch_northstar(game_install: GameInstall) -> Result<String, String> {
 
     let host_os = get_host_os();
 
+    // Explicetly fail early certain (currently) unsupported install setups
+    if host_os != "windows"
+        || !(matches!(game_install.install_type, InstallType::STEAM)
+            || matches!(game_install.install_type, InstallType::ORIGIN))
+    {
+        return Err(format!(
+            "Not yet implemented for \"{}\" with Titanfall2 installed via \"{:?}\"",
+            get_host_os(),
+            game_install.install_type
+        ));
+    }
+
     // Switch to Titanfall2 directory for launching
     // NorthstarLauncher.exe expects to be run from that folder
     if std::env::set_current_dir(game_install.game_path.clone()).is_err() {
