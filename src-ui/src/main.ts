@@ -33,7 +33,7 @@ async function get_northstar_version_number_and_set_button_accordingly(omniButto
         let northstarVersionHolderEl = $("northstar-version-holder") as HTMLElement;
         northstarVersionHolderEl.textContent = `Installed Northstar version: v${globalState.installed_northstar_version}`;
 
-        omniButtonEl.textContent = `${button_play_string} (v${northstar_version_number})`;
+        omniButtonEl.textContent = button_play_string;
         await invoke("check_is_northstar_outdated", { gamePath: globalState.gamepath })
             .then((message) => {
                 console.log(message);
@@ -166,7 +166,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 break;
 
             // Launch Northstar
-            case `${button_play_string} (v${globalState.installed_northstar_version})`:
+            case button_play_string:
                 let game_install = {
                     game_path: globalState.gamepath,
                     install_type: installTypeHolderEl.textContent
@@ -174,7 +174,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 await invoke("launch_northstar_caller", { gameInstall: game_install })
                     .then((message) => {
                         console.log(message);
-                        omniButtonEl.textContent = `${button_launched_string} (v${globalState.installed_northstar_version})`;
+                        omniButtonEl.textContent = button_launched_string;
                     })
                     .catch((error) => {
                         console.error(error);
@@ -185,7 +185,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             // Do nothing when clicked during install/update/game-launched
             case button_in_update_string:
             case button_in_install_string:
-            case `${button_launched_string} (v${globalState.installed_northstar_version})`:
+            case button_launched_string:
                 break;
 
             // Fallback
