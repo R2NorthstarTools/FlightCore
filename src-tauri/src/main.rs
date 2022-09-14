@@ -129,7 +129,7 @@ async fn check_is_northstar_outdated(game_path: String) -> Result<bool, String> 
     let nmod = index
         .iter()
         .find(|f| f.name.to_lowercase() == "northstar")
-        .unwrap();
+        .expect("Couldn't find Northstar on thunderstore???");
     // .ok_or_else(|| anyhow!("Couldn't find Northstar on thunderstore???"))?;
 
     dbg!(nmod);
