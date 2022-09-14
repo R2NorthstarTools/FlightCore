@@ -232,8 +232,20 @@ async fn do_install(nmod: &thermite::model::Mod, game_path: &std::path::Path) ->
     Ok(())
 }
 
-pub async fn install_northstar(game_path: &str) -> Result<String> {
-    let northstar_package_name = "Northstar".to_lowercase();
+pub async fn install_northstar(
+    game_path: &str,
+    northstar_package_name: Option<String>,
+) -> Result<String> {
+    let northstar_package_name = match northstar_package_name {
+        Some(northstar_package_name) => {
+            if northstar_package_name.len() <= 1 {
+                "Northstar".to_string()
+            } else {
+                northstar_package_name
+            }
+        }
+        None => "Northstar".to_string(),
+    };
 
     let index = thermite::api::get_package_index().await.unwrap().to_vec();
     let nmod = index
@@ -320,4 +332,13 @@ pub fn check_origin_running() -> bool {
         return true;
     }
     false
+}
+
+/// Helps with converting release candidate numbers which are different on Thunderstore
+/// due to restrictions imposed by the platform
+pub fn convert_release_candidate_number(version_number: String) -> String {
+    // This simply converts `-rc` to `0`
+    // Works as intended for RCs < 10, e.g.  `v1.9.2-rc1`  -> `v1.9.201`
+    // Doesn't work for larger numbers, e.g. `v1.9.2-rc11` -> `v1.9.2011` (should be `v1.9.211`)
+    version_number.replace("-rc", "0")
 }

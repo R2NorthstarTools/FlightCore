@@ -21,6 +21,7 @@ interface GameInstall {
 var globalState = {
     gamepath: "",
     installed_northstar_version: "",
+    northstar_package_name: "Northstar",
     current_view: "" // Note sure if this is the right way to do it
 }
 
@@ -34,7 +35,7 @@ async function get_northstar_version_number_and_set_button_accordingly(omniButto
         northstarVersionHolderEl.textContent = `Installed Northstar version: v${globalState.installed_northstar_version}`;
 
         omniButtonEl.textContent = button_play_string;
-        await invoke("check_is_northstar_outdated", { gamePath: globalState.gamepath })
+        await invoke("check_is_northstar_outdated", { gamePath: globalState.gamepath, northstarPackageName: globalState.northstar_package_name })
             .then((message) => {
                 console.log(message);
                 if (message) {
@@ -97,6 +98,18 @@ document.addEventListener("DOMContentLoaded", async function () {
     let omniButtonEl = document.getElementById("omni-button") as HTMLElement;
     let originRunningHolderEl = $("origin-running-holder") as HTMLElement;
     let northstarVersionHolderEl = $("northstar-version-holder") as HTMLElement;
+    let useReleaseCandidateCheckboxEl = document.getElementById("use-release-candidate-checkbox") as HTMLInputElement;
+
+    useReleaseCandidateCheckboxEl.addEventListener('change', function () {
+        // Switch between main release and release candidates
+        if (this.checked) {
+            globalState.northstar_package_name = "NorthstarReleaseCandidate"
+        } else {
+            globalState.northstar_package_name = "Northstar";
+        }
+        // Update the button
+        get_northstar_version_number_and_set_button_accordingly(omniButtonEl);
+    });
 
     // listen backend-ping event (from Tauri Rust App)
     listen("backend-ping", function (evt: TauriEvent<any>) {
@@ -130,7 +143,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             // Install Northstar
             case button_install_string:
-                let install_northstar_result = invoke("install_northstar_caller", { gamePath: globalState.gamepath });
+                let install_northstar_result = invoke("install_northstar_caller", { gamePath: globalState.gamepath, northstarPackageName: globalState.northstar_package_name });
 
                 // Update button while installl process is run
                 omniButtonEl.textContent = button_in_install_string;
@@ -148,7 +161,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             // Update Northstar
             case button_update_string:
-                let update_northstar_result = invoke("update_northstar_caller", { gamePath: globalState.gamepath });
+                let update_northstar_result = invoke("update_northstar_caller", { gamePath: globalState.gamepath, northstarPackageName: globalState.northstar_package_name });
 
                 // Update button while update process is run
                 omniButtonEl.textContent = button_in_update_string;

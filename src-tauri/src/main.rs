@@ -10,8 +10,9 @@ use std::{
 };
 
 use app::{
-    check_is_valid_game_path, check_origin_running, find_game_install_location, get_host_os,
-    get_northstar_version_number, install_northstar, launch_northstar, GameInstall,
+    check_is_valid_game_path, check_origin_running, convert_release_candidate_number,
+    find_game_install_location, get_host_os, get_northstar_version_number, install_northstar,
+    launch_northstar, GameInstall,
 };
 use tauri::{Manager, State};
 use tokio::time::sleep;
@@ -124,8 +125,20 @@ fn get_northstar_version_number_caller(game_path: String) -> String {
 /// Checks if installed Northstar version is up-to-date
 /// false -> Northstar install is up-to-date
 /// true  -> Northstar install is outdated
-async fn check_is_northstar_outdated(game_path: String) -> Result<bool, String> {
-    let northstar_package_name = "Northstar".to_lowercase();
+async fn check_is_northstar_outdated(
+    game_path: String,
+    northstar_package_name: Option<String>,
+) -> Result<bool, String> {
+    let northstar_package_name = match northstar_package_name {
+        Some(northstar_package_name) => {
+            if northstar_package_name.len() <= 1 {
+                "Northstar".to_string()
+            } else {
+                northstar_package_name
+            }
+        }
+        None => "Northstar".to_string(),
+    };
 
     let index = thermite::api::get_package_index().await.unwrap().to_vec();
     let nmod = index
@@ -144,6 +157,9 @@ async fn check_is_northstar_outdated(game_path: String) -> Result<bool, String> 
             return Err(err.to_string());
         }
     };
+
+    // Release candidate version numbers are different between `mods.json` and Thunderstore
+    let version_number = convert_release_candidate_number(version_number);
 
     if version_number != nmod.version {
         println!("Installed Northstar version outdated");
@@ -174,9 +190,12 @@ fn get_host_os_caller() -> String {
 
 #[tauri::command]
 /// Installs Northstar to the given path
-async fn install_northstar_caller(game_path: String) -> Result<bool, String> {
+async fn install_northstar_caller(
+    game_path: String,
+    northstar_package_name: Option<String>,
+) -> Result<bool, String> {
     println!("Running");
-    match install_northstar(&game_path).await {
+    match install_northstar(&game_path, northstar_package_name).await {
         Ok(_) => Ok(true),
         Err(err) => {
             println!("{}", err);
@@ -187,11 +206,14 @@ async fn install_northstar_caller(game_path: String) -> Result<bool, String> {
 
 #[tauri::command]
 /// Update Northstar install in the given path
-async fn update_northstar_caller(game_path: String) -> Result<bool, String> {
+async fn update_northstar_caller(
+    game_path: String,
+    northstar_package_name: Option<String>,
+) -> Result<bool, String> {
     println!("Updating");
 
     // Simply re-run install with up-to-date version for upate
-    match install_northstar(&game_path).await {
+    match install_northstar(&game_path, northstar_package_name).await {
         Ok(_) => Ok(true),
         Err(err) => {
             println!("{}", err);
