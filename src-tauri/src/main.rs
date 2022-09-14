@@ -125,10 +125,12 @@ fn get_northstar_version_number_caller(game_path: String) -> String {
 /// false -> Northstar install is up-to-date
 /// true  -> Northstar install is outdated
 async fn check_is_northstar_outdated(game_path: String) -> Result<bool, String> {
+    let northstar_package_name = "Northstar".to_lowercase();
+
     let index = thermite::api::get_package_index().await.unwrap().to_vec();
     let nmod = index
         .iter()
-        .find(|f| f.name.to_lowercase() == "northstar")
+        .find(|f| f.name.to_lowercase() == northstar_package_name.to_lowercase())
         .expect("Couldn't find Northstar on thunderstore???");
     // .ok_or_else(|| anyhow!("Couldn't find Northstar on thunderstore???"))?;
 
