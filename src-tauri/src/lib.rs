@@ -238,7 +238,7 @@ pub async fn install_northstar(game_path: &str) -> Result<String> {
     let index = thermite::api::get_package_index().await.unwrap().to_vec();
     let nmod = index
         .iter()
-        .find(|f| f.name.to_lowercase() == northstar_package_name)
+        .find(|f| f.name.to_lowercase() == northstar_package_name.to_lowercase())
         .ok_or_else(|| panic!("Couldn't find Northstar on thunderstore???"))
         .unwrap();
 
