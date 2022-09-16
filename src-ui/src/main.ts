@@ -232,9 +232,12 @@ document.addEventListener("DOMContentLoaded", async function () {
     // Run the following on initial page load
     // Get version number
     let version_number_string = await invoke("get_version_number") as string;
+    // Check if up-to-date
+    let flightcore_is_outdated = await invoke("check_is_flightcore_outdated_caller") as boolean;
+    let outdated_string = flightcore_is_outdated ? " (outdated, please update FlightCore)" : "";
     // Get host OS
     let host_os_string = await invoke("get_host_os_caller") as string;
-    versionNumberHolderEl.textContent = `${version_number_string} (${host_os_string})`;
+    versionNumberHolderEl.textContent = `${version_number_string} (${host_os_string})${outdated_string}`;
 
     // Get install location
     await invoke("find_game_install_location_caller", { gamePath: globalState.gamepath })

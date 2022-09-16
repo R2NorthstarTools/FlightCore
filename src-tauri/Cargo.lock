@@ -82,6 +82,7 @@ dependencies = [
  "libthermite",
  "powershell_script",
  "regex",
+ "reqwest",
  "sentry",
  "serde",
  "serde_json",

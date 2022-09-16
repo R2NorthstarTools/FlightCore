@@ -10,9 +10,9 @@ use std::{
 };
 
 use app::{
-    check_is_valid_game_path, check_origin_running, convert_release_candidate_number,
-    find_game_install_location, get_host_os, get_northstar_version_number, install_northstar,
-    launch_northstar, GameInstall,
+    check_is_flightcore_outdated, check_is_valid_game_path, check_origin_running,
+    convert_release_candidate_number, find_game_install_location, get_host_os,
+    get_northstar_version_number, install_northstar, launch_northstar, GameInstall,
 };
 use tauri::{Manager, State};
 use tokio::time::sleep;
@@ -66,7 +66,8 @@ fn main() {
             get_host_os_caller,
             install_northstar_caller,
             update_northstar_caller,
-            launch_northstar_caller
+            launch_northstar_caller,
+            check_is_flightcore_outdated_caller
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -168,6 +169,14 @@ async fn check_is_northstar_outdated(
         println!("Installed Northstar version up-to-date");
         Ok(false)
     }
+}
+
+#[tauri::command]
+/// Checks if installed FlightCore version is up-to-date
+/// false -> FlightCore install is up-to-date
+/// true  -> FlightCore install is outdated
+fn check_is_flightcore_outdated_caller() -> Result<bool, String> {
+    check_is_flightcore_outdated()
 }
 
 #[tauri::command]
