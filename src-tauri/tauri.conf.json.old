@@ -1,9 +1,9 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/schema.json",
   "build": {
-    "beforeBuildCommand": "cd src-vue && npm run build",
-    "beforeDevCommand": "cd src-vue && npm run dev",
-    "devPath": "http://localhost:5173/",
+    "beforeBuildCommand": "",
+    "beforeDevCommand": "",
+    "devPath": "http://localhost:8080/",
     "distDir": "../dist"
   },
   "package": {
