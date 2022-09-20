@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             originRunningHolderEl.textContent = "ORIGIN NOT RUNNING";
         }
         console.log(evt.payload);
-    })
+    });
 
     // omni button click
     omniButtonEl.addEventListener("click", async function () {
