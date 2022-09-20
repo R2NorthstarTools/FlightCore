@@ -131,6 +131,22 @@ document.addEventListener("DOMContentLoaded", async function () {
         console.log(evt.payload);
     });
 
+    // listen northstar-running-ping event (from Tauri Rust App)
+    listen("northstar-running-ping", function (evt: TauriEvent<any>) {
+        let northstar_is_running = evt.payload as boolean;
+        if (northstar_is_running) {
+            omniButtonEl.textContent = button_launched_string;
+        }
+        else {
+            // Only set button to launch Northstar if was running before
+            // Otherwise we'd have to check on each access if Titanfall2 path set, Northstar is installed, etc.
+            if (omniButtonEl.textContent == button_launched_string) {
+                omniButtonEl.textContent = button_play_string;
+            }
+        }
+        console.log(evt.payload);
+    });
+
     // omni button click
     omniButtonEl.addEventListener("click", async function () {
 

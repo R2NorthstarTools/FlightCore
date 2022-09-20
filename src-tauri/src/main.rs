@@ -10,9 +10,9 @@ use std::{
 };
 
 use app::{
-    check_is_flightcore_outdated, check_is_valid_game_path, check_origin_running,
-    convert_release_candidate_number, find_game_install_location, get_host_os,
-    get_northstar_version_number, install_northstar, launch_northstar, GameInstall,
+    check_is_flightcore_outdated, check_is_valid_game_path, check_northstar_running,
+    check_origin_running, convert_release_candidate_number, find_game_install_location,
+    get_host_os, get_northstar_version_number, install_northstar, launch_northstar, GameInstall,
 };
 use tauri::{Manager, State};
 use tokio::time::sleep;
@@ -47,6 +47,15 @@ fn main() {
                     sleep(Duration::from_millis(2000)).await;
                     app_handle
                         .emit_all("origin-running-ping", check_origin_running())
+                        .unwrap();
+                }
+            });
+            let app_handle = app.app_handle();
+            tauri::async_runtime::spawn(async move {
+                loop {
+                    sleep(Duration::from_millis(2000)).await;
+                    app_handle
+                        .emit_all("northstar-running-ping", check_northstar_running())
                         .unwrap();
                 }
             });
