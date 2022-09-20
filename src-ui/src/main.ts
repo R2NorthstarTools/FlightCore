@@ -262,10 +262,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     versionNumberHolderEl.textContent = `${version_number_string} (${host_os_string})${outdated_string}`;
 
     // Get preferred Northstar version from persistent store
-    const persistent_northstar_package_name = ((await store.get('northstar-package-name')) as any).value;
-    if (persistent_northstar_package_name) {
-        console.log(persistent_northstar_package_name)
-        globalState.northstar_package_name = persistent_northstar_package_name as string;
+    const persistent_northstar_package_name_obj = ((await store.get('northstar-package-name')) as any);
+    if (persistent_northstar_package_name_obj) {
+        console.log(persistent_northstar_package_name_obj)
+        globalState.northstar_package_name = persistent_northstar_package_name_obj.value as string;
         // Update checkbox if it's a ReleaseCandidate
         // In the future this might be a dropdown menu instead
         if (globalState.northstar_package_name === "NorthstarReleaseCandidate") {
