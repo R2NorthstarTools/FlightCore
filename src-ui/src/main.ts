@@ -2,6 +2,9 @@ import { invoke } from "@tauri-apps/api";
 import { listen, Event as TauriEvent } from "@tauri-apps/api/event";
 import { open } from '@tauri-apps/api/dialog';
 import { appDir } from '@tauri-apps/api/path';
+import { Store } from 'tauri-plugin-store-api';
+
+const store = new Store('flight-core-settings.json');
 
 const $ = document.querySelector.bind(document);
 const button_install_string = "Install Northstar";
@@ -100,7 +103,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     let northstarVersionHolderEl = $("northstar-version-holder") as HTMLElement;
     let useReleaseCandidateCheckboxEl = document.getElementById("use-release-candidate-checkbox") as HTMLInputElement;
 
-    useReleaseCandidateCheckboxEl.addEventListener('change', function () {
+    useReleaseCandidateCheckboxEl.addEventListener('change', async function () {
         // Switch between main release and release candidates
         if (this.checked) {
             globalState.northstar_package_name = "NorthstarReleaseCandidate"
@@ -109,6 +112,9 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
         // Update the button
         get_northstar_version_number_and_set_button_accordingly(omniButtonEl);
+ 
+        // Save change in persistent store
+        await store.set('northstar-package-name', { value: globalState.northstar_package_name });
     });
 
     // listen backend-ping event (from Tauri Rust App)
@@ -254,6 +260,18 @@ document.addEventListener("DOMContentLoaded", async function () {
     // Get host OS
     let host_os_string = await invoke("get_host_os_caller") as string;
     versionNumberHolderEl.textContent = `${version_number_string} (${host_os_string})${outdated_string}`;
+
+    // Get preferred Northstar version from persistent store
+    const persistent_northstar_package_name = ((await store.get('northstar-package-name')) as any).value;
+    if (persistent_northstar_package_name) {
+        console.log(persistent_northstar_package_name)
+        globalState.northstar_package_name = persistent_northstar_package_name as string;
+        // Update checkbox if it's a ReleaseCandidate
+        // In the future this might be a dropdown menu instead
+        if (globalState.northstar_package_name === "NorthstarReleaseCandidate") {
+            useReleaseCandidateCheckboxEl.checked = true;
+        }
+    }
 
     // Get install location
     await invoke("find_game_install_location_caller", { gamePath: globalState.gamepath })

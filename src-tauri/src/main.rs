@@ -16,6 +16,7 @@ use app::{
 };
 use tauri::{Manager, State};
 use tokio::time::sleep;
+use tauri_plugin_store::PluginBuilder;
 
 #[derive(Default)]
 struct Counter(Arc<Mutex<i32>>);
@@ -32,6 +33,7 @@ fn main() {
     ));
 
     tauri::Builder::default()
+        .plugin(PluginBuilder::default().build())
         .setup(|app| {
             let app_handle = app.app_handle();
             tauri::async_runtime::spawn(async move {
