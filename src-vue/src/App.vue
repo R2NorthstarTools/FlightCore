@@ -2,6 +2,7 @@
 </script>
 
 <template>
+  <div id="fc_bg__container"/>
   <el-tabs class="fc_menu__tabs" type="card">
     <el-tab-pane label="Play">Play</el-tab-pane>
     <el-tab-pane label="Changelog">Changelog</el-tab-pane>
@@ -37,7 +38,7 @@
 
 /* Header menu */
 .fc_menu__tabs .el-tabs__header {
-  background-color: #3c4549;
+  background-color: #3c4549b8;
   height: auto !important;
 }
 

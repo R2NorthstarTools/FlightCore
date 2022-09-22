@@ -1,3 +1,12 @@
 body {
   margin: 0;
 }
+
+#fc_bg__container {
+  background: url(/src/assets/wallpaperflare.com_wallpaper.jpg) center no-repeat;
+  background-size: cover;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  filter: brightness(0.8);
+}
