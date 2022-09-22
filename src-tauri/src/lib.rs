@@ -1,9 +1,14 @@
 use std::env;
 
 use anyhow::{anyhow, Context, Result};
+
+#[cfg(target_os = "windows")]
 use powershell_script::PsScriptBuilder;
+#[cfg(target_os = "windows")]
 use regex::Regex;
+
 use serde::{Deserialize, Serialize};
+use sysinfo::SystemExt;
 use zip::ZipArchive;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -323,10 +328,20 @@ pub fn launch_northstar(game_install: GameInstall) -> Result<String, String> {
     ))
 }
 
-use sysinfo::{System, SystemExt};
 pub fn check_origin_running() -> bool {
-    let s = System::new_all();
+    let s = sysinfo::System::new_all();
     for _process in s.processes_by_name("Origin.exe") {
+        // check here if this is your process
+        // dbg!(process);
+        return true;
+    }
+    false
+}
+
+/// Checks if Northstar process is running
+pub fn check_northstar_running() -> bool {
+    let s = sysinfo::System::new_all();
+    for _process in s.processes_by_name("NorthstarLauncher.exe") {
         // check here if this is your process
         // dbg!(process);
         return true;
@@ -377,4 +392,32 @@ pub fn check_is_flightcore_outdated() -> Result<bool, String> {
 
     // TODO: This shouldn't be a string compare but promper semver compare
     Ok(version != newest_release_version)
+}
+
+pub fn get_log_list(game_install: GameInstall) -> Result<Vec<std::path::PathBuf>, String> {
+    let ns_log_folder = format!("{}/R2Northstar/logs", game_install.game_path);
+
+    // Check if logs folder exists
+    if !std::path::Path::new(&ns_log_folder).exists() {
+        return Err("No logs folder found".to_string());
+    }
+
+    // List files in logs folder
+    let paths = std::fs::read_dir(ns_log_folder).unwrap();
+
+    // Stores paths of log files
+    let mut log_files: Vec<std::path::PathBuf> = Vec::new();
+
+    for path in paths {
+        let path = path.unwrap().path();
+        if path.display().to_string().contains("nslog") {
+            log_files.push(path);
+        }
+    }
+
+    if log_files.len() > 0 {
+        Ok(log_files)
+    } else {
+        Err("No logs found".to_string())
+    }
 }

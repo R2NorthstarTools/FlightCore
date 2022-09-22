@@ -2,6 +2,9 @@ import { invoke } from "@tauri-apps/api";
 import { listen, Event as TauriEvent } from "@tauri-apps/api/event";
 import { open } from '@tauri-apps/api/dialog';
 import { appDir } from '@tauri-apps/api/path';
+import { Store } from 'tauri-plugin-store-api';
+
+const store = new Store('flight-core-settings.json');
 
 const $ = document.querySelector.bind(document);
 const button_install_string = "Install Northstar";
@@ -87,9 +90,6 @@ async function manually_find_titanfall2_install(omniButtonEl: HTMLElement) {
 
 document.addEventListener("DOMContentLoaded", async function () {
     // get the elements
-    // const helloEl = $("div.hello")! as HTMLElement;
-    // let counterButtonEl = $("counter-button") as HTMLElement;
-    // let counterResultEl = $("counter-result") as HTMLElement;
     let pingEl = $("backend-ping")! as HTMLElement;
     let panicButtonEl = $("panic-button") as HTMLElement;
     let installLocationHolderEl = document.getElementById("install-location-holder") as HTMLInputElement;
@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     let northstarVersionHolderEl = $("northstar-version-holder") as HTMLElement;
     let useReleaseCandidateCheckboxEl = document.getElementById("use-release-candidate-checkbox") as HTMLInputElement;
 
-    useReleaseCandidateCheckboxEl.addEventListener('change', function () {
+    useReleaseCandidateCheckboxEl.addEventListener('change', async function () {
         // Switch between main release and release candidates
         if (this.checked) {
             globalState.northstar_package_name = "NorthstarReleaseCandidate"
@@ -109,6 +109,9 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
         // Update the button
         get_northstar_version_number_and_set_button_accordingly(omniButtonEl);
+
+        // Save change in persistent store
+        await store.set('northstar-package-name', { value: globalState.northstar_package_name });
     });
 
     // listen backend-ping event (from Tauri Rust App)
@@ -129,7 +132,23 @@ document.addEventListener("DOMContentLoaded", async function () {
             originRunningHolderEl.textContent = "ORIGIN NOT RUNNING";
         }
         console.log(evt.payload);
-    })
+    });
+
+    // listen northstar-running-ping event (from Tauri Rust App)
+    listen("northstar-running-ping", function (evt: TauriEvent<any>) {
+        let northstar_is_running = evt.payload as boolean;
+        if (northstar_is_running) {
+            omniButtonEl.textContent = button_launched_string;
+        }
+        else {
+            // Only set button to launch Northstar if was running before
+            // Otherwise we'd have to check on each access if Titanfall2 path set, Northstar is installed, etc.
+            if (omniButtonEl.textContent == button_launched_string) {
+                omniButtonEl.textContent = button_play_string;
+            }
+        }
+        console.log(evt.payload);
+    });
 
     // omni button click
     omniButtonEl.addEventListener("click", async function () {
@@ -208,21 +227,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     });
 
-    // // counter button click
-    // counterButtonEl.addEventListener("pointerup", async function () {
-    //     const result = await invoke("add_count", { num: 1 }) as string;
-    //     counterResultEl.textContent = result;
-    // });
-
-    // // hello click
-    // helloEl.addEventListener("pointerup", async function () {
-    //     const result = await invoke("hello_world") as string;
-    //     helloEl.textContent = result;
-    //     setTimeout(function () {
-    //         helloEl.textContent = "Click again";
-    //     }, 1000);
-    // })
-
     // panic button click
     panicButtonEl.addEventListener("pointerup", async function () {
         await invoke("force_panic");
@@ -238,6 +242,18 @@ document.addEventListener("DOMContentLoaded", async function () {
     // Get host OS
     let host_os_string = await invoke("get_host_os_caller") as string;
     versionNumberHolderEl.textContent = `${version_number_string} (${host_os_string})${outdated_string}`;
+
+    // Get preferred Northstar version from persistent store
+    const persistent_northstar_package_name_obj = ((await store.get('northstar-package-name')) as any);
+    if (persistent_northstar_package_name_obj) {
+        console.log(persistent_northstar_package_name_obj)
+        globalState.northstar_package_name = persistent_northstar_package_name_obj.value as string;
+        // Update checkbox if it's a ReleaseCandidate
+        // In the future this might be a dropdown menu instead
+        if (globalState.northstar_package_name === "NorthstarReleaseCandidate") {
+            useReleaseCandidateCheckboxEl.checked = true;
+        }
+    }
 
     // Get install location
     await invoke("find_game_install_location_caller", { gamePath: globalState.gamepath })
@@ -267,4 +283,19 @@ document.addEventListener("DOMContentLoaded", async function () {
             alert(error);
             omniButtonEl.textContent = button_manual_find_string;
         });
+
+    // --- This should be moved and is only placed here temporarily -----
+    let game_install = {
+        game_path: globalState.gamepath,
+        install_type: installTypeHolderEl.textContent
+    } as GameInstall;
+    await invoke("get_log_list_caller", { gameInstall: game_install })
+        .then((message) => {
+            console.log(message);
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+    // ------------------------------------------------------------------
+
 })

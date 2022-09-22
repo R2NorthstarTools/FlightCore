@@ -10,12 +10,14 @@ use std::{
 };
 
 use app::{
-    check_is_flightcore_outdated, check_is_valid_game_path, check_origin_running,
-    convert_release_candidate_number, find_game_install_location, get_host_os,
-    get_northstar_version_number, install_northstar, launch_northstar, GameInstall,
+    check_is_flightcore_outdated, check_is_valid_game_path, check_northstar_running,
+    check_origin_running, convert_release_candidate_number, find_game_install_location,
+    get_host_os, get_log_list, get_northstar_version_number, install_northstar, launch_northstar,
+    GameInstall,
 };
-use tauri::{Manager, State};
+use tauri::Manager;
 use tokio::time::sleep;
+use tauri_plugin_store::PluginBuilder;
 
 #[derive(Default)]
 struct Counter(Arc<Mutex<i32>>);
@@ -32,6 +34,7 @@ fn main() {
     ));
 
     tauri::Builder::default()
+        .plugin(PluginBuilder::default().build())
         .setup(|app| {
             let app_handle = app.app_handle();
             tauri::async_runtime::spawn(async move {
@@ -50,13 +53,20 @@ fn main() {
                         .unwrap();
                 }
             });
+            let app_handle = app.app_handle();
+            tauri::async_runtime::spawn(async move {
+                loop {
+                    sleep(Duration::from_millis(2000)).await;
+                    app_handle
+                        .emit_all("northstar-running-ping", check_northstar_running())
+                        .unwrap();
+                }
+            });
 
             Ok(())
         })
         .manage(Counter(Default::default()))
         .invoke_handler(tauri::generate_handler![
-            hello_world,
-            add_count,
             force_panic,
             find_game_install_location_caller,
             get_version_number,
@@ -67,7 +77,8 @@ fn main() {
             install_northstar_caller,
             update_northstar_caller,
             launch_northstar_caller,
-            check_is_flightcore_outdated_caller
+            check_is_flightcore_outdated_caller,
+            get_log_list_caller
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -83,19 +94,6 @@ fn find_game_install_location_caller() -> Result<GameInstall, String> {
             Err(err.to_string())
         }
     }
-}
-
-#[tauri::command]
-fn hello_world() -> String {
-    "Hello World!!!".to_string()
-}
-
-#[tauri::command]
-fn add_count(num: i32, counter: State<'_, Counter>) -> String {
-    let mut val = counter.0.lock().unwrap();
-    *val += num;
-
-    format!("{val}")
 }
 
 #[tauri::command]
@@ -235,4 +233,10 @@ async fn update_northstar_caller(
 /// Launches Northstar
 fn launch_northstar_caller(game_install: GameInstall) -> Result<String, String> {
     launch_northstar(game_install)
+}
+
+#[tauri::command]
+/// Get list of Northstar logs
+fn get_log_list_caller(game_install: GameInstall) -> Result<Vec<std::path::PathBuf>, String> {
+    get_log_list(game_install)
 }
