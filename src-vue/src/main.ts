@@ -4,7 +4,7 @@ import ElementPlus from "element-plus";
 
 // styles
 import 'element-plus/theme-chalk/index.css';
-// import './style.css'
+import './style.css'
 
 const app = createApp(App);
 app.use(ElementPlus);
