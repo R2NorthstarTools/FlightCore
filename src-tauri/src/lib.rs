@@ -1,8 +1,12 @@
 use std::env;
 
 use anyhow::{anyhow, Context, Result};
+
+#[cfg(target_os = "windows")]
 use powershell_script::PsScriptBuilder;
+#[cfg(target_os = "windows")]
 use regex::Regex;
+
 use serde::{Deserialize, Serialize};
 use sysinfo::SystemExt;
 use zip::ZipArchive;
