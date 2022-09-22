@@ -302,7 +302,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             omniButtonEl.textContent = button_manual_find_string;
         });
 
-
     // --- This should be moved and is only placed here temporarily -----
     let game_install = {
         game_path: globalState.gamepath,
