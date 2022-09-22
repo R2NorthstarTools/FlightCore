@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
         // Update the button
         get_northstar_version_number_and_set_button_accordingly(omniButtonEl);
- 
+
         // Save change in persistent store
         await store.set('northstar-package-name', { value: globalState.northstar_package_name });
     });
