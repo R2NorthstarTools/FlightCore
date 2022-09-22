@@ -12,7 +12,8 @@ use std::{
 use app::{
     check_is_flightcore_outdated, check_is_valid_game_path, check_northstar_running,
     check_origin_running, convert_release_candidate_number, find_game_install_location,
-    get_host_os, get_northstar_version_number, install_northstar, launch_northstar, GameInstall,
+    get_host_os, get_log_list, get_northstar_version_number, install_northstar, launch_northstar,
+    GameInstall,
 };
 use tauri::{Manager, State};
 use tokio::time::sleep;
@@ -78,7 +79,8 @@ fn main() {
             install_northstar_caller,
             update_northstar_caller,
             launch_northstar_caller,
-            check_is_flightcore_outdated_caller
+            check_is_flightcore_outdated_caller,
+            get_log_list_caller
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -246,4 +248,10 @@ async fn update_northstar_caller(
 /// Launches Northstar
 fn launch_northstar_caller(game_install: GameInstall) -> Result<String, String> {
     launch_northstar(game_install)
+}
+
+#[tauri::command]
+/// Get list of Northstar logs
+fn get_log_list_caller(game_install: GameInstall) -> Result<Vec<std::path::PathBuf>, String> {
+    get_log_list(game_install)
 }

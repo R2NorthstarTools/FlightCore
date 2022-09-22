@@ -301,4 +301,20 @@ document.addEventListener("DOMContentLoaded", async function () {
             alert(error);
             omniButtonEl.textContent = button_manual_find_string;
         });
+
+
+    // --- This should be moved and is only placed here temporarily -----
+    let game_install = {
+        game_path: globalState.gamepath,
+        install_type: installTypeHolderEl.textContent
+    } as GameInstall;
+    await invoke("get_log_list_caller", { gameInstall: game_install })
+        .then((message) => {
+            console.log(message);
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+    // ------------------------------------------------------------------
+
 })

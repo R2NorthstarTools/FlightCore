@@ -393,3 +393,31 @@ pub fn check_is_flightcore_outdated() -> Result<bool, String> {
     // TODO: This shouldn't be a string compare but promper semver compare
     Ok(version != newest_release_version)
 }
+
+pub fn get_log_list(game_install: GameInstall) -> Result<Vec<std::path::PathBuf>, String> {
+    let ns_log_folder = format!("{}/R2Northstar/logs", game_install.game_path);
+
+    // Check if logs folder exists
+    if !std::path::Path::new(&ns_log_folder).exists() {
+        return Err("No logs folder found".to_string());
+    }
+
+    // List files in logs folder
+    let paths = std::fs::read_dir(ns_log_folder).unwrap();
+
+    // Stores paths of log files
+    let mut log_files: Vec<std::path::PathBuf> = Vec::new();
+
+    for path in paths {
+        let path = path.unwrap().path();
+        if path.display().to_string().contains("nslog") {
+            log_files.push(path);
+        }
+    }
+
+    if log_files.len() > 0 {
+        Ok(log_files)
+    } else {
+        Err("No logs found".to_string())
+    }
+}
