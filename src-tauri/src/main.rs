@@ -15,7 +15,7 @@ use app::{
     get_host_os, get_log_list, get_northstar_version_number, install_northstar, launch_northstar,
     GameInstall,
 };
-use tauri::{Manager, State};
+use tauri::Manager;
 use tokio::time::sleep;
 use tauri_plugin_store::PluginBuilder;
 
@@ -67,8 +67,6 @@ fn main() {
         })
         .manage(Counter(Default::default()))
         .invoke_handler(tauri::generate_handler![
-            hello_world,
-            add_count,
             force_panic,
             find_game_install_location_caller,
             get_version_number,
@@ -96,19 +94,6 @@ fn find_game_install_location_caller() -> Result<GameInstall, String> {
             Err(err.to_string())
         }
     }
-}
-
-#[tauri::command]
-fn hello_world() -> String {
-    "Hello World!!!".to_string()
-}
-
-#[tauri::command]
-fn add_count(num: i32, counter: State<'_, Counter>) -> String {
-    let mut val = counter.0.lock().unwrap();
-    *val += num;
-
-    format!("{val}")
 }
 
 #[tauri::command]
