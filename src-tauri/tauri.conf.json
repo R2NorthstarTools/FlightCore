@@ -62,7 +62,11 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "FlightCore"
+        "title": "FlightCore",
+        "height": 600,
+        "minHeight": 600,
+        "width": 1000,
+        "minWidth": 1000
       }
     ]
   }
