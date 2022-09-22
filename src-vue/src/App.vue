@@ -19,7 +19,7 @@
 
 /* Header item */
 .fc_menu__tabs .el-tabs__item {
-  color: #898b8e;
+  color: #b4b6b9;
   text-transform: uppercase;
   border: none !important;
   font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
@@ -38,7 +38,8 @@
 
 /* Header menu */
 .fc_menu__tabs .el-tabs__header {
-  background-color: #3c4549b8;
+  background-image: radial-gradient(transparent 1px);
+  backdrop-filter: saturate(50%) blur(4px);
   height: auto !important;
 }
 
