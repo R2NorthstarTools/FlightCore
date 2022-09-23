@@ -31,7 +31,7 @@ npm run tauri dev
 > On Windows instead of `npm run ui-dev`, you may need to run 
 > `./node_modules/.bin/rollup --config --watch`
 > and
-> `npm run localhost`
+> `./node_modules/.bin/servor dist index.html 8080 --reload`
 > in two separate console windows
 
 ### Tips
