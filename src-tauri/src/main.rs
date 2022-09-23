@@ -106,7 +106,13 @@ fn force_panic() {
 /// Returns the current version number as a string
 fn get_version_number() -> String {
     let version = env!("CARGO_PKG_VERSION");
-    format!("v{}", version)
+    if cfg!(debug_assertions) {
+        // Debugging enabled
+        format!("v{} (debug mode)", version)
+    } else {
+        // Debugging disabled
+        format!("v{}", version)
+    }
 }
 
 #[tauri::command]
