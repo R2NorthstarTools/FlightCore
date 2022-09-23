@@ -10,6 +10,10 @@ import PlayView from './views/PlayView.vue';
     <el-tab-pane label="Mods">Mods</el-tab-pane>
     <el-tab-pane label="Settings">Settings</el-tab-pane>
   </el-tabs>
+  <div id="fc_window__controls">
+    <el-button color="white" icon="SemiSelect" circle />
+    <el-button color="white" icon="CloseBold" circle />
+  </div>
 </template>
 
 <style>
@@ -42,6 +46,27 @@ import PlayView from './views/PlayView.vue';
   background-image: radial-gradient(transparent 1px);
   backdrop-filter: saturate(50%) blur(4px);
   height: auto !important;
+}
+
+/* Window controls */
+#fc_window__controls {
+  display: flex;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: var(--el-tabs-header-height);
+}
+
+#fc_window__controls > button {
+  color: white;
+  font-size: 20px;
+  margin: auto 5px;
+  background: none;
+  border: none;
+}
+
+#fc_window__controls > button:last-of-type {
+  margin-right: 20px;
 }
 
 </style>
