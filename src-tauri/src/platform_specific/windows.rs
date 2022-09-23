@@ -8,7 +8,7 @@ use anyhow::{anyhow, Result};
 use crate::check_is_valid_game_path;
 
 /// Runs a powershell command and parses output to get Titanfall2 install location on Origin
-pub fn windows_origin_install_location_detection() -> Result<String, anyhow::Error> {
+pub fn origin_install_location_detection() -> Result<String, anyhow::Error> {
     dbg!();
 
     // Run PowerShell command to get Titanfall2 Origin install path

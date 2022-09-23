@@ -63,7 +63,7 @@ pub fn find_game_install_location() -> Result<GameInstall, anyhow::Error> {
 
     // (On Windows only) try parsing Windows registry for Origin install path
     #[cfg(target_os = "windows")]
-    match windows::windows_origin_install_location_detection() {
+    match windows::origin_install_location_detection() {
         Ok(game_path) => {
             let game_install = GameInstall {
                 game_path: game_path,
