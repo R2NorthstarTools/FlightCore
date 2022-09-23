@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import PlayView from './views/PlayView.vue';
 </script>
 
 <template>
   <div id="fc_bg__container"/>
   <el-tabs class="fc_menu__tabs" type="card">
-    <el-tab-pane label="Play">Play</el-tab-pane>
+    <el-tab-pane label="Play"><PlayView /></el-tab-pane>
     <el-tab-pane label="Changelog">Changelog</el-tab-pane>
     <el-tab-pane label="Mods">Mods</el-tab-pane>
     <el-tab-pane label="Settings">Settings</el-tab-pane>
