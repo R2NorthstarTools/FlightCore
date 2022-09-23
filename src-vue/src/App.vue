@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import PlayView from './views/PlayView.vue';
+import { appWindow } from '@tauri-apps/api/window';
 </script>
 
 <template>
@@ -11,8 +12,8 @@ import PlayView from './views/PlayView.vue';
     <el-tab-pane label="Settings">Settings</el-tab-pane>
   </el-tabs>
   <div id="fc_window__controls">
-    <el-button color="white" icon="SemiSelect" circle />
-    <el-button color="white" icon="CloseBold" circle />
+    <el-button color="white" icon="SemiSelect" @click="appWindow.minimize()" circle />
+    <el-button color="white" icon="CloseBold" @click="appWindow.close()" circle />
   </div>
 </template>
 
@@ -74,7 +75,7 @@ import PlayView from './views/PlayView.vue';
 }
 
 #fc_window__controls > button:last-of-type {
-  margin-right: 20px;
+  margin-right: 15px;
 }
 
 </style>
