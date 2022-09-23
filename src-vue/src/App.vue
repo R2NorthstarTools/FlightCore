@@ -65,6 +65,14 @@ import PlayView from './views/PlayView.vue';
   border: none;
 }
 
+#fc_window__controls > button:hover {
+  color: #c6c9ce;
+}
+
+#fc_window__controls > button:active {
+  color: #56585a;
+}
+
 #fc_window__controls > button:last-of-type {
   margin-right: 20px;
 }
