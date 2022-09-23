@@ -4,7 +4,7 @@ import { appWindow } from '@tauri-apps/api/window';
 </script>
 
 <template>
-  <div id="fc_bg__container"/>
+  <div id="fc_bg__container" data-tauri-drag-region />
   <el-tabs class="fc_menu__tabs" type="card">
     <el-tab-pane label="Play"><PlayView /></el-tab-pane>
     <el-tab-pane label="Changelog">Changelog</el-tab-pane>
