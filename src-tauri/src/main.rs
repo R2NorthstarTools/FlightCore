@@ -15,6 +15,10 @@ use app::{
     get_host_os, get_log_list, get_northstar_version_number, install_northstar, launch_northstar,
     GameInstall,
 };
+
+mod repair_and_verify;
+use repair_and_verify::verify_game_files;
+
 use tauri::Manager;
 use tokio::time::sleep;
 use tauri_plugin_store::PluginBuilder;
@@ -78,7 +82,8 @@ fn main() {
             update_northstar_caller,
             launch_northstar_caller,
             check_is_flightcore_outdated_caller,
-            get_log_list_caller
+            get_log_list_caller,
+            verify_game_files_caller
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -245,4 +250,9 @@ fn launch_northstar_caller(game_install: GameInstall) -> Result<String, String> 
 /// Get list of Northstar logs
 fn get_log_list_caller(game_install: GameInstall) -> Result<Vec<std::path::PathBuf>, String> {
     get_log_list(game_install)
+}
+
+#[tauri::command]
+fn verify_game_files_caller(game_install: GameInstall) -> Result<String, String> {
+  verify_game_files(game_install)
 }
