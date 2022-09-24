@@ -1,6 +1,19 @@
-<script setup lang="ts">
+<script lang="ts">
 import PlayView from './views/PlayView.vue';
 import { appWindow } from '@tauri-apps/api/window';
+import { store } from './plugins/store';
+
+export default {
+  components: {
+    PlayView
+  },
+  data() {
+    return {}
+  },
+  mounted: () => {
+    store.commit('initializeListeners');
+  }
+}
 </script>
 
 <template>
