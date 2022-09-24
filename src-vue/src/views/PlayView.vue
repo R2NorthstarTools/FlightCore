@@ -1,10 +1,35 @@
-<script setup lang="ts">
+<script lang="ts">
+import { ElNotification } from 'element-plus';
+
+export default {
+    data() {
+        return {
+            developerModeClicks: 0
+        }
+    },
+    methods: {
+        activateDeveloperMode() {
+            this.developerModeClicks += 1;
+            if (this.developerModeClicks === 6) {
+                this.$store.state.developer_mode = true;
+                ElNotification({
+                    title: 'Watch out!',
+                    message: 'Developer mode enabled.',
+                    type: 'info',
+                    position: 'bottom-right'
+                });
+            }
+        }
+    }
+};
 </script>
 
 <template>
     <div class="fc_launch__container">
         <div class="fc_title">Northstar</div>
-        <div class="fc_northstar__version">v{{ $store.state.installed_northstar_version }}</div>
+        <div class="fc_northstar__version" @click="activateDeveloperMode">
+            v{{ $store.state.installed_northstar_version }}
+        </div>
         <el-button type="primary" size="large">Launch game</el-button>
     </div>
 </template>
