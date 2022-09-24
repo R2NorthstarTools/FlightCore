@@ -8,6 +8,11 @@ export default {
             developerModeClicks: 0
         }
     },
+    computed: {
+        northstarIsRunning(): boolean {
+            return this.$store.state.northstar_is_running;
+        }
+    },
     methods: {
         activateDeveloperMode() {
             this.developerModeClicks += 1;
@@ -41,11 +46,13 @@ export default {
             </div>
         </div>
         <div>
-            <el-button type="primary" size="large">Launch game</el-button>
+            <el-button :disabled="northstarIsRunning" type="primary" size="large" class="fc_launch__button">
+                {{ northstarIsRunning ? "Game is running" : "Launch game" }}
+            </el-button>
             <div v-if="$store.state.developer_mode" id="fc_services__status">
                 <div>
                     <div class="fc_version__line">Northstar is running:    </div>
-                    <div class="fc_version__line fc_version__line__boolean"> {{ $store.state.northstar_is_running }}</div>
+                    <div class="fc_version__line fc_version__line__boolean"> {{ northstarIsRunning }}</div>
                 </div>
                 <div>
                     <div class="fc_version__line">Origin is running: </div>
@@ -92,6 +99,12 @@ button {
     margin-left: 3px;
     text-decoration: underline;
     cursor: pointer;
+}
+
+
+.fc_launch__button:focus {
+    background-color: var(--el-color-primary);
+    border-color: var(--el-color-primary);
 }
 
 
