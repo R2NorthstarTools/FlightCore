@@ -4,7 +4,7 @@
 <template>
     <div class="fc_launch__container">
         <div class="fc_title">Northstar</div>
-        <div class="fc_subtitle">Last updated: 23-09-2022 14:46</div>
+        <div class="fc_northstar__version">v{{ $store.state.installed_northstar_version }}</div>
         <el-button type="primary" size="large">Launch game</el-button>
     </div>
 </template>
@@ -31,7 +31,7 @@ button {
     font-weight: bold;
 }
 
-.fc_subtitle {
+.fc_northstar__version {
     color: rgb(168, 168, 168);
     margin-bottom: 20px;
 }
