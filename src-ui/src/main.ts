@@ -99,6 +99,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     let originRunningHolderEl = $("origin-running-holder") as HTMLElement;
     let northstarVersionHolderEl = $("northstar-version-holder") as HTMLElement;
     let useReleaseCandidateCheckboxEl = document.getElementById("use-release-candidate-checkbox") as HTMLInputElement;
+    let verifyGameFilesButtonEl = document.getElementById("verify-game-files-button") as HTMLElement;
+    let forceReinstallNorthstarButtonEl = document.getElementById("force-reinstall-northstar-button") as HTMLElement;
 
     useReleaseCandidateCheckboxEl.addEventListener('change', async function () {
         // Switch between main release and release candidates
@@ -225,6 +227,41 @@ document.addEventListener("DOMContentLoaded", async function () {
                 alert(`Not implemented yet: ${omniButtonEl.textContent}`);
                 break;
         }
+    });
+
+    // Handles verify button click
+    verifyGameFilesButtonEl.addEventListener("click", async function () {
+        let game_install = {
+            game_path: globalState.gamepath,
+            install_type: installTypeHolderEl.textContent
+        } as GameInstall;
+        await invoke("verify_game_files_caller", { gameInstall: game_install })
+            .then((message) => {
+                // Found some gamepath
+                console.log(message);
+            })
+            .catch((error) => {
+                console.error(error);
+                alert(error);
+            });
+    });
+
+    // Handles force reinstall click
+    forceReinstallNorthstarButtonEl.addEventListener("click", async function () {
+        let install_northstar_result = invoke("install_northstar_caller", { gamePath: globalState.gamepath, northstarPackageName: globalState.northstar_package_name });
+
+        // Update button while installl process is run
+        omniButtonEl.textContent = button_in_install_string;
+
+        await install_northstar_result.then((message) => {
+            console.log(message);
+        })
+            .catch((error) => {
+                console.error(error);
+                alert(error);
+            });
+
+        get_northstar_version_number_and_set_button_accordingly(omniButtonEl);
     });
 
     // panic button click

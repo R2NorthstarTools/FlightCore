@@ -2,10 +2,9 @@ use std::env;
 
 use anyhow::{anyhow, Context, Result};
 
+mod platform_specific;
 #[cfg(target_os = "windows")]
-use powershell_script::PsScriptBuilder;
-#[cfg(target_os = "windows")]
-use regex::Regex;
+use platform_specific::windows;
 
 use serde::{Deserialize, Serialize};
 use sysinfo::SystemExt;
@@ -41,39 +40,6 @@ pub fn check_mod_version_number(path_to_mod_folder: String) -> Result<String, an
     Ok(mod_version_number.to_string())
 }
 
-#[cfg(target_os = "windows")]
-/// Runs a powershell command and parses output to get Titanfall2 install location on Origin
-fn windows_origin_install_location_detection() -> Result<String, anyhow::Error> {
-    dbg!();
-
-    // Run PowerShell command to get Titanfall2 Origin install path
-    let ps = PsScriptBuilder::new()
-        .no_profile(true)
-        .non_interactive(true)
-        .hidden(false)
-        .print_commands(false)
-        .build();
-    let output = ps.run(r#"Get-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Respawn\Titanfall2\ -Name "Install Dir""#).unwrap();
-
-    // Get command output as string
-    let string = output.stdout().unwrap();
-
-    // Regex the result out and return value accordingly
-    let regex = Regex::new(r"(?m)Install Dir.+: (.+)\r\n").unwrap();
-    let mut result = regex.captures_iter(&string);
-    match result.next() {
-        Some(mat) => {
-            let game_path = mat.get(1).map_or("", |m| m.as_str());
-            println!("{}", game_path);
-            match check_is_valid_game_path(game_path) {
-                Ok(()) => return Ok(game_path.to_owned()),
-                Err(err) => Err(err),
-            }
-        }
-        None => Err(anyhow!("No Origin install path found")),
-    }
-}
-
 /// Attempts to find the game install location
 pub fn find_game_install_location() -> Result<GameInstall, anyhow::Error> {
     // Attempt parsing Steam library directly
@@ -97,7 +63,7 @@ pub fn find_game_install_location() -> Result<GameInstall, anyhow::Error> {
 
     // (On Windows only) try parsing Windows registry for Origin install path
     #[cfg(target_os = "windows")]
-    match windows_origin_install_location_detection() {
+    match windows::origin_install_location_detection() {
         Ok(game_path) => {
             let game_install = GameInstall {
                 game_path: game_path,
