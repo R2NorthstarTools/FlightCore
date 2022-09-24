@@ -12,6 +12,14 @@ export default {
   },
   mounted: () => {
     store.commit('initializeListeners');
+  },
+  methods: {
+    minimize() {
+      appWindow.minimize()
+    },
+    close() {
+      appWindow.close()
+    }
   }
 }
 </script>
@@ -25,8 +33,8 @@ export default {
     <el-tab-pane label="Settings">Settings</el-tab-pane>
   </el-tabs>
   <div id="fc_window__controls">
-    <el-button color="white" icon="SemiSelect" @click="appWindow.minimize()" circle />
-    <el-button color="white" icon="CloseBold" @click="appWindow.close()" circle />
+    <el-button color="white" icon="SemiSelect" @click="minimize" circle />
+    <el-button color="white" icon="CloseBold" @click="close" circle />
   </div>
 </template>
 
