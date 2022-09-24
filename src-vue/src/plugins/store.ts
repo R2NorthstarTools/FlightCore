@@ -1,16 +1,18 @@
 import { createStore } from 'vuex';
 import { listen, Event as TauriEvent } from "@tauri-apps/api/event";
+import {Tabs} from "../utils/Tabs";
 
 export const store = createStore({
     state () {
-      return {
-        developer_mode: false,
+        return {
+            current_tab: Tabs.PLAY,
+            developer_mode: false,
 
-        installed_northstar_version: "1.9.7",
+            installed_northstar_version: "1.9.7",
 
-        northstar_is_running: false,
-        origin_is_running: false
-      }
+            northstar_is_running: false,
+            origin_is_running: false
+        }
     },
     mutations: {
         toggleDeveloperMode(state) {
@@ -18,6 +20,9 @@ export const store = createStore({
         },
         initializeListeners(state) {
             _initializeListeners(state);
+        },
+        updateCurrentTab(state: any, newTab: Tabs) {
+            state.current_tab = newTab;
         }
     }
 });

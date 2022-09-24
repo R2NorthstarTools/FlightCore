@@ -1,5 +1,6 @@
 <script lang="ts">
 import { ElNotification } from 'element-plus';
+import {Tabs} from "../utils/Tabs";
 
 export default {
     data() {
@@ -19,6 +20,10 @@ export default {
                     position: 'bottom-right'
                 });
             }
+        },
+
+        showChangelogPage() {
+            this.$store.commit('updateCurrentTab', Tabs.CHANGELOG);
         }
     }
 };
@@ -27,8 +32,13 @@ export default {
 <template>
     <div class="fc_launch__container">
         <div class="fc_title">Northstar</div>
-        <div class="fc_northstar__version" @click="activateDeveloperMode">
-            v{{ $store.state.installed_northstar_version }}
+        <div class="fc_northstar__version__container">
+            <div class="fc_northstar__version" @click="activateDeveloperMode">
+                v{{ $store.state.installed_northstar_version }}
+            </div>
+            <div class="fc_changelog__link" @click="showChangelogPage">
+                (see patch notes)
+            </div>
         </div>
         <div>
             <el-button type="primary" size="large">Launch game</el-button>
@@ -68,10 +78,22 @@ button {
     font-weight: bold;
 }
 
-.fc_northstar__version {
-    color: rgb(168, 168, 168);
+/* Northstar version + changelog link */
+.fc_northstar__version__container {
     margin-bottom: 20px;
+    color: rgb(168, 168, 168);
 }
+
+.fc_northstar__version, .fc_changelog__link {
+    display: inline-block;
+}
+
+.fc_changelog__link {
+    margin-left: 3px;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
 
 #fc_services__status {
     display: inline-block;

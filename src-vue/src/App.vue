@@ -25,18 +25,18 @@ export default {
 </script>
 
 <template>
-  <div id="fc_bg__container" data-tauri-drag-region />
-  <el-tabs class="fc_menu__tabs" type="card">
-    <el-tab-pane label="Play"><PlayView /></el-tab-pane>
-    <el-tab-pane label="Changelog">Changelog</el-tab-pane>
-    <!-- <el-tab-pane label="Mods">Mods</el-tab-pane> -->
-    <el-tab-pane label="Settings">Settings</el-tab-pane>
-    <el-tab-pane v-if="$store.state.developer_mode" label="Dev">Developer tools</el-tab-pane>
-  </el-tabs>
-  <div id="fc_window__controls">
-    <el-button color="white" icon="SemiSelect" @click="minimize" circle />
-    <el-button color="white" icon="CloseBold" @click="close" circle />
-  </div>
+    <div id="fc_bg__container" data-tauri-drag-region />
+    <el-tabs v-model="$store.state.current_tab" class="fc_menu__tabs" type="card">
+        <el-tab-pane name="Play" label="Play"><PlayView /></el-tab-pane>
+        <el-tab-pane name="Changelog" label="Changelog">Changelog</el-tab-pane>
+        <!-- <el-tab-pane label="Mods">Mods</el-tab-pane> -->
+        <el-tab-pane name="Settings" label="Settings">Settings</el-tab-pane>
+        <el-tab-pane v-if="$store.state.developer_mode" name="Dev" label="Dev">Developer tools</el-tab-pane>
+    </el-tabs>
+    <div id="fc_window__controls">
+        <el-button color="white" icon="SemiSelect" @click="minimize" circle />
+        <el-button color="white" icon="CloseBold" @click="close" circle />
+    </div>
 </template>
 
 <style>
