@@ -31,6 +31,7 @@ export default {
     <el-tab-pane label="Changelog">Changelog</el-tab-pane>
     <!-- <el-tab-pane label="Mods">Mods</el-tab-pane> -->
     <el-tab-pane label="Settings">Settings</el-tab-pane>
+    <el-tab-pane v-if="$store.state.developer_mode" label="Dev">Developer tools</el-tab-pane>
   </el-tabs>
   <div id="fc_window__controls">
     <el-button color="white" icon="SemiSelect" @click="minimize" circle />

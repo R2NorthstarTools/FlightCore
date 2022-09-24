@@ -4,6 +4,8 @@ import { listen, Event as TauriEvent } from "@tauri-apps/api/event";
 export const store = createStore({
     state () {
       return {
+        developer_mode: false,
+        
         installed_northstar_version: "1.9.7",
 
         northstar_is_running: false,
@@ -11,6 +13,9 @@ export const store = createStore({
       }
     },
     mutations: {
+        toggleDeveloperMode(state) {
+            state.developer_mode = !state.developer_mode;
+        },
         initializeListeners(state) {
             _initializeListeners(state);
         }
