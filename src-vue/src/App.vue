@@ -1,11 +1,13 @@
 <script lang="ts">
 import PlayView from './views/PlayView.vue';
+import SettingsView from './views/SettingsView.vue';
 import { appWindow } from '@tauri-apps/api/window';
 import { store } from './plugins/store';
 
 export default {
   components: {
-    PlayView
+      PlayView,
+      SettingsView
   },
   data() {
     return {}
@@ -30,7 +32,7 @@ export default {
         <el-tab-pane name="Play" label="Play"><PlayView /></el-tab-pane>
         <el-tab-pane name="Changelog" label="Changelog">Changelog</el-tab-pane>
         <!-- <el-tab-pane label="Mods">Mods</el-tab-pane> -->
-        <el-tab-pane name="Settings" label="Settings">Settings</el-tab-pane>
+        <el-tab-pane name="Settings" label="Settings"><SettingsView/></el-tab-pane>
         <el-tab-pane v-if="$store.state.developer_mode" name="Dev" label="Dev">Developer tools</el-tab-pane>
     </el-tabs>
     <div id="fc_window__controls">
