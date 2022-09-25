@@ -3,6 +3,7 @@ import { listen, Event as TauriEvent } from "@tauri-apps/api/event";
 import {Tabs} from "../utils/Tabs";
 import {invoke} from "@tauri-apps/api";
 import {GameInstall} from "../utils/GameInstall";
+import {ReleaseCanal} from "../utils/ReleaseCanal";
 
 export const store = createStore({
     state () {
@@ -11,7 +12,7 @@ export const store = createStore({
             developer_mode: false,
             game_path: "this/is/the/game/path",
 
-            installed_northstar_version: "1.9.7",
+            installed_northstar_version: "Unknown version",
 
             northstar_is_running: false,
             origin_is_running: false
@@ -41,6 +42,9 @@ async function _initializeApp(state: any) {
             alert(err);
         });
     state.game_path = result.game_path;
+
+    // Check installed Northstar version if found
+    await _get_northstar_version_number_and_set_button_accordingly(state);
 }
 
 // TODO
@@ -59,4 +63,20 @@ function _initializeListeners(state: any) {
     listen("northstar-running-ping", function (evt: TauriEvent<any>) {
         state.northstar_is_running = evt.payload as boolean;
     });
+}
+
+async function _get_northstar_version_number_and_set_button_accordingly(state: any) {
+    let northstar_version_number: string = await invoke("get_northstar_version_number_caller", { gamePath: state.game_path });
+    if (northstar_version_number && northstar_version_number.length > 0) {
+        state.installed_northstar_version = northstar_version_number;
+
+        await invoke("check_is_northstar_outdated", { gamePath: state.game_path, northstarPackageName: ReleaseCanal.RELEASE })
+            .then((message) => {
+                console.log(message);
+            })
+            .catch((error) => {
+                console.error(error);
+                alert(error);
+            });
+    }
 }
