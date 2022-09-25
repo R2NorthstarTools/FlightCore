@@ -13,7 +13,7 @@ export default {
     return {}
   },
   mounted: () => {
-    store.commit('initializeListeners');
+    store.commit('initialize');
   },
   methods: {
     minimize() {
