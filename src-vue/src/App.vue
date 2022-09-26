@@ -1,4 +1,5 @@
 <script lang="ts">
+import DeveloperView from './views/DeveloperView.vue';
 import PlayView from './views/PlayView.vue';
 import SettingsView from './views/SettingsView.vue';
 import { appWindow } from '@tauri-apps/api/window';
@@ -6,6 +7,7 @@ import { store } from './plugins/store';
 
 export default {
   components: {
+      DeveloperView,
       PlayView,
       SettingsView
   },
@@ -33,7 +35,9 @@ export default {
         <el-tab-pane name="Changelog" label="Changelog">Changelog</el-tab-pane>
         <!-- <el-tab-pane label="Mods">Mods</el-tab-pane> -->
         <el-tab-pane name="Settings" label="Settings"><SettingsView/></el-tab-pane>
-        <el-tab-pane v-if="$store.state.developer_mode" name="Dev" label="Dev">Developer tools</el-tab-pane>
+        <el-tab-pane v-if="$store.state.developer_mode" name="Dev" label="Dev">
+          <DeveloperView/>
+        </el-tab-pane>
     </el-tabs>
     <div id="fc_window__controls">
         <el-button color="white" icon="SemiSelect" @click="minimize" circle />
