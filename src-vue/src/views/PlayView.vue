@@ -11,6 +11,9 @@ export default {
     computed: {
         northstarIsRunning(): boolean {
             return this.$store.state.northstar_is_running;
+        },
+        northstarVersion(): string {
+            return this.$store.state.installed_northstar_version;
         }
     },
     methods: {
@@ -44,9 +47,9 @@ export default {
         <div class="fc_title">Northstar</div>
         <div class="fc_northstar__version__container">
             <div class="fc_northstar__version" @click="activateDeveloperMode">
-                v{{ $store.state.installed_northstar_version }}
+                {{ northstarVersion === '' ? 'Unknown version' : `v${northstarVersion}` }}
             </div>
-            <div class="fc_changelog__link" @click="showChangelogPage">
+            <div v-if="northstarVersion !== ''" class="fc_changelog__link" @click="showChangelogPage">
                 (see patch notes)
             </div>
         </div>

@@ -13,7 +13,7 @@ export const store = createStore({
             developer_mode: false,
             game_path: "this/is/the/game/path",
 
-            installed_northstar_version: "Unknown version",
+            installed_northstar_version: "",
 
             northstar_is_running: false,
             origin_is_running: false
