@@ -24,6 +24,7 @@ export default {
                     type: 'info',
                     position: 'bottom-right'
                 });
+                this.developerModeClicks = 0;
             }
         },
 

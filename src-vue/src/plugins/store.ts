@@ -21,6 +21,11 @@ export const store = createStore({
     mutations: {
         toggleDeveloperMode(state) {
             state.developer_mode = !state.developer_mode;
+
+            // Reset tab when closing dev mode.
+            if (!state.developer_mode) {
+                store.commit('updateCurrentTab', Tabs.PLAY);
+            }
         },
         initialize(state) {
             _initializeApp(state);
