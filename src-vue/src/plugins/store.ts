@@ -4,6 +4,7 @@ import {Tabs} from "../utils/Tabs";
 import {invoke} from "@tauri-apps/api";
 import {GameInstall} from "../utils/GameInstall";
 import {ReleaseCanal} from "../utils/ReleaseCanal";
+import { ElNotification } from 'element-plus';
 
 export const store = createStore({
     state () {
@@ -34,6 +35,21 @@ export const store = createStore({
         },
         updateCurrentTab(state: any, newTab: Tabs) {
             state.current_tab = newTab;
+        },
+        launchGame(state: any) {
+            // TODO update installation if release track was switched
+            // TODO install northstar if it wasn't detected
+            // Show an error message if Origin is not running.
+            if (!state.origin_is_running) {
+                ElNotification({
+                    title: 'Origin is not running',
+                    message: "Northstar cannot launch while you're not authenticated with Origin.",
+                    type: 'warning',
+                    position: 'bottom-right'
+                });
+            }
+
+            // TODO launch game
         }
     }
 });

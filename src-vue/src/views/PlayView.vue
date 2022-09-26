@@ -30,6 +30,10 @@ export default {
 
         showChangelogPage() {
             this.$store.commit('updateCurrentTab', Tabs.CHANGELOG);
+        },
+
+        launchGame() {
+            this.$store.commit('launchGame');
         }
     }
 };
@@ -47,7 +51,7 @@ export default {
             </div>
         </div>
         <div>
-            <el-button :disabled="northstarIsRunning" type="primary" size="large" class="fc_launch__button">
+            <el-button :disabled="northstarIsRunning" type="primary" size="large" @click="launchGame" class="fc_launch__button">
                 {{ northstarIsRunning ? "Game is running" : "Launch game" }}
             </el-button>
             <div v-if="$store.state.developer_mode" id="fc_services__status">
