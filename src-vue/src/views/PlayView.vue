@@ -1,13 +1,16 @@
 <script lang="ts">
 import { ElNotification } from 'element-plus';
-import { NorthstarState } from '../utils/NorthstarState';
 import {Tabs} from "../utils/Tabs";
+import PlayButton from '../components/PlayButton.vue';
 
 export default {
     data() {
         return {
             developerModeClicks: 0
         }
+    },
+    components: {
+        PlayButton
     },
     computed: {
         northstarIsRunning(): boolean {
@@ -16,24 +19,6 @@ export default {
         northstarVersion(): string {
             return this.$store.state.installed_northstar_version;
         },
-        playButtonLabel(): string {
-            if (this.$store.state.northstar_is_running) {
-                return "Game is running";
-            }
-
-            switch(this.$store.state.northstar_state) {
-                case NorthstarState.INSTALL:
-                    return "Install";
-                case NorthstarState.INSTALLING:
-                    return "Installing..."
-                case NorthstarState.MUST_UPDATE:
-                    return "Update";
-                case NorthstarState.UPDATING:
-                    return "Updating...";
-                case NorthstarState.READY_TO_PLAY:
-                    return "Launch game";
-            }
-        }
     },
     methods: {
         activateDeveloperMode() {
@@ -52,10 +37,6 @@ export default {
 
         showChangelogPage() {
             this.$store.commit('updateCurrentTab', Tabs.CHANGELOG);
-        },
-
-        launchGame() {
-            this.$store.commit('launchGame');
         }
     }
 };
@@ -73,9 +54,7 @@ export default {
             </div>
         </div>
         <div>
-            <el-button :disabled="northstarIsRunning" type="primary" size="large" @click="launchGame" class="fc_launch__button">
-                {{ playButtonLabel }}
-            </el-button>
+            <PlayButton/>
             <div v-if="$store.state.developer_mode" id="fc_services__status">
                 <div>
                     <div class="fc_version__line">Northstar is running:    </div>
