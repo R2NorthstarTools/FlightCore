@@ -5,6 +5,7 @@ import {invoke} from "@tauri-apps/api";
 import {GameInstall} from "../utils/GameInstall";
 import {ReleaseCanal} from "../utils/ReleaseCanal";
 import { ElNotification } from 'element-plus';
+import { NorthstarState } from '../utils/NorthstarState';
 
 export const store = createStore({
     state () {
@@ -14,6 +15,7 @@ export const store = createStore({
             game_path: "this/is/the/game/path",
 
             installed_northstar_version: "",
+            northstar_state: NorthstarState.INSTALL,
 
             northstar_is_running: false,
             origin_is_running: false
@@ -36,9 +38,25 @@ export const store = createStore({
         updateCurrentTab(state: any, newTab: Tabs) {
             state.current_tab = newTab;
         },
-        launchGame(state: any) {
+        async launchGame(state: any) {
             // TODO update installation if release track was switched
-            // TODO install northstar if it wasn't detected
+
+            // Install northstar if it wasn't detected.
+            if (state.northstar_state === NorthstarState.INSTALL) {
+                let install_northstar_result = invoke("install_northstar_caller", { gamePath: state.game_path, northstarPackageName: ReleaseCanal.RELEASE });
+                state.northstar_state = NorthstarState.INSTALLING;
+
+                await install_northstar_result.then((message) => {
+                    console.log(message);
+                })
+                    .catch((error) => {
+                        console.error(error);
+                        alert(error);
+                    });
+
+                _get_northstar_version_number(state);
+            }
+
             // Show an error message if Origin is not running.
             if (!state.origin_is_running) {
                 ElNotification({
@@ -101,10 +119,13 @@ async function _get_northstar_version_number(state: any) {
     let northstar_version_number: string = await invoke("get_northstar_version_number_caller", { gamePath: state.game_path });
     if (northstar_version_number && northstar_version_number.length > 0) {
         state.installed_northstar_version = northstar_version_number;
+        state.northstar_state = NorthstarState.READY_TO_PLAY;
 
         await invoke("check_is_northstar_outdated", { gamePath: state.game_path, northstarPackageName: ReleaseCanal.RELEASE })
             .then((message) => {
-                console.log(message);
+                if (message) {
+                    state.northstar_state = NorthstarState.MUST_UPDATE;
+                }                
             })
             .catch((error) => {
                 console.error(error);

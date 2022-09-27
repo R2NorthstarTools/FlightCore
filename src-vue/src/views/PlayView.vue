@@ -1,5 +1,6 @@
 <script lang="ts">
 import { ElNotification } from 'element-plus';
+import { NorthstarState } from '../utils/NorthstarState';
 import {Tabs} from "../utils/Tabs";
 
 export default {
@@ -14,6 +15,24 @@ export default {
         },
         northstarVersion(): string {
             return this.$store.state.installed_northstar_version;
+        },
+        playButtonLabel(): string {
+            if (this.$store.state.northstar_is_running) {
+                return "Game is running";
+            }
+
+            switch(this.$store.state.northstar_state) {
+                case NorthstarState.INSTALL:
+                    return "Install";
+                case NorthstarState.INSTALLING:
+                    return "Installing..."
+                case NorthstarState.MUST_UPDATE:
+                    return "Update";
+                case NorthstarState.UPDATING:
+                    return "Updating...";
+                case NorthstarState.READY_TO_PLAY:
+                    return "Launch game";
+            }
         }
     },
     methods: {
@@ -55,7 +74,7 @@ export default {
         </div>
         <div>
             <el-button :disabled="northstarIsRunning" type="primary" size="large" @click="launchGame" class="fc_launch__button">
-                {{ northstarIsRunning ? "Game is running" : "Launch game" }}
+                {{ playButtonLabel }}
             </el-button>
             <div v-if="$store.state.developer_mode" id="fc_services__status">
                 <div>
