@@ -55,6 +55,7 @@ export const store = createStore({
                     });
 
                 _get_northstar_version_number(state);
+                return;
             }
 
             // Show an error message if Origin is not running.
