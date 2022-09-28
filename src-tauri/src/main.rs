@@ -17,7 +17,7 @@ use app::{
 };
 
 mod repair_and_verify;
-use repair_and_verify::verify_game_files;
+use repair_and_verify::{verify_game_files, disable_all_but_core};
 
 use tauri::Manager;
 use tauri_plugin_store::PluginBuilder;
@@ -85,7 +85,8 @@ fn main() {
             get_log_list_caller,
             verify_game_files_caller,
             get_enabled_mods_caller,
-            set_mod_enabled_status_caller
+            set_mod_enabled_status_caller,
+            disable_all_but_core_caller
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -271,4 +272,9 @@ fn set_mod_enabled_status_caller(
     is_enabled: bool,
 ) -> Result<(), String> {
     set_mod_enabled_status(game_install, mod_name, is_enabled)
+}
+
+#[tauri::command]
+fn disable_all_but_core_caller(game_install: GameInstall) -> Result<(), String> {
+    disable_all_but_core(game_install)
 }
