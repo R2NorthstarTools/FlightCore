@@ -391,7 +391,7 @@ pub fn get_log_list(game_install: GameInstall) -> Result<Vec<std::path::PathBuf>
 /// Returns a serde json object of the parsed `enabledmods.json` file
 pub fn get_enabled_mods(game_install: GameInstall) -> Result<serde_json::value::Value, String> {
     let enabledmods_json_path = format!(
-        "{}/R2Northstar/mods/enabledmods.json",
+        "{}/R2Northstar/enabledmods.json",
         game_install.game_path
     );
 
