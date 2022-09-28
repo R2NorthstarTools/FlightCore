@@ -12,8 +12,8 @@ use std::{
 use app::{
     check_is_flightcore_outdated, check_is_valid_game_path, check_northstar_running,
     check_origin_running, convert_release_candidate_number, find_game_install_location,
-    get_host_os, get_log_list, get_northstar_version_number, install_northstar, launch_northstar,
-    GameInstall,
+    get_enabled_mods, get_host_os, get_log_list, get_northstar_version_number, install_northstar,
+    launch_northstar, GameInstall,
 };
 
 mod repair_and_verify;
@@ -83,7 +83,8 @@ fn main() {
             launch_northstar_caller,
             check_is_flightcore_outdated_caller,
             get_log_list_caller,
-            verify_game_files_caller
+            verify_game_files_caller,
+            get_enabled_mods_caller
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -255,4 +256,9 @@ fn get_log_list_caller(game_install: GameInstall) -> Result<Vec<std::path::PathB
 #[tauri::command]
 fn verify_game_files_caller(game_install: GameInstall) -> Result<String, String> {
     verify_game_files(game_install)
+}
+
+#[tauri::command]
+fn get_enabled_mods_caller(game_install: GameInstall) -> Result<serde_json::value::Value, String> {
+    get_enabled_mods(game_install)
 }
