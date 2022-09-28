@@ -13,7 +13,7 @@
             </template>
         </el-input>
         <h3>About:</h3>
-        UI design inspired by <a href="https://github.com/TFORevive/tforevive_launcher/">TFORevive Launcher</a> (not yet public)
+        UI design inspired by <a target="_blank" href="https://github.com/TFORevive/tforevive_launcher/">TFORevive Launcher</a> (not yet public)
     </div>
 </template>
 
