@@ -20,8 +20,8 @@ mod repair_and_verify;
 use repair_and_verify::verify_game_files;
 
 use tauri::Manager;
-use tokio::time::sleep;
 use tauri_plugin_store::PluginBuilder;
+use tokio::time::sleep;
 
 #[derive(Default)]
 struct Counter(Arc<Mutex<i32>>);
@@ -254,5 +254,5 @@ fn get_log_list_caller(game_install: GameInstall) -> Result<Vec<std::path::PathB
 
 #[tauri::command]
 fn verify_game_files_caller(game_install: GameInstall) -> Result<String, String> {
-  verify_game_files(game_install)
+    verify_game_files(game_install)
 }
