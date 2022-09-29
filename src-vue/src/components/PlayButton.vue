@@ -64,6 +64,12 @@ export default {
 </template>
 
 <style scoped>
+button {
+    text-transform: uppercase;
+    border-radius: 2px;
+    padding: 30px;
+    font-size: 15px;
+}
 .fc_launch__button:focus {
     background-color: var(--el-color-primary);
     border-color: var(--el-color-primary);

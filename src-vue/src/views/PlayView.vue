@@ -76,14 +76,6 @@ export default {
     bottom: 0;
 }
 
-/* Buttons */
-button {
-    text-transform: uppercase;
-    border-radius: 2px;
-    padding: 30px;
-    font-size: 15px;
-}
-
 /* Titles */
 .fc_title {
     color: white;
