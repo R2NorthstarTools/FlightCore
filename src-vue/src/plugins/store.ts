@@ -16,6 +16,7 @@ export const store = createStore({
 
             installed_northstar_version: "",
             northstar_state: NorthstarState.INSTALL,
+            release_canal: ReleaseCanal.RELEASE,
 
             northstar_is_running: false,
             origin_is_running: false
