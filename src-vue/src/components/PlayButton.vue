@@ -4,7 +4,6 @@ import { ReleaseCanal } from '../utils/ReleaseCanal';
 
 export default {
     name: 'PlayButton',
-    data() {},
     computed: {
         playButtonLabel(): string {
             if (this.$store.state.northstar_is_running) {
@@ -26,6 +25,9 @@ export default {
                 default: 
                     return "";
             }
+        },
+        northstarIsRunning(): boolean {
+            return this.$store.state.northstar_is_running;
         },
         options(): {key: string, value: string}[] {
             return Object.keys(ReleaseCanal).map(function (v) {
