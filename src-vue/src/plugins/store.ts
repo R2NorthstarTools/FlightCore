@@ -59,6 +59,24 @@ export const store = createStore({
                 return;
             }
 
+            // Update northstar if it is outdated.
+            if (state.northstar_state === NorthstarState.MUST_UPDATE) {
+                // Updating is the same as installing, simply overwrites the existing files
+                let install_northstar_result = invoke("install_northstar_caller", { gamePath: state.game_path, northstarPackageName: ReleaseCanal.RELEASE });
+                state.northstar_state = NorthstarState.UPDATING;
+
+                await install_northstar_result.then((message) => {
+                    console.log(message);
+                })
+                    .catch((error) => {
+                        console.error(error);
+                        alert(error);
+                    });
+
+                _get_northstar_version_number(state);
+                return;
+            }
+
             // Show an error message if Origin is not running.
             if (!state.origin_is_running) {
                 ElNotification({
