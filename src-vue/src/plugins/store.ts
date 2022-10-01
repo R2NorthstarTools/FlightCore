@@ -13,6 +13,7 @@ export const store = createStore({
             current_tab: Tabs.PLAY,
             developer_mode: false,
             game_path: "this/is/the/game/path",
+            install_type: undefined,
 
             installed_northstar_version: "",
             northstar_state: NorthstarState.INSTALL,
@@ -77,17 +78,36 @@ export const store = createStore({
                 return;
             }
 
-            // Show an error message if Origin is not running.
-            if (!state.origin_is_running) {
-                ElNotification({
-                    title: 'Origin is not running',
-                    message: "Northstar cannot launch while you're not authenticated with Origin.",
-                    type: 'warning',
-                    position: 'bottom-right'
-                });
-            }
+            // Game is ready to play
+            if (state.northstar_state === NorthstarState.READY_TO_PLAY) {
+                // Show an error message if Origin is not running.
+                if (!state.origin_is_running) {
+                    ElNotification({
+                        title: 'Origin is not running',
+                        message: "Northstar cannot launch while you're not authenticated with Origin.",
+                        type: 'warning',
+                        position: 'bottom-right'
+                    });
 
-            // TODO launch game
+                    // If Origin isn't running, end here
+                    return;
+                }
+
+                let game_install = {
+                    game_path: state.game_path,
+                    install_type: state.install_type
+                } as GameInstall;
+                await invoke("launch_northstar_caller", { gameInstall: game_install })
+                    .then((message) => {
+                        console.log(message);
+                        // NorthstarState.RUNNING
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        alert(error);
+                    });
+                return;
+            }
         }
     }
 });
@@ -104,6 +124,7 @@ async function _initializeApp(state: any) {
             alert(err);
         });
     state.game_path = result.game_path;
+    state.install_type = result.install_type;
 
     // Check installed Northstar version if found
     await _get_northstar_version_number(state);
