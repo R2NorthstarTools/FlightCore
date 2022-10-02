@@ -1,6 +1,7 @@
 import { createStore } from 'vuex';
 import { listen, Event as TauriEvent } from "@tauri-apps/api/event";
 import {Tabs} from "../utils/Tabs";
+import {InstallType} from "../utils/InstallType";
 import {invoke} from "@tauri-apps/api";
 import {GameInstall} from "../utils/GameInstall";
 import {ReleaseCanal} from "../utils/ReleaseCanal";
@@ -124,7 +125,7 @@ async function _initializeApp(state: any) {
             alert(err);
         });
     state.game_path = result.game_path;
-    state.install_type = result.install_type;
+    state.install_type = result.install_type as InstallType;
 
     // Check installed Northstar version if found
     await _get_northstar_version_number(state);
