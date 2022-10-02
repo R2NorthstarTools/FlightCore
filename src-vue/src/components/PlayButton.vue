@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { NorthstarState } from '../utils/NorthstarState';
+import { ReleaseCanal } from '../utils/ReleaseCanal';
 
 export default defineComponent({
     name: 'PlayButton',
