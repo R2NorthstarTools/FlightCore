@@ -26,7 +26,7 @@ export default {
         }
     },
     mounted() {
-        document.querySelector('input').disabled = true;
+        document.querySelector('input')!.disabled = true;
     }
 }
 </script>

@@ -2,8 +2,9 @@
 import { ElNotification } from 'element-plus';
 import {Tabs} from "../utils/Tabs";
 import PlayButton from '../components/PlayButton.vue';
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
     data() {
         return {
             developerModeClicks: 0
@@ -39,7 +40,7 @@ export default {
             this.$store.commit('updateCurrentTab', Tabs.CHANGELOG);
         }
     }
-};
+});
 </script>
 
 <template>

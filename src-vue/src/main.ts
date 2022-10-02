@@ -18,6 +18,6 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 }
 
 // style
-app.use( store );
+app.use( store, '$store' );
 
 app.mount('#app')

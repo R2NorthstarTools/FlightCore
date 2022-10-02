@@ -118,6 +118,7 @@ export const store = createStore({
  * It invokes all Rust methods that are needed to initialize UI.
  */
 async function _initializeApp(state: any) {
+    // @ts-ignore
     const result: GameInstall = await invoke("find_game_install_location_caller")
         .catch((err) => {
             // Gamepath not found or other error
@@ -154,7 +155,7 @@ function _initializeListeners(state: any) {
 }
 
 /**
- * This retrieves Northstar version tag, and stores it in application 
+ * This retrieves Northstar version tag, and stores it in application
  * state, for it to be displayed in UI.
  */
 async function _get_northstar_version_number(state: any) {
@@ -167,7 +168,7 @@ async function _get_northstar_version_number(state: any) {
             .then((message) => {
                 if (message) {
                     state.northstar_state = NorthstarState.MUST_UPDATE;
-                }                
+                }
             })
             .catch((error) => {
                 console.error(error);

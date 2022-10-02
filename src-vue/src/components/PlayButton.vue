@@ -22,7 +22,7 @@ export default {
                 case NorthstarState.READY_TO_PLAY:
                     return "Launch game";
 
-                default: 
+                default:
                     return "";
             }
         },
@@ -33,6 +33,7 @@ export default {
             return Object.keys(ReleaseCanal).map(function (v) {
                 return {
                     key: v,
+                    // @ts-ignore
                     value: ReleaseCanal[v]
                 }
             });
