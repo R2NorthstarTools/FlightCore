@@ -32,7 +32,7 @@ export const store = createStore({
             install_type: undefined,
 
             installed_northstar_version: "",
-            northstar_state: NorthstarState.INSTALL,
+            northstar_state: NorthstarState.GAME_NOT_FOUND,
             release_canal: ReleaseCanal.RELEASE,
 
             northstar_is_running: false,
@@ -189,5 +189,8 @@ async function _get_northstar_version_number(state: any) {
                 console.error(error);
                 alert(error);
             });
+    }
+    else {
+        state.northstar_state = NorthstarState.INSTALL;
     }
 }

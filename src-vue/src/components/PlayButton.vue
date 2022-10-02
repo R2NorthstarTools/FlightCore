@@ -12,6 +12,8 @@ export default defineComponent({
             }
 
             switch(this.$store.state.northstar_state) {
+                case NorthstarState.GAME_NOT_FOUND:
+                    return "Titanfall2 not found";
                 case NorthstarState.INSTALL:
                     return "Install";
                 case NorthstarState.INSTALLING:
