@@ -387,3 +387,60 @@ pub fn get_log_list(game_install: GameInstall) -> Result<Vec<std::path::PathBuf>
         Err("No logs found".to_string())
     }
 }
+
+/// Returns a serde json object of the parsed `enabledmods.json` file
+pub fn get_enabled_mods(game_install: GameInstall) -> Result<serde_json::value::Value, String> {
+    let enabledmods_json_path = format!(
+        "{}/R2Northstar/enabledmods.json",
+        game_install.game_path
+    );
+
+    // Check for JSON file
+    if !std::path::Path::new(&enabledmods_json_path).exists() {
+        return Err("enabledmods.json not found".to_string());
+    }
+
+    // Read file
+    let data = match std::fs::read_to_string(enabledmods_json_path) {
+        Ok(data) => data,
+        Err(err) => return Err(err.to_string()),
+    };
+
+    // Parse JSON
+    let res: serde_json::Value = match serde_json::from_str(&data) {
+        Ok(result) => result,
+        Err(err) => return Err(format!("Failed to read JSON due to: {}", err.to_string())),
+    };
+
+    // Return parsed data
+    Ok(res)
+}
+
+/// Set the status of a passed mod to enabled/disabled
+pub fn set_mod_enabled_status(
+    game_install: GameInstall,
+    mod_name: String,
+    is_enabled: bool,
+) -> Result<(), String> {
+    let enabledmods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
+
+    // Parse JSON
+    let mut res: serde_json::Value = get_enabled_mods(game_install)?;
+
+    // Check if key exists
+    if res.get(mod_name.clone()).is_none() {
+        return Err("Value not found in enabledmod.json".to_string());
+    }
+
+    // Update value
+    res[mod_name] = serde_json::Value::Bool(is_enabled);
+
+    // Save the JSON structure into the output file
+    std::fs::write(
+        enabledmods_json_path,
+        serde_json::to_string_pretty(&res).unwrap(),
+    )
+    .unwrap();
+
+    Ok(())
+}

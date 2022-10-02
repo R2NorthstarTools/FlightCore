@@ -133,7 +133,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         else {
             originRunningHolderEl.textContent = "ORIGIN NOT RUNNING";
         }
-        console.log(evt.payload);
     });
 
     // listen northstar-running-ping event (from Tauri Rust App)
@@ -149,7 +148,6 @@ document.addEventListener("DOMContentLoaded", async function () {
                 omniButtonEl.textContent = button_play_string;
             }
         }
-        console.log(evt.payload);
     });
 
     // omni button click
