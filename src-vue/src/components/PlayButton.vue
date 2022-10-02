@@ -1,7 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { NorthstarState } from '../utils/NorthstarState';
-import { ReleaseCanal } from '../utils/ReleaseCanal';
 
 export default defineComponent({
     name: 'PlayButton',
@@ -52,19 +51,6 @@ export default defineComponent({
     <el-button :disabled="northstarIsRunning" type="primary" size="large" @click="launchGame" class="fc_launch__button">
         {{ playButtonLabel }}
     </el-button>
-    <el-select
-      v-model="$store.state.release_canal"
-      filterable
-      placeholder="Select release canal"
-      style="width: 240px"
-    >
-      <el-option
-        v-for="item in options"
-        :key="item.key"
-        :label="item.value"
-        :value="item.value"
-      />
-    </el-select>
 </template>
 
 <style scoped>
