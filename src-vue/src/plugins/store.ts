@@ -28,7 +28,7 @@ export const store = createStore({
         return {
             current_tab: Tabs.PLAY,
             developer_mode: false,
-            game_path: "this/is/the/game/path",
+            game_path: undefined,
             install_type: undefined,
 
             installed_northstar_version: "",
