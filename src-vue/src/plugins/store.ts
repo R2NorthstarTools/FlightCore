@@ -8,6 +8,21 @@ import {ReleaseCanal} from "../utils/ReleaseCanal";
 import { ElNotification } from 'element-plus';
 import { NorthstarState } from '../utils/NorthstarState';
 
+
+export type Store = {
+    current_tab: Tabs,
+    developer_mode: boolean,
+    game_path: string,
+    install_type: InstallType,
+
+    installed_northstar_version: string,
+    northstar_state: NorthstarState,
+    release_canal: ReleaseCanal,
+
+    northstar_is_running: boolean,
+    origin_is_running: boolean
+}
+
 export const store = createStore({
     state () {
         return {

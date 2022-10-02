@@ -1,8 +1,9 @@
 <script lang="ts">
+import { defineComponent } from 'vue';
 import { NorthstarState } from '../utils/NorthstarState';
 import { ReleaseCanal } from '../utils/ReleaseCanal';
 
-export default {
+export default defineComponent({
     name: 'PlayButton',
     computed: {
         playButtonLabel(): string {
@@ -44,7 +45,7 @@ export default {
             this.$store.commit('launchGame');
         }
     }
-};
+});
 </script>
 
 <template>

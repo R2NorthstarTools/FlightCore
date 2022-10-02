@@ -7,14 +7,16 @@
 </template>
 
 <script lang="ts">
-export default {
+import {defineComponent} from "vue";
+
+export default defineComponent({
     name: "DeveloperView",
     methods: {
         disableDevMode() {
             this.$store.commit('toggleDeveloperMode');
         }
     }
-}
+});
 </script>
 
 <style scoped>
