@@ -24,7 +24,7 @@ export default defineComponent({
     methods: {
         activateDeveloperMode() {
             this.developerModeClicks += 1;
-            if (this.developerModeClicks === 6) {
+            if (this.developerModeClicks >= 6) {
                 this.$store.state.developer_mode = true;
                 ElNotification({
                     title: 'Watch out!',
