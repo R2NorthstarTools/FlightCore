@@ -131,15 +131,15 @@ export const store = createStore({
  * It invokes all Rust methods that are needed to initialize UI.
  */
 async function _initializeApp(state: any) {
-    // @ts-ignore
-    const result: GameInstall = await invoke("find_game_install_location_caller")
+    const result = await invoke("find_game_install_location_caller")
         .catch((err) => {
             // Gamepath not found or other error
             console.error(err);
             alert(err);
         });
-    state.game_path = result.game_path;
-    state.install_type = result.install_type as InstallType;
+    const typedResult: GameInstall = result as GameInstall;
+    state.game_path = typedResult.game_path;
+    state.install_type = typedResult.install_type;
 
     // Check installed Northstar version if found
     await _get_northstar_version_number(state);
