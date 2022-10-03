@@ -1,4 +1,5 @@
 export enum NorthstarState {
+    GAME_NOT_FOUND,
     INSTALL,
     INSTALLING,
     MUST_UPDATE,
