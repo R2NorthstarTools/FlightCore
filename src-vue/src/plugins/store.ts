@@ -40,6 +40,9 @@ export const store = createStore({
         }
     },
     mutations: {
+        checkNorthstarUpdates(state) {
+            _get_northstar_version_number(state);
+        },
         toggleDeveloperMode(state) {
             state.developer_mode = !state.developer_mode;
 
