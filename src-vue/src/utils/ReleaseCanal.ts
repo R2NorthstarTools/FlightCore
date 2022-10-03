@@ -1,4 +1,4 @@
 export enum ReleaseCanal {
-    RELEASE = 'Northstar',
-    RELEASE_CANDIDATE = 'NorthstarReleaseCandidate'
+    RELEASE = <any>'Northstar',
+    RELEASE_CANDIDATE = <any>'NorthstarReleaseCandidate'
 }

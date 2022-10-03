@@ -36,8 +36,7 @@ export default defineComponent({
             return Object.keys(ReleaseCanal).map(function (v) {
                 return {
                     key: v,
-                    // @ts-ignore
-                    value: ReleaseCanal[v]
+                    value: Object.keys(ReleaseCanal)[Object.values(ReleaseCanal).indexOf(v)]
                 }
             });
         }
