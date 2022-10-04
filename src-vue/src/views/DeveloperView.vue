@@ -37,12 +37,9 @@ export default defineComponent({
         },
         async toggleReleaseCandidate() {
             // Flip between RELEASE and RELEASE_CANDIDATE
-            if (this.$store.state.release_canal === ReleaseCanal.RELEASE) {
-                this.$store.state.release_canal = ReleaseCanal.RELEASE_CANDIDATE;
-            }
-            else {
-                this.$store.state.release_canal = ReleaseCanal.RELEASE;
-            }
+            this.$store.state.release_canal = this.$store.state.release_canal === ReleaseCanal.RELEASE
+                ? ReleaseCanal.RELEASE_CANDIDATE
+                : ReleaseCanal.RELEASE;
 
             // Update current state so that update check etc can be performed
             this.$store.commit("checkNorthstarUpdates");
