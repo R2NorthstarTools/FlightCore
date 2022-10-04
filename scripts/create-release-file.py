@@ -8,8 +8,8 @@ assert("--version" in sys.argv)
 version_number = sys.argv[2]
 version_number_stripped_v = version_number.replace("v", "")
 
-PATH_TO_LINUX_SIG = f"./artifact/appimage/flightcore_{version_number_stripped_v}_amd64.AppImage.tar.gz.sig"
-PATH_TO_WINDOWS_SIG = f"./artifact/msi/flightcore_{version_number_stripped_v}_x64_en-US.msi.zip.sig"
+PATH_TO_LINUX_SIG = f"./artifact/appimage/flight-core_{version_number_stripped_v}_amd64.AppImage.tar.gz.sig"
+PATH_TO_WINDOWS_SIG = f"./artifact/msi/FlightCore_{version_number_stripped_v}_x64_en-US.msi.zip.sig"
 
 # Read signatures
 with open(PATH_TO_LINUX_SIG, "rt") as f:
@@ -27,11 +27,11 @@ release_dict = {
   "platforms": {
     "linux-x86_64": {
       "signature": linux_sig,
-      "url": f"https://github.com/GeckoEidechse/FlightCore/releases/download/{version_number}/flightcore_{version_number_stripped_v}_amd64.AppImage.tar.gz"
+      "url": f"https://github.com/GeckoEidechse/FlightCore/releases/download/{version_number}/flight-core_{version_number_stripped_v}_amd64.AppImage.tar.gz"
     },
     "windows-x86_64": {
       "signature": windows_sig,
-      "url": f"https://github.com/GeckoEidechse/FlightCore/releases/download/{version_number}/flightcore_{version_number_stripped_v}_x64_en-US.msi.zip"
+      "url": f"https://github.com/GeckoEidechse/FlightCore/releases/download/{version_number}/FlightCore_{version_number_stripped_v}_x64_en-US.msi.zip"
     }
   }
 }
