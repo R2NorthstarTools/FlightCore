@@ -65,9 +65,9 @@
         "decorations": false,
         "title": "FlightCore",
         "height": 600,
-        "minHeight": 600,
+        "minHeight": 300,
         "width": 1000,
-        "minWidth": 1000
+        "minWidth": 600
       }
     ]
   }
