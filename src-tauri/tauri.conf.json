@@ -1,10 +1,10 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/schema.json",
   "build": {
-    "beforeBuildCommand": "",
-    "beforeDevCommand": "",
-    "devPath": "http://localhost:8080/",
-    "distDir": "../dist"
+    "beforeBuildCommand": "cd src-vue && npm run build",
+    "beforeDevCommand": "cd src-vue && npm run dev",
+    "devPath": "http://localhost:5173/",
+    "distDir": "../src-vue/dist"
   },
   "package": {
     "productName": "flightcore",
@@ -62,7 +62,12 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "FlightCore"
+        "decorations": false,
+        "title": "FlightCore",
+        "height": 600,
+        "minHeight": 300,
+        "width": 1000,
+        "minWidth": 600
       }
     ]
   }

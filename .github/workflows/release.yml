@@ -44,7 +44,7 @@ jobs:
         TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
       run: |
         npm install
-        ./node_modules/.bin/rollup --config
+        cd src-vue && npm install && cd ..
         npm run tauri build
     - uses: tauri-apps/tauri-action@v0
       env:

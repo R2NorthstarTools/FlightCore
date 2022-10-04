@@ -17,14 +17,16 @@ Install `npm` dependencies with
 npm install
 ```
 
+Install UI dependencies too
+
+```sh
+cd src-vue && npm install
+```
+
 Then for developing
 
 ```sh
-# terminal 1 (UI localhost for hot-reload)
-npm run ui-dev
-
-# terminal 2 (for the Rust/App hot-reload)
-npm run tauri dev
+npx tauri dev
 ```
 
 > **Note**
