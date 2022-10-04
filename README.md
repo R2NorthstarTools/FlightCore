@@ -2,6 +2,8 @@
 
 A [Northstar](https://northstar.tf/) installer, updater, and soon to be mod-manager
 
+![FlightCore screenshot](assets/main-window-screenshot.png)
+
 ## Roadmap
 
 --> See https://github.com/GeckoEidechse/FlightCore/issues/1
