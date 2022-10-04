@@ -8,6 +8,13 @@ A [Northstar](https://northstar.tf/) installer, updater, and soon to be mod-mana
 
 --> See https://github.com/GeckoEidechse/FlightCore/issues/1
 
+## Download
+
+Head to over to [releases](https://github.com/GeckoEidechse/FlightCore/releases) and download
+- **Windows:** `FlightCore_X.Y.Z_x64_en-US.msi`
+or
+- **Linux:** `flight-core_X.Y.Z_amd64.AppImage` .
+
 ## Development
 
 Make sure you have the necessary dependencies installed: https://tauri.app/v1/guides/getting-started/prerequisites
