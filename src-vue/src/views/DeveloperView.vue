@@ -7,6 +7,10 @@
         <el-button type="primary" @click="crashApplication">
             Panic button
         </el-button>
+
+        <el-button type="primary" @click="toggleReleaseCandidate">
+            Toggle Release Candidate
+        </el-button>
     </div>
 </template>
 
@@ -14,6 +18,7 @@
 import {defineComponent} from "vue";
 import { invoke } from "@tauri-apps/api";
 import { ElNotification } from "element-plus";
+import { ReleaseCanal } from "../utils/ReleaseCanal";
 
 export default defineComponent({
     name: "DeveloperView",
@@ -27,6 +32,25 @@ export default defineComponent({
                 title: 'Error',
                 message: "Never should have been able to get here!",
                 type: 'error',
+                position: 'bottom-right'
+            });
+        },
+        async toggleReleaseCandidate() {
+            // Flip between RELEASE and RELEASE_CANDIDATE
+            this.$store.state.release_canal = this.$store.state.release_canal === ReleaseCanal.RELEASE
+                ? ReleaseCanal.RELEASE_CANDIDATE
+                : ReleaseCanal.RELEASE;
+
+            // Update current state so that update check etc can be performed
+            this.$store.commit("checkNorthstarUpdates");
+
+            console.log(this.$store.state)
+
+            // Display notification to highlight change
+            ElNotification({
+                title: `${this.$store.state.release_canal}`,
+                message: `Switched release channel to: "${this.$store.state.release_canal}"`,
+                type: 'success',
                 position: 'bottom-right'
             });
         }
