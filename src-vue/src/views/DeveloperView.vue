@@ -45,7 +45,7 @@ export default defineComponent({
             }
 
             // Update current state so that update check etc can be performed
-            this.$store.commit("initialize");
+            this.$store.commit("checkNorthstarUpdates");
 
             console.log(this.$store.state)
 
