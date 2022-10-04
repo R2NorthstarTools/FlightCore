@@ -9,7 +9,7 @@ import { ElNotification } from 'element-plus';
 import { NorthstarState } from '../utils/NorthstarState';
 
 
-export type Store = {
+export interface FlightCoreStore {
     current_tab: Tabs,
     developer_mode: boolean,
     game_path: string,
@@ -23,13 +23,13 @@ export type Store = {
     origin_is_running: boolean
 }
 
-export const store = createStore({
-    state () {
+export const store = createStore<FlightCoreStore>({
+    state (): FlightCoreStore {
         return {
             current_tab: Tabs.PLAY,
             developer_mode: false,
-            game_path: undefined,
-            install_type: undefined,
+            game_path: undefined as unknown as string,
+            install_type: undefined as unknown as InstallType,
 
             installed_northstar_version: "",
             northstar_state: NorthstarState.GAME_NOT_FOUND,
