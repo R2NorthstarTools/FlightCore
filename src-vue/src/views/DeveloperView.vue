@@ -53,7 +53,7 @@ export default defineComponent({
             ElNotification({
                 title: `${this.$store.state.release_canal}`,
                 message: `Switched release channel to: "${this.$store.state.release_canal}"`,
-                type: 'error',
+                type: 'success',
                 position: 'bottom-right'
             });
         }
