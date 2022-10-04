@@ -184,7 +184,7 @@ function _initializeListeners(state: any) {
  * This retrieves Northstar version tag, and stores it in application
  * state, for it to be displayed in UI.
  */
-async function _get_northstar_version_number(state: any) {
+export async function _get_northstar_version_number(state: any) {
     let northstar_version_number: string = await invoke("get_northstar_version_number_caller", { gamePath: state.game_path });
     if (northstar_version_number && northstar_version_number.length > 0) {
         state.installed_northstar_version = northstar_version_number;
