@@ -7,7 +7,7 @@
     "distDir": "../src-vue/dist"
   },
   "package": {
-    "productName": "flightcore",
+    "productName": "FlightCore",
     "version": "0.1.5"
   },
   "tauri": {
