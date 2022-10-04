@@ -149,8 +149,21 @@ async function _initializeApp(state: any) {
 }
 
 async function _checkForFlightCoreUpdates(state: FlightCoreStore) {
-    // Check if up-to-date
+    // Check if FlightCore up-to-date
     let flightcore_is_outdated = await invoke("check_is_flightcore_outdated_caller") as boolean;
+
+    // Get FlightCore version number
+    let flightcore_version_number = await invoke("get_version_number") as string;
+
+    if (flightcore_is_outdated) {
+        ElNotification({
+            title: 'FlightCore outdated!',
+            message: `Please update FlightCore. Running outdated version ${flightcore_version_number}`,
+            type: 'warning',
+            position: 'bottom-right',
+            duration: 0 // Duration `0` means the notification will not auto-vanish
+        });
+    }
 }
 
 /**
