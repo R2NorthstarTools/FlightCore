@@ -1,10 +1,10 @@
 import { createStore } from 'vuex';
 import { listen, Event as TauriEvent } from "@tauri-apps/api/event";
-import {Tabs} from "../utils/Tabs";
-import {InstallType} from "../utils/InstallType";
-import {invoke} from "@tauri-apps/api";
-import {GameInstall} from "../utils/GameInstall";
-import {ReleaseCanal} from "../utils/ReleaseCanal";
+import { Tabs } from "../utils/Tabs";
+import { InstallType } from "../utils/InstallType";
+import { invoke } from "@tauri-apps/api";
+import { GameInstall } from "../utils/GameInstall";
+import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { ElNotification } from 'element-plus';
 import { NorthstarState } from '../utils/NorthstarState';
 
