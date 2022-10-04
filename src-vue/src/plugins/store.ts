@@ -53,7 +53,7 @@ export const store = createStore<FlightCoreStore>({
         },
         initialize(state) {
             _initializeApp(state);
-            // _checkForFlightCoreUpdates(state);
+            _checkForFlightCoreUpdates(state);
             _initializeListeners(state);
         },
         updateCurrentTab(state: any, newTab: Tabs) {
@@ -148,12 +148,51 @@ async function _initializeApp(state: any) {
     await _get_northstar_version_number(state);
 }
 
-// TODO
-async function _checkForFlightCoreUpdates(state: any) {
+async function _checkForFlightCoreUpdates(state: FlightCoreStore) {
     // Get version number
     let version_number_string = await invoke("get_version_number") as string;
     // Check if up-to-date
     let flightcore_is_outdated = await invoke("check_is_flightcore_outdated_caller") as boolean;
+    // Get host OS
+    let host_os_string = await invoke("get_host_os_caller") as string;
+    
+    // Get install location
+    await invoke("find_game_install_location_caller", { gamePath: state.game_path })
+        .then((game_install) => {
+            // Found some gamepath
+            let game_install_obj = game_install as GameInstall;
+
+            // Change installation state based on whether game install was found
+            state.northstar_state = NorthstarState.INSTALL;
+            state.game_path = game_install_obj.game_path;
+            state.install_type = game_install_obj.install_type as InstallType;
+
+            // Check installed Northstar version if found
+            _get_northstar_version_number(state);
+        })
+        .catch((error) => {
+            // Gamepath not found or other error
+            ElNotification({
+                title: "Couldn't find game path",
+                message: error,
+                type: 'warning',
+                position: 'bottom-right'
+            });
+            state.northstar_state = NorthstarState.GAME_NOT_FOUND;
+        });
+
+    // --- This should be moved and is only placed here temporarily -----
+    let game_install = {
+        game_path: state.game_path,
+        install_type: state.install_type.toString()
+    } as GameInstall;
+    await invoke("get_log_list_caller", { gameInstall: game_install })
+        .then((message) => {
+            console.log(message);
+        })
+        .catch((error) => {
+            console.error(error);
+        });
 }
 
 /**
