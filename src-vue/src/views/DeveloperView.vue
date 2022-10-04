@@ -19,7 +19,6 @@ import {defineComponent} from "vue";
 import { invoke } from "@tauri-apps/api";
 import { ElNotification } from "element-plus";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
-import { _get_northstar_version_number } from "../plugins/store"
 
 export default defineComponent({
     name: "DeveloperView",
@@ -46,7 +45,9 @@ export default defineComponent({
             }
 
             // Update current state so that update check etc can be performed
-            _get_northstar_version_number(this.$store.state);
+            this.$store.commit("initialize");
+
+            console.log(this.$store.state)
 
             // Display notification to highlight change
             ElNotification({
