@@ -31,13 +31,6 @@ Then for developing
 npx tauri dev
 ```
 
-> **Note**
-> On Windows instead of `npm run ui-dev`, you may need to run 
-> `./node_modules/.bin/rollup --config --watch`
-> and
-> `./node_modules/.bin/servor dist index.html 8080 --reload`
-> in two separate console windows
-
 ### Tips
 
 Note that you can adjust the behaviour of Tauri windows in `tauri.conf.json`, e.g.
