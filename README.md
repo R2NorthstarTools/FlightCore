@@ -1,3 +1,7 @@
+<p align="center">
+	<img src="assets/Square310x310Logo.png" width="200px"><br>
+</p>
+
 # FlightCore
 
 A [Northstar](https://northstar.tf/) installer, updater, and soon to be mod-manager
