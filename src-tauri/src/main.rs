@@ -86,7 +86,8 @@ fn main() {
             verify_game_files_caller,
             get_enabled_mods_caller,
             set_mod_enabled_status_caller,
-            disable_all_but_core_caller
+            disable_all_but_core_caller,
+            is_debug_mode
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -108,6 +109,12 @@ fn find_game_install_location_caller() -> Result<GameInstall, String> {
 /// This function's only use is to force a `panic!()`
 fn force_panic() {
     panic!("Force panicked!");
+}
+
+#[tauri::command]
+/// Returns true if built in debug mode
+fn is_debug_mode() -> bool {
+    return cfg!(debug_assertions);
 }
 
 #[tauri::command]
