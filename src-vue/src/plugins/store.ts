@@ -138,7 +138,13 @@ async function _initializeApp(state: any) {
         .catch((err) => {
             // Gamepath not found or other error
             console.error(err);
-            alert(err);
+            ElNotification({
+                title: 'Titanfall2 not found!',
+                message: "Please manually select install location",
+                type: 'error',
+                position: 'bottom-right',
+                duration: 0 // Duration `0` means the notification will not auto-vanish
+            });
         });
     const typedResult: GameInstall = result as GameInstall;
     state.game_path = typedResult.game_path;
