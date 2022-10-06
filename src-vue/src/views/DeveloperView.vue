@@ -8,6 +8,10 @@
             Panic button
         </el-button>
 
+        <el-button type="primary" @click="checkLinuxCompatability">
+            Check NSProton Compatability
+        </el-button>
+
         <el-button type="primary" @click="toggleReleaseCandidate">
             Toggle Release Candidate
         </el-button>
@@ -42,6 +46,24 @@ export default defineComponent({
                 type: 'error',
                 position: 'bottom-right'
             });
+        },
+        async checkLinuxCompatability() {
+            let LinuxCompatabile = await invoke("linux_checks");
+            if (!LinuxCompatabile) {
+                ElNotification({
+                title: 'fail',
+                message: 'bad',
+                type: 'error',
+                position: 'bottom-right'
+                });
+            } else {
+                ElNotification({
+                title: 'succes i think',
+                message: 'worked',
+                type: 'succes',
+                position: 'bottom-right'
+                });
+            }
         },
         async toggleReleaseCandidate() {
             // Flip between RELEASE and RELEASE_CANDIDATE

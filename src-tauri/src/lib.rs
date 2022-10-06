@@ -5,6 +5,8 @@ use anyhow::{anyhow, Context, Result};
 mod platform_specific;
 #[cfg(target_os = "windows")]
 use platform_specific::windows;
+#[cfg(target_os = "linux")]
+use platform_specific::linux;
 
 use serde::{Deserialize, Serialize};
 use sysinfo::SystemExt;
@@ -39,6 +41,22 @@ pub fn check_mod_version_number(path_to_mod_folder: String) -> Result<String, an
 
     Ok(mod_version_number.to_string())
 }
+
+// I intend to add more linux related stuff to check here, so making a func
+// for now tho it only checks `ldd --version`
+// - salmon
+#[cfg(target_os = "linux")]
+pub fn linux_checks() -> bool {
+    let mut linux_compatabile: bool = true; // a variable that starts true and will be set to false if any of the checks arent met
+
+    // check `ldd --version` to see if glibc is up to date for northstar proton
+    let lddv = linux::check_glibc_v();
+    println!("{}", lddv);
+    if lddv < 2.33 { linux_compatabile = false };
+
+    return linux_compatabile;
+}
+
 
 /// Attempts to find the game install location
 pub fn find_game_install_location() -> Result<GameInstall, anyhow::Error> {
