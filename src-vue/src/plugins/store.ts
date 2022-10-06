@@ -161,7 +161,7 @@ export const store = createStore<FlightCoreStore>({
                     break;
 
                 case NorthstarState.GAME_NOT_FOUND:
-                    // TODO
+                    store.commit('updateGamePath');
                     break;
             }
         }
