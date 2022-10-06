@@ -51,7 +51,6 @@ pub fn linux_checks() -> bool {
 
     // check `ldd --version` to see if glibc is up to date for northstar proton
     let lddv = linux::check_glibc_v();
-    println!("{}", lddv);
     if lddv < 2.33 { linux_compatabile = false };
 
     return linux_compatabile;
