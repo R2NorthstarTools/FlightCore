@@ -68,7 +68,6 @@ export default defineComponent({
                 install_type: this.$store.state.install_type
             } as GameInstall;
             await invoke("disable_all_but_core_caller", { gameInstall: game_install }).then((message) => {
-                console.log(message);
                 ElNotification({
                     title: 'Success',
                     message: "Disabled all mods but core",
@@ -77,7 +76,6 @@ export default defineComponent({
                 });
             })
                 .catch((error) => {
-                    console.error(error);
                     ElNotification({
                         title: 'Error',
                         message: `${error}`,
