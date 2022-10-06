@@ -60,7 +60,7 @@ export default defineComponent({
                 ElNotification({
                 title: 'Linux compatabile',
                 message: 'No error reported',
-                type: 'succes',
+                type: 'success',
                 position: 'bottom-right'
                 });
             }
