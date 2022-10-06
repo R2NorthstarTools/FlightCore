@@ -72,6 +72,7 @@ fn main() {
         .manage(Counter(Default::default()))
         .invoke_handler(tauri::generate_handler![
             force_panic,
+            linux_checks,
             find_game_install_location_caller,
             get_version_number,
             get_northstar_version_number_caller,
@@ -115,6 +116,12 @@ fn force_panic() {
 /// Returns true if built in debug mode
 fn is_debug_mode() -> bool {
     return cfg!(debug_assertions);
+}
+
+#[tauri::command]
+/// Returns true if linux compatabile
+fn linux_checks() -> bool {
+    return app::linux_checks_librs();
 }
 
 #[tauri::command]

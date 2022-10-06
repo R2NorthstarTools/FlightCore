@@ -51,15 +51,15 @@ export default defineComponent({
             let LinuxCompatabile = await invoke("linux_checks");
             if (!LinuxCompatabile) {
                 ElNotification({
-                title: 'fail',
-                message: 'bad',
+                title: 'Not linux compatabile',
+                message: 'GLIBC is not version 2.33 or greater',
                 type: 'error',
                 position: 'bottom-right'
                 });
             } else {
                 ElNotification({
-                title: 'succes i think',
-                message: 'worked',
+                title: 'Linux compatabile',
+                message: 'No error reported',
                 type: 'succes',
                 position: 'bottom-right'
                 });

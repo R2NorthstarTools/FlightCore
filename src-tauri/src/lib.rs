@@ -46,7 +46,7 @@ pub fn check_mod_version_number(path_to_mod_folder: String) -> Result<String, an
 // for now tho it only checks `ldd --version`
 // - salmon
 #[cfg(target_os = "linux")]
-pub fn linux_checks() -> bool {
+pub fn linux_checks_librs() -> bool {
     let mut linux_compatabile: bool = true; // a variable that starts true and will be set to false if any of the checks arent met
 
     // check `ldd --version` to see if glibc is up to date for northstar proton
