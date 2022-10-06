@@ -78,7 +78,7 @@ export default defineComponent({
                 .catch((error) => {
                     ElNotification({
                         title: 'Error',
-                        message: `${error}`,
+                        message: error,
                         type: 'error',
                         position: 'bottom-right'
                     });
