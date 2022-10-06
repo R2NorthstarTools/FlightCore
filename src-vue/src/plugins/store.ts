@@ -7,6 +7,8 @@ import { GameInstall } from "../utils/GameInstall";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { ElNotification } from 'element-plus';
 import { NorthstarState } from '../utils/NorthstarState';
+import { appDir } from '@tauri-apps/api/path';
+import { open } from '@tauri-apps/api/dialog';
 
 
 export interface FlightCoreStore {
@@ -58,6 +60,39 @@ export const store = createStore<FlightCoreStore>({
         },
         updateCurrentTab(state: any, newTab: Tabs) {
             state.current_tab = newTab;
+        },
+        async updateGamePath(state: FlightCoreStore) {
+            // Open a selection dialog for directories
+            const selected = await open({
+                directory: true,
+                multiple: false,
+                defaultPath: await appDir(),
+            });
+            if (Array.isArray(selected)) {
+                // user selected multiple directories
+                alert("Please only select a single directory");
+            } else if (selected === null) {
+                // user cancelled the selection
+            } else {
+                // user selected a single directory
+
+                // Verify if valid Titanfall2 install location
+                let is_valid_titanfall2_install = await invoke("verify_install_location", { gamePath: selected }) as boolean;
+                if (is_valid_titanfall2_install) {
+                    state.game_path = selected;
+                    // Check for Northstar install
+                    store.commit('checkNorthstarUpdates');
+                }
+                else {
+                    // Not valid Titanfall2 install
+                    ElNotification({
+                        title: 'Wrong folder',
+                        message: "Selected folder is not a valid Titanfall2 install.",
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                }
+            }
         },
         async launchGame(state: any) {
             // TODO update installation if release track was switched
@@ -123,6 +158,10 @@ export const store = createStore<FlightCoreStore>({
                             console.error(error);
                             alert(error);
                         });
+                    break;
+
+                case NorthstarState.GAME_NOT_FOUND:
+                    // TODO
                     break;
             }
         }
