@@ -1,22 +1,12 @@
 {
   "name": "flightcore",
   "scripts": {
-    "tauri": "tauri",
-    "localhost": "./node_modules/.bin/servor dist index.html 8080 --reload",
-    "ui-build": "./node_modules/.bin/rollup --config",
-    "ui-dev": "./node_modules/.bin/rollup --config --watch & npm run localhost"
+    "tauri": "tauri"
   },
   "dependencies": {
-    "@tauri-apps/api": "^1.1.0",
-    "tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store#dev"
+    "@tauri-apps/api": "^1.1.0"
   },
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "^13.3.0",
-    "@rollup/plugin-typescript": "^8.3.4",
-    "@tauri-apps/cli": "^1.1.1",
-    "rollup": "^2.78.1",
-    "servor": "^4.0.2",
-    "tslib": "^2.4.0",
-    "typescript": "^4.7.4"
+    "@tauri-apps/cli": "^1.1.1"
   }
 }
