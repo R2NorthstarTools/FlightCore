@@ -6,3 +6,6 @@ target/
 # TypeScript builds
 dist/js/*.js
 dist/js/*.map
+
+# code workspace lol
+**/*.code-workspace
