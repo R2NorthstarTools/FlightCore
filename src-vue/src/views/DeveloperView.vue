@@ -58,7 +58,7 @@ export default defineComponent({
                 });
             } else {
                 ElNotification({
-                    title: 'Linux ompatible',
+                    title: 'Linux compatible',
                     message: 'No error reported',
                     type: 'success',
                     position: 'bottom-right'
