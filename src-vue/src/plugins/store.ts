@@ -80,6 +80,13 @@ export const store = createStore<FlightCoreStore>({
                 let is_valid_titanfall2_install = await invoke("verify_install_location", { gamePath: selected }) as boolean;
                 if (is_valid_titanfall2_install) {
                     state.game_path = selected;
+                    ElNotification({
+                        title: 'New game folder',
+                        message: "Game folder was successfully updated.",
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+
                     // Check for Northstar install
                     store.commit('checkNorthstarUpdates');
                 }
