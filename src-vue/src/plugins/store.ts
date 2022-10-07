@@ -5,7 +5,7 @@ import { InstallType } from "../utils/InstallType";
 import { invoke } from "@tauri-apps/api";
 import { GameInstall } from "../utils/GameInstall";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
-import { ElNotification } from 'element-plus';
+import { ElNotification, NotificationHandle } from 'element-plus';
 import { NorthstarState } from '../utils/NorthstarState';
 import { appDir } from '@tauri-apps/api/path';
 import { open } from '@tauri-apps/api/dialog';
@@ -24,6 +24,8 @@ export interface FlightCoreStore {
     northstar_is_running: boolean,
     origin_is_running: boolean
 }
+
+let notification_handle: NotificationHandle;
 
 export const store = createStore<FlightCoreStore>({
     state (): FlightCoreStore {
@@ -86,6 +88,7 @@ export const store = createStore<FlightCoreStore>({
                         type: 'success',
                         position: 'bottom-right'
                     });
+                    notification_handle.close();
 
                     // Check for Northstar install
                     store.commit('checkNorthstarUpdates');
@@ -189,7 +192,7 @@ async function _initializeApp(state: any) {
         .catch((err) => {
             // Gamepath not found or other error
             console.error(err);
-            ElNotification({
+            notification_handle = ElNotification({
                 title: 'Titanfall2 not found!',
                 message: "Please manually select install location",
                 type: 'error',
