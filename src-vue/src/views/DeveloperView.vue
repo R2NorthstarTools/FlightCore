@@ -11,6 +11,13 @@
         <el-button type="primary" @click="toggleReleaseCandidate">
             Toggle Release Candidate
         </el-button>
+
+        <h3>Repair:</h3>
+
+        <el-button type="primary" @click="disableAllModsButCore">
+            Disable all but core mods
+        </el-button>
+
     </div>
 </template>
 
@@ -19,6 +26,7 @@ import {defineComponent} from "vue";
 import { invoke } from "@tauri-apps/api";
 import { ElNotification } from "element-plus";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
+import { GameInstall } from "../utils/GameInstall";
 
 export default defineComponent({
     name: "DeveloperView",
@@ -53,6 +61,28 @@ export default defineComponent({
                 type: 'success',
                 position: 'bottom-right'
             });
+        },
+        async disableAllModsButCore() {
+            let game_install = {
+                game_path: this.$store.state.game_path,
+                install_type: this.$store.state.install_type
+            } as GameInstall;
+            await invoke("disable_all_but_core_caller", { gameInstall: game_install }).then((message) => {
+                ElNotification({
+                    title: 'Success',
+                    message: "Disabled all mods but core",
+                    type: 'success',
+                    position: 'bottom-right'
+                });
+            })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                });
         }
     }
 });
@@ -61,5 +91,6 @@ export default defineComponent({
 <style scoped>
 .fc__developer__container {
     padding: 20px 30px;
+    color: white;
 }
 </style>

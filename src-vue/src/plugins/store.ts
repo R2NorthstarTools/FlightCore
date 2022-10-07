@@ -173,6 +173,11 @@ export const store = createStore<FlightCoreStore>({
  * It invokes all Rust methods that are needed to initialize UI.
  */
 async function _initializeApp(state: any) {
+    // Enable dev mode directly if application is in debug mode
+    if (await invoke("is_debug_mode")) {
+        state.developer_mode = true;
+    }
+
     const result = await invoke("find_game_install_location_caller")
         .catch((err) => {
             // Gamepath not found or other error
