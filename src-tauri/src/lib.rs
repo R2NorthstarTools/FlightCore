@@ -47,13 +47,13 @@ pub fn check_mod_version_number(path_to_mod_folder: String) -> Result<String, an
 // - salmon
 #[cfg(target_os = "linux")]
 pub fn linux_checks_librs() -> bool {
-    let mut linux_compatabile: bool = true; // a variable that starts true and will be set to false if any of the checks arent met
+    let mut linux_compatible: bool = true; // a variable that starts true and will be set to false if any of the checks arent met
 
     // check `ldd --version` to see if glibc is up to date for northstar proton
     let lddv = linux::check_glibc_v();
-    if lddv < 2.33 { linux_compatabile = false };
+    if lddv < 2.33 { linux_compatible = false };
 
-    return linux_compatabile;
+    return linux_compatible;
 }
 
 

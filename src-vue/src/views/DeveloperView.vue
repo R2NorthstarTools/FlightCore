@@ -9,7 +9,7 @@
         </el-button>
 
         <el-button type="primary" @click="checkLinuxCompatibility">
-            Check NSProton Compatability
+            Check NSProton Compatibility
         </el-button>
 
         <el-button type="primary" @click="toggleReleaseCandidate">
@@ -48,17 +48,17 @@ export default defineComponent({
             });
         },
         async checkLinuxCompatibility() {
-            let LinuxCompatabile = await invoke("linux_checks");
-            if (!LinuxCompatabile) {
+            let LinuxCompatible = await invoke("linux_checks");
+            if (!LinuxCompatible) {
                 ElNotification({
-                    title: 'Not linux compatabile',
+                    title: 'Not linux compatible',
                     message: 'GLIBC is not version 2.33 or greater',
                     type: 'error',
                     position: 'bottom-right'
                 });
             } else {
                 ElNotification({
-                    title: 'Linux compatabile',
+                    title: 'Linux ompatible',
                     message: 'No error reported',
                     type: 'success',
                     position: 'bottom-right'
