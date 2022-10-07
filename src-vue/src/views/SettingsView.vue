@@ -14,6 +14,8 @@
         </el-input>
         <h3>About:</h3>
         UI design inspired by <el-link :underline="false" target="_blank" href="https://github.com/TFORevive/tforevive_launcher/" type="primary">TFORevive Launcher</el-link> (not yet public)
+        <br />
+        FlightCore Version: {{ flightcoreVersion === '' ? 'Unknown version' : `${flightcoreVersion}` }}
     </div>
 </template>
 
@@ -26,6 +28,11 @@ import { ElNotification } from 'element-plus';
 
 export default defineComponent({
     name: "SettingsView",
+    computed: {
+        flightcoreVersion(): string {
+            return this.$store.state.flightcore_version; // TODO change to FlightCore version
+        },
+    },
     methods: {
         async updateGamePath() {
             // Open a selection dialog for directories

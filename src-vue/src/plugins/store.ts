@@ -15,6 +15,8 @@ export interface FlightCoreStore {
     game_path: string,
     install_type: InstallType,
 
+    flightcore_version: string,
+
     installed_northstar_version: string,
     northstar_state: NorthstarState,
     release_canal: ReleaseCanal,
@@ -30,6 +32,8 @@ export const store = createStore<FlightCoreStore>({
             developer_mode: false,
             game_path: undefined as unknown as string,
             install_type: undefined as unknown as InstallType,
+
+            flightcore_version: "",
 
             installed_northstar_version: "",
             northstar_state: NorthstarState.GAME_NOT_FOUND,
@@ -139,6 +143,9 @@ async function _initializeApp(state: any) {
         state.developer_mode = true;
     }
 
+    // Get FlightCore version number
+    state.flightcore_version = await invoke("get_version_number");
+
     const result = await invoke("find_game_install_location_caller")
         .catch((err) => {
             // Gamepath not found or other error
@@ -163,13 +170,10 @@ async function _checkForFlightCoreUpdates(state: FlightCoreStore) {
     // Check if FlightCore up-to-date
     let flightcore_is_outdated = await invoke("check_is_flightcore_outdated_caller") as boolean;
 
-    // Get FlightCore version number
-    let flightcore_version_number = await invoke("get_version_number") as string;
-
     if (flightcore_is_outdated) {
         ElNotification({
             title: 'FlightCore outdated!',
-            message: `Please update FlightCore. Running outdated version ${flightcore_version_number}`,
+            message: `Please update FlightCore. Running outdated version ${state.flightcore_version}`,
             type: 'warning',
             position: 'bottom-right',
             duration: 0 // Duration `0` means the notification will not auto-vanish
