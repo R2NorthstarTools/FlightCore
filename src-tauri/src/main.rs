@@ -13,7 +13,7 @@ use app::{
     check_is_flightcore_outdated, check_is_valid_game_path, check_northstar_running,
     check_origin_running, convert_release_candidate_number, find_game_install_location,
     get_enabled_mods, get_host_os, get_log_list, get_northstar_version_number, install_northstar,
-    launch_northstar, set_mod_enabled_status, GameInstall,
+    launch_northstar, set_mod_enabled_status, GameInstall, linux_checks_librs,
 };
 
 mod repair_and_verify;
@@ -122,7 +122,7 @@ fn is_debug_mode() -> bool {
 #[tauri::command]
 /// Returns true if linux compatabile
 fn linux_checks() -> bool {
-    return app::linux_checks_librs();
+    return linux_checks_librs();
 }
 
 #[tauri::command]

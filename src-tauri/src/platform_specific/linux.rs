@@ -8,6 +8,7 @@ pub fn check_glibc_v() -> f32 {
         .output()
         .expect("failed to run 'ldd --version'");
     
+    // parse the output down to just version num
     let lddva = String::from_utf8_lossy(&out.stdout);
     let lddvl: Vec<&str> = lddva.split('\n').collect();
     let lddvw: Vec<&str> = lddvl[0].split(' ').collect();

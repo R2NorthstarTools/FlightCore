@@ -8,7 +8,7 @@
             Panic button
         </el-button>
 
-        <el-button type="primary" @click="checkLinuxCompatability">
+        <el-button type="primary" @click="checkLinuxCompatibility">
             Check NSProton Compatability
         </el-button>
 
@@ -47,21 +47,21 @@ export default defineComponent({
                 position: 'bottom-right'
             });
         },
-        async checkLinuxCompatability() {
+        async checkLinuxCompatibility() {
             let LinuxCompatabile = await invoke("linux_checks");
             if (!LinuxCompatabile) {
                 ElNotification({
-                title: 'Not linux compatabile',
-                message: 'GLIBC is not version 2.33 or greater',
-                type: 'error',
-                position: 'bottom-right'
+                    title: 'Not linux compatabile',
+                    message: 'GLIBC is not version 2.33 or greater',
+                    type: 'error',
+                    position: 'bottom-right'
                 });
             } else {
                 ElNotification({
-                title: 'Linux compatabile',
-                message: 'No error reported',
-                type: 'success',
-                position: 'bottom-right'
+                    title: 'Linux compatabile',
+                    message: 'No error reported',
+                    type: 'success',
+                    position: 'bottom-right'
                 });
             }
         },
