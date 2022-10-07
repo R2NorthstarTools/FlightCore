@@ -31,7 +31,7 @@ export default defineComponent({
     name: "SettingsView",
     computed: {
         flightcoreVersion(): string {
-            return this.$store.state.flightcore_version; // TODO change to FlightCore version
+            return this.$store.state.flightcore_version;
         },
     },
     methods: {
