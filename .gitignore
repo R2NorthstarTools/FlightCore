@@ -5,3 +5,4 @@ target/
 
 # TypeScript builds
 dist/js/*.js
+dist/js/*.map
