@@ -17,7 +17,7 @@ use app::{
 };
 
 #[cfg(target_os = "linux")]
-use app::linux_check_librs;
+use app::linux_checks_librs;
 
 mod repair_and_verify;
 use repair_and_verify::{verify_game_files, disable_all_but_core};
@@ -123,7 +123,7 @@ fn is_debug_mode() -> bool {
 #[allow(dead_code)]
 #[cfg(target_os = "linux")]
 #[tauri::command]
-/// Returns true if linux compatabile
+/// Returns true if linux compatible
 fn linux_checks() -> bool {
     return linux_checks_librs();
 }
