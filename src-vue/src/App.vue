@@ -22,8 +22,8 @@ export default {
 
     // Enable dragging entire app by dragging menu bar.
     // https://github.com/tauri-apps/tauri/issues/1656#issuecomment-1161495124
-    document.querySelector(".el-tabs__nav-scroll").addEventListener("mousedown", async e => {
-        if (e.target.closest(".el-tabs__item")) return; // Disable drag when clicking menu items.
+    document.querySelector(".el-tabs__nav-scroll")!.addEventListener("mousedown", async e => {
+        if ((e.target as Element).closest(".el-tabs__item")) return; // Disable drag when clicking menu items.
         await tauriWindow.appWindow.startDragging();
     });
   },
