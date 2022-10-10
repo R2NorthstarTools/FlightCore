@@ -39,7 +39,7 @@ export default {
 </script>
 
 <template>
-    <div id="fc_bg__container" data-tauri-drag-region />
+    <div id="fc_bg__container" />
     <el-tabs v-model="$store.state.current_tab" class="fc_menu__tabs" type="card">
         <el-tab-pane name="Play" label="Play"><PlayView /></el-tab-pane>
         <el-tab-pane name="Changelog" label="Changelog"><ChangelogView /></el-tab-pane>
