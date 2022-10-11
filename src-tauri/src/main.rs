@@ -16,6 +16,9 @@ use app::{
     launch_northstar, set_mod_enabled_status, GameInstall,
 };
 
+mod github;
+use github::release_notes::get_northstar_release_notes;
+
 mod repair_and_verify;
 use repair_and_verify::{verify_game_files, disable_all_but_core};
 
@@ -87,7 +90,8 @@ fn main() {
             get_enabled_mods_caller,
             set_mod_enabled_status_caller,
             disable_all_but_core_caller,
-            is_debug_mode
+            is_debug_mode,
+            get_northstar_release_notes
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
