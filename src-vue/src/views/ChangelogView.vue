@@ -7,9 +7,16 @@
 </template>
 
 <script lang="ts">
-export default {
-    name: "ChangelogView"
-}
+import { invoke } from '@tauri-apps/api/tauri';
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+    name: "ChangelogView",
+    mounted: async () => {
+        const notes: string = await invoke("get_northstar_release_notes");
+        console.log(notes);
+    }
+});
 </script>
 
 <style scoped>
