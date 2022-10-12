@@ -9,11 +9,12 @@
 <script lang="ts">
 import { invoke } from '@tauri-apps/api/tauri';
 import { defineComponent } from 'vue';
+import ReleaseInfo from '../utils/ReleaseInfo';
 
 export default defineComponent({
     name: "ChangelogView",
     mounted: async () => {
-        const notes: string = await invoke("get_northstar_release_notes");
+        const notes: ReleaseInfo[] = await invoke("get_northstar_release_notes");
         console.log(notes);
     }
 });
