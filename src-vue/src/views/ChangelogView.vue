@@ -3,6 +3,20 @@
         <el-link :underline="false" icon="DocumentCopy" target="_blank" href="https://github.com/R2Northstar/Northstar/releases">
             Open release notes
         </el-link>
+
+        <el-timeline>
+            <el-timeline-item
+                v-for="release in releases"
+                v-bind:key="release.name"
+                :timestamp="release.published_at" 
+                placement="top"
+            >
+            <el-card>
+                <h4>{{ release.name }}</h4>
+                {{ release.body }}
+            </el-card>
+            </el-timeline-item>
+        </el-timeline>
     </div>
 </template>
 
@@ -13,9 +27,14 @@ import ReleaseInfo from '../utils/ReleaseInfo';
 
 export default defineComponent({
     name: "ChangelogView",
-    mounted: async () => {
-        const notes: ReleaseInfo[] = await invoke("get_northstar_release_notes");
-        console.log(notes);
+    data() {
+        return {
+            releases: []
+        }
+    },
+    async mounted() {
+        this.releases = await invoke("get_northstar_release_notes");
+        console.log(this.releases);
     }
 });
 </script>
