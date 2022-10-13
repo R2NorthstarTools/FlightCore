@@ -90,7 +90,8 @@ fn main() {
             get_enabled_mods_caller,
             set_mod_enabled_status_caller,
             disable_all_but_core_caller,
-            is_debug_mode
+            is_debug_mode,
+            linux_checks
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -125,7 +126,7 @@ fn is_debug_mode() -> bool {
 #[tauri::command]
 /// Returns true if linux compatible
 fn linux_checks() -> bool {
-    return linux_checks_librs();
+    linux_checks_librs()
 }
 
 #[tauri::command]
