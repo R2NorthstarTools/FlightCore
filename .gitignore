@@ -2,7 +2,3 @@
 node_modules/
 # Rust builds
 target/
-
-# TypeScript builds
-dist/js/*.js
-dist/js/*.map
