@@ -2,6 +2,7 @@
 import ChangelogView from './views/ChangelogView.vue';
 import DeveloperView from './views/DeveloperView.vue';
 import PlayView from './views/PlayView.vue';
+import ModsView from './views/ModsView.vue';
 import SettingsView from './views/SettingsView.vue';
 import { appWindow } from '@tauri-apps/api/window';
 import { store } from './plugins/store';
@@ -9,11 +10,12 @@ import { window as tauriWindow } from "@tauri-apps/api";
 
 export default {
   components: {
-      ChangelogView,
-      DeveloperView,
-      PlayView,
-      SettingsView
-  },
+    ChangelogView,
+    DeveloperView,
+    PlayView,
+    SettingsView,
+    ModsView
+},
   data() {
     return {}
   },
@@ -43,7 +45,7 @@ export default {
     <el-tabs v-model="$store.state.current_tab" class="fc_menu__tabs" type="card">
         <el-tab-pane name="Play" label="Play"><PlayView /></el-tab-pane>
         <el-tab-pane name="Changelog" label="Changelog"><ChangelogView /></el-tab-pane>
-        <!-- <el-tab-pane label="Mods">Mods</el-tab-pane> -->
+        <el-tab-pane name="Mods" label="Mods"><ModsView /></el-tab-pane>
         <el-tab-pane name="Settings" label="Settings"><SettingsView/></el-tab-pane>
         <el-tab-pane v-if="$store.state.developer_mode" name="Dev" label="Dev">
           <DeveloperView/>
