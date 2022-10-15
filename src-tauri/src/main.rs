@@ -122,10 +122,10 @@ fn is_debug_mode() -> bool {
 }
 
 #[allow(dead_code)]
-#[cfg(target_os = "linux")]
 #[tauri::command]
 /// Returns true if linux compatible
 fn linux_checks() -> bool {
+    if get_host_os() == "windows" { false };
     linux_checks_librs()
 }
 
