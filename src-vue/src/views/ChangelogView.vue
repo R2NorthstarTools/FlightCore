@@ -9,7 +9,7 @@
             >
             <el-card>
                 <h4>{{ release.name }}</h4>
-                {{ release.body }}
+                <p v-html="formatRelease(release.body)"></p>
             </el-card>
             </el-timeline-item>
         </el-timeline>
@@ -20,6 +20,8 @@
 import { invoke } from '@tauri-apps/api/tauri';
 import { defineComponent } from 'vue';
 import ReleaseInfo from '../utils/ReleaseInfo';
+import { parse } from "marked";
+
 
 export default defineComponent({
     name: "ChangelogView",
@@ -31,6 +33,16 @@ export default defineComponent({
     async mounted() {
         this.releases = await invoke("get_northstar_release_notes");
         console.log(this.releases);
+    },
+    methods: {
+        // Transforms a Markdown document into an HTML document.
+        // Taken from Viper launcher:
+        // https://github.com/0neGal/viper/blob/5106d9ed409a3cc91a7755f961fab1bf91d8b7fb/src/app/launcher.js#L26
+        formatRelease(releaseBody: string) {
+            // link formatting
+            const content = releaseBody.replaceAll(/\@(\S+)/g, `<a href="https://github.com/$1">@$1</a>`);
+            return parse(content, {breaks: true});
+        }
     }
 });
 </script>
