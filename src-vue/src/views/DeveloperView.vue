@@ -27,6 +27,8 @@ import { invoke } from "@tauri-apps/api";
 import { ElNotification } from "element-plus";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { GameInstall } from "../utils/GameInstall";
+import { Store } from 'tauri-plugin-store-api';
+const persistentStore = new Store('flight-core-settings.json');
 
 export default defineComponent({
     name: "DeveloperView",
@@ -48,6 +50,9 @@ export default defineComponent({
             this.$store.state.northstar_release_canal = this.$store.state.northstar_release_canal === ReleaseCanal.RELEASE
                 ? ReleaseCanal.RELEASE_CANDIDATE
                 : ReleaseCanal.RELEASE;
+
+            // Save change in persistent store
+            await persistentStore.set('northstar-release-canal', { value: this.$store.state.northstar_release_canal });
 
             // Update current state so that update check etc can be performed
             this.$store.commit("checkNorthstarUpdates");

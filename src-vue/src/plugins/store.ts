@@ -7,6 +7,9 @@ import { GameInstall } from "../utils/GameInstall";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { ElNotification } from 'element-plus';
 import { NorthstarState } from '../utils/NorthstarState';
+import { Store } from 'tauri-plugin-store-api';
+
+const persistentStore = new Store('flight-core-settings.json');
 
 
 export interface FlightCoreStore {
@@ -141,6 +144,16 @@ async function _initializeApp(state: any) {
     // Enable dev mode directly if application is in debug mode
     if (await invoke("is_debug_mode")) {
         state.developer_mode = true;
+    }
+
+    // Grab Northstar release canal value from store if exists
+    var persistent_northstar_release_canal = (await persistentStore.get('northstar-release-canal')) as any;
+    if(persistent_northstar_release_canal) { // For some reason, the plugin-store doesn't throw an eror but simply returns `null` when key not found
+        // Put value from peristent store into current store
+        state.northstar_release_canal = persistent_northstar_release_canal.value as string;
+    }
+    else {
+        console.log("Value not found in store");
     }
 
     // Get FlightCore version number
