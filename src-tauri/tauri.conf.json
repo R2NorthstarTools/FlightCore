@@ -51,7 +51,7 @@
       "csp": null
     },
     "updater": {
-      "active": true,
+      "active": false,
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEVBNjM3NzJGRDgxMTU4NUUKUldSZVdCSFlMM2RqNmdhK3pIZjhEYWg2WnZGSFJqdkhLSHNOSjNhaW5VQVFLaHV3YWFDTnFKWWQK",
       "endpoints": [
         "https://github.com/GeckoEidechse/FlightCore/releases/latest/download/latest-release.json"

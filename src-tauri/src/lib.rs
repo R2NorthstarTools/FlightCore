@@ -5,7 +5,7 @@ use anyhow::{anyhow, Context, Result};
 mod platform_specific;
 #[cfg(target_os = "windows")]
 use platform_specific::windows;
-#[cfg(target_os = "linux")]
+
 use platform_specific::linux;
 
 use serde::{Deserialize, Serialize};
@@ -45,7 +45,7 @@ pub fn check_mod_version_number(path_to_mod_folder: String) -> Result<String, an
 // I intend to add more linux related stuff to check here, so making a func
 // for now tho it only checks `ldd --version`
 // - salmon
-#[cfg(target_os = "linux")]
+
 pub fn linux_checks_librs() -> bool {
     let mut linux_compatible: bool = true; // a variable that starts true and will be set to false if any of the checks arent met
 
