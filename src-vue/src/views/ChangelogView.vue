@@ -27,7 +27,7 @@ export default defineComponent({
     name: "ChangelogView",
     data() {
         return {
-            releases: []
+            releases: [] as ReleaseInfo[]
         }
     },
     async mounted() {
