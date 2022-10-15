@@ -1,9 +1,5 @@
 <template>
     <div class="fc__changelog__container">
-        <el-link :underline="false" icon="DocumentCopy" target="_blank" href="https://github.com/R2Northstar/Northstar/releases">
-            Open release notes
-        </el-link>
-
         <el-timeline>
             <el-timeline-item
                 v-for="release in releases"
