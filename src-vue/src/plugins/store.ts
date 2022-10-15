@@ -19,7 +19,7 @@ export interface FlightCoreStore {
 
     installed_northstar_version: string,
     northstar_state: NorthstarState,
-    release_canal: ReleaseCanal,
+    northstar_release_canal: ReleaseCanal,
 
     northstar_is_running: boolean,
     origin_is_running: boolean
@@ -37,7 +37,7 @@ export const store = createStore<FlightCoreStore>({
 
             installed_northstar_version: "",
             northstar_state: NorthstarState.GAME_NOT_FOUND,
-            release_canal: ReleaseCanal.RELEASE,
+            northstar_release_canal: ReleaseCanal.RELEASE,
 
             northstar_is_running: false,
             origin_is_running: false
@@ -68,7 +68,7 @@ export const store = createStore<FlightCoreStore>({
             switch (state.northstar_state) {
                 // Install northstar if it wasn't detected.
                 case NorthstarState.INSTALL:
-                    let install_northstar_result = invoke("install_northstar_caller", { gamePath: state.game_path, northstarPackageName: state.release_canal });
+                    let install_northstar_result = invoke("install_northstar_caller", { gamePath: state.game_path, northstarPackageName: state.northstar_release_canal });
                     state.northstar_state = NorthstarState.INSTALLING;
 
                     await install_northstar_result.then((message) => {
@@ -85,7 +85,7 @@ export const store = createStore<FlightCoreStore>({
                 // Update northstar if it is outdated.
                 case NorthstarState.MUST_UPDATE:
                     // Updating is the same as installing, simply overwrites the existing files
-                    let reinstall_northstar_result = invoke("install_northstar_caller", { gamePath: state.game_path, northstarPackageName: state.release_canal });
+                    let reinstall_northstar_result = invoke("install_northstar_caller", { gamePath: state.game_path, northstarPackageName: state.northstar_release_canal });
                     state.northstar_state = NorthstarState.UPDATING;
 
                     await reinstall_northstar_result.then((message) => {
@@ -205,7 +205,7 @@ async function _get_northstar_version_number(state: any) {
         state.installed_northstar_version = northstar_version_number;
         state.northstar_state = NorthstarState.READY_TO_PLAY;
 
-        await invoke("check_is_northstar_outdated", { gamePath: state.game_path, northstarPackageName: state.release_canal })
+        await invoke("check_is_northstar_outdated", { gamePath: state.game_path, northstarPackageName: state.northstar_release_canal })
             .then((message) => {
                 if (message) {
                     state.northstar_state = NorthstarState.MUST_UPDATE;
