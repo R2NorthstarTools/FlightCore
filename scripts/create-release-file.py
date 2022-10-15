@@ -11,6 +11,9 @@ version_number_stripped_v = version_number.replace("v", "")
 PATH_TO_LINUX_SIG = f"./artifact/appimage/flight-core_{version_number_stripped_v}_amd64.AppImage.tar.gz.sig"
 PATH_TO_WINDOWS_SIG = f"./artifact/msi/FlightCore_{version_number_stripped_v}_x64_en-US.msi.zip.sig"
 
+# Text to show in update notification
+RELEASE_TEXT = "See the following link for release notes: https://github.com/GeckoEidechse/FlightCore/releases"
+
 # Read signatures
 with open(PATH_TO_LINUX_SIG, "rt") as f:
   linux_sig = f.read()
@@ -22,7 +25,7 @@ current_datetime_string = str(datetime.datetime.utcnow().replace(microsecond=0).
 
 release_dict = {
   "version": f"{version_number}",
-  "notes": "Test version",
+  "notes": f"{RELEASE_TEXT}",
   "pub_date": current_datetime_string,
   "platforms": {
     "linux-x86_64": {
