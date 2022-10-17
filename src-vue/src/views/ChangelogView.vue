@@ -39,8 +39,12 @@ export default defineComponent({
         // Taken from Viper launcher:
         // https://github.com/0neGal/viper/blob/5106d9ed409a3cc91a7755f961fab1bf91d8b7fb/src/app/launcher.js#L26
         formatRelease(releaseBody: string) {
-            // link formatting
-            const content = releaseBody.replaceAll(/\@(\S+)/g, `<a href="https://github.com/$1">@$1</a>`);
+            // GitHub authors' links formatting
+            let content: string = releaseBody.replaceAll(/\@(\S+)/g, `<a target="_blank" href="https://github.com/$1">@$1</a>`);
+
+            // PR's links formatting
+            content = content.replaceAll(/\[(\S+)\]\(([^)]+)\)/g, `<a target="_blank" href="$2">$1</a>`);
+
             return parse(content, {breaks: true});
         }
     }
