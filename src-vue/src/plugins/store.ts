@@ -96,6 +96,7 @@ export const store = createStore<FlightCoreStore>({
                         position: 'bottom-right'
                     });
                     notification_handle.close();
+                    state.install_type = InstallType.UNKNOWN;
 
                     // Check for Northstar install
                     store.commit('checkNorthstarUpdates');
