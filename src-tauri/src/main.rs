@@ -118,7 +118,6 @@ fn is_debug_mode() -> bool {
     return cfg!(debug_assertions);
 }
 
-#[allow(dead_code)]
 #[tauri::command]
 /// Returns true if linux compatible
 fn linux_checks() -> bool {
