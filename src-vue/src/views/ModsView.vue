@@ -15,12 +15,13 @@ import { defineComponent } from "vue";
 import { ElNotification } from "element-plus";
 import { invoke } from '@tauri-apps/api/tauri';
 import { GameInstall } from "../utils/GameInstall";
+import { NorthstarMod } from "../utils/NorthstarMod"
 
 export default defineComponent({
     name: "ModsView",
     data() {
         return {
-            releases: [],
+            releases: [] as NorthstarMod[],
         }
     },
     async mounted() {
