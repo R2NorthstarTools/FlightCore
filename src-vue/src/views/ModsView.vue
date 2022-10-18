@@ -30,8 +30,19 @@ export default defineComponent({
             install_type: this.$store.state.install_type
         } as GameInstall;
         // Call back-end for installed mods
-        this.installed_mods = await invoke("get_installed_mods_caller", { gameInstall: game_install });
-        console.log(this.installed_mods);
+        await invoke("get_installed_mods_caller", { gameInstall: game_install })
+            .then((message) => {
+                this.installed_mods = (message as NorthstarMod[]);
+            })
+            .catch((error) => {
+                console.error(error);
+                ElNotification({
+                    title: 'Error',
+                    message: error,
+                    type: 'error',
+                    position: 'bottom-right'
+                });
+            });
     }
 });
 </script>
