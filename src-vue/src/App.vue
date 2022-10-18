@@ -5,6 +5,7 @@ import PlayView from './views/PlayView.vue';
 import SettingsView from './views/SettingsView.vue';
 import { appWindow } from '@tauri-apps/api/window';
 import { store } from './plugins/store';
+import { window as tauriWindow } from "@tauri-apps/api";
 
 export default {
   components: {
@@ -18,6 +19,13 @@ export default {
   },
   mounted: () => {
     store.commit('initialize');
+
+    // Enable dragging entire app by dragging menu bar.
+    // https://github.com/tauri-apps/tauri/issues/1656#issuecomment-1161495124
+    document.querySelector(".el-tabs__nav-scroll")!.addEventListener("mousedown", async e => {
+        if ((e.target as Element).closest(".el-tabs__item")) return; // Disable drag when clicking menu items.
+        await tauriWindow.appWindow.startDragging();
+    });
   },
   methods: {
     minimize() {
@@ -31,7 +39,7 @@ export default {
 </script>
 
 <template>
-    <div id="fc_bg__container" data-tauri-drag-region />
+    <div id="fc_bg__container" />
     <el-tabs v-model="$store.state.current_tab" class="fc_menu__tabs" type="card">
         <el-tab-pane name="Play" label="Play"><PlayView /></el-tab-pane>
         <el-tab-pane name="Changelog" label="Changelog"><ChangelogView /></el-tab-pane>

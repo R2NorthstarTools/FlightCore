@@ -8,6 +8,10 @@
             Panic button
         </el-button>
 
+        <el-button type="primary" @click="checkLinuxCompatibility">
+            Check NSProton Compatibility
+        </el-button>
+
         <el-button type="primary" @click="toggleReleaseCandidate">
             Toggle Release Candidate
         </el-button>
@@ -27,6 +31,8 @@ import { invoke } from "@tauri-apps/api";
 import { ElNotification } from "element-plus";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { GameInstall } from "../utils/GameInstall";
+import { Store } from 'tauri-plugin-store-api';
+const persistentStore = new Store('flight-core-settings.json');
 
 export default defineComponent({
     name: "DeveloperView",
@@ -43,11 +49,32 @@ export default defineComponent({
                 position: 'bottom-right'
             });
         },
+        async checkLinuxCompatibility() {
+            let LinuxCompatible = await invoke("linux_checks");
+            if (!LinuxCompatible) {
+                ElNotification({
+                    title: 'Not linux compatible',
+                    message: 'GLIBC is not version 2.33 or greater',
+                    type: 'error',
+                    position: 'bottom-right'
+                });
+            } else {
+                ElNotification({
+                    title: 'Linux compatible',
+                    message: 'No error reported',
+                    type: 'success',
+                    position: 'bottom-right'
+                });
+            }
+        },
         async toggleReleaseCandidate() {
             // Flip between RELEASE and RELEASE_CANDIDATE
-            this.$store.state.release_canal = this.$store.state.release_canal === ReleaseCanal.RELEASE
+            this.$store.state.northstar_release_canal = this.$store.state.northstar_release_canal === ReleaseCanal.RELEASE
                 ? ReleaseCanal.RELEASE_CANDIDATE
                 : ReleaseCanal.RELEASE;
+
+            // Save change in persistent store
+            await persistentStore.set('northstar-release-canal', { value: this.$store.state.northstar_release_canal });
 
             // Update current state so that update check etc can be performed
             this.$store.commit("checkNorthstarUpdates");
@@ -56,8 +83,8 @@ export default defineComponent({
 
             // Display notification to highlight change
             ElNotification({
-                title: `${this.$store.state.release_canal}`,
-                message: `Switched release channel to: "${this.$store.state.release_canal}"`,
+                title: `${this.$store.state.northstar_release_canal}`,
+                message: `Switched release channel to: "${this.$store.state.northstar_release_canal}"`,
                 type: 'success',
                 position: 'bottom-right'
             });

@@ -9,6 +9,9 @@ import { ElNotification, NotificationHandle } from 'element-plus';
 import { NorthstarState } from '../utils/NorthstarState';
 import { appDir } from '@tauri-apps/api/path';
 import { open } from '@tauri-apps/api/dialog';
+import { Store } from 'tauri-plugin-store-api';
+
+const persistentStore = new Store('flight-core-settings.json');
 
 
 export interface FlightCoreStore {
@@ -17,9 +20,11 @@ export interface FlightCoreStore {
     game_path: string,
     install_type: InstallType,
 
+    flightcore_version: string,
+
     installed_northstar_version: string,
     northstar_state: NorthstarState,
-    release_canal: ReleaseCanal,
+    northstar_release_canal: ReleaseCanal,
 
     northstar_is_running: boolean,
     origin_is_running: boolean
@@ -35,9 +40,11 @@ export const store = createStore<FlightCoreStore>({
             game_path: undefined as unknown as string,
             install_type: undefined as unknown as InstallType,
 
+            flightcore_version: "",
+
             installed_northstar_version: "",
             northstar_state: NorthstarState.GAME_NOT_FOUND,
-            release_canal: ReleaseCanal.RELEASE,
+            northstar_release_canal: ReleaseCanal.RELEASE,
 
             northstar_is_running: false,
             origin_is_running: false
@@ -109,7 +116,7 @@ export const store = createStore<FlightCoreStore>({
             switch (state.northstar_state) {
                 // Install northstar if it wasn't detected.
                 case NorthstarState.INSTALL:
-                    let install_northstar_result = invoke("install_northstar_caller", { gamePath: state.game_path, northstarPackageName: state.release_canal });
+                    let install_northstar_result = invoke("install_northstar_caller", { gamePath: state.game_path, northstarPackageName: state.northstar_release_canal });
                     state.northstar_state = NorthstarState.INSTALLING;
 
                     await install_northstar_result.then((message) => {
@@ -126,7 +133,7 @@ export const store = createStore<FlightCoreStore>({
                 // Update northstar if it is outdated.
                 case NorthstarState.MUST_UPDATE:
                     // Updating is the same as installing, simply overwrites the existing files
-                    let reinstall_northstar_result = invoke("install_northstar_caller", { gamePath: state.game_path, northstarPackageName: state.release_canal });
+                    let reinstall_northstar_result = invoke("install_northstar_caller", { gamePath: state.game_path, northstarPackageName: state.northstar_release_canal });
                     state.northstar_state = NorthstarState.UPDATING;
 
                     await reinstall_northstar_result.then((message) => {
@@ -188,6 +195,19 @@ async function _initializeApp(state: any) {
         state.developer_mode = true;
     }
 
+    // Grab Northstar release canal value from store if exists
+    var persistent_northstar_release_canal = (await persistentStore.get('northstar-release-canal')) as any;
+    if(persistent_northstar_release_canal) { // For some reason, the plugin-store doesn't throw an eror but simply returns `null` when key not found
+        // Put value from peristent store into current store
+        state.northstar_release_canal = persistent_northstar_release_canal.value as string;
+    }
+    else {
+        console.log("Value not found in store");
+    }
+
+    // Get FlightCore version number
+    state.flightcore_version = await invoke("get_version_number");
+
     const result = await invoke("find_game_install_location_caller")
         .catch((err) => {
             // Gamepath not found or other error
@@ -212,13 +232,10 @@ async function _checkForFlightCoreUpdates(state: FlightCoreStore) {
     // Check if FlightCore up-to-date
     let flightcore_is_outdated = await invoke("check_is_flightcore_outdated_caller") as boolean;
 
-    // Get FlightCore version number
-    let flightcore_version_number = await invoke("get_version_number") as string;
-
     if (flightcore_is_outdated) {
         ElNotification({
             title: 'FlightCore outdated!',
-            message: `Please update FlightCore. Running outdated version ${flightcore_version_number}`,
+            message: `Please update FlightCore. Running outdated version ${state.flightcore_version}`,
             type: 'warning',
             position: 'bottom-right',
             duration: 0 // Duration `0` means the notification will not auto-vanish
@@ -250,7 +267,7 @@ async function _get_northstar_version_number(state: any) {
         state.installed_northstar_version = northstar_version_number;
         state.northstar_state = NorthstarState.READY_TO_PLAY;
 
-        await invoke("check_is_northstar_outdated", { gamePath: state.game_path, northstarPackageName: state.release_canal })
+        await invoke("check_is_northstar_outdated", { gamePath: state.game_path, northstarPackageName: state.northstar_release_canal })
             .then((message) => {
                 if (message) {
                     state.northstar_state = NorthstarState.MUST_UPDATE;
