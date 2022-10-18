@@ -2,7 +2,7 @@
     <div class="fc__mods__container">
         <h3>Installed Mods:</h3>
         <div>
-            <el-card shadow="hover" v-for="mod in releases">
+            <el-card shadow="hover" v-for="mod in installed_mods">
                 <el-switch style="--el-switch-on-color: #13ce66; --el-switch-off-color: #8957e5" v-model="mod.enabled" disabled />
                 {{mod.name}}
             </el-card>
@@ -21,7 +21,7 @@ export default defineComponent({
     name: "ModsView",
     data() {
         return {
-            releases: [] as NorthstarMod[],
+            installed_mods: [] as NorthstarMod[],
         }
     },
     async mounted() {
@@ -30,8 +30,8 @@ export default defineComponent({
             install_type: this.$store.state.install_type
         } as GameInstall;
         // Call back-end for installed mods
-        this.releases = await invoke("get_installed_mods_caller", { gameInstall: game_install });
-        console.log(this.releases);
+        this.installed_mods = await invoke("get_installed_mods_caller", { gameInstall: game_install });
+        console.log(this.installed_mods);
     }
 });
 </script>
