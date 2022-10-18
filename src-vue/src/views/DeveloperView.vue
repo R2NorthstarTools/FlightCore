@@ -8,6 +8,10 @@
             Panic button
         </el-button>
 
+        <el-button type="primary" @click="checkLinuxCompatibility">
+            Check NSProton Compatibility
+        </el-button>
+
         <el-button type="primary" @click="toggleReleaseCandidate">
             Toggle Release Candidate
         </el-button>
@@ -42,6 +46,24 @@ export default defineComponent({
                 type: 'error',
                 position: 'bottom-right'
             });
+        },
+        async checkLinuxCompatibility() {
+            let LinuxCompatible = await invoke("linux_checks");
+            if (!LinuxCompatible) {
+                ElNotification({
+                    title: 'Not linux compatible',
+                    message: 'GLIBC is not version 2.33 or greater',
+                    type: 'error',
+                    position: 'bottom-right'
+                });
+            } else {
+                ElNotification({
+                    title: 'Linux compatible',
+                    message: 'No error reported',
+                    type: 'success',
+                    position: 'bottom-right'
+                });
+            }
         },
         async toggleReleaseCandidate() {
             // Flip between RELEASE and RELEASE_CANDIDATE
