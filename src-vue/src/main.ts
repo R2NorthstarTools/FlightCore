@@ -30,10 +30,10 @@ app.use( store, '$store' );
 
 // routes
 const routes = [
-    { path: '/', name: 'Main', component: () => PlayView},
-    { path: '/changelog', name: 'Changelog', component: () => ChangelogView},
-    { path: '/settings', name: 'Settings', component: () => SettingsView},
-    { path: '/dev', name: 'Dev', component: () => DeveloperView}
+    { path: '/', name: 'Main', component: async () => PlayView},
+    { path: '/changelog', name: 'Changelog', component: async () => ChangelogView},
+    { path: '/settings', name: 'Settings', component: async () => SettingsView},
+    { path: '/dev', name: 'Dev', component: async () => DeveloperView}
 ];
 const router = createRouter({
     history: createWebHashHistory(),
