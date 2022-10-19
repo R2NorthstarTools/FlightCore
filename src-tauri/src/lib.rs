@@ -51,9 +51,14 @@ pub fn linux_checks_librs() -> Result<(), String> {
     // Return early with error message if a check fails
 
     // check `ldd --version` to see if glibc is up to date for northstar proton
+    let min_required_ldd_version = 2.33;
     let lddv = linux::check_glibc_v();
-    if lddv < 2.33 {
-        return Err("GLIBC is not version 2.33 or greater".to_string());
+    if lddv < min_required_ldd_version {
+        return Err(format!(
+            "GLIBC is not version {} or greater",
+            min_required_ldd_version
+        )
+        .to_string());
     };
 
     // All checks passed
