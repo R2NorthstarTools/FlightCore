@@ -207,7 +207,7 @@ async function _initializeApp(state: any) {
     }
 
     // Get FlightCore version number
-    state.flightcore_version = await invoke("get_version_number");
+    state.flightcore_version = await invoke("get_flightcore_version_number");
 
     const result = await invoke("find_game_install_location_caller")
         .catch((err) => {
