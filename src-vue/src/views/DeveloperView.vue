@@ -50,22 +50,24 @@ export default defineComponent({
             });
         },
         async checkLinuxCompatibility() {
-            let LinuxCompatible = await invoke("linux_checks");
-            if (!LinuxCompatible) {
-                ElNotification({
-                    title: 'Not linux compatible',
-                    message: 'GLIBC is not version 2.33 or greater',
-                    type: 'error',
-                    position: 'bottom-right'
+            await invoke("linux_checks")
+                .then(() => {
+                    ElNotification({
+                        title: 'Linux compatible',
+                        message: 'All checks passed',
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+                })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Not linux compatible',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                    console.error(error);
                 });
-            } else {
-                ElNotification({
-                    title: 'Linux compatible',
-                    message: 'No error reported',
-                    type: 'success',
-                    position: 'bottom-right'
-                });
-            }
         },
         async toggleReleaseCandidate() {
             // Flip between RELEASE and RELEASE_CANDIDATE

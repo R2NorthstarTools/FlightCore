@@ -46,16 +46,19 @@ pub fn check_mod_version_number(path_to_mod_folder: String) -> Result<String, an
 // for now tho it only checks `ldd --version`
 // - salmon
 
-pub fn linux_checks_librs() -> bool {
-    let mut linux_compatible: bool = true; // a variable that starts true and will be set to false if any of the checks arent met
+pub fn linux_checks_librs() -> Result<(), String> {
+    // Perform various checks in terms of Linux compatibility
+    // Return early with error message if a check fails
 
     // check `ldd --version` to see if glibc is up to date for northstar proton
     let lddv = linux::check_glibc_v();
-    if lddv < 2.33 { linux_compatible = false };
+    if lddv < 2.33 {
+        return Err("GLIBC is not version 2.33 or greater".to_string());
+    };
 
-    return linux_compatible;
+    // All checks passed
+    Ok(())
 }
-
 
 /// Attempts to find the game install location
 pub fn find_game_install_location() -> Result<GameInstall, anyhow::Error> {
