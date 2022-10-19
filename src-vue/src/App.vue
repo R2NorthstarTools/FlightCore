@@ -22,7 +22,7 @@ export default {
 
     // Enable dragging entire app by dragging menu bar.
     // https://github.com/tauri-apps/tauri/issues/1656#issuecomment-1161495124
-    document.querySelector(".el-tabs__nav-scroll")!.addEventListener("mousedown", async e => {
+    document.querySelector("#fc__menu_bar")!.addEventListener("mousedown", async e => {
         if ((e.target as Element).closest(".el-menu-item")) return; // Disable drag when clicking menu items.
         await tauriWindow.appWindow.startDragging();
     });
@@ -48,7 +48,8 @@ export default {
         default-active="/"
         mode="horizontal"
         @select="handleSelect"
-        class="el-menu-demo fc_menu__tabs el-tabs__nav-scroll"
+        id="fc__menu_bar"
+        class="el-menu-demo el-tabs__nav-scroll"
     >
         <el-menu-item active index="/">Play</el-menu-item>
         <el-menu-item index="/changelog">Changelog</el-menu-item>
@@ -66,33 +67,35 @@ export default {
 
 <style>
 /* Borders reset */
-.fc_menu__tabs .el-tabs__nav, .fc_menu__tabs .el-tabs__header {
-  border: none !important;
+#fc__menu_bar {
+    border: none !important;
 }
 
 /* Header item */
-.fc_menu__tabs .el-tabs__item {
+#fc__menu_bar .el-menu-item {
   color: #b4b6b9;
   text-transform: uppercase;
   border: none !important;
   font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
   font-weight: bold;
   font-size: large;
-  margin: 10px 0;
 }
 
-.fc_menu__tabs .el-tabs__item:hover {
+#fc__menu_bar .el-menu-item:hover {
   color: #c6c9ce;
+  background-color: transparent;
 }
 
-.fc_menu__tabs .is-active {
+#fc__menu_bar .el-menu-item.is-active {
   color: white !important;
+  background-color: transparent;
 }
 
 /* Header menu */
-.fc_menu__tabs .el-tabs__header {
+#fc__menu_bar {
   background-image: radial-gradient(transparent 1px);
   backdrop-filter: saturate(50%) blur(4px);
+  background-color: transparent;
   height: auto !important;
 }
 
