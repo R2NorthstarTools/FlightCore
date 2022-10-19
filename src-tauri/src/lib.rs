@@ -348,7 +348,7 @@ pub fn convert_release_candidate_number(version_number: String) -> String {
     // This simply converts `-rc` to `0`
     // Works as intended for RCs < 10, e.g.  `v1.9.2-rc1`  -> `v1.9.201`
     // Doesn't work for larger numbers, e.g. `v1.9.2-rc11` -> `v1.9.2011` (should be `v1.9.211`)
-    version_number.replace("-rc", "0")
+    version_number.replace("-rc", "0").replace("00", "")
 }
 
 /// Checks if installed FlightCore version is up-to-date
