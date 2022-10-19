@@ -40,6 +40,7 @@ const router = createRouter({
     routes, // short for `routes: routes`
 });
 app.use(router);
+router.push({path: '/'});
 
 
 app.mount('#app')
