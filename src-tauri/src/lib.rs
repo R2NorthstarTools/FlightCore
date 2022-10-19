@@ -267,7 +267,8 @@ pub fn launch_northstar(game_install: GameInstall) -> Result<String, String> {
     // Explicetly fail early certain (currently) unsupported install setups
     if host_os != "windows"
         || !(matches!(game_install.install_type, InstallType::STEAM)
-            || matches!(game_install.install_type, InstallType::ORIGIN))
+            || matches!(game_install.install_type, InstallType::ORIGIN)
+            || matches!(game_install.install_type, InstallType::UNKNOWN))
     {
         return Err(format!(
             "Not yet implemented for \"{}\" with Titanfall2 installed via \"{:?}\"",
@@ -294,7 +295,8 @@ pub fn launch_northstar(game_install: GameInstall) -> Result<String, String> {
     // Only Windows with Steam or Origin are supported at the moment
     if host_os == "windows"
         && (matches!(game_install.install_type, InstallType::STEAM)
-            || matches!(game_install.install_type, InstallType::ORIGIN))
+            || matches!(game_install.install_type, InstallType::ORIGIN)
+            || matches!(game_install.install_type, InstallType::UNKNOWN))
     {
         let _output =
             std::process::Command::new(format!("{}/NorthstarLauncher.exe", game_install.game_path))

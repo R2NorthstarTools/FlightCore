@@ -5,8 +5,10 @@ import { InstallType } from "../utils/InstallType";
 import { invoke } from "@tauri-apps/api";
 import { GameInstall } from "../utils/GameInstall";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
-import { ElNotification } from 'element-plus';
+import { ElNotification, NotificationHandle } from 'element-plus';
 import { NorthstarState } from '../utils/NorthstarState';
+import { appDir } from '@tauri-apps/api/path';
+import { open } from '@tauri-apps/api/dialog';
 import { Store } from 'tauri-plugin-store-api';
 
 const persistentStore = new Store('flight-core-settings.json');
@@ -27,6 +29,8 @@ export interface FlightCoreStore {
     northstar_is_running: boolean,
     origin_is_running: boolean
 }
+
+let notification_handle: NotificationHandle;
 
 export const store = createStore<FlightCoreStore>({
     state (): FlightCoreStore {
@@ -65,6 +69,48 @@ export const store = createStore<FlightCoreStore>({
         },
         updateCurrentTab(state: any, newTab: Tabs) {
             state.current_tab = newTab;
+        },
+        async updateGamePath(state: FlightCoreStore) {
+            // Open a selection dialog for directories
+            const selected = await open({
+                directory: true,
+                multiple: false,
+                defaultPath: await appDir(),
+            });
+            if (Array.isArray(selected)) {
+                // user selected multiple directories
+                alert("Please only select a single directory");
+            } else if (selected === null) {
+                // user cancelled the selection
+            } else {
+                // user selected a single directory
+
+                // Verify if valid Titanfall2 install location
+                let is_valid_titanfall2_install = await invoke("verify_install_location", { gamePath: selected }) as boolean;
+                if (is_valid_titanfall2_install) {
+                    state.game_path = selected;
+                    ElNotification({
+                        title: 'New game folder',
+                        message: "Game folder was successfully updated.",
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+                    notification_handle.close();
+                    state.install_type = InstallType.UNKNOWN;
+
+                    // Check for Northstar install
+                    store.commit('checkNorthstarUpdates');
+                }
+                else {
+                    // Not valid Titanfall2 install
+                    ElNotification({
+                        title: 'Wrong folder',
+                        message: "Selected folder is not a valid Titanfall2 install.",
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                }
+            }
         },
         async launchGame(state: any) {
             // TODO update installation if release track was switched
@@ -131,6 +177,10 @@ export const store = createStore<FlightCoreStore>({
                             alert(error);
                         });
                     break;
+
+                case NorthstarState.GAME_NOT_FOUND:
+                    store.commit('updateGamePath');
+                    break;
             }
         }
     }
@@ -163,7 +213,7 @@ async function _initializeApp(state: any) {
         .catch((err) => {
             // Gamepath not found or other error
             console.error(err);
-            ElNotification({
+            notification_handle = ElNotification({
                 title: 'Titanfall2 not found!',
                 message: "Please manually select install location",
                 type: 'error',
