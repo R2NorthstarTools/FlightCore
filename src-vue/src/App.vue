@@ -33,10 +33,7 @@ export default {
     },
     close() {
       appWindow.close()
-    },
-      handleSelect(key: string, keyPath: string[]) {
-        this.$router.push({path: key});
-      }
+    }
   }
 }
 </script>
@@ -46,8 +43,8 @@ export default {
 
     <el-menu
         default-active="/"
+        router
         mode="horizontal"
-        @select="handleSelect"
         id="fc__menu_bar"
         class="el-menu-demo el-tabs__nav-scroll"
     >
