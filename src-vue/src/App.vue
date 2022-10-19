@@ -23,7 +23,7 @@ export default {
     // Enable dragging entire app by dragging menu bar.
     // https://github.com/tauri-apps/tauri/issues/1656#issuecomment-1161495124
     document.querySelector(".el-tabs__nav-scroll")!.addEventListener("mousedown", async e => {
-        if ((e.target as Element).closest(".el-tabs__item")) return; // Disable drag when clicking menu items.
+        if ((e.target as Element).closest(".el-menu-item")) return; // Disable drag when clicking menu items.
         await tauriWindow.appWindow.startDragging();
     });
   },
@@ -33,22 +33,31 @@ export default {
     },
     close() {
       appWindow.close()
-    }
+    },
+      handleSelect(key: string, keyPath: string[]) {
+        this.$router.push({path: key});
+      }
   }
 }
 </script>
 
 <template>
     <div id="fc_bg__container" />
-    <el-tabs v-model="$store.state.current_tab" class="fc_menu__tabs" type="card">
-        <el-tab-pane name="Play" label="Play"><PlayView /></el-tab-pane>
-        <el-tab-pane name="Changelog" label="Changelog"><ChangelogView /></el-tab-pane>
-        <!-- <el-tab-pane label="Mods">Mods</el-tab-pane> -->
-        <el-tab-pane name="Settings" label="Settings"><SettingsView/></el-tab-pane>
-        <el-tab-pane v-if="$store.state.developer_mode" name="Dev" label="Dev">
-          <DeveloperView/>
-        </el-tab-pane>
-    </el-tabs>
+
+    <el-menu
+        default-active="/"
+        mode="horizontal"
+        @select="handleSelect"
+        class="el-menu-demo fc_menu__tabs el-tabs__nav-scroll"
+    >
+        <el-menu-item active index="/">Play</el-menu-item>
+        <el-menu-item index="/changelog">Changelog</el-menu-item>
+        <el-menu-item index="/settings">Settings</el-menu-item>
+        <el-menu-item index="/dev">Dev</el-menu-item>
+    </el-menu>
+
+    <router-view></router-view>
+
     <div id="fc_window__controls">
         <el-button color="white" icon="SemiSelect" @click="minimize" circle />
         <el-button color="white" icon="CloseBold" @click="close" circle />
