@@ -50,7 +50,7 @@ export default {
         <el-menu-item active index="/">Play</el-menu-item>
         <el-menu-item index="/changelog">Changelog</el-menu-item>
         <el-menu-item index="/settings">Settings</el-menu-item>
-        <el-menu-item index="/dev">Dev</el-menu-item>
+        <el-menu-item index="/dev" v-if="$store.state.developer_mode">Dev</el-menu-item>
     </el-menu>
 
     <router-view></router-view>
