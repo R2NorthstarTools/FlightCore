@@ -47,7 +47,7 @@ export default {
         mode="horizontal"
         id="fc__menu_bar"
     >
-        <el-menu-item active index="/">Play</el-menu-item>
+        <el-menu-item index="/">Play</el-menu-item>
         <el-menu-item index="/changelog">Changelog</el-menu-item>
         <el-menu-item index="/settings">Settings</el-menu-item>
         <el-menu-item index="/dev" v-if="$store.state.developer_mode">Dev</el-menu-item>
@@ -82,7 +82,7 @@ export default {
   background-color: transparent;
 }
 
-#fc__menu_bar .el-menu-item.is-active {
+#fc__menu_bar .el-menu-item.is-active, #fc__menu_bar .el-menu-item:focus{
   color: white !important;
   background-color: transparent;
 }
