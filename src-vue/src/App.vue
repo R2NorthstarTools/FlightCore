@@ -119,7 +119,7 @@ export default {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  height:80%;
+  height: calc(100% - var(--fc-menu_height));
 }
 
 /* Header menu */
