@@ -86,7 +86,7 @@ export default {
   background-image: radial-gradient(transparent 1px);
   backdrop-filter: saturate(50%) blur(4px);
   background-color: transparent;
-  height: auto !important;
+  height: var(--fc-menu_height);
 }
 
 /* Window controls */
@@ -95,7 +95,7 @@ export default {
   position: absolute;
   top: 0;
   right: 0;
-  height: var(--el-tabs-header-height);
+  height: var(--fc-menu_height);
 }
 
 #fc_window__controls > button {
