@@ -73,7 +73,7 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             force_panic,
             find_game_install_location_caller,
-            get_version_number,
+            get_flightcore_version_number,
             get_northstar_version_number_caller,
             check_is_northstar_outdated,
             verify_install_location,
@@ -131,7 +131,7 @@ fn linux_checks() -> Result<(), String> {
 
 #[tauri::command]
 /// Returns the current version number as a string
-fn get_version_number() -> String {
+fn get_flightcore_version_number() -> String {
     let version = env!("CARGO_PKG_VERSION");
     if cfg!(debug_assertions) {
         // Debugging enabled
