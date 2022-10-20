@@ -14,7 +14,6 @@ const persistentStore = new Store('flight-core-settings.json');
 
 
 export interface FlightCoreStore {
-    current_tab: Tabs,
     developer_mode: boolean,
     game_path: string,
     install_type: InstallType,
@@ -32,7 +31,6 @@ export interface FlightCoreStore {
 export const store = createStore<FlightCoreStore>({
     state (): FlightCoreStore {
         return {
-            current_tab: Tabs.PLAY,
             developer_mode: false,
             game_path: undefined as unknown as string,
             install_type: undefined as unknown as InstallType,
@@ -65,7 +63,6 @@ export const store = createStore<FlightCoreStore>({
             _initializeListeners(state);
         },
         updateCurrentTab(state: any, newTab: Tabs) {
-            state.current_tab = newTab;
             router.push({path: newTab});
         },
         async launchGame(state: any) {
