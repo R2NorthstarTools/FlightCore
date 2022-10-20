@@ -5,8 +5,13 @@ import { InstallType } from "../utils/InstallType";
 import { invoke } from "@tauri-apps/api";
 import { GameInstall } from "../utils/GameInstall";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
-import { ElNotification } from 'element-plus';
+import { ElNotification, NotificationHandle } from 'element-plus';
 import { NorthstarState } from '../utils/NorthstarState';
+import { appDir } from '@tauri-apps/api/path';
+import { open } from '@tauri-apps/api/dialog';
+import { Store } from 'tauri-plugin-store-api';
+
+const persistentStore = new Store('flight-core-settings.json');
 
 
 export interface FlightCoreStore {
@@ -19,11 +24,13 @@ export interface FlightCoreStore {
 
     installed_northstar_version: string,
     northstar_state: NorthstarState,
-    release_canal: ReleaseCanal,
+    northstar_release_canal: ReleaseCanal,
 
     northstar_is_running: boolean,
     origin_is_running: boolean
 }
+
+let notification_handle: NotificationHandle;
 
 export const store = createStore<FlightCoreStore>({
     state (): FlightCoreStore {
@@ -37,7 +44,7 @@ export const store = createStore<FlightCoreStore>({
 
             installed_northstar_version: "",
             northstar_state: NorthstarState.GAME_NOT_FOUND,
-            release_canal: ReleaseCanal.RELEASE,
+            northstar_release_canal: ReleaseCanal.RELEASE,
 
             northstar_is_running: false,
             origin_is_running: false
@@ -63,12 +70,54 @@ export const store = createStore<FlightCoreStore>({
         updateCurrentTab(state: any, newTab: Tabs) {
             state.current_tab = newTab;
         },
+        async updateGamePath(state: FlightCoreStore) {
+            // Open a selection dialog for directories
+            const selected = await open({
+                directory: true,
+                multiple: false,
+                defaultPath: await appDir(),
+            });
+            if (Array.isArray(selected)) {
+                // user selected multiple directories
+                alert("Please only select a single directory");
+            } else if (selected === null) {
+                // user cancelled the selection
+            } else {
+                // user selected a single directory
+
+                // Verify if valid Titanfall2 install location
+                let is_valid_titanfall2_install = await invoke("verify_install_location", { gamePath: selected }) as boolean;
+                if (is_valid_titanfall2_install) {
+                    state.game_path = selected;
+                    ElNotification({
+                        title: 'New game folder',
+                        message: "Game folder was successfully updated.",
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+                    notification_handle.close();
+                    state.install_type = InstallType.UNKNOWN;
+
+                    // Check for Northstar install
+                    store.commit('checkNorthstarUpdates');
+                }
+                else {
+                    // Not valid Titanfall2 install
+                    ElNotification({
+                        title: 'Wrong folder',
+                        message: "Selected folder is not a valid Titanfall2 install.",
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                }
+            }
+        },
         async launchGame(state: any) {
             // TODO update installation if release track was switched
             switch (state.northstar_state) {
                 // Install northstar if it wasn't detected.
                 case NorthstarState.INSTALL:
-                    let install_northstar_result = invoke("install_northstar_caller", { gamePath: state.game_path, northstarPackageName: state.release_canal });
+                    let install_northstar_result = invoke("install_northstar_caller", { gamePath: state.game_path, northstarPackageName: state.northstar_release_canal });
                     state.northstar_state = NorthstarState.INSTALLING;
 
                     await install_northstar_result.then((message) => {
@@ -85,7 +134,7 @@ export const store = createStore<FlightCoreStore>({
                 // Update northstar if it is outdated.
                 case NorthstarState.MUST_UPDATE:
                     // Updating is the same as installing, simply overwrites the existing files
-                    let reinstall_northstar_result = invoke("install_northstar_caller", { gamePath: state.game_path, northstarPackageName: state.release_canal });
+                    let reinstall_northstar_result = invoke("install_northstar_caller", { gamePath: state.game_path, northstarPackageName: state.northstar_release_canal });
                     state.northstar_state = NorthstarState.UPDATING;
 
                     await reinstall_northstar_result.then((message) => {
@@ -128,6 +177,10 @@ export const store = createStore<FlightCoreStore>({
                             alert(error);
                         });
                     break;
+
+                case NorthstarState.GAME_NOT_FOUND:
+                    store.commit('updateGamePath');
+                    break;
             }
         }
     }
@@ -143,6 +196,16 @@ async function _initializeApp(state: any) {
         state.developer_mode = true;
     }
 
+    // Grab Northstar release canal value from store if exists
+    var persistent_northstar_release_canal = (await persistentStore.get('northstar-release-canal')) as any;
+    if(persistent_northstar_release_canal) { // For some reason, the plugin-store doesn't throw an eror but simply returns `null` when key not found
+        // Put value from peristent store into current store
+        state.northstar_release_canal = persistent_northstar_release_canal.value as string;
+    }
+    else {
+        console.log("Value not found in store");
+    }
+
     // Get FlightCore version number
     state.flightcore_version = await invoke("get_version_number");
 
@@ -150,7 +213,7 @@ async function _initializeApp(state: any) {
         .catch((err) => {
             // Gamepath not found or other error
             console.error(err);
-            ElNotification({
+            notification_handle = ElNotification({
                 title: 'Titanfall2 not found!',
                 message: "Please manually select install location",
                 type: 'error',
@@ -205,7 +268,7 @@ async function _get_northstar_version_number(state: any) {
         state.installed_northstar_version = northstar_version_number;
         state.northstar_state = NorthstarState.READY_TO_PLAY;
 
-        await invoke("check_is_northstar_outdated", { gamePath: state.game_path, northstarPackageName: state.release_canal })
+        await invoke("check_is_northstar_outdated", { gamePath: state.game_path, northstarPackageName: state.northstar_release_canal })
             .then((message) => {
                 if (message) {
                     state.northstar_state = NorthstarState.MUST_UPDATE;

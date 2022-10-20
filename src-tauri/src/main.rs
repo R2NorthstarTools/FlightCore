@@ -13,7 +13,7 @@ use app::{
     check_is_flightcore_outdated, check_is_valid_game_path, check_northstar_running,
     check_origin_running, convert_release_candidate_number, find_game_install_location,
     get_enabled_mods, get_host_os, get_installed_mods, get_log_list, get_northstar_version_number,
-    install_northstar, launch_northstar, set_mod_enabled_status, GameInstall, NorthstarMod,
+    install_northstar, launch_northstar, linux_checks_librs, set_mod_enabled_status, GameInstall, NorthstarMod,
 };
 
 mod repair_and_verify;
@@ -88,6 +88,7 @@ fn main() {
             set_mod_enabled_status_caller,
             disable_all_but_core_caller,
             is_debug_mode,
+            linux_checks,
             get_installed_mods_caller
         ])
         .run(tauri::generate_context!())
@@ -116,6 +117,17 @@ fn force_panic() {
 /// Returns true if built in debug mode
 fn is_debug_mode() -> bool {
     return cfg!(debug_assertions);
+}
+
+#[tauri::command]
+/// Returns true if linux compatible
+fn linux_checks() -> Result<(), String> {
+    // Early return if Windows
+    if get_host_os() == "windows" {
+        return Err("Not available on Windows".to_string());
+    }
+
+    linux_checks_librs()
 }
 
 #[tauri::command]
