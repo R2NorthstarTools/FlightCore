@@ -21,11 +21,7 @@
 </template>
 
 <script lang="ts">
-import { open } from '@tauri-apps/api/dialog';
-import { appDir } from '@tauri-apps/api/path';
-import { invoke } from "@tauri-apps/api";
 import { defineComponent } from "vue";
-import { ElNotification } from 'element-plus';
 
 export default defineComponent({
     name: "SettingsView",
@@ -36,37 +32,7 @@ export default defineComponent({
     },
     methods: {
         async updateGamePath() {
-            // Open a selection dialog for directories
-            const selected = await open({
-                directory: true,
-                multiple: false,
-                defaultPath: await appDir(),
-            });
-            if (Array.isArray(selected)) {
-                // user selected multiple directories
-                alert("Please only select a single directory");
-            } else if (selected === null) {
-                // user cancelled the selection
-            } else {
-                // user selected a single directory
-
-                // Verify if valid Titanfall2 install location
-                let is_valid_titanfall2_install = await invoke("verify_install_location", { gamePath: selected }) as boolean;
-                if (is_valid_titanfall2_install) {
-                    this.$store.state.game_path = selected;
-                    // Check for Northstar install
-                    this.$store.commit('checkNorthstarUpdates');
-                }
-                else {
-                    // Not valid Titanfall2 install
-                    ElNotification({
-                        title: 'Wrong folder',
-                        message: "Selected folder is not a valid Titanfall2 install.",
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
-                }
-            }
+            this.$store.commit('updateGamePath');
         }
     },
     mounted() {
