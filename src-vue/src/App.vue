@@ -19,13 +19,6 @@ export default {
   },
   mounted: () => {
     store.commit('initialize');
-
-    // Enable dragging entire app by dragging menu bar.
-    // https://github.com/tauri-apps/tauri/issues/1656#issuecomment-1161495124
-    document.querySelector("#fc__menu_bar")!.addEventListener("mousedown", async e => {
-        if ((e.target as Element).closest(".el-menu-item")) return; // Disable drag when clicking menu items.
-        await tauriWindow.appWindow.startDragging();
-    });
   },
   methods: {
     minimize() {
@@ -46,6 +39,7 @@ export default {
         router
         mode="horizontal"
         id="fc__menu_bar"
+        data-tauri-drag-region
     >
         <el-menu-item index="/">Play</el-menu-item>
         <el-menu-item index="/changelog">Changelog</el-menu-item>
@@ -82,7 +76,7 @@ export default {
   background-color: transparent;
 }
 
-#fc__menu_bar .el-menu-item.is-active, #fc__menu_bar .el-menu-item:focus{
+#fc__menu_bar .el-menu-item.is-active, #fc__menu_bar .el-menu-item:focus {
   color: white !important;
   background-color: transparent;
 }
