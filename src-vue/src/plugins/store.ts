@@ -33,7 +33,7 @@ export interface FlightCoreStore {
 let notification_handle: NotificationHandle;
 
 export const store = createStore<FlightCoreStore>({
-    state (): FlightCoreStore {
+    state(): FlightCoreStore {
         return {
             developer_mode: false,
             game_path: undefined as unknown as string,
@@ -197,7 +197,7 @@ async function _initializeApp(state: any) {
 
     // Grab Northstar release canal value from store if exists
     var persistent_northstar_release_canal = (await persistentStore.get('northstar-release-canal')) as any;
-    if(persistent_northstar_release_canal) { // For some reason, the plugin-store doesn't throw an eror but simply returns `null` when key not found
+    if (persistent_northstar_release_canal) { // For some reason, the plugin-store doesn't throw an eror but simply returns `null` when key not found
         // Put value from peristent store into current store
         state.northstar_release_canal = persistent_northstar_release_canal.value as string;
     }
@@ -206,7 +206,7 @@ async function _initializeApp(state: any) {
     }
 
     // Get FlightCore version number
-    state.flightcore_version = await invoke("get_version_number");
+    state.flightcore_version = await invoke("get_flightcore_version_number");
 
     const result = await invoke("find_game_install_location_caller")
         .catch((err) => {

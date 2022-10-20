@@ -1,6 +1,6 @@
 <script lang="ts">
 import { ElNotification } from 'element-plus';
-import {Tabs} from "../utils/Tabs";
+import { Tabs } from "../utils/Tabs";
 import PlayButton from '../components/PlayButton.vue';
 import { defineComponent } from "vue";
 
@@ -55,10 +55,10 @@ export default defineComponent({
             </div>
         </div>
         <div>
-            <PlayButton/>
+            <PlayButton />
             <div v-if="$store.state.developer_mode" id="fc_services__status">
                 <div>
-                    <div class="fc_version__line">Northstar is running:    </div>
+                    <div class="fc_version__line">Northstar is running: </div>
                     <div class="fc_version__line fc_version__line__boolean"> {{ northstarIsRunning }}</div>
                 </div>
                 <div>

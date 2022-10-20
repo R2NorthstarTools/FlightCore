@@ -237,7 +237,7 @@ async fn do_install(nmod: &thermite::model::Mod, game_path: &std::path::Path) ->
 pub async fn install_northstar(
     game_path: &str,
     northstar_package_name: Option<String>,
-) -> Result<String> {
+) -> Result<String, String> {
     let northstar_package_name = match northstar_package_name {
         Some(northstar_package_name) => {
             if northstar_package_name.len() <= 1 {
