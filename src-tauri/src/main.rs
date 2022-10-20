@@ -89,7 +89,7 @@ fn main() {
             disable_all_but_core_caller,
             is_debug_mode,
             linux_checks,
-            get_installed_mods_caller
+            get_installed_mods_caller,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
