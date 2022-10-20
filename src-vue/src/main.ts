@@ -35,7 +35,7 @@ const routes = [
     { path: '/settings', name: 'Settings', component: async () => SettingsView},
     { path: '/dev', name: 'Dev', component: async () => DeveloperView}
 ];
-const router = createRouter({
+export const router = createRouter({
     history: createWebHashHistory(),
     routes, // short for `routes: routes`
 });

@@ -8,6 +8,7 @@ import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { ElNotification } from 'element-plus';
 import { NorthstarState } from '../utils/NorthstarState';
 import { Store } from 'tauri-plugin-store-api';
+import {router} from "../main";
 
 const persistentStore = new Store('flight-core-settings.json');
 
@@ -65,6 +66,7 @@ export const store = createStore<FlightCoreStore>({
         },
         updateCurrentTab(state: any, newTab: Tabs) {
             state.current_tab = newTab;
+            router.push({path: newTab});
         },
         async launchGame(state: any) {
             // TODO update installation if release track was switched
