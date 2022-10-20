@@ -46,7 +46,6 @@ export default {
         router
         mode="horizontal"
         id="fc__menu_bar"
-        class="el-menu-demo el-tabs__nav-scroll"
     >
         <el-menu-item active index="/">Play</el-menu-item>
         <el-menu-item index="/changelog">Changelog</el-menu-item>
