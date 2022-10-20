@@ -47,6 +47,7 @@ export default defineComponent({
     padding: 20px 30px;
     margin: 0 auto;
     color: white;
+    position: relative;
 }
 
 h3:first-of-type {

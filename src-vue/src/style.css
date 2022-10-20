@@ -10,7 +10,7 @@ html, body {
 body {
   margin: 0;
   font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
-  --el-tabs-header-height: 60px;
+  --fc-menu_height: 50px;
   user-select: none;
 }
 

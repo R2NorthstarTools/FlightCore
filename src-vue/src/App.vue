@@ -21,13 +21,6 @@ export default {
   },
   mounted: () => {
     store.commit('initialize');
-
-    // Enable dragging entire app by dragging menu bar.
-    // https://github.com/tauri-apps/tauri/issues/1656#issuecomment-1161495124
-    document.querySelector(".el-tabs__header")!.addEventListener("mousedown", async e => {
-        if ((e.target as Element).closest(".el-tabs__item")) return; // Disable drag when clicking menu items.
-        await tauriWindow.appWindow.startDragging();
-    });
   },
   methods: {
     minimize() {
@@ -43,15 +36,23 @@ export default {
 <template>
   <div class="app-inner">
     <div id="fc_bg__container" />
-    <el-tabs v-model="$store.state.current_tab" class="fc_menu__tabs" type="card">
-        <el-tab-pane name="Play" label="Play"><PlayView /></el-tab-pane>
-        <el-tab-pane name="Changelog" label="Changelog"><ChangelogView /></el-tab-pane>
-        <el-tab-pane name="Mods" label="Mods"><ModsView /></el-tab-pane>
-        <el-tab-pane name="Settings" label="Settings"><SettingsView/></el-tab-pane>
-        <el-tab-pane v-if="$store.state.developer_mode" name="Dev" label="Dev">
-          <DeveloperView/>
-        </el-tab-pane>
-    </el-tabs>
+
+    <el-menu
+        default-active="/"
+        router
+        mode="horizontal"
+        id="fc__menu_bar"
+        data-tauri-drag-region
+    >
+        <el-menu-item index="/">Play</el-menu-item>
+        <el-menu-item index="/changelog">Changelog</el-menu-item>
+        <el-menu-item index="/mods">Mods</el-menu-item>
+        <el-menu-item index="/settings">Settings</el-menu-item>
+        <el-menu-item index="/dev" v-if="$store.state.developer_mode">Dev</el-menu-item>
+    </el-menu>
+
+    <router-view></router-view>
+
     <div id="fc_window__controls">
         <el-button color="white" icon="SemiSelect" @click="minimize" circle />
         <el-button color="white" icon="CloseBold" @click="close" circle />
@@ -60,6 +61,10 @@ export default {
 </template>
 
 <style>
+/* Borders reset */
+#fc__menu_bar {
+    border: none !important;
+}
 .app-inner {
   height: 100%;
   width: 100%;
@@ -90,27 +95,39 @@ export default {
   border: none !important;
 }
 
-.app-inner > .fc_menu__tabs > .el-tabs__header .el-tabs__item {
+/* Header item */
+#fc__menu_bar .el-menu-item {
   color: #b4b6b9;
   text-transform: uppercase;
-  border: none;
+  border: none !important;
   font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
   font-weight: bold;
   font-size: large;
 }
 
-.app-inner > .fc_menu__tabs > .el-tabs__header .el-tabs__item:hover {
+#fc__menu_bar .el-menu-item:hover {
   color: #c6c9ce;
+  background-color: transparent;
 }
 
-.app-inner > .fc_menu__tabs > .el-tabs__header .is-active {
+#fc__menu_bar .el-menu-item.is-active, #fc__menu_bar .el-menu-item:focus {
   color: white !important;
+  background-color: transparent;
 }
 
-.app-inner > .fc_menu__tabs > .el-tabs__content {
+.app-inner > .fc__mods__container {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  height:80%;
+}
+
+/* Header menu */
+#fc__menu_bar {
+  background-image: radial-gradient(transparent 1px);
+  backdrop-filter: saturate(50%) blur(4px);
+  background-color: transparent;
+  height: var(--fc-menu_height);
 }
 
 #fc_bg__container {
@@ -128,7 +145,7 @@ export default {
   position: absolute;
   top: 0;
   right: 15px;
-  height: var(--el-tabs-header-height);
+  height: var(--fc-menu_height);
 }
 
 #fc_window__controls > button {

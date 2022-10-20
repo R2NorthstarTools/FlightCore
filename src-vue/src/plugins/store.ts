@@ -10,12 +10,12 @@ import { NorthstarState } from '../utils/NorthstarState';
 import { appDir } from '@tauri-apps/api/path';
 import { open } from '@tauri-apps/api/dialog';
 import { Store } from 'tauri-plugin-store-api';
+import {router} from "../main";
 
 const persistentStore = new Store('flight-core-settings.json');
 
 
 export interface FlightCoreStore {
-    current_tab: Tabs,
     developer_mode: boolean,
     game_path: string,
     install_type: InstallType,
@@ -35,7 +35,6 @@ let notification_handle: NotificationHandle;
 export const store = createStore<FlightCoreStore>({
     state (): FlightCoreStore {
         return {
-            current_tab: Tabs.PLAY,
             developer_mode: false,
             game_path: undefined as unknown as string,
             install_type: undefined as unknown as InstallType,
@@ -68,7 +67,7 @@ export const store = createStore<FlightCoreStore>({
             _initializeListeners(state);
         },
         updateCurrentTab(state: any, newTab: Tabs) {
-            state.current_tab = newTab;
+            router.push({path: newTab});
         },
         async updateGamePath(state: FlightCoreStore) {
             // Open a selection dialog for directories
