@@ -497,7 +497,6 @@ pub fn get_installed_mods(game_install: GameInstall) -> Result<Vec<NorthstarMod>
     let mut installed_mods = Vec::new();
 
     for (key, value) in res.as_object().unwrap() {
-        println!("{:?} ===> {:?}", key, value);
 
         let current_mod: NorthstarMod = NorthstarMod {
             name: key.to_string(),
