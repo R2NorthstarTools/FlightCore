@@ -22,6 +22,10 @@
             Disable all but core mods
         </el-button>
 
+        <el-button type="primary" @click="getInstalledMods">
+            Get installed mods
+        </el-button>
+
     </div>
 </template>
 
@@ -100,6 +104,33 @@ export default defineComponent({
                 ElNotification({
                     title: 'Success',
                     message: "Disabled all mods but core",
+                    type: 'success',
+                    position: 'bottom-right'
+                });
+            })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                });
+        },
+        async getInstalledMods() {
+            let game_install = {
+                game_path: this.$store.state.game_path,
+                install_type: this.$store.state.install_type
+            } as GameInstall;
+            await invoke("get_installed_mods_caller", { gameInstall: game_install }).then((message) => {
+                // Simply console logging for now
+                // In the future we should display the installed mods somewhere
+                console.log(message);
+
+                // Just a visual indicator that it worked
+                ElNotification({
+                    title: 'Success',
+                    message: "Success",
                     type: 'success',
                     position: 'bottom-right'
                 });

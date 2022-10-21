@@ -2,6 +2,7 @@
 import ChangelogView from './views/ChangelogView.vue';
 import DeveloperView from './views/DeveloperView.vue';
 import PlayView from './views/PlayView.vue';
+import ModsView from './views/ModsView.vue';
 import SettingsView from './views/SettingsView.vue';
 import { appWindow } from '@tauri-apps/api/window';
 import { store } from './plugins/store';
@@ -12,7 +13,8 @@ export default {
       ChangelogView,
       DeveloperView,
       PlayView,
-      SettingsView
+      SettingsView,
+      ModsView
   },
   data() {
     return {}
@@ -43,6 +45,7 @@ export default {
     >
         <el-menu-item index="/">Play</el-menu-item>
         <el-menu-item index="/changelog">Changelog</el-menu-item>
+        <el-menu-item index="/mods">Mods</el-menu-item>
         <el-menu-item index="/settings">Settings</el-menu-item>
         <el-menu-item index="/dev" v-if="$store.state.developer_mode">Dev</el-menu-item>
     </el-menu>

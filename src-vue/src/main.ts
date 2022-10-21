@@ -5,6 +5,7 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import { store } from './plugins/store';
 import PlayView from "./views/PlayView.vue";
 import ChangelogView from "./views/ChangelogView.vue";
+import ModsView from "./views/ModsView.vue";
 import SettingsView from "./views/SettingsView.vue";
 import DeveloperView from "./views/DeveloperView.vue";
 import {createRouter, createWebHashHistory} from "vue-router";
@@ -32,6 +33,7 @@ app.use( store, '$store' );
 const routes = [
     { path: '/', name: 'Main', component: async () => PlayView},
     { path: '/changelog', name: 'Changelog', component: async () => ChangelogView},
+    { path: '/mods', name: 'Mods', component: async () => ModsView},
     { path: '/settings', name: 'Settings', component: async () => SettingsView},
     { path: '/dev', name: 'Dev', component: async () => DeveloperView}
 ];

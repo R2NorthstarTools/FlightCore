@@ -26,6 +26,12 @@ pub struct GameInstall {
     pub install_type: InstallType,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct NorthstarMod {
+    pub name: String,
+    pub enabled: bool,
+}
+
 /// Check version number of a mod
 pub fn check_mod_version_number(path_to_mod_folder: String) -> Result<String, anyhow::Error> {
     // println!("{}", format!("{}/mod.json", path_to_mod_folder));
@@ -470,4 +476,37 @@ pub fn set_mod_enabled_status(
     .unwrap();
 
     Ok(())
+}
+
+/// Gets list of installed mods and their properties
+/// - name
+/// - is enabled?
+pub fn get_installed_mods(game_install: GameInstall) -> Result<Vec<NorthstarMod>, String> {
+    let enabled_mods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
+    // Open file
+    let data = match std::fs::read_to_string(enabled_mods_json_path) {
+        Ok(data) => data,
+        Err(err) => return Err(err.to_string()),
+    };
+    // Check if valid JSON and parse
+    let res: serde_json::Value = match serde_json::from_str(&data) {
+        Ok(res) => res,
+        Err(err) => return Err(err.to_string()),
+    };
+
+    let mut installed_mods = Vec::new();
+
+    for (key, value) in res.as_object().unwrap() {
+
+        let current_mod: NorthstarMod = NorthstarMod {
+            name: key.to_string(),
+            enabled: value.as_bool().unwrap(),
+        };
+        installed_mods.push(current_mod);
+    }
+
+    dbg!(&res);
+    dbg!(installed_mods.clone());
+
+    Ok(installed_mods)
 }
