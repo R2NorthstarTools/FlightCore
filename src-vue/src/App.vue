@@ -34,6 +34,7 @@ export default {
 </script>
 
 <template>
+  <div class="app-inner">
     <div id="fc_bg__container" />
 
     <el-menu
@@ -56,12 +57,17 @@ export default {
         <el-button color="white" icon="SemiSelect" @click="minimize" circle />
         <el-button color="white" icon="CloseBold" @click="close" circle />
     </div>
+  </div>
 </template>
 
 <style>
 /* Borders reset */
 #fc__menu_bar {
     border: none !important;
+}
+.app-inner {
+  height: 100%;
+  width: 100%;
 }
 
 /* Header item */
@@ -82,6 +88,11 @@ export default {
 #fc__menu_bar .el-menu-item.is-active, #fc__menu_bar .el-menu-item:focus {
   color: white !important;
   background-color: transparent;
+}
+
+.app-inner > .fc__mods__container {
+  overflow-y: auto;
+  height: calc(100% - var(--fc-menu_height));
 }
 
 /* Header menu */
