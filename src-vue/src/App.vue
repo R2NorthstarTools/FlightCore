@@ -10,12 +10,12 @@ import { window as tauriWindow } from "@tauri-apps/api";
 
 export default {
   components: {
-    ChangelogView,
-    DeveloperView,
-    PlayView,
-    SettingsView,
-    ModsView
-},
+      ChangelogView,
+      DeveloperView,
+      PlayView,
+      SettingsView,
+      ModsView
+  },
   data() {
     return {}
   },
