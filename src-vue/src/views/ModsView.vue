@@ -61,7 +61,9 @@ export default defineComponent({
                 await invoke("set_mod_enabled_status_caller", {
                     gameInstall: game_install,
                     modName: mod.name,
-                    isEnabled: !mod.enabled, // TODO this might set it to the old state
+                    // Need to set it to the opposite of current state,
+                    // as current state is only updated after command is run
+                    isEnabled: !mod.enabled,
                 })
             }
             catch (error) {
