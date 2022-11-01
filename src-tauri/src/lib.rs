@@ -482,17 +482,8 @@ pub fn set_mod_enabled_status(
 /// - name
 /// - is enabled?
 pub fn get_installed_mods(game_install: GameInstall) -> Result<Vec<NorthstarMod>, String> {
-    let enabled_mods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
-    // Open file
-    let data = match std::fs::read_to_string(enabled_mods_json_path) {
-        Ok(data) => data,
-        Err(err) => return Err(err.to_string()),
-    };
-    // Check if valid JSON and parse
-    let res: serde_json::Value = match serde_json::from_str(&data) {
-        Ok(res) => res,
-        Err(err) => return Err(err.to_string()),
-    };
+    // Get enabled mods as JSON
+    let res: serde_json::Value = get_enabled_mods(game_install)?;
 
     let mut installed_mods = Vec::new();
 
