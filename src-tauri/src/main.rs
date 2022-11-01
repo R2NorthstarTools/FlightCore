@@ -11,9 +11,10 @@ use std::{
 
 use app::{
     check_is_flightcore_outdated, check_is_valid_game_path, check_northstar_running,
-    check_origin_running, convert_release_candidate_number, find_game_install_location,
-    get_enabled_mods, get_host_os, get_installed_mods, get_log_list, get_northstar_version_number,
-    install_northstar, launch_northstar, linux_checks_librs, set_mod_enabled_status, GameInstall, NorthstarMod,
+    check_origin_running, convert_release_candidate_number, fc_install_mod,
+    find_game_install_location, get_enabled_mods, get_host_os, get_installed_mods, get_log_list,
+    get_northstar_version_number, install_northstar, launch_northstar, linux_checks_librs,
+    set_mod_enabled_status, GameInstall, NorthstarMod,
 };
 
 mod repair_and_verify;
@@ -90,6 +91,7 @@ fn main() {
             is_debug_mode,
             linux_checks,
             get_installed_mods_caller,
+            install_mod_caller,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -302,4 +304,13 @@ fn disable_all_but_core_caller(game_install: GameInstall) -> Result<(), String> 
 #[tauri::command]
 async fn get_installed_mods_caller(game_install: GameInstall) -> Result<Vec<NorthstarMod>, String> {
     get_installed_mods(game_install)
+}
+
+#[tauri::command]
+/// Installs the specified mod
+async fn install_mod_caller(
+    game_install: GameInstall,
+    thunderstore_mod_string: String,
+) -> Result<(), String> {
+    fc_install_mod(game_install, thunderstore_mod_string).await
 }

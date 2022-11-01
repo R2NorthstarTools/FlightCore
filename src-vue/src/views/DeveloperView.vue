@@ -16,6 +16,15 @@
             Toggle Release Candidate
         </el-button>
 
+
+        <h3>Mod install:</h3>
+
+        <el-input v-model="mod_to_install_field_string" placeholder="Please input Thunderstore dependency string" clearable />
+
+        <el-button type="primary" @click="installMod">
+            Install mod
+        </el-button>
+
         <h3>Repair:</h3>
 
         <el-button type="primary" @click="disableAllModsButCore">
@@ -40,6 +49,11 @@ const persistentStore = new Store('flight-core-settings.json');
 
 export default defineComponent({
     name: "DeveloperView",
+    data() {
+        return {
+            mod_to_install_field_string : "",
+        }
+    },
     methods: {
         disableDevMode() {
             this.$store.commit('toggleDeveloperMode');
@@ -131,6 +145,34 @@ export default defineComponent({
                 ElNotification({
                     title: 'Success',
                     message: "Success",
+                    type: 'success',
+                    position: 'bottom-right'
+                });
+            })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                });
+        },
+        async installMod() {
+            let game_install = {
+                game_path: this.$store.state.game_path,
+                install_type: this.$store.state.install_type
+            } as GameInstall;
+            let mod_to_install = this.mod_to_install_field_string;
+            await invoke("install_mod_caller", { gameInstall: game_install, thunderstoreModString: mod_to_install }).then((message) => {
+                // Simply console logging for now
+                // In the future we should display the installed mods somewhere
+                console.log(message);
+
+                // Just a visual indicator that it worked
+                ElNotification({
+                    title: 'Success',
+                    message: `Installed ${mod_to_install}`,
                     type: 'success',
                     position: 'bottom-right'
                 });
