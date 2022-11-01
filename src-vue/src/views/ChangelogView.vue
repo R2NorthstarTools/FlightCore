@@ -17,7 +17,6 @@
 </template>
 
 <script lang="ts">
-import { invoke } from '@tauri-apps/api/tauri';
 import { defineComponent } from 'vue';
 import ReleaseInfo from '../utils/ReleaseInfo';
 import { marked } from "marked";
@@ -25,14 +24,13 @@ import { marked } from "marked";
 
 export default defineComponent({
     name: "ChangelogView",
-    data() {
-        return {
-            releases: [] as ReleaseInfo[]
-        }
-    },
     async mounted() {
-        this.releases = await invoke("get_northstar_release_notes");
-        console.log(this.releases);
+        this.$store.commit('fetchReleaseNotes');
+    },
+    computed: {
+        releases(): ReleaseInfo[] {
+            return this.$store.state.releaseNotes;
+        }
     },
     methods: {
         // Transforms a Markdown document into an HTML document.
