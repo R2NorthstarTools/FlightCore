@@ -12,8 +12,8 @@ use std::{
 use app::{
     check_is_flightcore_outdated, check_is_valid_game_path, check_northstar_running,
     check_origin_running, convert_release_candidate_number, find_game_install_location,
-    get_enabled_mods, get_host_os, get_log_list, get_northstar_version_number, install_northstar,
-    launch_northstar, set_mod_enabled_status, GameInstall,
+    get_enabled_mods, get_host_os, get_installed_mods, get_log_list, get_northstar_version_number,
+    install_northstar, launch_northstar, linux_checks_librs, set_mod_enabled_status, GameInstall, NorthstarMod,
 };
 
 mod github;
@@ -76,7 +76,7 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             force_panic,
             find_game_install_location_caller,
-            get_version_number,
+            get_flightcore_version_number,
             get_northstar_version_number_caller,
             check_is_northstar_outdated,
             verify_install_location,
@@ -91,7 +91,9 @@ fn main() {
             set_mod_enabled_status_caller,
             disable_all_but_core_caller,
             is_debug_mode,
-            get_northstar_release_notes
+            get_northstar_release_notes,
+            linux_checks,
+            get_installed_mods_caller,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -122,8 +124,19 @@ fn is_debug_mode() -> bool {
 }
 
 #[tauri::command]
+/// Returns true if linux compatible
+fn linux_checks() -> Result<(), String> {
+    // Early return if Windows
+    if get_host_os() == "windows" {
+        return Err("Not available on Windows".to_string());
+    }
+
+    linux_checks_librs()
+}
+
+#[tauri::command]
 /// Returns the current version number as a string
-fn get_version_number() -> String {
+fn get_flightcore_version_number() -> String {
     let version = env!("CARGO_PKG_VERSION");
     if cfg!(debug_assertions) {
         // Debugging enabled
@@ -288,4 +301,9 @@ fn set_mod_enabled_status_caller(
 #[tauri::command]
 fn disable_all_but_core_caller(game_install: GameInstall) -> Result<(), String> {
     disable_all_but_core(game_install)
+}
+
+#[tauri::command]
+async fn get_installed_mods_caller(game_install: GameInstall) -> Result<Vec<NorthstarMod>, String> {
+    get_installed_mods(game_install)
 }

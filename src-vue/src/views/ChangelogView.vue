@@ -57,6 +57,6 @@ export default defineComponent({
 }
 
 .el-link {
-  color: white;
+    color: white;
 }
 </style>

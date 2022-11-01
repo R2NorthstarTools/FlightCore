@@ -2,6 +2,7 @@
 import ChangelogView from './views/ChangelogView.vue';
 import DeveloperView from './views/DeveloperView.vue';
 import PlayView from './views/PlayView.vue';
+import ModsView from './views/ModsView.vue';
 import SettingsView from './views/SettingsView.vue';
 import { appWindow } from '@tauri-apps/api/window';
 import { store } from './plugins/store';
@@ -12,20 +13,14 @@ export default {
       ChangelogView,
       DeveloperView,
       PlayView,
-      SettingsView
+      SettingsView,
+      ModsView
   },
   data() {
     return {}
   },
   mounted: () => {
     store.commit('initialize');
-
-    // Enable dragging entire app by dragging menu bar.
-    // https://github.com/tauri-apps/tauri/issues/1656#issuecomment-1161495124
-    document.querySelector(".el-tabs__nav-scroll")!.addEventListener("mousedown", async e => {
-        if ((e.target as Element).closest(".el-tabs__item")) return; // Disable drag when clicking menu items.
-        await tauriWindow.appWindow.startDragging();
-    });
   },
   methods: {
     minimize() {
@@ -39,52 +34,73 @@ export default {
 </script>
 
 <template>
+  <div class="app-inner">
     <div id="fc_bg__container" />
-    <el-tabs v-model="$store.state.current_tab" class="fc_menu__tabs" type="card">
-        <el-tab-pane name="Play" label="Play"><PlayView /></el-tab-pane>
-        <el-tab-pane name="Changelog" label="Changelog"><ChangelogView /></el-tab-pane>
-        <!-- <el-tab-pane label="Mods">Mods</el-tab-pane> -->
-        <el-tab-pane name="Settings" label="Settings"><SettingsView/></el-tab-pane>
-        <el-tab-pane v-if="$store.state.developer_mode" name="Dev" label="Dev">
-          <DeveloperView/>
-        </el-tab-pane>
-    </el-tabs>
+
+    <el-menu
+        default-active="/"
+        router
+        mode="horizontal"
+        id="fc__menu_bar"
+        data-tauri-drag-region
+    >
+        <el-menu-item index="/">Play</el-menu-item>
+        <el-menu-item index="/changelog">Changelog</el-menu-item>
+        <el-menu-item index="/mods">Mods</el-menu-item>
+        <el-menu-item index="/settings">Settings</el-menu-item>
+        <el-menu-item index="/dev" v-if="$store.state.developer_mode">Dev</el-menu-item>
+    </el-menu>
+
+    <router-view></router-view>
+
     <div id="fc_window__controls">
         <el-button color="white" icon="SemiSelect" @click="minimize" circle />
         <el-button color="white" icon="CloseBold" @click="close" circle />
     </div>
+  </div>
 </template>
 
 <style>
 /* Borders reset */
-.fc_menu__tabs .el-tabs__nav, .fc_menu__tabs .el-tabs__header {
-  border: none !important;
+#fc__menu_bar {
+    border: none !important;
+}
+.app-inner {
+  height: 100%;
+  width: 100%;
 }
 
 /* Header item */
-.fc_menu__tabs .el-tabs__item {
+#fc__menu_bar .el-menu-item {
   color: #b4b6b9;
   text-transform: uppercase;
   border: none !important;
   font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
   font-weight: bold;
   font-size: large;
-  margin: 10px 0;
 }
 
-.fc_menu__tabs .el-tabs__item:hover {
+#fc__menu_bar .el-menu-item:hover {
   color: #c6c9ce;
+  background-color: transparent;
 }
 
-.fc_menu__tabs .is-active {
+#fc__menu_bar .el-menu-item.is-active, #fc__menu_bar .el-menu-item:focus {
   color: white !important;
+  background-color: transparent;
+}
+
+.app-inner > .fc__mods__container {
+  overflow-y: auto;
+  height: calc(100% - var(--fc-menu_height));
 }
 
 /* Header menu */
-.fc_menu__tabs .el-tabs__header {
+#fc__menu_bar {
   background-image: radial-gradient(transparent 1px);
   backdrop-filter: saturate(50%) blur(4px);
-  height: auto !important;
+  background-color: transparent;
+  height: var(--fc-menu_height);
 }
 
 /* Window controls */
@@ -93,7 +109,7 @@ export default {
   position: absolute;
   top: 0;
   right: 0;
-  height: var(--el-tabs-header-height);
+  height: var(--fc-menu_height);
 }
 
 #fc_window__controls > button {

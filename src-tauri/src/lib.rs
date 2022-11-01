@@ -6,6 +6,8 @@ mod platform_specific;
 #[cfg(target_os = "windows")]
 use platform_specific::windows;
 
+use platform_specific::linux;
+
 use serde::{Deserialize, Serialize};
 use sysinfo::SystemExt;
 use zip::ZipArchive;
@@ -24,6 +26,12 @@ pub struct GameInstall {
     pub install_type: InstallType,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct NorthstarMod {
+    pub name: String,
+    pub enabled: bool,
+}
+
 /// Check version number of a mod
 pub fn check_mod_version_number(path_to_mod_folder: String) -> Result<String, anyhow::Error> {
     // println!("{}", format!("{}/mod.json", path_to_mod_folder));
@@ -38,6 +46,29 @@ pub fn check_mod_version_number(path_to_mod_folder: String) -> Result<String, an
     println!("{}", mod_version_number);
 
     Ok(mod_version_number.to_string())
+}
+
+// I intend to add more linux related stuff to check here, so making a func
+// for now tho it only checks `ldd --version`
+// - salmon
+
+pub fn linux_checks_librs() -> Result<(), String> {
+    // Perform various checks in terms of Linux compatibility
+    // Return early with error message if a check fails
+
+    // check `ldd --version` to see if glibc is up to date for northstar proton
+    let min_required_ldd_version = 2.33;
+    let lddv = linux::check_glibc_v();
+    if lddv < min_required_ldd_version {
+        return Err(format!(
+            "GLIBC is not version {} or greater",
+            min_required_ldd_version
+        )
+        .to_string());
+    };
+
+    // All checks passed
+    Ok(())
 }
 
 /// Attempts to find the game install location
@@ -206,7 +237,7 @@ async fn do_install(nmod: &thermite::model::Mod, game_path: &std::path::Path) ->
 pub async fn install_northstar(
     game_path: &str,
     northstar_package_name: Option<String>,
-) -> Result<String> {
+) -> Result<String, String> {
     let northstar_package_name = match northstar_package_name {
         Some(northstar_package_name) => {
             if northstar_package_name.len() <= 1 {
@@ -250,7 +281,8 @@ pub fn launch_northstar(game_install: GameInstall) -> Result<String, String> {
     // Explicetly fail early certain (currently) unsupported install setups
     if host_os != "windows"
         || !(matches!(game_install.install_type, InstallType::STEAM)
-            || matches!(game_install.install_type, InstallType::ORIGIN))
+            || matches!(game_install.install_type, InstallType::ORIGIN)
+            || matches!(game_install.install_type, InstallType::UNKNOWN))
     {
         return Err(format!(
             "Not yet implemented for \"{}\" with Titanfall2 installed via \"{:?}\"",
@@ -277,7 +309,8 @@ pub fn launch_northstar(game_install: GameInstall) -> Result<String, String> {
     // Only Windows with Steam or Origin are supported at the moment
     if host_os == "windows"
         && (matches!(game_install.install_type, InstallType::STEAM)
-            || matches!(game_install.install_type, InstallType::ORIGIN))
+            || matches!(game_install.install_type, InstallType::ORIGIN)
+            || matches!(game_install.install_type, InstallType::UNKNOWN))
     {
         let _output =
             std::process::Command::new(format!("{}/NorthstarLauncher.exe", game_install.game_path))
@@ -321,7 +354,7 @@ pub fn convert_release_candidate_number(version_number: String) -> String {
     // This simply converts `-rc` to `0`
     // Works as intended for RCs < 10, e.g.  `v1.9.2-rc1`  -> `v1.9.201`
     // Doesn't work for larger numbers, e.g. `v1.9.2-rc11` -> `v1.9.2011` (should be `v1.9.211`)
-    version_number.replace("-rc", "0")
+    version_number.replace("-rc", "0").replace("00", "")
 }
 
 /// Checks if installed FlightCore version is up-to-date
@@ -443,4 +476,37 @@ pub fn set_mod_enabled_status(
     .unwrap();
 
     Ok(())
+}
+
+/// Gets list of installed mods and their properties
+/// - name
+/// - is enabled?
+pub fn get_installed_mods(game_install: GameInstall) -> Result<Vec<NorthstarMod>, String> {
+    let enabled_mods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
+    // Open file
+    let data = match std::fs::read_to_string(enabled_mods_json_path) {
+        Ok(data) => data,
+        Err(err) => return Err(err.to_string()),
+    };
+    // Check if valid JSON and parse
+    let res: serde_json::Value = match serde_json::from_str(&data) {
+        Ok(res) => res,
+        Err(err) => return Err(err.to_string()),
+    };
+
+    let mut installed_mods = Vec::new();
+
+    for (key, value) in res.as_object().unwrap() {
+
+        let current_mod: NorthstarMod = NorthstarMod {
+            name: key.to_string(),
+            enabled: value.as_bool().unwrap(),
+        };
+        installed_mods.push(current_mod);
+    }
+
+    dbg!(&res);
+    dbg!(installed_mods.clone());
+
+    Ok(installed_mods)
 }

@@ -8,6 +8,10 @@
             Panic button
         </el-button>
 
+        <el-button type="primary" @click="checkLinuxCompatibility">
+            Check NSProton Compatibility
+        </el-button>
+
         <el-button type="primary" @click="toggleReleaseCandidate">
             Toggle Release Candidate
         </el-button>
@@ -18,15 +22,21 @@
             Disable all but core mods
         </el-button>
 
+        <el-button type="primary" @click="getInstalledMods">
+            Get installed mods
+        </el-button>
+
     </div>
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import { invoke } from "@tauri-apps/api";
 import { ElNotification } from "element-plus";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { GameInstall } from "../utils/GameInstall";
+import { Store } from 'tauri-plugin-store-api';
+const persistentStore = new Store('flight-core-settings.json');
 
 export default defineComponent({
     name: "DeveloperView",
@@ -43,11 +53,34 @@ export default defineComponent({
                 position: 'bottom-right'
             });
         },
+        async checkLinuxCompatibility() {
+            await invoke("linux_checks")
+                .then(() => {
+                    ElNotification({
+                        title: 'Linux compatible',
+                        message: 'All checks passed',
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+                })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Not linux compatible',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                    console.error(error);
+                });
+        },
         async toggleReleaseCandidate() {
             // Flip between RELEASE and RELEASE_CANDIDATE
-            this.$store.state.release_canal = this.$store.state.release_canal === ReleaseCanal.RELEASE
+            this.$store.state.northstar_release_canal = this.$store.state.northstar_release_canal === ReleaseCanal.RELEASE
                 ? ReleaseCanal.RELEASE_CANDIDATE
                 : ReleaseCanal.RELEASE;
+
+            // Save change in persistent store
+            await persistentStore.set('northstar-release-canal', { value: this.$store.state.northstar_release_canal });
 
             // Update current state so that update check etc can be performed
             this.$store.commit("checkNorthstarUpdates");
@@ -56,8 +89,8 @@ export default defineComponent({
 
             // Display notification to highlight change
             ElNotification({
-                title: `${this.$store.state.release_canal}`,
-                message: `Switched release channel to: "${this.$store.state.release_canal}"`,
+                title: `${this.$store.state.northstar_release_canal}`,
+                message: `Switched release channel to: "${this.$store.state.northstar_release_canal}"`,
                 type: 'success',
                 position: 'bottom-right'
             });
@@ -83,6 +116,33 @@ export default defineComponent({
                         position: 'bottom-right'
                     });
                 });
+        },
+        async getInstalledMods() {
+            let game_install = {
+                game_path: this.$store.state.game_path,
+                install_type: this.$store.state.install_type
+            } as GameInstall;
+            await invoke("get_installed_mods_caller", { gameInstall: game_install }).then((message) => {
+                // Simply console logging for now
+                // In the future we should display the installed mods somewhere
+                console.log(message);
+
+                // Just a visual indicator that it worked
+                ElNotification({
+                    title: 'Success',
+                    message: "Success",
+                    type: 'success',
+                    position: 'bottom-right'
+                });
+            })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                });
         }
     }
 });
@@ -92,5 +152,6 @@ export default defineComponent({
 .fc__developer__container {
     padding: 20px 30px;
     color: white;
+    position: relative;
 }
 </style>

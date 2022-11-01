@@ -13,7 +13,7 @@ export default defineComponent({
 
             switch(this.$store.state.northstar_state) {
                 case NorthstarState.GAME_NOT_FOUND:
-                    return "Titanfall2 not found";
+                    return "Select Titanfall2 game folder";
                 case NorthstarState.INSTALL:
                     return "Install";
                 case NorthstarState.INSTALLING:
