@@ -20,7 +20,7 @@
 import { invoke } from '@tauri-apps/api/tauri';
 import { defineComponent } from 'vue';
 import ReleaseInfo from '../utils/ReleaseInfo';
-import { parse } from "marked";
+import { marked } from "marked";
 
 
 export default defineComponent({
@@ -45,7 +45,7 @@ export default defineComponent({
             // PR's links formatting
             content = content.replaceAll(/\[(\S+)\]\(([^)]+)\)/g, `<a target="_blank" href="$2">$1</a>`);
 
-            return parse(content, {breaks: true});
+            return marked.parse(content, {breaks: true});
         }
     }
 });
