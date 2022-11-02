@@ -11,7 +11,7 @@ use std::{
 
 use app::{
     check_is_flightcore_outdated, check_is_valid_game_path, check_northstar_running,
-    check_origin_running, convert_release_candidate_number, fc_install_mod,
+    check_origin_running, convert_release_candidate_number, fc_download_mod_and_install,
     find_game_install_location, get_enabled_mods, get_host_os, get_installed_mods, get_log_list,
     get_northstar_version_number, install_northstar, launch_northstar, linux_checks_librs,
     set_mod_enabled_status, GameInstall, NorthstarMod,
@@ -312,5 +312,5 @@ async fn install_mod_caller(
     game_install: GameInstall,
     thunderstore_mod_string: String,
 ) -> Result<(), String> {
-    fc_install_mod(game_install, thunderstore_mod_string).await
+    fc_download_mod_and_install(game_install, thunderstore_mod_string).await
 }

@@ -532,7 +532,7 @@ async fn get_ns_mod_download_url(thunderstore_mod_string: String) -> Result<Stri
 // Copied from `libtermite` source code and modified
 // Should be replaced with a library call to libthermite in the future
 /// Download and install mod to the specified target.
-pub async fn fc_install_mod(
+pub async fn fc_download_mod_and_install(
     game_install: GameInstall,
     thunderstore_mod_string: String,
 ) -> Result<(), String> {
