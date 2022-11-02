@@ -98,13 +98,7 @@ fn main() {
 #[tauri::command]
 /// Wrapper for `find_game_install_location` as tauri doesn't allow passing `Result<>` types to front-end
 async fn find_game_install_location_caller() -> Result<GameInstall, String> {
-    match find_game_install_location() {
-        Ok(game_install) => Ok(game_install),
-        Err(err) => {
-            println!("{}", err);
-            Err(err.to_string())
-        }
-    }
+    find_game_install_location()
 }
 
 #[tauri::command]
