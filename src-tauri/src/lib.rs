@@ -72,7 +72,7 @@ pub fn linux_checks_librs() -> Result<(), String> {
 }
 
 /// Attempts to find the game install location
-pub fn find_game_install_location() -> Result<GameInstall, anyhow::Error> {
+pub fn find_game_install_location() -> Result<GameInstall, String> {
     // Attempt parsing Steam library directly
     match steamlocate::SteamDir::locate() {
         Some(mut steamdir) => {
@@ -107,9 +107,7 @@ pub fn find_game_install_location() -> Result<GameInstall, anyhow::Error> {
         }
     };
 
-    Err(anyhow!(
-        "Could not auto-detect game install location! Please enter it manually."
-    ))
+    Err("Could not auto-detect game install location! Please enter it manually.".to_string())
 }
 
 /// Returns the current Northstar version number as a string
