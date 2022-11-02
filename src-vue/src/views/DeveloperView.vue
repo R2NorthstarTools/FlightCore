@@ -165,14 +165,10 @@ export default defineComponent({
             } as GameInstall;
             let mod_to_install = this.mod_to_install_field_string;
             await invoke("install_mod_caller", { gameInstall: game_install, thunderstoreModString: mod_to_install }).then((message) => {
-                // Simply console logging for now
-                // In the future we should display the installed mods somewhere
-                console.log(message);
-
-                // Just a visual indicator that it worked
+                // Show user notificatio if mod install completed.
                 ElNotification({
-                    title: 'Success',
-                    message: `Installed ${mod_to_install}`,
+                    title: `Installed ${mod_to_install}`,
+                    message: message as string,
                     type: 'success',
                     position: 'bottom-right'
                 });
