@@ -360,18 +360,20 @@ pub fn convert_release_candidate_number(version_number: String) -> String {
 /// Checks if installed FlightCore version is up-to-date
 /// false -> FlightCore install is up-to-date
 /// true  -> FlightCore install is outdated
-pub fn check_is_flightcore_outdated() -> Result<bool, String> {
+pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
     // Get newest version number from GitHub API
     println!("Checking GitHub API");
     let url = "https://api.github.com/repos/GeckoEidechse/FlightCore/releases/latest";
     let user_agent = "GeckoEidechse/FlightCore";
-    let client = reqwest::blocking::Client::new();
+    let client = reqwest::Client::new();
     let res = client
         .get(url)
         .header(reqwest::header::USER_AGENT, user_agent)
         .send()
+        .await
         .unwrap()
         .text()
+        .await
         .unwrap();
 
     let json_response: serde_json::Value =
