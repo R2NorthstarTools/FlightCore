@@ -12,7 +12,7 @@ use std::{
 use app::{
     check_is_flightcore_outdated, check_is_valid_game_path, check_northstar_running,
     check_origin_running, convert_release_candidate_number, find_game_install_location,
-    get_enabled_mods, get_host_os, get_installed_mods, get_log_list, get_northstar_version_number,
+    get_enabled_mods, get_host_os, get_installed_mods_and_properties, get_log_list, get_northstar_version_number,
     install_northstar, launch_northstar, linux_checks_librs, set_mod_enabled_status, GameInstall, NorthstarMod,
 };
 
@@ -296,5 +296,5 @@ async fn disable_all_but_core_caller(game_install: GameInstall) -> Result<(), St
 
 #[tauri::command]
 async fn get_installed_mods_caller(game_install: GameInstall) -> Result<Vec<NorthstarMod>, String> {
-    get_installed_mods(game_install)
+    get_installed_mods_and_properties(game_install)
 }

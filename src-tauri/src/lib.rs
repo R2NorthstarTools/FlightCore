@@ -481,7 +481,7 @@ pub fn set_mod_enabled_status(
 /// Gets list of installed mods and their properties
 /// - name
 /// - is enabled?
-pub fn get_installed_mods(game_install: GameInstall) -> Result<Vec<NorthstarMod>, String> {
+pub fn get_installed_mods_and_properties(game_install: GameInstall) -> Result<Vec<NorthstarMod>, String> {
     // Get enabled mods as JSON
     let res: serde_json::Value = get_enabled_mods(game_install)?;
 
