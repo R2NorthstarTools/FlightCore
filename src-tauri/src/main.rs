@@ -203,7 +203,7 @@ async fn check_is_northstar_outdated(
 /// false -> FlightCore install is up-to-date
 /// true  -> FlightCore install is outdated
 async fn check_is_flightcore_outdated_caller() -> Result<bool, String> {
-    check_is_flightcore_outdated()
+    check_is_flightcore_outdated().await
 }
 
 #[tauri::command]
