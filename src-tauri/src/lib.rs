@@ -491,8 +491,6 @@ fn parse_mod_json_for_mod_name(mod_json_path: String) -> Result<String, anyhow::
         None => return Err(anyhow!("No name found")),
     };
 
-    println!("{}", mod_name);
-
     Ok(mod_name.to_string())
 }
 
@@ -508,15 +506,11 @@ fn get_installed_mods(game_install: GameInstall) -> Result<Vec<String>, String> 
     // Get list of folders in `mods` directory
     for path in paths {
         let my_path = path.unwrap().path();
-        println!("Name: {}", my_path.display());
 
         let md = std::fs::metadata(my_path.clone()).unwrap();
         if md.is_dir() {
             directories.push(my_path);
         }
-        println!("is dir: {}", md.is_dir());
-        println!("is file: {}", md.is_file());
-        println!("");
     }
 
     // Iterate over folders and check if they are Northstar mods
@@ -524,7 +518,6 @@ fn get_installed_mods(game_install: GameInstall) -> Result<Vec<String>, String> 
         // Check if mod.json exists
         let mod_json_path = format!("{}/mod.json", directory.to_str().unwrap());
         if  !std::path::Path::new(&mod_json_path).exists() {
-            println!("Skipped {}", directory.to_str().unwrap());
             continue;
         }
 
@@ -569,9 +562,6 @@ pub fn get_installed_mods_and_properties(game_install: GameInstall) -> Result<Ve
         };
         installed_mods.push(current_mod);
     }
-
-    dbg!(&enabled_mods);
-    dbg!(installed_mods.clone());
 
     Ok(installed_mods)
 }
