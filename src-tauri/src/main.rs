@@ -13,11 +13,14 @@ use app::{
     check_is_flightcore_outdated, check_is_valid_game_path, check_northstar_running,
     check_origin_running, convert_release_candidate_number, find_game_install_location,
     get_enabled_mods, get_host_os, get_installed_mods_and_properties, get_log_list, get_northstar_version_number,
-    install_northstar, launch_northstar, linux_checks_librs, set_mod_enabled_status, GameInstall, NorthstarMod,
+    install_northstar, launch_northstar, linux_checks_librs, GameInstall, NorthstarMod,
 };
 
 mod repair_and_verify;
 use repair_and_verify::{verify_game_files, disable_all_but_core};
+
+mod mod_management;
+use mod_management::set_mod_enabled_status;
 
 use tauri::Manager;
 use tauri_plugin_store::PluginBuilder;
