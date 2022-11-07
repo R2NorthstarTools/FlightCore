@@ -7,7 +7,7 @@
             <el-timeline-item
                 v-for="release in releases"
                 v-bind:key="release.name"
-                :timestamp="formatDate(release.published_at)" 
+                :timestamp="formatDate(release.published_at)"
                 placement="top"
             >
             <el-card>
@@ -60,6 +60,8 @@ export default defineComponent({
 .fc__changelog__container {
     padding: 20px 30px;
     position: relative;
+    overflow-y: auto;
+    height: calc(100% - var(--fc-menu_height));
     color: white;
 }
 
