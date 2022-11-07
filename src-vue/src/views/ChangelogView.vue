@@ -7,7 +7,7 @@
             <el-timeline-item
                 v-for="release in releases"
                 v-bind:key="release.name"
-                :timestamp="release.published_at" 
+                :timestamp="formatDate(release.published_at)" 
                 placement="top"
             >
             <el-card>
@@ -47,6 +47,10 @@ export default defineComponent({
             content = content.replaceAll(/\[(\S+)\]\(([^)]+)\)/g, `<a target="_blank" href="$2">$1</a>`);
 
             return marked.parse(content, {breaks: true});
+        },
+        // Formats an ISO-formatted date into a human-readable string.
+        formatDate(timestamp: string): string {
+            return new Date(timestamp).toLocaleString();
         }
     }
 });
