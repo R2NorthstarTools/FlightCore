@@ -52,10 +52,15 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style>
 .fc__changelog__container {
     padding: 20px 30px;
     position: relative;
     color: white;
+}
+
+.el-timeline-item__timestamp {
+    color: white !important;
+    user-select: none !important;
 }
 </style>
