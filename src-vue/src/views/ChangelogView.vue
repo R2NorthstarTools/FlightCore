@@ -1,6 +1,9 @@
 <template>
     <div class="fc__changelog__container">
-        <el-timeline>
+        <div v-if="releases.length === 0">
+            <el-progress :show-text="false" :percentage="50" :indeterminate="true" />
+        </div>
+        <el-timeline v-else>
             <el-timeline-item
                 v-for="release in releases"
                 v-bind:key="release.name"
@@ -52,9 +55,7 @@ export default defineComponent({
 <style scoped>
 .fc__changelog__container {
     padding: 20px 30px;
-}
-
-.el-link {
+    position: relative;
     color: white;
 }
 </style>
