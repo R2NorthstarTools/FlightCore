@@ -12,8 +12,8 @@ use std::{
 use app::{
     check_is_flightcore_outdated, check_is_valid_game_path, check_northstar_running,
     check_origin_running, convert_release_candidate_number, find_game_install_location,
-    get_enabled_mods, get_host_os, get_installed_mods, get_log_list, get_northstar_version_number,
-    install_northstar, launch_northstar, linux_checks_librs, set_mod_enabled_status, GameInstall, NorthstarMod,
+    get_enabled_mods, get_host_os, get_installed_mods_and_properties, get_log_list, get_northstar_version_number,
+    install_northstar, launch_northstar, linux_checks_librs, GameInstall, NorthstarMod,
 };
 
 mod github;
@@ -21,6 +21,9 @@ use github::release_notes::get_northstar_release_notes;
 
 mod repair_and_verify;
 use repair_and_verify::{verify_game_files, disable_all_but_core};
+
+mod mod_management;
+use mod_management::set_mod_enabled_status;
 
 use tauri::Manager;
 use tauri_plugin_store::PluginBuilder;
@@ -101,31 +104,26 @@ fn main() {
 
 #[tauri::command]
 /// Wrapper for `find_game_install_location` as tauri doesn't allow passing `Result<>` types to front-end
-fn find_game_install_location_caller() -> Result<GameInstall, String> {
-    match find_game_install_location() {
-        Ok(game_install) => Ok(game_install),
-        Err(err) => {
-            println!("{}", err);
-            Err(err.to_string())
-        }
-    }
+async fn find_game_install_location_caller() -> Result<GameInstall, String> {
+    find_game_install_location()
 }
 
 #[tauri::command]
 /// This function's only use is to force a `panic!()`
+// This must NOT be async to ensure crashing whole application.
 fn force_panic() {
     panic!("Force panicked!");
 }
 
 #[tauri::command]
 /// Returns true if built in debug mode
-fn is_debug_mode() -> bool {
+async fn is_debug_mode() -> bool {
     return cfg!(debug_assertions);
 }
 
 #[tauri::command]
 /// Returns true if linux compatible
-fn linux_checks() -> Result<(), String> {
+async fn linux_checks() -> Result<(), String> {
     // Early return if Windows
     if get_host_os() == "windows" {
         return Err("Not available on Windows".to_string());
@@ -136,7 +134,7 @@ fn linux_checks() -> Result<(), String> {
 
 #[tauri::command]
 /// Returns the current version number as a string
-fn get_flightcore_version_number() -> String {
+async fn get_flightcore_version_number() -> String {
     let version = env!("CARGO_PKG_VERSION");
     if cfg!(debug_assertions) {
         // Debugging enabled
@@ -148,7 +146,7 @@ fn get_flightcore_version_number() -> String {
 }
 
 #[tauri::command]
-fn get_northstar_version_number_caller(game_path: String) -> String {
+async fn get_northstar_version_number_caller(game_path: String) -> String {
     match get_northstar_version_number(game_path) {
         Ok(version_number) => version_number,
         Err(err) => {
@@ -211,13 +209,13 @@ async fn check_is_northstar_outdated(
 /// Checks if installed FlightCore version is up-to-date
 /// false -> FlightCore install is up-to-date
 /// true  -> FlightCore install is outdated
-fn check_is_flightcore_outdated_caller() -> Result<bool, String> {
-    check_is_flightcore_outdated()
+async fn check_is_flightcore_outdated_caller() -> Result<bool, String> {
+    check_is_flightcore_outdated().await
 }
 
 #[tauri::command]
 /// Checks if is valid Titanfall2 install based on certain conditions
-fn verify_install_location(game_path: String) -> bool {
+async fn verify_install_location(game_path: String) -> bool {
     match check_is_valid_game_path(&game_path) {
         Ok(()) => true,
         Err(err) => {
@@ -229,7 +227,7 @@ fn verify_install_location(game_path: String) -> bool {
 
 #[tauri::command]
 /// Returns identifier of host OS FlightCore is running on
-fn get_host_os_caller() -> String {
+async fn get_host_os_caller() -> String {
     get_host_os()
 }
 
@@ -269,28 +267,28 @@ async fn update_northstar_caller(
 
 #[tauri::command]
 /// Launches Northstar
-fn launch_northstar_caller(game_install: GameInstall) -> Result<String, String> {
+async fn launch_northstar_caller(game_install: GameInstall) -> Result<String, String> {
     launch_northstar(game_install)
 }
 
 #[tauri::command]
 /// Get list of Northstar logs
-fn get_log_list_caller(game_install: GameInstall) -> Result<Vec<std::path::PathBuf>, String> {
+async fn get_log_list_caller(game_install: GameInstall) -> Result<Vec<std::path::PathBuf>, String> {
     get_log_list(game_install)
 }
 
 #[tauri::command]
-fn verify_game_files_caller(game_install: GameInstall) -> Result<String, String> {
+async fn verify_game_files_caller(game_install: GameInstall) -> Result<String, String> {
     verify_game_files(game_install)
 }
 
 #[tauri::command]
-fn get_enabled_mods_caller(game_install: GameInstall) -> Result<serde_json::value::Value, String> {
+async fn get_enabled_mods_caller(game_install: GameInstall) -> Result<serde_json::value::Value, String> {
     get_enabled_mods(game_install)
 }
 
 #[tauri::command]
-fn set_mod_enabled_status_caller(
+async fn set_mod_enabled_status_caller(
     game_install: GameInstall,
     mod_name: String,
     is_enabled: bool,
@@ -299,11 +297,11 @@ fn set_mod_enabled_status_caller(
 }
 
 #[tauri::command]
-fn disable_all_but_core_caller(game_install: GameInstall) -> Result<(), String> {
+async fn disable_all_but_core_caller(game_install: GameInstall) -> Result<(), String> {
     disable_all_but_core(game_install)
 }
 
 #[tauri::command]
 async fn get_installed_mods_caller(game_install: GameInstall) -> Result<Vec<NorthstarMod>, String> {
-    get_installed_mods(game_install)
+    get_installed_mods_and_properties(game_install)
 }
