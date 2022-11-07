@@ -9,18 +9,20 @@ pub struct ReleaseInfo {
 }
 
 #[tauri::command]
-pub fn get_northstar_release_notes() -> Result<Vec<ReleaseInfo>, String> {
+pub async fn get_northstar_release_notes() -> Result<Vec<ReleaseInfo>, String> {
     println!("Fetching releases notes from GitHub API");
 
     let url = "https://api.github.com/repos/R2Northstar/Northstar/releases";
     let user_agent = "R2Northstar/Northstar";
-    let client = reqwest::blocking::Client::new();
+    let client = reqwest::Client::new();
     let res = client
         .get(url)
         .header(reqwest::header::USER_AGENT, user_agent)
         .send()
+        .await
         .unwrap()
         .text()
+        .await
         .unwrap();
 
     let json_response: Vec<serde_json::Value> =
