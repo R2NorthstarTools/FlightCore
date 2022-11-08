@@ -52,7 +52,7 @@ export default defineComponent({
         },
         // Formats an ISO-formatted date into a human-readable string.
         formatDate(timestamp: string): string {
-            return new Date(timestamp).toLocaleString();
+            return new Date(timestamp).toLocaleDateString();
         }
     }
 });
