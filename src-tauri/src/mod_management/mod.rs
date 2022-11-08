@@ -39,7 +39,7 @@ pub fn set_mod_enabled_status(
 
 /// Parses `mod.json` for mod name
 // TODO: Maybe pass PathBuf or serde json object
-fn parse_mod_json_for_mod_name(mod_json_path: String) -> Result<String, anyhow::Error>{
+fn parse_mod_json_for_mod_name(mod_json_path: String) -> Result<String, anyhow::Error> {
     // Read file into string and parse it
     let data = std::fs::read_to_string(mod_json_path)?;
     let parsed_json: serde_json::Value = serde_json::from_str(&data)?;
@@ -76,7 +76,7 @@ fn get_installed_mods(game_install: GameInstall) -> Result<Vec<String>, String> 
     for directory in directories {
         // Check if mod.json exists
         let mod_json_path = format!("{}/mod.json", directory.to_str().unwrap());
-        if  !std::path::Path::new(&mod_json_path).exists() {
+        if !std::path::Path::new(&mod_json_path).exists() {
             continue;
         }
 
@@ -86,7 +86,7 @@ fn get_installed_mods(game_install: GameInstall) -> Result<Vec<String>, String> 
             Err(err) => {
                 println!("Failed parsing {} with {}", mod_json_path, err.to_string());
                 continue;
-            },
+            }
         };
         mod_names.push(mod_name);
     }
@@ -98,8 +98,9 @@ fn get_installed_mods(game_install: GameInstall) -> Result<Vec<String>, String> 
 /// Gets list of installed mods and their properties
 /// - name
 /// - is enabled?
-pub fn get_installed_mods_and_properties(game_install: GameInstall) -> Result<Vec<NorthstarMod>, String> {
-
+pub fn get_installed_mods_and_properties(
+    game_install: GameInstall,
+) -> Result<Vec<NorthstarMod>, String> {
     // Get actually installed mods
     let found_installed_mods = get_installed_mods(game_install.clone())?;
 
