@@ -1,21 +1,23 @@
 <template>
-    <div class="fc__changelog__container">
-        <div v-if="releases.length === 0">
+    <div style="height: calc(100% - var(--fc-menu_height))">
+        <div v-if="releases.length === 0" class="fc__changelog__container">
             <el-progress :show-text="false" :percentage="50" :indeterminate="true" />
         </div>
-        <el-timeline v-else>
-            <el-timeline-item
-                v-for="release in releases"
-                v-bind:key="release.name"
-                :timestamp="formatDate(release.published_at)"
-                placement="top"
-            >
-            <el-card>
-                <h4>{{ release.name }}</h4>
-                <p v-html="formatRelease(release.body)"></p>
-            </el-card>
-            </el-timeline-item>
-        </el-timeline>
+        <el-scrollbar v-else>
+            <el-timeline>
+                <el-timeline-item
+                    v-for="release in releases"
+                    v-bind:key="release.name"
+                    :timestamp="formatDate(release.published_at)"
+                    placement="top"
+                >
+                <el-card>
+                    <h4>{{ release.name }}</h4>
+                    <p v-html="formatRelease(release.body)"></p>
+                </el-card>
+                </el-timeline-item>
+            </el-timeline>
+        </el-scrollbar>
     </div>
 </template>
 
@@ -57,6 +59,10 @@ export default defineComponent({
 </script>
 
 <style>
+.el-scrollbar__view {
+    padding: 20px 30px;
+}
+
 .fc__changelog__container {
     padding: 20px 30px;
     position: relative;
