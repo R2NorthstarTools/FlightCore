@@ -104,7 +104,10 @@ pub fn get_installed_mods_and_properties(game_install: GameInstall) -> Result<Ve
     let found_installed_mods = get_installed_mods(game_install.clone())?;
 
     // Get enabled mods as JSON
-    let enabled_mods: serde_json::Value = get_enabled_mods(game_install)?;
+    let enabled_mods: serde_json::Value = match get_enabled_mods(game_install) {
+        Ok(enabled_mods) => enabled_mods,
+        Err(_) => serde_json::from_str("{}").unwrap(), // `enabledmods.json` not found, create empty object
+    };
 
     let mut installed_mods = Vec::new();
     let mapping = enabled_mods.as_object().unwrap();
