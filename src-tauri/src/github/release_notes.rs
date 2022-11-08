@@ -29,9 +29,20 @@ pub async fn get_northstar_release_notes() -> Result<Vec<ReleaseInfo>, String> {
         serde_json::from_str(&res).expect("JSON was not well-formatted");
     println!("Done checking GitHub API");
     
-    return Ok(json_response.iter().map(|release| ReleaseInfo {
-        name: release.get("name").and_then(|value| value.as_str()).unwrap().to_string(),
-        published_at: release.get("published_at").and_then(|value| value.as_str()).unwrap().to_string(),
-        body: release.get("body").and_then(|value| value.as_str()).unwrap().to_string(),
-    }).collect());
+    return Ok(
+        json_response.iter().map(|release| ReleaseInfo {
+            name: release.get("name")
+                .and_then(|value| value.as_str())
+                .unwrap()
+                .to_string(),
+            published_at: release.get("published_at")
+                .and_then(|value| value.as_str())
+                .unwrap()
+                .to_string(),
+            body: release.get("body")
+                .and_then(|value| value.as_str())
+                .unwrap()
+                .to_string(),
+        }).collect()
+    );
 }
