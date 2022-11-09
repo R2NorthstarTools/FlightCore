@@ -11,6 +11,7 @@ import { appDir } from '@tauri-apps/api/path';
 import { open } from '@tauri-apps/api/dialog';
 import { Store } from 'tauri-plugin-store-api';
 import {router} from "../main";
+import ReleaseInfo from "../utils/ReleaseInfo";
 
 const persistentStore = new Store('flight-core-settings.json');
 
@@ -25,6 +26,7 @@ export interface FlightCoreStore {
     installed_northstar_version: string,
     northstar_state: NorthstarState,
     northstar_release_canal: ReleaseCanal,
+    releaseNotes: ReleaseInfo[],
 
     northstar_is_running: boolean,
     origin_is_running: boolean
@@ -44,6 +46,7 @@ export const store = createStore<FlightCoreStore>({
             installed_northstar_version: "",
             northstar_state: NorthstarState.GAME_NOT_FOUND,
             northstar_release_canal: ReleaseCanal.RELEASE,
+            releaseNotes: [],
 
             northstar_is_running: false,
             origin_is_running: false
@@ -181,6 +184,10 @@ export const store = createStore<FlightCoreStore>({
                     store.commit('updateGamePath');
                     break;
             }
+        },
+        async fetchReleaseNotes(state: FlightCoreStore) {
+            if (state.releaseNotes.length !== 0) return;
+            state.releaseNotes = await invoke("get_northstar_release_notes");
         }
     }
 });
