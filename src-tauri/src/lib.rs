@@ -448,27 +448,3 @@ pub fn get_enabled_mods(game_install: GameInstall) -> Result<serde_json::value::
     // Return parsed data
     Ok(res)
 }
-
-/// Gets list of installed mods and their properties
-/// - name
-/// - is enabled?
-pub fn get_installed_mods_and_properties(game_install: GameInstall) -> Result<Vec<NorthstarMod>, String> {
-    // Get enabled mods as JSON
-    let res: serde_json::Value = get_enabled_mods(game_install)?;
-
-    let mut installed_mods = Vec::new();
-
-    for (key, value) in res.as_object().unwrap() {
-
-        let current_mod: NorthstarMod = NorthstarMod {
-            name: key.to_string(),
-            enabled: value.as_bool().unwrap(),
-        };
-        installed_mods.push(current_mod);
-    }
-
-    dbg!(&res);
-    dbg!(installed_mods.clone());
-
-    Ok(installed_mods)
-}
