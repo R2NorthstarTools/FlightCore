@@ -75,4 +75,8 @@ export default defineComponent({
     color: white !important;
     user-select: none !important;
 }
+
+.el-card__body * {
+    max-width: 100%;
+}
 </style>
