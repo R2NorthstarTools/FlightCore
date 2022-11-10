@@ -28,3 +28,8 @@ body {
   position: fixed;
   filter: brightness(0.8);
 }
+
+.el-scrollbar {
+  --el-scrollbar-opacity: 0.5;
+  --el-scrollbar-hover-opacity: 0.7;
+}

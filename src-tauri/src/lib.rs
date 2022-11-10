@@ -72,7 +72,7 @@ pub fn linux_checks_librs() -> Result<(), String> {
 }
 
 /// Attempts to find the game install location
-pub fn find_game_install_location() -> Result<GameInstall, anyhow::Error> {
+pub fn find_game_install_location() -> Result<GameInstall, String> {
     // Attempt parsing Steam library directly
     match steamlocate::SteamDir::locate() {
         Some(mut steamdir) => {
@@ -107,9 +107,7 @@ pub fn find_game_install_location() -> Result<GameInstall, anyhow::Error> {
         }
     };
 
-    Err(anyhow!(
-        "Could not auto-detect game install location! Please enter it manually."
-    ))
+    Err("Could not auto-detect game install location! Please enter it manually.".to_string())
 }
 
 /// Returns the current Northstar version number as a string
@@ -360,18 +358,20 @@ pub fn convert_release_candidate_number(version_number: String) -> String {
 /// Checks if installed FlightCore version is up-to-date
 /// false -> FlightCore install is up-to-date
 /// true  -> FlightCore install is outdated
-pub fn check_is_flightcore_outdated() -> Result<bool, String> {
+pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
     // Get newest version number from GitHub API
     println!("Checking GitHub API");
     let url = "https://api.github.com/repos/GeckoEidechse/FlightCore/releases/latest";
     let user_agent = "GeckoEidechse/FlightCore";
-    let client = reqwest::blocking::Client::new();
+    let client = reqwest::Client::new();
     let res = client
         .get(url)
         .header(reqwest::header::USER_AGENT, user_agent)
         .send()
+        .await
         .unwrap()
         .text()
+        .await
         .unwrap();
 
     let json_response: serde_json::Value =
@@ -447,68 +447,6 @@ pub fn get_enabled_mods(game_install: GameInstall) -> Result<serde_json::value::
 
     // Return parsed data
     Ok(res)
-}
-
-/// Set the status of a passed mod to enabled/disabled
-pub fn set_mod_enabled_status(
-    game_install: GameInstall,
-    mod_name: String,
-    is_enabled: bool,
-) -> Result<(), String> {
-    let enabledmods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
-
-    // Parse JSON
-    let mut res: serde_json::Value = get_enabled_mods(game_install)?;
-
-    // Check if key exists
-    if res.get(mod_name.clone()).is_none() {
-        return Err("Value not found in enabledmod.json".to_string());
-    }
-
-    // Update value
-    res[mod_name] = serde_json::Value::Bool(is_enabled);
-
-    // Save the JSON structure into the output file
-    std::fs::write(
-        enabledmods_json_path,
-        serde_json::to_string_pretty(&res).unwrap(),
-    )
-    .unwrap();
-
-    Ok(())
-}
-
-/// Gets list of installed mods and their properties
-/// - name
-/// - is enabled?
-pub fn get_installed_mods(game_install: GameInstall) -> Result<Vec<NorthstarMod>, String> {
-    let enabled_mods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
-    // Open file
-    let data = match std::fs::read_to_string(enabled_mods_json_path) {
-        Ok(data) => data,
-        Err(err) => return Err(err.to_string()),
-    };
-    // Check if valid JSON and parse
-    let res: serde_json::Value = match serde_json::from_str(&data) {
-        Ok(res) => res,
-        Err(err) => return Err(err.to_string()),
-    };
-
-    let mut installed_mods = Vec::new();
-
-    for (key, value) in res.as_object().unwrap() {
-
-        let current_mod: NorthstarMod = NorthstarMod {
-            name: key.to_string(),
-            enabled: value.as_bool().unwrap(),
-        };
-        installed_mods.push(current_mod);
-    }
-
-    dbg!(&res);
-    dbg!(installed_mods.clone());
-
-    Ok(installed_mods)
 }
 
 async fn get_ns_mod_download_url(thunderstore_mod_string: String) -> Result<String, String> {
