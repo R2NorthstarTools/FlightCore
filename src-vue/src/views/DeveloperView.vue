@@ -1,5 +1,7 @@
 <template>
     <div class="fc__developer__container">
+        <h3>Basic:</h3>
+
         <el-button type="primary" @click="disableDevMode">
             Disable developer mode
         </el-button>
@@ -8,9 +10,13 @@
             Panic button
         </el-button>
 
+        <h3>Linux:</h3>
+
         <el-button type="primary" @click="checkLinuxCompatibility">
             Check NSProton Compatibility
         </el-button>
+
+        <h3>Testing:</h3>
 
         <el-button type="primary" @click="toggleReleaseCandidate">
             Toggle Release Candidate
