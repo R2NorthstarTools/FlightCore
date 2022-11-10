@@ -5,11 +5,6 @@ import PlayButton from '../components/PlayButton.vue';
 import { defineComponent } from "vue";
 
 export default defineComponent({
-    data() {
-        return {
-            developerModeClicks: 0
-        }
-    },
     components: {
         PlayButton
     },
@@ -22,20 +17,6 @@ export default defineComponent({
         },
     },
     methods: {
-        activateDeveloperMode() {
-            this.developerModeClicks += 1;
-            if (this.developerModeClicks >= 6) {
-                this.$store.state.developer_mode = true;
-                ElNotification({
-                    title: 'Watch out!',
-                    message: 'Developer mode enabled.',
-                    type: 'info',
-                    position: 'bottom-right'
-                });
-                this.developerModeClicks = 0;
-            }
-        },
-
         showChangelogPage() {
             this.$store.commit('updateCurrentTab', Tabs.CHANGELOG);
         }
@@ -47,9 +28,7 @@ export default defineComponent({
     <div class="fc_launch__container">
         <div class="fc_title">Northstar</div>
         <div class="fc_northstar__version__container">
-            <div class="fc_northstar__version" @click="activateDeveloperMode">
-                {{ northstarVersion === '' ? 'Unknown version' : `v${northstarVersion}` }}
-            </div>
+            {{ northstarVersion === '' ? 'Unknown version' : `v${northstarVersion}` }}
             <div v-if="northstarVersion !== ''" class="fc_changelog__link" @click="showChangelogPage">
                 (see patch notes)
             </div>
