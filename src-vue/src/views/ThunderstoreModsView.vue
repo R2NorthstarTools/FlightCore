@@ -24,7 +24,8 @@ export default defineComponent({
         mods(): ThunderstoreMod[] {
             return [
                 {
-                    name: "Shrek"
+                    name: "Shrek",
+                    versions: []
                 }
             ];
         }
