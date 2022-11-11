@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import {ThunderstoreMod} from "../utils/ThunderstoreMod";
+import {ThunderstoreMod} from "../utils/thunderstore/ThunderstoreMod";
 
 export default defineComponent({
     name: "ThunderstoreModsView",
