@@ -146,13 +146,10 @@ async fn get_flightcore_version_number() -> String {
 }
 
 #[tauri::command]
-async fn get_northstar_version_number_caller(game_path: String) -> String {
+async fn get_northstar_version_number_caller(game_path: String) -> Result<String, String> {
     match get_northstar_version_number(game_path) {
-        Ok(version_number) => version_number,
-        Err(err) => {
-            println!("{}", err);
-            "".to_string()
-        }
+        Ok(version_number) => Ok(version_number),
+        Err(err) => Err(err.to_string()),
     }
 }
 
