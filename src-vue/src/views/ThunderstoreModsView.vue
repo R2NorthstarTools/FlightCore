@@ -9,7 +9,22 @@
                     :src="mod.versions[0].icon"
                     class="image"
                 />
-                <div style="padding: 14px 14px 10px 14px;">
+                <div style="padding: 0px 10px 10px;">
+                    <span class="statContainer">
+                        <el-icon class="no-inherit">
+                            <Download />
+                        </el-icon>
+                        {{ mod.versions[0].downloads }}
+                    </span>
+
+                    <span class="statContainer">
+                        {{ mod.rating_score }}
+                        <el-icon class="no-inherit">
+                            <Star />
+                        </el-icon>
+                    </span>
+                    <br/>
+
                     <span>{{ mod.name }}</span><br/>
                     <span class="author">by {{ mod.owner }}</span>
                     <div class="desc">
@@ -39,12 +54,14 @@ export default defineComponent({
                 {
                     name: "Shrek",
                     owner: "UNO",
+                    rating_score: 2,
                     versions: [
                         {
                             description: "Regular scorch is replaced by Shrek from the smash hit cult classic, Shrek",
                             icon: "https://gcdn.thunderstore.io/live/repository/icons/UNO-Shrek-1.0.0.png",
                             version_number: "1.0.0",
                             download_url: "https://thunderstore.io/package/download/UNO/Shrek/1.0.0/",
+                            downloads: 101,
                             date_created: "2022-11-10T00:03:13.057122Z"
                         }
                     ]
@@ -98,5 +115,13 @@ export default defineComponent({
 
 button {
     width: 100% !important;
+}
+
+.statContainer {
+    font-size: 14px;
+}
+
+.statContainer:nth-child(2) {
+    float: right;
 }
 </style>
