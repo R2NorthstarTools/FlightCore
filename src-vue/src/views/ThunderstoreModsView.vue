@@ -25,8 +25,8 @@
                     </span>
                     <br/>
 
-                    <span>{{ mod.name }}</span><br/>
-                    <span class="author">by {{ mod.owner }}</span>
+                    <div class="name hide-text-overflow">{{ mod.name }}</div>
+                    <div class="author hide-text-overflow">by {{ mod.owner }}</div>
                     <div class="desc">
                         {{ mod.versions[0].description }}
                     </div>
@@ -95,6 +95,12 @@ export default defineComponent({
 .author {
     font-size: 14px;
     font-style: italic;
+}
+
+.hide-text-overflow {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .desc {
