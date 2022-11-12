@@ -40,7 +40,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import {defineComponent} from 'vue';
 import {ThunderstoreMod} from "../utils/thunderstore/ThunderstoreMod";
 
 export default defineComponent({
@@ -50,14 +50,12 @@ export default defineComponent({
      * TODO Fetch mods with backend?
      */
     async mounted() {
-        // https://northstar.thunderstore.io/api/v1/package/
         const response = await fetch('https://northstar.thunderstore.io/api/v1/package/');
-        const json: ThunderstoreMod[] = JSON.parse(await (await response.blob()).text());
-        this.mods = json;
+        this.mods = JSON.parse(await (await response.blob()).text());
     },
     data() {
         return {
-            mods: []
+            mods: [] as ThunderstoreMod[]
         };
     },
     methods: {
