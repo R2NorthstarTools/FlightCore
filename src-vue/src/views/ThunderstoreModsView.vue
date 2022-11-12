@@ -89,7 +89,8 @@ export default defineComponent({
 
 .el-card {
     display: inline-block;
-    max-width: 185px;
+    max-width: 178px;
+    margin: 5px;
 }
 
 .author {
