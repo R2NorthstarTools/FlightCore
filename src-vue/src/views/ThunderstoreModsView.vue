@@ -79,14 +79,26 @@ export default defineComponent({
         getModButtonText(mod: ThunderstoreMod): string {
             return "Install";
         },
+
+        /**
+         * This method is called each time search input is modified, and
+         * filters mods matching the input string.
+         * 
+         * This converts research string and all researched fields to
+         * lower case, to match mods regardless of font case.
+         */
         onFilterTextChange(value: string) {
             if (value === '') {
                 this.filteredMods = [];
                 return;
             }
 
+            const searchValue = value.toLowerCase();
+
             this.filteredMods = this.mods.filter((mod: ThunderstoreMod) => {
-                return mod.name.includes(value) || mod.owner.includes(value) || mod.versions[0].description.includes(value);
+                return mod.name.toLowerCase().includes(searchValue) 
+                    || mod.owner.toLowerCase().includes(searchValue) 
+                    || mod.versions[0].description.toLowerCase().includes(searchValue);
             });
         }
     }
