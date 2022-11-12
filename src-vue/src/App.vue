@@ -41,7 +41,6 @@ export default {
         default-active="/"
         router
         mode="horizontal"
-        class="developer_build"
         id="fc__menu_bar"
         data-tauri-drag-region
     >
