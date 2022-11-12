@@ -4,7 +4,10 @@
             <el-progress :show-text="false" :percentage="50" :indeterminate="true" />
         </div>
         <el-scrollbar v-else class="container">
-            <el-card v-for="mod of mods" v-bind:key="mod.name" :body-style="{ padding: '0px' }">
+            <div class="filter_container">
+                <el-input v-model="input" placeholder="Search" clearable @input="onFilterTextChange" />
+            </div>
+            <el-card v-for="mod of modsList" v-bind:key="mod.name" :body-style="{ padding: '0px' }">
                 <img
                     :src="mod.versions[0].icon"
                     class="image"
@@ -53,9 +56,16 @@ export default defineComponent({
         const response = await fetch('https://northstar.thunderstore.io/api/v1/package/');
         this.mods = JSON.parse(await (await response.blob()).text());
     },
+    computed: {
+        modsList(): ThunderstoreMod[] {
+            return this.input.length === 0 ? this.mods : this.filteredMods;
+        }
+    },
     data() {
         return {
-            mods: [] as ThunderstoreMod[]
+            input: '',
+            mods: [] as ThunderstoreMod[],
+            filteredMods: [] as ThunderstoreMod[]
         };
     },
     methods: {
@@ -68,6 +78,16 @@ export default defineComponent({
          */
         getModButtonText(mod: ThunderstoreMod): string {
             return "Install";
+        },
+        onFilterTextChange(value: string) {
+            if (value === '') {
+                this.filteredMods = [];
+                return;
+            }
+
+            this.filteredMods = this.mods.filter((mod: ThunderstoreMod) => {
+                return mod.name.includes(value) || mod.owner.includes(value) || mod.versions[0].description.includes(value);
+            });
         }
     }
 });
@@ -122,5 +142,13 @@ button {
 
 .statContainer:nth-child(2) {
     float: right;
+}
+
+.filter_container {
+    margin: 5px;
+}
+
+.el-input {
+    max-width: 300px;
 }
 </style>
