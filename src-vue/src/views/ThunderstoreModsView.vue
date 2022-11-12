@@ -14,7 +14,9 @@
                     <div class="desc">
                         {{ mod.versions[0].description }}
                     </div>
-                    <el-button type="primary" class="button">Install</el-button>
+                    <el-button type="primary" class="button">
+                        {{ getModButtonText(mod) }}
+                    </el-button>
                 </div>
             </el-card>
         </el-scrollbar>
@@ -49,7 +51,16 @@ export default defineComponent({
         }
     },
     methods: {
-
+        /**
+         * Returns button text associated to a mod.
+         * TODO Returned text changes regarding status of argument mod:
+         *     * "Install", when the mod is not installed
+         *     * "Update", when installed version is deprecated
+         *     * "Installed", when mod is installed and up-to-date
+         */
+        getModButtonText(mod: ThunderstoreMod): string {
+            return "Install";
+        }
     }
 });
 </script>
