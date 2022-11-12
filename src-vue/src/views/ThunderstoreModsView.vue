@@ -106,6 +106,9 @@ export default defineComponent({
 .desc {
     font-size: 12px;
     margin: 8px 0 16px;
+    height: 58px;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 button {
