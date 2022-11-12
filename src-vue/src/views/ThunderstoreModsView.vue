@@ -10,7 +10,8 @@
                     class="image"
                 />
                 <div style="padding: 14px 14px 10px 14px;">
-                    <span>{{ mod.name }}</span>
+                    <span>{{ mod.name }}</span><br/>
+                    <span class="author">by {{ mod.owner }}</span>
                     <div class="desc">
                         {{ mod.versions[0].description }}
                     </div>
@@ -37,6 +38,7 @@ export default defineComponent({
             return [
                 {
                     name: "Shrek",
+                    owner: "UNO",
                     versions: [
                         {
                             description: "Regular scorch is replaced by Shrek from the smash hit cult classic, Shrek",
@@ -82,6 +84,11 @@ export default defineComponent({
 .el-card {
     display: inline-block;
     max-width: 185px;
+}
+
+.author {
+    font-size: 14px;
+    font-style: italic;
 }
 
 .desc {
