@@ -41,6 +41,7 @@ export default {
         default-active="/"
         router
         mode="horizontal"
+        class="developer_build"
         id="fc__menu_bar"
         data-tauri-drag-region
     >
@@ -101,6 +102,16 @@ export default {
   backdrop-filter: saturate(50%) blur(4px);
   background-color: transparent;
   height: var(--fc-menu_height);
+}
+
+.developer_build {
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(0, 0, 0, 0.2),
+    rgba(0, 0, 0, 0.2) 20px,
+    rgba(0, 0, 0, 0.3) 20px,
+    rgba(0, 0, 0, 0.3) 40px
+  );
 }
 
 /* Window controls */
