@@ -45,29 +45,20 @@ import {ThunderstoreMod} from "../utils/thunderstore/ThunderstoreMod";
 
 export default defineComponent({
     name: "ThunderstoreModsView",
+    /**
+     * TODO Mods should be stored in front store
+     * TODO Fetch mods with backend?
+     */
     async mounted() {
-
+        // https://northstar.thunderstore.io/api/v1/package/
+        const response = await fetch('https://northstar.thunderstore.io/api/v1/package/');
+        const json: ThunderstoreMod[] = JSON.parse(await (await response.blob()).text());
+        this.mods = json;
     },
-    computed: {
-        mods(): ThunderstoreMod[] {
-            return [
-                {
-                    name: "Shrek",
-                    owner: "UNO",
-                    rating_score: 2,
-                    versions: [
-                        {
-                            description: "Regular scorch is replaced by Shrek from the smash hit cult classic, Shrek",
-                            icon: "https://gcdn.thunderstore.io/live/repository/icons/UNO-Shrek-1.0.0.png",
-                            version_number: "1.0.0",
-                            download_url: "https://thunderstore.io/package/download/UNO/Shrek/1.0.0/",
-                            downloads: 101,
-                            date_created: "2022-11-10T00:03:13.057122Z"
-                        }
-                    ]
-                }
-            ];
-        }
+    data() {
+        return {
+            mods: []
+        };
     },
     methods: {
         /**
