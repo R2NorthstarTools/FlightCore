@@ -207,7 +207,7 @@ fn extract(zip_file: std::fs::File, target: &std::path::Path) -> Result<()> {
 ///Install N* from the provided mod
 ///
 ///Checks cache, else downloads the latest version
-async fn do_install(nmod: &thermite::model::Mod, game_path: &std::path::Path) -> Result<()> {
+async fn do_install(nmod: &thermite::model::ModVersion, game_path: &std::path::Path) -> Result<()> {
     let filename = format!("northstar-{}.zip", nmod.version);
     let download_directory = format!("{}/___flightcore-temp-download-dir/", game_path.display());
 
@@ -254,11 +254,11 @@ pub async fn install_northstar(
         .ok_or_else(|| panic!("Couldn't find Northstar on thunderstore???"))
         .unwrap();
 
-    do_install(nmod, std::path::Path::new(game_path))
+    do_install(nmod.versions.get(&nmod.latest).unwrap(), std::path::Path::new(game_path))
         .await
         .unwrap();
 
-    Ok(nmod.version.clone())
+    Ok(nmod.latest.clone())
 }
 
 /// Returns identifier of host OS FlightCore is running on
