@@ -448,4 +448,3 @@ pub fn get_enabled_mods(game_install: GameInstall) -> Result<serde_json::value::
     // Return parsed data
     Ok(res)
 }
-
