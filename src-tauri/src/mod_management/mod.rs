@@ -128,3 +128,75 @@ pub fn get_installed_mods_and_properties(
 
     Ok(installed_mods)
 }
+
+async fn get_ns_mod_download_url(thunderstore_mod_string: String) -> Result<String, String> {
+
+    // TODO: This will crash the thread if not internet connection exist. `match` should be used instead
+    let index = thermite::api::get_package_index().await.unwrap().to_vec();
+
+    // String replace works but more care should be taken in the future
+    let ts_mod_string_url = thunderstore_mod_string.replace("-", "/");
+
+    for ns_mod in index {
+        if ns_mod.url.contains(&ts_mod_string_url) {
+            dbg!(ns_mod.clone());
+            return Ok(ns_mod.url);
+        }
+    }
+
+    Err("Could not find mod on Thunderstore".to_string())
+}
+
+// Copied from `libtermite` source code and modified
+// Should be replaced with a library call to libthermite in the future
+/// Download and install mod to the specified target.
+pub async fn fc_download_mod_and_install(
+    game_install: GameInstall,
+    thunderstore_mod_string: String,
+) -> Result<(), String> {
+    // Get mods and download directories
+    let download_directory = format!(
+        "{}/___flightcore-temp-download-dir/",
+        game_install.game_path
+    );
+    let mods_directory = format!("{}/R2Northstar/mods/", game_install.game_path);
+
+    // Get download URL for the specified mod
+    let download_url = get_ns_mod_download_url(thunderstore_mod_string.clone()).await?;
+
+    // Create download directory
+    match std::fs::create_dir_all(download_directory.clone()) {
+        Ok(()) => (),
+        Err(err) => return Err(err.to_string()),
+    };
+
+    let name = thunderstore_mod_string;
+    let path = format!(
+        "{}/___flightcore-temp-download-dir/{}.zip",
+        game_install.game_path, name
+    );
+
+    // Download the mod
+    let f = match thermite::core::actions::download_file(&download_url, path.clone()).await {
+        Ok(f) => f,
+        Err(e) => return Err(e.to_string()),
+    };
+
+    // Extract the mod to the mods directory
+    let pkg = match thermite::core::actions::install_mod(&f, std::path::Path::new(&mods_directory))
+    {
+        Ok(pkg) => pkg,
+        Err(err) => return Err(err.to_string()),
+    };
+    dbg!(pkg.clone());
+
+    // Delete downloaded zip file
+    std::fs::remove_file(path).unwrap();
+
+    // Delete temp download folder
+    // TODO: For some reason this fails. Maybe delete download folder in separate call?
+    // std::fs::remove_dir(download_directory).unwrap();
+    // std::fs::remove_dir_all(download_directory).unwrap();
+
+    Ok(())
+}
