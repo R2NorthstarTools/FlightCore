@@ -12,7 +12,7 @@ use std::{
 use app::*;
 
 mod github;
-use github::release_notes::get_northstar_release_notes;
+use github::release_notes::{get_northstar_release_notes, check_is_flightcore_outdated};
 
 mod repair_and_verify;
 use repair_and_verify::{verify_game_files, disable_all_but_core};

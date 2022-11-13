@@ -355,44 +355,6 @@ pub fn convert_release_candidate_number(version_number: String) -> String {
     version_number.replace("-rc", "0").replace("00", "")
 }
 
-/// Checks if installed FlightCore version is up-to-date
-/// false -> FlightCore install is up-to-date
-/// true  -> FlightCore install is outdated
-pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
-    // Get newest version number from GitHub API
-    println!("Checking GitHub API");
-    let url = "https://api.github.com/repos/GeckoEidechse/FlightCore/releases/latest";
-    let user_agent = "GeckoEidechse/FlightCore";
-    let client = reqwest::Client::new();
-    let res = client
-        .get(url)
-        .header(reqwest::header::USER_AGENT, user_agent)
-        .send()
-        .await
-        .unwrap()
-        .text()
-        .await
-        .unwrap();
-
-    let json_response: serde_json::Value =
-        serde_json::from_str(&res).expect("JSON was not well-formatted");
-    println!("Done checking GitHub API");
-
-    // Extract version number from JSON
-    let newest_release_version = json_response
-        .get("tag_name")
-        .and_then(|value| value.as_str())
-        .unwrap();
-
-    // Get version of installed FlightCore...
-    let version = env!("CARGO_PKG_VERSION");
-    // ...and format it
-    let version = format!("v{}", version);
-
-    // TODO: This shouldn't be a string compare but promper semver compare
-    Ok(version != newest_release_version)
-}
-
 pub fn get_log_list(game_install: GameInstall) -> Result<Vec<std::path::PathBuf>, String> {
     let ns_log_folder = format!("{}/R2Northstar/logs", game_install.game_path);
 
