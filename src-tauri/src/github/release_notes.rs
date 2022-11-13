@@ -34,17 +34,7 @@ pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
     // Get newest version number from GitHub API
     println!("Checking GitHub API");
     let url = "https://api.github.com/repos/GeckoEidechse/FlightCore/releases/latest";
-    let user_agent = "GeckoEidechse/FlightCore";
-    let client = reqwest::Client::new();
-    let res = client
-        .get(url)
-        .header(reqwest::header::USER_AGENT, user_agent)
-        .send()
-        .await
-        .unwrap()
-        .text()
-        .await
-        .unwrap();
+    let res = fetch_github_releases_api(url).await?;
 
     let json_response: serde_json::Value =
         serde_json::from_str(&res).expect("JSON was not well-formatted");
