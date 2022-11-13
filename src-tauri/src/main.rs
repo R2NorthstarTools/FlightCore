@@ -193,7 +193,7 @@ async fn check_is_northstar_outdated(
     // Release candidate version numbers are different between `mods.json` and Thunderstore
     let version_number = convert_release_candidate_number(version_number);
 
-    if version_number != nmod.version {
+    if version_number != nmod.latest {
         println!("Installed Northstar version outdated");
         Ok(true)
     } else {
