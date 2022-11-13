@@ -13,7 +13,9 @@
             </template>
         </el-input>
         <h3>About:</h3>
-        FlightCore Version: {{ flightcoreVersion === '' ? 'Unknown version' : `${flightcoreVersion}` }}
+        <div class="fc_northstar__version" @click="activateDeveloperMode">
+            FlightCore Version: {{ flightcoreVersion === '' ? 'Unknown version' : `${flightcoreVersion}` }}
+        </div>
         <br />
         <br />
         UI design inspired by <el-link :underline="false" target="_blank" href="https://github.com/TFORevive/tforevive_launcher/" type="primary">TFORevive Launcher</el-link> (not yet public)
@@ -22,15 +24,34 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { ElNotification } from 'element-plus';
 
 export default defineComponent({
     name: "SettingsView",
+    data() {
+        return {
+            developerModeClicks: 0
+        }
+    },
     computed: {
         flightcoreVersion(): string {
             return this.$store.state.flightcore_version;
         },
     },
     methods: {
+        activateDeveloperMode() {
+            this.developerModeClicks += 1;
+            if (this.developerModeClicks >= 6) {
+                this.$store.state.developer_mode = true;
+                ElNotification({
+                    title: 'Watch out!',
+                    message: 'Developer mode enabled.',
+                    type: 'info',
+                    position: 'bottom-right'
+                });
+                this.developerModeClicks = 0;
+            }
+        },
         async updateGamePath() {
             this.$store.commit('updateGamePath');
         }
