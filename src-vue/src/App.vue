@@ -103,6 +103,16 @@ export default {
   height: var(--fc-menu_height);
 }
 
+.developer_build {
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(0, 0, 0, 0.2),
+    rgba(0, 0, 0, 0.2) 20px,
+    rgba(0, 0, 0, 0.3) 20px,
+    rgba(0, 0, 0, 0.3) 40px
+  );
+}
+
 /* Window controls */
 #fc_window__controls {
   display: flex;
