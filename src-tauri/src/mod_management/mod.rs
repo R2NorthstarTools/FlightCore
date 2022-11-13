@@ -140,10 +140,12 @@ async fn get_ns_mod_download_url(thunderstore_mod_string: String) -> Result<Stri
     let ts_mod_string_url = thunderstore_mod_string.replace("-", "/");
 
     for ns_mod in index {
-        let ns_mod = ns_mod.versions.get(&ns_mod.latest).unwrap();
-        if ns_mod.url.contains(&ts_mod_string_url) {
-            dbg!(ns_mod.clone());
-            return Ok(ns_mod.url.clone());
+        // Iterate over all versions of a given mod
+        for (_key, ns_mod) in &ns_mod.versions {
+            if ns_mod.url.contains(&ts_mod_string_url) {
+                dbg!(ns_mod.clone());
+                return Ok(ns_mod.url.clone());
+            }
         }
     }
 
