@@ -123,9 +123,19 @@ export default defineComponent({
                     || mod.versions[0].description.toLowerCase().includes(searchValue);
             });
         },
+
+        /**
+         * This opens an URL in user's favorite web browser.
+         * This is used to open Thunderstore mod pages.
+         */
         openURL(url: string): void {
             shell.open(url);
         },
+        
+        /**
+         * This computes the total count of downloads of a given mod, by adding
+         * download count of each of its releases.
+         */
         modDownloadsCount(mod: ThunderstoreMod): number {
             let totalDownloads = 0;
             mod.versions.map((version: ThunderstoreModVersion) => totalDownloads += version.downloads);
