@@ -66,10 +66,6 @@ import { ThunderstoreModVersion } from '../utils/thunderstore/ThunderstoreModVer
 
 export default defineComponent({
     name: "ThunderstoreModsView",
-    /**
-     * TODO Mods should be stored in front store
-     * TODO Fetch mods with backend?
-     */
     async mounted() {
         this.$store.commit('fetchThunderstoreMods');
     },
