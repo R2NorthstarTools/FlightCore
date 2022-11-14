@@ -200,6 +200,12 @@ async function _initializeApp(state: any) {
     // Enable dev mode directly if application is in debug mode
     if (await invoke("is_debug_mode")) {
         state.developer_mode = true;
+
+        // Make menubar striped if debug build
+        let menu_bar_handle = document.querySelector('#fc__menu_bar');
+        if (menu_bar_handle !== null) {
+            menu_bar_handle.classList.toggle('developer_build');
+        }
     }
 
     // Grab Northstar release canal value from store if exists

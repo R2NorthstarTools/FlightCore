@@ -7,6 +7,8 @@ use std::path::PathBuf;
 use app::GameInstall;
 use app::get_enabled_mods;
 
+use json5;
+
 /// Set the status of a passed mod to enabled/disabled
 pub fn set_mod_enabled_status(
     game_install: GameInstall,
@@ -42,7 +44,7 @@ pub fn set_mod_enabled_status(
 fn parse_mod_json_for_mod_name(mod_json_path: String) -> Result<String, anyhow::Error> {
     // Read file into string and parse it
     let data = std::fs::read_to_string(mod_json_path)?;
-    let parsed_json: serde_json::Value = serde_json::from_str(&data)?;
+    let parsed_json: serde_json::Value = json5::from_str(&data)?;
 
     // Extract mod name
     let mod_name = match parsed_json.get("Name").and_then(|value| value.as_str()) {
