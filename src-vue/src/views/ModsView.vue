@@ -88,7 +88,6 @@ export default defineComponent({
 
 <style scoped>
 .fc__mods__container {
-    /*padding: 20px 30px;*/
     color: white;
     position: relative;
 }
