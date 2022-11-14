@@ -12,6 +12,7 @@ import { open } from '@tauri-apps/api/dialog';
 import { Store } from 'tauri-plugin-store-api';
 import {router} from "../main";
 import ReleaseInfo from "../utils/ReleaseInfo";
+import { ThunderstoreMod } from '../utils/thunderstore/ThunderstoreMod';
 
 const persistentStore = new Store('flight-core-settings.json');
 
@@ -27,6 +28,7 @@ export interface FlightCoreStore {
     northstar_state: NorthstarState,
     northstar_release_canal: ReleaseCanal,
     releaseNotes: ReleaseInfo[],
+    thunderstoreMods: ThunderstoreMod[],
 
     northstar_is_running: boolean,
     origin_is_running: boolean
@@ -47,6 +49,7 @@ export const store = createStore<FlightCoreStore>({
             northstar_state: NorthstarState.GAME_NOT_FOUND,
             northstar_release_canal: ReleaseCanal.RELEASE,
             releaseNotes: [],
+            thunderstoreMods: [],
 
             northstar_is_running: false,
             origin_is_running: false
@@ -188,6 +191,16 @@ export const store = createStore<FlightCoreStore>({
         async fetchReleaseNotes(state: FlightCoreStore) {
             if (state.releaseNotes.length !== 0) return;
             state.releaseNotes = await invoke("get_northstar_release_notes");
+        },
+        async fetchThunderstoreMods(state: FlightCoreStore) {
+            if (state.thunderstoreMods.length !== 0) return;
+            
+            const response = await fetch('https://northstar.thunderstore.io/api/v1/package/');
+            let mods = JSON.parse(await (await response.blob()).text());
+
+            // Remove some mods from listing
+            const removedMods = ['Northstar', 'NorthstarReleaseCandidate', 'r2modman'];
+            state.thunderstoreMods = mods.filter((mod: ThunderstoreMod) => !removedMods.includes(mod.name));
         }
     }
 });
