@@ -1,4 +1,5 @@
 // This file contains various mod management functions
+use async_recursion::async_recursion;
 
 use anyhow::{anyhow, Result};
 use app::NorthstarMod;
@@ -182,9 +183,35 @@ fn add_thunderstore_mod_string(
     Ok(())
 }
 
+/// Returns a vector of modstrings containing the dependencies of a given mod
+async fn get_mod_dependencies(
+    thunderstore_mod_string: String,
+) -> Result<Vec<String>, anyhow::Error> {
+    dbg!(thunderstore_mod_string.clone());
+
+    // TODO: This will crash the thread if not internet connection exist. `match` should be used instead
+    let index = thermite::api::get_package_index().await.unwrap().to_vec();
+
+    // String replace works but more care should be taken in the future
+    let ts_mod_string_url = thunderstore_mod_string.replace("-", "/");
+
+    // Iterate over index
+    for ns_mod in index {
+        // Iterate over all versions of a given mod
+        for (_key, ns_mod) in &ns_mod.versions {
+            if ns_mod.url.contains(&ts_mod_string_url) {
+                dbg!(ns_mod.clone());
+                return Ok(ns_mod.deps.clone());
+            }
+        }
+    }
+    Ok(Vec::<String>::new())
+}
+
 // Copied from `libtermite` source code and modified
 // Should be replaced with a library call to libthermite in the future
 /// Download and install mod to the specified target.
+#[async_recursion]
 pub async fn fc_download_mod_and_install(
     game_install: GameInstall,
     thunderstore_mod_string: String,
@@ -199,6 +226,17 @@ pub async fn fc_download_mod_and_install(
     // Early return on empty string
     if thunderstore_mod_string.len() == 0 {
         return Err("Passed empty string".to_string());
+    }
+
+    let deps = match get_mod_dependencies(thunderstore_mod_string.clone()).await {
+        Ok(deps) => deps,
+        Err(err) => return Err(err.to_string()),
+    };
+    dbg!(deps.clone());
+
+    // Recursively install dependencies
+    for dep in deps {
+        fc_download_mod_and_install(game_install.clone(), dep).await?;
     }
 
     // Prevent installing Northstar as a mod
