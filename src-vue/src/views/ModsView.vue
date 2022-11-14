@@ -1,13 +1,15 @@
 <template>
     <div class="fc__mods__container">
-        <h3>Installed Mods:</h3>
-        <div>
-            <el-card shadow="hover" v-for="mod in installed_mods">
-                <el-switch style="--el-switch-on-color: #13ce66; --el-switch-off-color: #8957e5" v-model="mod.enabled"
-                    :before-change="() => updateWhichModsEnabled(mod)" :loading="global_load_indicator" />
-                {{mod.name}}
-            </el-card>
-        </div>
+        <el-scrollbar>
+            <h3>Installed Mods:</h3>
+            <div>
+                <el-card shadow="hover" v-for="mod in installed_mods">
+                    <el-switch style="--el-switch-on-color: #13ce66; --el-switch-off-color: #8957e5" v-model="mod.enabled"
+                        :before-change="() => updateWhichModsEnabled(mod)" :loading="global_load_indicator" />
+                    {{mod.name}}
+                </el-card>
+            </div>
+        </el-scrollbar>
     </div>
 </template>
 
@@ -86,7 +88,6 @@ export default defineComponent({
 
 <style scoped>
 .fc__mods__container {
-    padding: 20px 30px;
     color: white;
     position: relative;
 }
