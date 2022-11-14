@@ -163,7 +163,7 @@ export default defineComponent({
 .desc {
     font-size: 12px;
     margin: 8px 0 16px;
-    height: 58px;
+    height: 57px;
     text-overflow: ellipsis;
     overflow: hidden;
 }
