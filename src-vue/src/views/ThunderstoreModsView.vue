@@ -55,6 +55,10 @@ export default defineComponent({
     async mounted() {
         const response = await fetch('https://northstar.thunderstore.io/api/v1/package/');
         this.mods = JSON.parse(await (await response.blob()).text());
+
+        // Remove some mods from listing
+        const removedMods = ['Northstar', 'NorthstarReleaseCandidate', 'r2modman'];
+        this.mods = this.mods.filter((mod: ThunderstoreMod) => !removedMods.includes(mod.name));
     },
     computed: {
         modsList(): ThunderstoreMod[] {
