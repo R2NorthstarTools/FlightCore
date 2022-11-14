@@ -4,9 +4,18 @@
             <el-progress :show-text="false" :percentage="50" :indeterminate="true" />
         </div>
         <el-scrollbar v-else class="container">
+            <!-- Search filters -->
             <div class="filter_container">
                 <el-input v-model="input" placeholder="Search" clearable @input="onFilterTextChange" />
             </div>
+
+            <!-- Message displayed if no mod matched searched words -->
+            <div v-if="filteredMods.length === 0 && input.length !== 0" class="noModFound">
+                No matching mod has been found.<br/>
+                Try another search!
+            </div>
+
+            <!-- Mod cards -->
             <el-card v-for="mod of modsList" v-bind:key="mod.name" :body-style="{ padding: '0px' }">
                 <img
                     :src="mod.versions[0].icon"
@@ -180,5 +189,10 @@ export default defineComponent({
     padding: 0;
     font-size: 20px;
     border: none;
+}
+
+.noModFound {
+    color: white;
+    margin: 20px 5px;
 }
 </style>
