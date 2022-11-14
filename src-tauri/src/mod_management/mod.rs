@@ -196,6 +196,11 @@ pub async fn fc_download_mod_and_install(
     );
     let mods_directory = format!("{}/R2Northstar/mods/", game_install.game_path);
 
+    // Early return on empty string
+    if thunderstore_mod_string.len() == 0 {
+        return Err("Passed empty string".to_string());
+    }
+
     // Prevent installing Northstar as a mod
     // While it would fail during install anyway, having explicit error message is nicer
     let blacklisted_mods = ["northstar-Northstar", "northstar-NorthstarReleaseCandidate"];
