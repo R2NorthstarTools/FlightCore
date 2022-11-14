@@ -33,9 +33,16 @@
                     <div class="desc">
                         {{ mod.versions[0].description }}
                     </div>
-                    <el-button type="primary" class="button">
-                        {{ getModButtonText(mod) }}
-                    </el-button>
+                    <span style="display: flex">
+                        <el-button type="primary" style="flex: 6">
+                            {{ getModButtonText(mod) }}
+                        </el-button>
+                        <el-button link type="info" class="infoBtn" @click="openURL(mod.package_url)">
+                            <el-icon>
+                                <InfoFilled />
+                            </el-icon>
+                        </el-button>
+                    </span>
                 </div>
             </el-card>
         </el-scrollbar>
@@ -45,6 +52,7 @@
 <script lang="ts">
 import {defineComponent} from 'vue';
 import {ThunderstoreMod} from "../utils/thunderstore/ThunderstoreMod";
+import { shell } from '@tauri-apps/api';
 
 export default defineComponent({
     name: "ThunderstoreModsView",
@@ -104,6 +112,9 @@ export default defineComponent({
                     || mod.owner.toLowerCase().includes(searchValue) 
                     || mod.versions[0].description.toLowerCase().includes(searchValue);
             });
+        },
+        openURL(url: string): void {
+            shell.open(url);
         }
     }
 });
@@ -148,10 +159,6 @@ export default defineComponent({
     overflow: hidden;
 }
 
-button {
-    width: 100% !important;
-}
-
 .statContainer {
     font-size: 14px;
 }
@@ -166,5 +173,12 @@ button {
 
 .el-input {
     max-width: 300px;
+}
+
+.infoBtn {
+    width: 20px;
+    padding: 0;
+    font-size: 20px;
+    border: none;
 }
 </style>
