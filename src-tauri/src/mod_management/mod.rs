@@ -241,7 +241,7 @@ pub async fn fc_download_mod_and_install(
 
     // Prevent installing Northstar as a mod
     // While it would fail during install anyway, having explicit error message is nicer
-    let blacklisted_mods = ["northstar-Northstar", "northstar-NorthstarReleaseCandidate"];
+    let blacklisted_mods = ["northstar-Northstar", "northstar-NorthstarReleaseCandidate", "ebkr-r2modman"];
     for blacklisted_mod in blacklisted_mods {
         if thunderstore_mod_string.contains(blacklisted_mod) {
             return Err("Cannot install Northstar as a mod!".to_string());
