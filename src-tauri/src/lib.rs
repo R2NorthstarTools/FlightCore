@@ -207,7 +207,7 @@ fn extract(zip_file: std::fs::File, target: &std::path::Path) -> Result<()> {
 ///Install N* from the provided mod
 ///
 ///Checks cache, else downloads the latest version
-async fn do_install(nmod: &thermite::model::Mod, game_path: &std::path::Path) -> Result<()> {
+async fn do_install(nmod: &thermite::model::ModVersion, game_path: &std::path::Path) -> Result<()> {
     let filename = format!("northstar-{}.zip", nmod.version);
     let download_directory = format!("{}/___flightcore-temp-download-dir/", game_path.display());
 
@@ -254,11 +254,11 @@ pub async fn install_northstar(
         .ok_or_else(|| panic!("Couldn't find Northstar on thunderstore???"))
         .unwrap();
 
-    do_install(nmod, std::path::Path::new(game_path))
+    do_install(nmod.versions.get(&nmod.latest).unwrap(), std::path::Path::new(game_path))
         .await
         .unwrap();
 
-    Ok(nmod.version.clone())
+    Ok(nmod.latest.clone())
 }
 
 /// Returns identifier of host OS FlightCore is running on
@@ -353,44 +353,6 @@ pub fn convert_release_candidate_number(version_number: String) -> String {
     // Works as intended for RCs < 10, e.g.  `v1.9.2-rc1`  -> `v1.9.201`
     // Doesn't work for larger numbers, e.g. `v1.9.2-rc11` -> `v1.9.2011` (should be `v1.9.211`)
     version_number.replace("-rc", "0").replace("00", "")
-}
-
-/// Checks if installed FlightCore version is up-to-date
-/// false -> FlightCore install is up-to-date
-/// true  -> FlightCore install is outdated
-pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
-    // Get newest version number from GitHub API
-    println!("Checking GitHub API");
-    let url = "https://api.github.com/repos/GeckoEidechse/FlightCore/releases/latest";
-    let user_agent = "GeckoEidechse/FlightCore";
-    let client = reqwest::Client::new();
-    let res = client
-        .get(url)
-        .header(reqwest::header::USER_AGENT, user_agent)
-        .send()
-        .await
-        .unwrap()
-        .text()
-        .await
-        .unwrap();
-
-    let json_response: serde_json::Value =
-        serde_json::from_str(&res).expect("JSON was not well-formatted");
-    println!("Done checking GitHub API");
-
-    // Extract version number from JSON
-    let newest_release_version = json_response
-        .get("tag_name")
-        .and_then(|value| value.as_str())
-        .unwrap();
-
-    // Get version of installed FlightCore...
-    let version = env!("CARGO_PKG_VERSION");
-    // ...and format it
-    let version = format!("v{}", version);
-
-    // TODO: This shouldn't be a string compare but promper semver compare
-    Ok(version != newest_release_version)
 }
 
 pub fn get_log_list(game_install: GameInstall) -> Result<Vec<std::path::PathBuf>, String> {
