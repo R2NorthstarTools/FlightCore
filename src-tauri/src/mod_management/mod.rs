@@ -159,9 +159,6 @@ fn add_thunderstore_mod_string(
     path_to_mod_json: String,
     thunderstore_mod_string: String,
 ) -> Result<(), anyhow::Error> {
-    println!("Hello");
-    dbg!(path_to_mod_json.clone());
-    dbg!(thunderstore_mod_string.clone());
 
     // Read file into string and parse it
     let data = std::fs::read_to_string(path_to_mod_json.clone())?;
