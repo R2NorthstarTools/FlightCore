@@ -26,7 +26,7 @@
                         <el-icon class="no-inherit">
                             <Download />
                         </el-icon>
-                        {{ mod.versions[0].downloads }}
+                        {{ modDownloadsCount(mod) }}
                     </span>
 
                     <span class="statContainer">
@@ -62,6 +62,7 @@
 import {defineComponent} from 'vue';
 import {ThunderstoreMod} from "../utils/thunderstore/ThunderstoreMod";
 import { shell } from '@tauri-apps/api';
+import { ThunderstoreModVersion } from '../utils/thunderstore/ThunderstoreModVersion';
 
 export default defineComponent({
     name: "ThunderstoreModsView",
@@ -124,6 +125,11 @@ export default defineComponent({
         },
         openURL(url: string): void {
             shell.open(url);
+        },
+        modDownloadsCount(mod: ThunderstoreMod): number {
+            let totalDownloads = 0;
+            mod.versions.map((version: ThunderstoreModVersion) => totalDownloads += version.downloads);
+            return totalDownloads;
         }
     }
 });
