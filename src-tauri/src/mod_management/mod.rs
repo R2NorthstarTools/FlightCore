@@ -233,7 +233,17 @@ pub async fn fc_download_mod_and_install(
 
     // Recursively install dependencies
     for dep in deps {
-        fc_download_mod_and_install(game_install.clone(), dep).await?;
+        match fc_download_mod_and_install(game_install.clone(), dep).await {
+            Ok(()) => (),
+            Err(err) => {
+                if err.to_string() == "Cannot install Northstar as a mod!" {
+                    return Ok(()); // For Northstar as a dependency, we just skip it
+                }
+                else {
+                    return Err(err.to_string())
+                }
+            }
+        };
     }
 
     // Prevent installing Northstar as a mod
