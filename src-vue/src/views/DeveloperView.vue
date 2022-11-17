@@ -41,6 +41,10 @@
             Get installed mods
         </el-button>
 
+        <el-button type="primary" @click="cleanUpDownloadFolder">
+            Force delete temp download folder
+        </el-button>
+
     </div>
 </template>
 
@@ -175,6 +179,29 @@ export default defineComponent({
                 ElNotification({
                     title: `Installed ${mod_to_install}`,
                     message: message as string,
+                    type: 'success',
+                    position: 'bottom-right'
+                });
+            })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                });
+        },
+        async cleanUpDownloadFolder() {
+            let game_install = {
+                game_path: this.$store.state.game_path,
+                install_type: this.$store.state.install_type
+            } as GameInstall;
+            await invoke("clean_up_download_folder_caller", { gameInstall: game_install, force: true }).then((message) => {
+                // Show user notificatio if mod install completed.
+                ElNotification({
+                    title: `Done`,
+                    message: `Done`,
                     type: 'success',
                     position: 'bottom-right'
                 });
