@@ -10,8 +10,13 @@
                     <el-input v-model="input" placeholder="Search" clearable @input="onFilterTextChange" />
                 </div>
 
+                <!-- Message displayed when user is typing in search bar -->
+                <div v-if="userIsTyping" class="modMessage">
+                    Searching mods...
+                </div>
+
                 <!-- Message displayed if no mod matched searched words -->
-                <div v-if="filteredMods.length === 0 && input.length !== 0" class="noModFound">
+                <div v-else-if="filteredMods.length === 0 && input.length !== 0" class="modMessage">
                     No matching mod has been found.<br/>
                     Try another search!
                 </div>
@@ -83,7 +88,9 @@ export default defineComponent({
     data() {
         return {
             input: '',
-            filteredMods: [] as ThunderstoreMod[]
+            filteredMods: [] as ThunderstoreMod[],
+            userIsTyping: false,
+            debouncedSearch: this.debounce((i: string) => this.filterMods(i))
         };
     },
     methods: {
@@ -99,13 +106,24 @@ export default defineComponent({
         },
 
         /**
+         * This is a debounced version of the filterMods method, that calls
+         * filterMods when user has stopped typing in the search bar (i.e.
+         * waits 300ms).
+         * It allows not to trigger filtering method (which is costly) each
+         * time user inputs a character.
+         */
+        onFilterTextChange (searchString: string) {
+            this.debouncedSearch(searchString);
+        },
+
+        /**
          * This method is called each time search input is modified, and
          * filters mods matching the input string.
          *
          * This converts research string and all researched fields to
          * lower case, to match mods regardless of font case.
          */
-        onFilterTextChange(value: string) {
+        filterMods(value: string) {
             if (value === '') {
                 this.filteredMods = [];
                 return;
@@ -136,6 +154,23 @@ export default defineComponent({
             let totalDownloads = 0;
             mod.versions.map((version: ThunderstoreModVersion) => totalDownloads += version.downloads);
             return totalDownloads;
+        },
+
+        /**
+         * This debounces a method, i.e. it prevents input method from being called
+         * multiple times in a short period of time.
+         * Stolen from https://www.freecodecamp.org/news/javascript-debounce-example/
+         */
+        debounce (func: Function, timeout = 1000) {
+            let timer: number;
+            return (...args: any) => {
+                this.userIsTyping = true;
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    this.userIsTyping = false;
+                    func.apply(this, args);
+                }, timeout);
+            };
         }
     }
 });
@@ -203,7 +238,7 @@ export default defineComponent({
     border: none;
 }
 
-.noModFound {
+.modMessage {
     color: white;
     margin: 20px 5px;
 }
