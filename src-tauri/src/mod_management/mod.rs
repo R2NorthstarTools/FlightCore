@@ -123,6 +123,7 @@ pub fn get_installed_mods_and_properties(
         };
         let current_mod: NorthstarMod = NorthstarMod {
             name: name,
+            thunderstore_mod_string: None,
             enabled: current_mod_enabled,
         };
         installed_mods.push(current_mod);
