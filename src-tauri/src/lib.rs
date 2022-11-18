@@ -107,6 +107,24 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
         }
     };
 
+    // Other custom locations (for dev)
+    #[cfg(debug_assertions)]
+    {
+        let locations = [
+            "/your/path/here", // Replace this path with one pointing to a TF|2 install or add more below
+        ];
+        // Check if valid folder and valid Titanfall2 install path
+        for location in locations {
+            if std::path::Path::new(location).exists() && check_is_valid_game_path(location).is_ok() {
+                let game_install = GameInstall {
+                    game_path: location.to_string(),
+                    install_type: InstallType::UNKNOWN,
+                };
+                return Ok(game_install);
+            }
+        }
+    }
+
     Err("Could not auto-detect game install location! Please enter it manually.".to_string())
 }
 
