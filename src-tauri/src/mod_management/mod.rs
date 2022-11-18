@@ -304,10 +304,5 @@ pub async fn fc_download_mod_and_install(
     // Delete downloaded zip file
     std::fs::remove_file(path).unwrap();
 
-    // Delete temp download folder
-    // TODO: For some reason this fails. Maybe delete download folder in separate call?
-    // std::fs::remove_dir(download_directory).unwrap();
-    // std::fs::remove_dir_all(download_directory).unwrap();
-
     Ok(())
 }
