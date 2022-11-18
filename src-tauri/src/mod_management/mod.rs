@@ -56,7 +56,7 @@ fn parse_mod_json_for_mod_name(mod_json_path: String) -> Result<String, anyhow::
 }
 
 /// Parse `mods` folder for installed mods.
-fn get_installed_mods(game_install: GameInstall) -> Result<Vec<String>, String> {
+fn parse_installed_mods(game_install: GameInstall) -> Result<Vec<String>, String> {
     let ns_mods_folder = format!("{}/R2Northstar/mods/", game_install.game_path);
 
     let paths = std::fs::read_dir(ns_mods_folder).unwrap();
@@ -104,7 +104,7 @@ pub fn get_installed_mods_and_properties(
     game_install: GameInstall,
 ) -> Result<Vec<NorthstarMod>, String> {
     // Get actually installed mods
-    let found_installed_mods = get_installed_mods(game_install.clone())?;
+    let found_installed_mods = parse_installed_mods(game_install.clone())?;
 
     // Get enabled mods as JSON
     let enabled_mods: serde_json::Value = match get_enabled_mods(game_install) {
