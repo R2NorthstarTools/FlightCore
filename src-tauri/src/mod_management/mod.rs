@@ -237,7 +237,7 @@ pub async fn fc_download_mod_and_install(
             Ok(()) => (),
             Err(err) => {
                 if err.to_string() == "Cannot install Northstar as a mod!" {
-                    return Ok(()); // For Northstar as a dependency, we just skip it
+                    continue; // For Northstar as a dependency, we just skip it
                 }
                 else {
                     return Err(err.to_string())
