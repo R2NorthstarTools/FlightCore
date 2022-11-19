@@ -1,4 +1,5 @@
 export interface ThunderstoreModVersion {
+    full_name: string;
     description: string;
     icon: string;
     version_number: string;
