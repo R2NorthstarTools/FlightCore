@@ -29,6 +29,7 @@ pub struct GameInstall {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct NorthstarMod {
     pub name: String,
+    pub thunderstore_mod_string: Option<String>,
     pub enabled: bool,
 }
 
