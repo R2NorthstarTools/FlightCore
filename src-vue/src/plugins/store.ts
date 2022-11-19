@@ -198,6 +198,8 @@ export const store = createStore<FlightCoreStore>({
             state.releaseNotes = await invoke("get_northstar_release_notes");
         },
         async fetchThunderstoreMods(state: FlightCoreStore) {
+            // To check if some Thunderstore mods are already installed/outdated, we need to load locally-installed mods.
+            await store.commit('loadInstalledMods');
             if (state.thunderstoreMods.length !== 0) return;
 
             const response = await fetch('https://northstar.thunderstore.io/api/v1/package/');
