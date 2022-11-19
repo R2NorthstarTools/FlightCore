@@ -50,7 +50,11 @@
                         </div>
 
                         <span style="display: flex">
-                            <el-button type="primary" style="flex: 6" @click.stop="installMod(mod)">
+                            <el-button
+                                type="primary" style="flex: 6"
+                                :loading="modsBeingInstalled.includes(mod.name)"
+                                @click.stop="installMod(mod)"
+                            >
                                 {{ getModButtonText(mod) }}
                             </el-button>
                             <el-button link type="info" class="infoBtn" @click="openURL(mod.package_url)">
@@ -91,6 +95,7 @@ export default defineComponent({
         return {
             input: '',
             filteredMods: [] as ThunderstoreMod[],
+            modsBeingInstalled: [] as string[],
             userIsTyping: false,
             debouncedSearch: this.debounce((i: string) => this.filterMods(i))
         };
@@ -180,6 +185,7 @@ export default defineComponent({
                 game_path: this.$store.state.game_path,
                 install_type: this.$store.state.install_type
             } as GameInstall;
+            this.modsBeingInstalled.push(mod.name);
             await invoke("install_mod_caller", { gameInstall: game_install, thunderstoreModString: mod.versions[0].full_name }).then((message) => {
                 ElNotification({
                     title: `Installed ${mod.name}`,
@@ -195,7 +201,10 @@ export default defineComponent({
                         type: 'error',
                         position: 'bottom-right'
                     });
-                });
+                })
+            .finally(() => {
+                this.modsBeingInstalled.splice(this.modsBeingInstalled.indexOf(mod.name), 1);
+            });
         },
     }
 });
