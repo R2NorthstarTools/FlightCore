@@ -50,7 +50,7 @@
                         </div>
 
                         <span style="display: flex">
-                            <el-button type="primary" style="flex: 6">
+                            <el-button type="primary" style="flex: 6" @click.stop="installMod(mod)">
                                 {{ getModButtonText(mod) }}
                             </el-button>
                             <el-button link type="info" class="infoBtn" @click="openURL(mod.package_url)">
@@ -69,8 +69,10 @@
 <script lang="ts">
 import {defineComponent} from 'vue';
 import {ThunderstoreMod} from "../utils/thunderstore/ThunderstoreMod";
-import { shell } from '@tauri-apps/api';
+import {invoke, shell} from '@tauri-apps/api';
 import { ThunderstoreModVersion } from '../utils/thunderstore/ThunderstoreModVersion';
+import {GameInstall} from "../utils/GameInstall";
+import {ElNotification} from "element-plus";
 
 export default defineComponent({
     name: "ThunderstoreModsView",
@@ -171,7 +173,30 @@ export default defineComponent({
                     func.apply(this, args);
                 }, timeout);
             };
-        }
+        },
+
+        async installMod (mod: ThunderstoreMod) {
+            let game_install = {
+                game_path: this.$store.state.game_path,
+                install_type: this.$store.state.install_type
+            } as GameInstall;
+            await invoke("install_mod_caller", { gameInstall: game_install, thunderstoreModString: mod.versions[0].full_name }).then((message) => {
+                ElNotification({
+                    title: `Installed ${mod.name}`,
+                    message: message as string,
+                    type: 'success',
+                    position: 'bottom-right'
+                });
+            })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                });
+        },
     }
 });
 </script>
