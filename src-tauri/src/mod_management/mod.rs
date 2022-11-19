@@ -55,14 +55,35 @@ fn parse_mod_json_for_mod_name(mod_json_path: String) -> Result<String, anyhow::
     Ok(mod_name.to_string())
 }
 
+/// Parses `mod.json` for Thunderstore mod string
+// TODO: Maybe pass PathBuf or serde json object
+fn parse_mod_json_for_thunderstore_mod_string(
+    mod_json_path: String,
+) -> Result<String, anyhow::Error> {
+    // Read file into string and parse it
+    let data = std::fs::read_to_string(mod_json_path)?;
+    let parsed_json: serde_json::Value = json5::from_str(&data)?;
+
+    // Extract TS mod string
+    let thunderstore_mod_string = match parsed_json
+        .get("ThunderstoreModString")
+        .and_then(|value| value.as_str())
+    {
+        Some(thunderstore_mod_string) => thunderstore_mod_string,
+        None => return Err(anyhow!("No ThunderstoreModString found")),
+    };
+
+    Ok(thunderstore_mod_string.to_string())
+}
+
 /// Parse `mods` folder for installed mods.
-fn parse_installed_mods(game_install: GameInstall) -> Result<Vec<String>, String> {
+fn parse_installed_mods(game_install: GameInstall) -> Result<Vec<(String, Option<String>)>, String> {
     let ns_mods_folder = format!("{}/R2Northstar/mods/", game_install.game_path);
 
     let paths = std::fs::read_dir(ns_mods_folder).unwrap();
 
     let mut directories: Vec<PathBuf> = Vec::new();
-    let mut mod_names: Vec<String> = Vec::new();
+    let mut mods: Vec<(String, Option<String>)> = Vec::new();
 
     // Get list of folders in `mods` directory
     for path in paths {
@@ -90,11 +111,17 @@ fn parse_installed_mods(game_install: GameInstall) -> Result<Vec<String>, String
                 continue;
             }
         };
-        mod_names.push(mod_name);
+        let thunderstore_mod_string =
+            match parse_mod_json_for_thunderstore_mod_string(mod_json_path.clone()) {
+                Ok(thunderstore_mod_string) => Some(thunderstore_mod_string),
+                Err(err) => None,
+            };
+
+        mods.push((mod_name, thunderstore_mod_string));
     }
 
     // Return found mod names
-    Ok(mod_names)
+    Ok(mods)
 }
 
 /// Gets list of installed mods and their properties
@@ -116,14 +143,14 @@ pub fn get_installed_mods_and_properties(
     let mapping = enabled_mods.as_object().unwrap();
 
     // Use list of installed mods and set enabled based on `enabledmods.json`
-    for name in found_installed_mods {
+    for (name, thunderstore_mod_string) in found_installed_mods {
         let current_mod_enabled = match mapping.get(&name) {
             Some(enabled) => enabled.as_bool().unwrap(),
             None => true, // Northstar considers mods not in mapping as enabled.
         };
         let current_mod: NorthstarMod = NorthstarMod {
             name: name,
-            thunderstore_mod_string: None,
+            thunderstore_mod_string: thunderstore_mod_string,
             enabled: current_mod_enabled,
         };
         installed_mods.push(current_mod);
