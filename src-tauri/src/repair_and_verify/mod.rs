@@ -2,6 +2,7 @@
 
 use app::{get_enabled_mods, GameInstall};
 use crate::mod_management::set_mod_enabled_status;
+use anyhow::anyhow;
 
 /// Verifies Titanfall2 game files
 pub fn verify_game_files(game_install: GameInstall) -> Result<String, String> {
@@ -31,6 +32,36 @@ pub fn disable_all_but_core(game_install: GameInstall) -> Result<(), String> {
             set_mod_enabled_status(game_install.clone(), key.to_string(), false)?;
         }
     }
+
+    Ok(())
+}
+
+/// Deletes download folder
+/// If `force` is FALSE, bails on non-empty folder
+/// If `force` is TRUE, deletes folder even if non-empty
+pub fn clean_up_download_folder(
+    game_install: GameInstall,
+    force: bool,
+) -> Result<(), anyhow::Error> {
+    // Get download directory
+    let download_directory = format!(
+        "{}/___flightcore-temp-download-dir/",
+        game_install.game_path
+    );
+
+    // Check if files in folder
+    let download_dir_contents = std::fs::read_dir(download_directory.clone())?;
+    // dbg!(download_dir_contents);
+
+    let mut count = 0;
+    download_dir_contents.inspect(|_| count += 1).for_each(drop);
+
+    if count > 0 && !force {
+        return Err(anyhow!("Folder not empty, not deleting"));
+    }
+
+    // Delete folder
+    std::fs::remove_dir_all(download_directory)?;
 
     Ok(())
 }

@@ -22,6 +22,15 @@
             Toggle Release Candidate
         </el-button>
 
+
+        <h3>Mod install:</h3>
+
+        <el-input v-model="mod_to_install_field_string" placeholder="Please input Thunderstore dependency string" clearable />
+
+        <el-button type="primary" @click="installMod">
+            Install mod
+        </el-button>
+
         <h3>Repair:</h3>
 
         <el-button type="primary" @click="disableAllModsButCore">
@@ -30,6 +39,10 @@
 
         <el-button type="primary" @click="getInstalledMods">
             Get installed mods
+        </el-button>
+
+        <el-button type="primary" @click="cleanUpDownloadFolder">
+            Force delete temp download folder
         </el-button>
 
     </div>
@@ -46,6 +59,11 @@ const persistentStore = new Store('flight-core-settings.json');
 
 export default defineComponent({
     name: "DeveloperView",
+    data() {
+        return {
+            mod_to_install_field_string : "",
+        }
+    },
     methods: {
         disableDevMode() {
             this.$store.commit('toggleDeveloperMode');
@@ -137,6 +155,53 @@ export default defineComponent({
                 ElNotification({
                     title: 'Success',
                     message: "Success",
+                    type: 'success',
+                    position: 'bottom-right'
+                });
+            })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                });
+        },
+        async installMod() {
+            let game_install = {
+                game_path: this.$store.state.game_path,
+                install_type: this.$store.state.install_type
+            } as GameInstall;
+            let mod_to_install = this.mod_to_install_field_string;
+            await invoke("install_mod_caller", { gameInstall: game_install, thunderstoreModString: mod_to_install }).then((message) => {
+                // Show user notificatio if mod install completed.
+                ElNotification({
+                    title: `Installed ${mod_to_install}`,
+                    message: message as string,
+                    type: 'success',
+                    position: 'bottom-right'
+                });
+            })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                });
+        },
+        async cleanUpDownloadFolder() {
+            let game_install = {
+                game_path: this.$store.state.game_path,
+                install_type: this.$store.state.install_type
+            } as GameInstall;
+            await invoke("clean_up_download_folder_caller", { gameInstall: game_install, force: true }).then((message) => {
+                // Show user notificatio if mod install completed.
+                ElNotification({
+                    title: `Done`,
+                    message: `Done`,
                     type: 'success',
                     position: 'bottom-right'
                 });

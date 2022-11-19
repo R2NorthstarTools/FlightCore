@@ -15,10 +15,12 @@ mod github;
 use github::release_notes::{get_northstar_release_notes, check_is_flightcore_outdated};
 
 mod repair_and_verify;
-use repair_and_verify::{verify_game_files, disable_all_but_core};
+use repair_and_verify::{clean_up_download_folder, disable_all_but_core, verify_game_files};
 
 mod mod_management;
-use mod_management::{set_mod_enabled_status, get_installed_mods_and_properties};
+use mod_management::{
+    fc_download_mod_and_install, get_installed_mods_and_properties, set_mod_enabled_status,
+};
 
 use tauri::Manager;
 use tauri_plugin_store::PluginBuilder;
@@ -92,6 +94,8 @@ fn main() {
             get_northstar_release_notes,
             linux_checks,
             get_installed_mods_caller,
+            install_mod_caller,
+            clean_up_download_folder_caller,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -275,7 +279,9 @@ async fn verify_game_files_caller(game_install: GameInstall) -> Result<String, S
 }
 
 #[tauri::command]
-async fn get_enabled_mods_caller(game_install: GameInstall) -> Result<serde_json::value::Value, String> {
+async fn get_enabled_mods_caller(
+    game_install: GameInstall,
+) -> Result<serde_json::value::Value, String> {
     get_enabled_mods(game_install)
 }
 
@@ -296,4 +302,34 @@ async fn disable_all_but_core_caller(game_install: GameInstall) -> Result<(), St
 #[tauri::command]
 async fn get_installed_mods_caller(game_install: GameInstall) -> Result<Vec<NorthstarMod>, String> {
     get_installed_mods_and_properties(game_install)
+}
+
+#[tauri::command]
+/// Installs the specified mod
+async fn install_mod_caller(
+    game_install: GameInstall,
+    thunderstore_mod_string: String,
+) -> Result<(), String> {
+    fc_download_mod_and_install(game_install.clone(), thunderstore_mod_string).await?;
+    match clean_up_download_folder(game_install, false) {
+        Ok(()) => Ok(()),
+        Err(err) => {
+            println!("Failed to delete download folder due to {}", err);
+            // Failure to delete download folder is not an error in mod install
+            // As such ignore. User can still force delete if need be
+            Ok(())
+        }
+    }
+}
+
+#[tauri::command]
+/// Installs the specified mod
+async fn clean_up_download_folder_caller(
+    game_install: GameInstall,
+    force: bool,
+) -> Result<(), String> {
+    match clean_up_download_folder(game_install, force) {
+        Ok(()) => Ok(()),
+        Err(err) => Err(err.to_string()),
+    }
 }
