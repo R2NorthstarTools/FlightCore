@@ -77,6 +77,7 @@ import {invoke, shell} from '@tauri-apps/api';
 import { ThunderstoreModVersion } from '../utils/thunderstore/ThunderstoreModVersion';
 import {GameInstall} from "../utils/GameInstall";
 import {ElNotification} from "element-plus";
+import {NorthstarMod} from "../utils/NorthstarMod";
 
 export default defineComponent({
     name: "ThunderstoreModsView",
@@ -104,11 +105,17 @@ export default defineComponent({
         /**
          * Returns button text associated to a mod.
          * TODO Returned text changes regarding status of argument mod:
-         *     * "Install", when the mod is not installed
          *     * "Update", when installed version is deprecated
          *     * "Installed", when mod is installed and up-to-date
          */
         getModButtonText(mod: ThunderstoreMod): string {
+            if (this.modsBeingInstalled.includes(mod.name)) {
+                return "Installing...";
+            }
+            // TODO ensure mod is up-to-date
+            if (this.$store.state.installed_mods.map((mod: NorthstarMod) => mod.thunderstore_mod_string).includes(mod.versions[0].full_name)) {
+                return "Installed";
+            }
             return "Install";
         },
 
