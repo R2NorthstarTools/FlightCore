@@ -114,7 +114,7 @@ fn parse_installed_mods(game_install: GameInstall) -> Result<Vec<(String, Option
         let thunderstore_mod_string =
             match parse_mod_json_for_thunderstore_mod_string(mod_json_path.clone()) {
                 Ok(thunderstore_mod_string) => Some(thunderstore_mod_string),
-                Err(err) => None,
+                Err(_err) => None,
             };
 
         mods.push((mod_name, thunderstore_mod_string));
