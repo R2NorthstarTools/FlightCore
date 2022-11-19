@@ -209,7 +209,7 @@ export default defineComponent({
          * multiple times in a short period of time.
          * Stolen from https://www.freecodecamp.org/news/javascript-debounce-example/
          */
-        debounce (func: Function, timeout = 1000) {
+        debounce (func: Function, timeout = 200) {
             let timer: number;
             return (...args: any) => {
                 this.userIsTyping = true;
