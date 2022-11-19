@@ -13,6 +13,7 @@ import { Store } from 'tauri-plugin-store-api';
 import {router} from "../main";
 import ReleaseInfo from "../utils/ReleaseInfo";
 import { ThunderstoreMod } from '../utils/thunderstore/ThunderstoreMod';
+import {NorthstarMod} from "../utils/NorthstarMod";
 
 const persistentStore = new Store('flight-core-settings.json');
 
@@ -28,7 +29,9 @@ export interface FlightCoreStore {
     northstar_state: NorthstarState,
     northstar_release_canal: ReleaseCanal,
     releaseNotes: ReleaseInfo[],
+
     thunderstoreMods: ThunderstoreMod[],
+    installed_mods: NorthstarMod[],
 
     northstar_is_running: boolean,
     origin_is_running: boolean
@@ -49,7 +52,9 @@ export const store = createStore<FlightCoreStore>({
             northstar_state: NorthstarState.GAME_NOT_FOUND,
             northstar_release_canal: ReleaseCanal.RELEASE,
             releaseNotes: [],
+
             thunderstoreMods: [],
+            installed_mods: [],
 
             northstar_is_running: false,
             origin_is_running: false
@@ -194,7 +199,7 @@ export const store = createStore<FlightCoreStore>({
         },
         async fetchThunderstoreMods(state: FlightCoreStore) {
             if (state.thunderstoreMods.length !== 0) return;
-            
+
             const response = await fetch('https://northstar.thunderstore.io/api/v1/package/');
             let mods = JSON.parse(await (await response.blob()).text());
 
