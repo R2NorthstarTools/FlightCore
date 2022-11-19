@@ -74,10 +74,11 @@
 import {defineComponent} from 'vue';
 import {ThunderstoreMod} from "../utils/thunderstore/ThunderstoreMod";
 import {invoke, shell} from '@tauri-apps/api';
-import { ThunderstoreModVersion } from '../utils/thunderstore/ThunderstoreModVersion';
+import {ThunderstoreModVersion} from '../utils/thunderstore/ThunderstoreModVersion';
 import {GameInstall} from "../utils/GameInstall";
 import {ElNotification} from "element-plus";
 import {NorthstarMod} from "../utils/NorthstarMod";
+import {ThunderstoreModStatus} from "../utils/thunderstore/ThunderstoreModStatus";
 
 export default defineComponent({
     name: "ThunderstoreModsView",
@@ -104,19 +105,35 @@ export default defineComponent({
     methods: {
         /**
          * Returns button text associated to a mod.
-         * TODO Returned text changes regarding status of argument mod:
-         *     * "Update", when installed version is deprecated
-         *     * "Installed", when mod is installed and up-to-date
          */
         getModButtonText(mod: ThunderstoreMod): string {
+            switch (this.getModStatus(mod)) {
+                case ThunderstoreModStatus.BEING_INSTALLED:
+                    return "Installing...";
+                case ThunderstoreModStatus.INSTALLED:
+                    return "Installed";
+                case ThunderstoreModStatus.NOT_INSTALLED:
+                    return "Install";
+                case ThunderstoreModStatus.OUTDATED:
+                    return "Update";
+            }
+        },
+
+        /**
+         * Returns the status of a given mod.
+         * TODO Returned status changes regarding status of argument mod:
+         *     * "Outdated", when installed version is deprecated
+         *     * "Installed", when mod is installed and up-to-date
+         */
+        getModStatus(mod: ThunderstoreMod): ThunderstoreModStatus {
             if (this.modsBeingInstalled.includes(mod.name)) {
-                return "Installing...";
+                return ThunderstoreModStatus.BEING_INSTALLED;
             }
             // TODO ensure mod is up-to-date
             if (this.$store.state.installed_mods.map((mod: NorthstarMod) => mod.thunderstore_mod_string).includes(mod.versions[0].full_name)) {
-                return "Installed";
+                return ThunderstoreModStatus.INSTALLED;
             }
-            return "Install";
+            return ThunderstoreModStatus.NOT_INSTALLED;
         },
 
         /**
