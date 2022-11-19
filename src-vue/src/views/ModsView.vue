@@ -28,24 +28,7 @@ export default defineComponent({
         }
     },
     async mounted() {
-        let game_install = {
-            game_path: this.$store.state.game_path,
-            install_type: this.$store.state.install_type
-        } as GameInstall;
-        // Call back-end for installed mods
-        await invoke("get_installed_mods_caller", { gameInstall: game_install })
-            .then((message) => {
-                this.$store.state.installed_mods = (message as NorthstarMod[]);
-            })
-            .catch((error) => {
-                console.error(error);
-                ElNotification({
-                    title: 'Error',
-                    message: error,
-                    type: 'error',
-                    position: 'bottom-right'
-                });
-            });
+        this.$store.commit('loadInstalledMods');
     },
     methods: {
         async updateWhichModsEnabled(mod: NorthstarMod) {

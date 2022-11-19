@@ -206,6 +206,26 @@ export const store = createStore<FlightCoreStore>({
             // Remove some mods from listing
             const removedMods = ['Northstar', 'NorthstarReleaseCandidate', 'r2modman'];
             state.thunderstoreMods = mods.filter((mod: ThunderstoreMod) => !removedMods.includes(mod.name));
+        },
+        async loadInstalledMods(state: FlightCoreStore) {
+            let game_install = {
+                game_path: state.game_path,
+                install_type: state.install_type
+            } as GameInstall;
+            // Call back-end for installed mods
+            await invoke("get_installed_mods_caller", { gameInstall: game_install })
+                .then((message) => {
+                    state.installed_mods = (message as NorthstarMod[]);
+                })
+                .catch((error) => {
+                    console.error(error);
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                });
         }
     }
 });
