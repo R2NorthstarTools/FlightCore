@@ -97,7 +97,12 @@ export const store = createStore<FlightCoreStore>({
                         type: 'success',
                         position: 'bottom-right'
                     });
-                    notification_handle.close();
+                    try {
+                        notification_handle.close();
+                    }
+                    catch {
+                        console.warn("Nothing to close");
+                    }
                     state.install_type = InstallType.UNKNOWN;
 
                     // Check for Northstar install
