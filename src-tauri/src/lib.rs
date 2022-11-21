@@ -2,6 +2,8 @@ use std::env;
 
 use anyhow::{anyhow, Context, Result};
 
+mod northstar;
+
 mod platform_specific;
 #[cfg(target_os = "windows")]
 use platform_specific::windows;
@@ -11,6 +13,8 @@ use platform_specific::linux;
 use serde::{Deserialize, Serialize};
 use sysinfo::SystemExt;
 use zip::ZipArchive;
+
+use northstar::get_northstar_version_number;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum InstallType {
@@ -109,45 +113,6 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
     };
 
     Err("Could not auto-detect game install location! Please enter it manually.".to_string())
-}
-
-/// Returns the current Northstar version number as a string
-pub fn get_northstar_version_number(game_path: String) -> Result<String, anyhow::Error> {
-    println!("{}", game_path);
-    // println!("{:?}", install_type);
-
-    // TODO:
-    // Check if NorthstarLauncher.exe exists and check its version number
-    let profile_folder = "R2Northstar";
-    let core_mods = [
-        "Northstar.Client",
-        "Northstar.Custom",
-        "Northstar.CustomServers",
-    ];
-    let initial_version_number = match check_mod_version_number(format!(
-        "{}/{}/mods/{}",
-        game_path, profile_folder, core_mods[0]
-    )) {
-        Ok(version_number) => version_number,
-        Err(err) => return Err(err),
-    };
-
-    for core_mod in core_mods {
-        let current_version_number = match check_mod_version_number(format!(
-            "{}/{}/mods/{}",
-            game_path, profile_folder, core_mod
-        )) {
-            Ok(version_number) => version_number,
-            Err(err) => return Err(err),
-        };
-        if current_version_number != initial_version_number {
-            // We have a version number mismatch
-            return Err(anyhow!("Found version number mismatch"));
-        }
-    }
-    println!("All mods same version");
-
-    Ok(initial_version_number)
 }
 
 /// Checks whether the provided path is a valid Titanfall2 gamepath by checking against a certain set of criteria
