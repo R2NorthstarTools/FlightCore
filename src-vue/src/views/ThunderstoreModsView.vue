@@ -209,7 +209,7 @@ export default defineComponent({
          * Stolen from https://www.freecodecamp.org/news/javascript-debounce-example/
          */
         debounce (func: Function, timeout = 200) {
-            let timer: number;
+            let timer: NodeJS.Timeout;
             return (...args: any) => {
                 this.userIsTyping = true;
                 clearTimeout(timer);
