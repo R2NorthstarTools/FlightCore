@@ -8,15 +8,14 @@
                 <!-- Search filters -->
                 <div class="filter_container">
                     <el-input v-model="input" placeholder="Search" clearable @input="onFilterTextChange" />
-                </div>
-
-                <!-- Message displayed when user is typing in search bar -->
-                <div v-if="userIsTyping" class="modMessage">
-                    Searching mods...
+                    <!-- Message displayed when user is typing in search bar -->
+                    <div v-if="userIsTyping" class="modMessage search">
+                        Searching mods...
+                    </div>
                 </div>
 
                 <!-- Message displayed if no mod matched searched words -->
-                <div v-else-if="filteredMods.length === 0 && input.length !== 0" class="modMessage">
+                <div v-if="filteredMods.length === 0 && input.length !== 0 && !userIsTyping" class="modMessage">
                     No matching mod has been found.<br/>
                     Try another search!
                 </div>
@@ -91,7 +90,7 @@ export default defineComponent({
             return this.$store.state.thunderstoreMods;
         },
         modsList(): ThunderstoreMod[] {
-            return this.input.length === 0 ? this.mods : this.filteredMods;
+            return this.input.length === 0 || this.userIsTyping ? this.mods : this.filteredMods;
         }
     },
     data() {
@@ -311,6 +310,11 @@ export default defineComponent({
     padding: 0;
     font-size: 20px;
     border: none;
+}
+
+.search {
+    display: inline-block;
+    margin: 0 0 0 10px !important;
 }
 
 .modMessage {
