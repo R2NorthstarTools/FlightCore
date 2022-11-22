@@ -236,7 +236,7 @@ async function _initializeApp(state: any) {
 
     var result = undefined;
     var persistent_game_install = (await persistentStore.get('game-install')) as any;
-    console.log(persistent_game_install);
+
     if ( // Safety checks for value from store
         persistent_game_install
         && persistent_game_install.value !== undefined
