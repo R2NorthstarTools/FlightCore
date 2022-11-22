@@ -105,6 +105,14 @@ export const store = createStore<FlightCoreStore>({
                     }
                     state.install_type = InstallType.UNKNOWN;
 
+                    let game_install = {
+                        game_path: selected,
+                        install_type: InstallType.UNKNOWN
+                    } as GameInstall;
+
+                    // Save change in persistent store
+                    await persistentStore.set('game-install', { value: game_install });
+
                     // Check for Northstar install
                     store.commit('checkNorthstarUpdates');
                 }
@@ -226,21 +234,51 @@ async function _initializeApp(state: any) {
     // Get FlightCore version number
     state.flightcore_version = await invoke("get_flightcore_version_number");
 
-    const result = await invoke("find_game_install_location_caller")
-        .catch((err) => {
-            // Gamepath not found or other error
-            console.error(err);
-            notification_handle = ElNotification({
-                title: 'Titanfall2 not found!',
-                message: "Please manually select install location",
-                type: 'error',
-                position: 'bottom-right',
-                duration: 0 // Duration `0` means the notification will not auto-vanish
+    var result = undefined;
+    var persistent_game_install = (await persistentStore.get('game-install')) as any;
+    console.log(persistent_game_install);
+    if ( // Safety checks for value from store
+        persistent_game_install
+        && persistent_game_install.value !== undefined
+        && persistent_game_install.value.game_path !== undefined
+        && persistent_game_install.value.install_type !== undefined
+    ) { // For some reason, the plugin-store doesn't throw an eror but simply returns `null` when key not found
+        let game_install = persistent_game_install.value as GameInstall;
+        // check if valid path
+        let is_valid_titanfall2_install = await invoke("verify_install_location", { gamePath: game_install.game_path }) as boolean;
+        if (is_valid_titanfall2_install) {
+            // Use value from peristent store
+            result = game_install;
+        }
+
+    }
+
+    if (result === undefined) { // No (valid) value found in persistent store
+        result = await invoke("find_game_install_location_caller")
+            .catch((err) => {
+                // Gamepath not found or other error
+                console.error(err);
+                notification_handle = ElNotification({
+                    title: 'Titanfall2 not found!',
+                    message: "Please manually select install location",
+                    type: 'error',
+                    position: 'bottom-right',
+                    duration: 0 // Duration `0` means the notification will not auto-vanish
+                });
             });
-        });
-    const typedResult: GameInstall = result as GameInstall;
-    state.game_path = typedResult.game_path;
-    state.install_type = typedResult.install_type;
+    }
+
+    if (result !== undefined) { // Found some form of value for gameinstall
+    
+        const typedResult: GameInstall = result as GameInstall;
+
+        // Save change in persistent store
+        await persistentStore.set('game-install', { value: typedResult });
+
+        // Update UI store
+        state.game_path = typedResult.game_path;
+        state.install_type = typedResult.install_type;
+    }
 
     // Check installed Northstar version if found
     await _get_northstar_version_number(state);
