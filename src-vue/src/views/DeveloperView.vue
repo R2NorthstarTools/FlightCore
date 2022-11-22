@@ -45,6 +45,9 @@
             Force delete temp download folder
         </el-button>
 
+        <el-button type="primary" @click="clearFlightCorePersistentStore">
+            Delete FlightCore persistent store
+        </el-button>
     </div>
 </template>
 
@@ -214,6 +217,12 @@ export default defineComponent({
                         position: 'bottom-right'
                     });
                 });
+        },
+        async clearFlightCorePersistentStore() {
+            // Clear store...
+            await persistentStore.clear();
+            // ...and save
+            await persistentStore.save();
         }
     }
 });
