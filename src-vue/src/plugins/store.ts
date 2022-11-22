@@ -269,7 +269,7 @@ async function _initializeApp(state: any) {
     }
 
     if (result !== undefined) { // Found some form of value for gameinstall
-    
+
         const typedResult: GameInstall = result as GameInstall;
 
         // Save change in persistent store
@@ -278,10 +278,10 @@ async function _initializeApp(state: any) {
         // Update UI store
         state.game_path = typedResult.game_path;
         state.install_type = typedResult.install_type;
-    }
 
-    // Check installed Northstar version if found
-    await _get_northstar_version_number(state);
+        // Check installed Northstar version if found
+        await _get_northstar_version_number(state);
+    }
 }
 
 async function _checkForFlightCoreUpdates(state: FlightCoreStore) {
