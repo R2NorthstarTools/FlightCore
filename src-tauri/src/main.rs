@@ -22,6 +22,9 @@ use mod_management::{
     fc_download_mod_and_install, get_installed_mods_and_properties, set_mod_enabled_status,
 };
 
+mod northstar;
+use northstar::get_northstar_version_number;
+
 use tauri::Manager;
 use tauri_plugin_store::PluginBuilder;
 use tokio::time::sleep;
