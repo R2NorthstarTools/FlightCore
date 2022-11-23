@@ -136,19 +136,39 @@ export default defineComponent({
         },
 
         /**
+         * Strips off a Thunderstore dependency string from its version
+         * (e.g. "taskinoz-WallrunningTitans-1.0.0" to
+         * "taskinoz-WallrunningTitans").
+         */
+        getThunderstoreDependencyStringPrefix (dependency: string): string {
+            const dependencyStringMembers = dependency.split('-');
+            return `${dependencyStringMembers[0]}-${dependencyStringMembers[1]}`;
+        },
+
+        /**
          * Returns the status of a given mod.
-         * TODO Returned status changes regarding status of argument mod:
-         *     * "Outdated", when installed version is deprecated
-         *     * "Installed", when mod is installed and up-to-date
          */
         getModStatus(mod: ThunderstoreMod): ThunderstoreModStatus {
             if (this.modsBeingInstalled.includes(mod.name)) {
                 return ThunderstoreModStatus.BEING_INSTALLED;
             }
-            // TODO ensure mod is up-to-date
-            if (this.$store.state.installed_mods.map((mod: NorthstarMod) => mod.thunderstore_mod_string).includes(mod.versions[0].full_name)) {
-                return ThunderstoreModStatus.INSTALLED;
+
+            // Ensure mod is up-to-date.
+            const tsModPrefix = this.getThunderstoreDependencyStringPrefix(mod.versions[0].full_name);
+            const matchingMods: NorthstarMod[] = this.$store.state.installed_mods.filter((mod: NorthstarMod) => {
+                if (!mod.thunderstore_mod_string) return false;
+                return this.getThunderstoreDependencyStringPrefix(mod.thunderstore_mod_string!) === tsModPrefix;
+            });
+            if (matchingMods.length !== 0) {
+                // There shouldn't be several mods with same dependency string, but we never know...
+                const matchingMod = matchingMods[0];
+                // A mod is outdated if its dependency strings differs from Thunderstore dependency string
+                // (no need for semver check here)
+                return matchingMod.thunderstore_mod_string === mod.versions[0].full_name
+                    ? ThunderstoreModStatus.INSTALLED
+                    : ThunderstoreModStatus.OUTDATED;
             }
+
             return ThunderstoreModStatus.NOT_INSTALLED;
         },
 
