@@ -1,7 +1,7 @@
 <template>
     <el-card :body-style="{ padding: '0px' }">
         <img
-            :src="this.mod.versions[0].icon"
+            :src="latestVersion.icon"
             class="image"
         />
         <div style="padding: 0 10px 10px;">
@@ -23,7 +23,7 @@
             <div class="name hide-text-overflow">{{ mod.name }}</div>
             <div class="author hide-text-overflow">by {{ mod.owner }}</div>
             <div class="desc">
-                {{ mod.versions[0].description }}
+                {{ latestVersion.description }}
             </div>
 
             <span style="display: flex">
@@ -67,7 +67,7 @@ export default defineComponent({
         isBeingInstalled: false
     }),
     computed: {
-        lastVersion (): ThunderstoreModVersion {
+        latestVersion (): ThunderstoreModVersion {
             return this.mod.versions[0];
         },
 
@@ -80,7 +80,7 @@ export default defineComponent({
             }
 
             // Ensure mod is up-to-date.
-            const tsModPrefix = this.getThunderstoreDependencyStringPrefix(this.lastVersion.full_name);
+            const tsModPrefix = this.getThunderstoreDependencyStringPrefix(this.latestVersion.full_name);
             const matchingMods: NorthstarMod[] = this.$store.state.installed_mods.filter((mod: NorthstarMod) => {
                 if (!mod.thunderstore_mod_string) return false;
                 return this.getThunderstoreDependencyStringPrefix(mod.thunderstore_mod_string!) === tsModPrefix;
@@ -90,7 +90,7 @@ export default defineComponent({
                 const matchingMod = matchingMods[0];
                 // A mod is outdated if its dependency strings differs from Thunderstore dependency string
                 // (no need for semver check here)
-                return matchingMod.thunderstore_mod_string === this.lastVersion.full_name
+                return matchingMod.thunderstore_mod_string === this.latestVersion.full_name
                     ? ThunderstoreModStatus.INSTALLED
                     : ThunderstoreModStatus.OUTDATED;
             }
@@ -165,7 +165,7 @@ export default defineComponent({
                 install_type: this.$store.state.install_type
             } as GameInstall;
             this.isBeingInstalled = true;
-            await invoke("install_mod_caller", { gameInstall: game_install, thunderstoreModString: mod.versions[0].full_name }).then((message) => {
+            await invoke("install_mod_caller", { gameInstall: game_install, thunderstoreModString: this.latestVersion.full_name }).then((message) => {
                 ElNotification({
                     title: `Installed ${mod.name}`,
                     message: message as string,
