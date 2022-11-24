@@ -21,50 +21,7 @@
                 </div>
 
                 <!-- Mod cards -->
-                <el-card v-for="mod of modsList" v-bind:key="mod.name" :body-style="{ padding: '0px' }">
-                    <img
-                        :src="mod.versions[0].icon"
-                        class="image"
-                    />
-                    <div style="padding: 0px 10px 10px;">
-                        <span class="statContainer">
-                            <el-icon class="no-inherit">
-                                <Download />
-                            </el-icon>
-                            {{ modDownloadsCount(mod) }}
-                        </span>
-
-                        <span class="statContainer">
-                            {{ mod.rating_score }}
-                            <el-icon class="no-inherit">
-                                <Star />
-                            </el-icon>
-                        </span>
-                        <br/>
-
-                        <div class="name hide-text-overflow">{{ mod.name }}</div>
-                        <div class="author hide-text-overflow">by {{ mod.owner }}</div>
-                        <div class="desc">
-                            {{ mod.versions[0].description }}
-                        </div>
-
-                        <span style="display: flex">
-                            <el-button
-                                :type="getModButtonType(mod)"
-                                style="flex: 6"
-                                :loading="modsBeingInstalled.includes(mod.name)"
-                                @click.stop="installMod(mod)"
-                            >
-                                {{ getModButtonText(mod) }}
-                            </el-button>
-                            <el-button link type="info" class="infoBtn" @click="openURL(mod.package_url)">
-                                <el-icon>
-                                    <InfoFilled />
-                                </el-icon>
-                            </el-button>
-                        </span>
-                    </div>
-                </el-card>
+                <thunderstore-mod-card v-for="mod of modsList" v-bind:key="mod.name" :mod="mod" />
             </div>
         </el-scrollbar>
     </div>
@@ -73,15 +30,11 @@
 <script lang="ts">
 import {defineComponent} from 'vue';
 import {ThunderstoreMod} from "../utils/thunderstore/ThunderstoreMod";
-import {invoke, shell} from '@tauri-apps/api';
-import {ThunderstoreModVersion} from '../utils/thunderstore/ThunderstoreModVersion';
-import {GameInstall} from "../utils/GameInstall";
-import {ElNotification} from "element-plus";
-import {NorthstarMod} from "../utils/NorthstarMod";
-import {ThunderstoreModStatus} from "../utils/thunderstore/ThunderstoreModStatus";
+import ThunderstoreModCard from "../components/ThunderstoreModCard.vue";
 
 export default defineComponent({
     name: "ThunderstoreModsView",
+    components: {ThunderstoreModCard},
     async mounted() {
         this.$store.commit('fetchThunderstoreMods');
     },
@@ -103,75 +56,6 @@ export default defineComponent({
         };
     },
     methods: {
-        /**
-         * Returns button type associated to a mod.
-         */
-        getModButtonType(mod: ThunderstoreMod): string {
-            switch (this.getModStatus(mod)) {
-                case ThunderstoreModStatus.BEING_INSTALLED:
-                    return "primary";
-                case ThunderstoreModStatus.INSTALLED:
-                    return "success";
-                case ThunderstoreModStatus.NOT_INSTALLED:
-                    return "primary";
-                case ThunderstoreModStatus.OUTDATED:
-                    return "warning";
-            }
-        },
-
-        /**
-         * Returns button text associated to a mod.
-         */
-        getModButtonText(mod: ThunderstoreMod): string {
-            switch (this.getModStatus(mod)) {
-                case ThunderstoreModStatus.BEING_INSTALLED:
-                    return "Installing...";
-                case ThunderstoreModStatus.INSTALLED:
-                    return "Installed";
-                case ThunderstoreModStatus.NOT_INSTALLED:
-                    return "Install";
-                case ThunderstoreModStatus.OUTDATED:
-                    return "Update";
-            }
-        },
-
-        /**
-         * Strips off a Thunderstore dependency string from its version
-         * (e.g. "taskinoz-WallrunningTitans-1.0.0" to
-         * "taskinoz-WallrunningTitans").
-         */
-        getThunderstoreDependencyStringPrefix (dependency: string): string {
-            const dependencyStringMembers = dependency.split('-');
-            return `${dependencyStringMembers[0]}-${dependencyStringMembers[1]}`;
-        },
-
-        /**
-         * Returns the status of a given mod.
-         */
-        getModStatus(mod: ThunderstoreMod): ThunderstoreModStatus {
-            if (this.modsBeingInstalled.includes(mod.name)) {
-                return ThunderstoreModStatus.BEING_INSTALLED;
-            }
-
-            // Ensure mod is up-to-date.
-            const tsModPrefix = this.getThunderstoreDependencyStringPrefix(mod.versions[0].full_name);
-            const matchingMods: NorthstarMod[] = this.$store.state.installed_mods.filter((mod: NorthstarMod) => {
-                if (!mod.thunderstore_mod_string) return false;
-                return this.getThunderstoreDependencyStringPrefix(mod.thunderstore_mod_string!) === tsModPrefix;
-            });
-            if (matchingMods.length !== 0) {
-                // There shouldn't be several mods with same dependency string, but we never know...
-                const matchingMod = matchingMods[0];
-                // A mod is outdated if its dependency strings differs from Thunderstore dependency string
-                // (no need for semver check here)
-                return matchingMod.thunderstore_mod_string === mod.versions[0].full_name
-                    ? ThunderstoreModStatus.INSTALLED
-                    : ThunderstoreModStatus.OUTDATED;
-            }
-
-            return ThunderstoreModStatus.NOT_INSTALLED;
-        },
-
         /**
          * This is a debounced version of the filterMods method, that calls
          * filterMods when user has stopped typing in the search bar (i.e.
@@ -206,24 +90,6 @@ export default defineComponent({
         },
 
         /**
-         * This opens an URL in user's favorite web browser.
-         * This is used to open Thunderstore mod pages.
-         */
-        openURL(url: string): void {
-            shell.open(url);
-        },
-
-        /**
-         * This computes the total count of downloads of a given mod, by adding
-         * download count of each of its releases.
-         */
-        modDownloadsCount(mod: ThunderstoreMod): number {
-            let totalDownloads = 0;
-            mod.versions.map((version: ThunderstoreModVersion) => totalDownloads += version.downloads);
-            return totalDownloads;
-        },
-
-        /**
          * This debounces a method, i.e. it prevents input method from being called
          * multiple times in a short period of time.
          * Stolen from https://www.freecodecamp.org/news/javascript-debounce-example/
@@ -238,35 +104,7 @@ export default defineComponent({
                     func.apply(this, args);
                 }, timeout);
             };
-        },
-
-        async installMod (mod: ThunderstoreMod) {
-            let game_install = {
-                game_path: this.$store.state.game_path,
-                install_type: this.$store.state.install_type
-            } as GameInstall;
-            this.modsBeingInstalled.push(mod.name);
-            await invoke("install_mod_caller", { gameInstall: game_install, thunderstoreModString: mod.versions[0].full_name }).then((message) => {
-                ElNotification({
-                    title: `Installed ${mod.name}`,
-                    message: message as string,
-                    type: 'success',
-                    position: 'bottom-right'
-                });
-            })
-                .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
-                })
-            .finally(() => {
-                this.modsBeingInstalled.splice(this.modsBeingInstalled.indexOf(mod.name), 1);
-                this.$store.commit('loadInstalledMods');
-            });
-        },
+        }
     }
 });
 </script>
@@ -285,52 +123,12 @@ export default defineComponent({
     user-select: none !important;
 }
 
-.el-card {
-    display: inline-block;
-    max-width: 178px;
-    margin: 5px;
-}
-
-.author {
-    font-size: 14px;
-    font-style: italic;
-}
-
-.hide-text-overflow {
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-}
-
-.desc {
-    font-size: 12px;
-    margin: 8px 0 16px;
-    height: 57px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-}
-
-.statContainer {
-    font-size: 14px;
-}
-
-.statContainer:nth-child(2) {
-    float: right;
-}
-
 .filter_container {
     margin: 5px;
 }
 
 .el-input {
     max-width: 300px;
-}
-
-.infoBtn {
-    width: 20px;
-    padding: 0;
-    font-size: 20px;
-    border: none;
 }
 
 .search {
