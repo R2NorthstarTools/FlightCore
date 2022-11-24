@@ -264,6 +264,7 @@ export default defineComponent({
                 })
             .finally(() => {
                 this.modsBeingInstalled.splice(this.modsBeingInstalled.indexOf(mod.name), 1);
+                this.$store.commit('loadInstalledMods');
             });
         },
     }
