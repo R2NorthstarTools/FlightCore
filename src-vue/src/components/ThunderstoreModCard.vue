@@ -30,7 +30,7 @@
                 <el-button
                     :type="modButtonType"
                     style="flex: 6"
-                    :loading="isBeingInstalled"
+                    :loading="isBeingInstalled || isBeingUpdated"
                     @click.stop="installMod(mod)"
                 >
                     {{ modButtonText }}
@@ -64,7 +64,8 @@ export default defineComponent({
         }
     },
     data: () => ({
-        isBeingInstalled: false
+        isBeingInstalled: false,
+        isBeingUpdated: false
     }),
     computed: {
         latestVersion (): ThunderstoreModVersion {
@@ -77,6 +78,9 @@ export default defineComponent({
         modStatus(): ThunderstoreModStatus {
             if (this.isBeingInstalled) {
                 return ThunderstoreModStatus.BEING_INSTALLED;
+            }
+            if (this.isBeingUpdated) {
+                return ThunderstoreModStatus.BEING_UPDATED;
             }
 
             // Ensure mod is up-to-date.
@@ -105,6 +109,8 @@ export default defineComponent({
             switch (this.modStatus) {
                 case ThunderstoreModStatus.BEING_INSTALLED:
                     return "Installing...";
+                case ThunderstoreModStatus.BEING_UPDATED:
+                    return "Updating...";
                 case ThunderstoreModStatus.INSTALLED:
                     return "Installed";
                 case ThunderstoreModStatus.NOT_INSTALLED:
@@ -126,6 +132,7 @@ export default defineComponent({
                 case ThunderstoreModStatus.NOT_INSTALLED:
                     return "primary";
                 case ThunderstoreModStatus.OUTDATED:
+                case ThunderstoreModStatus.BEING_UPDATED:
                     return "warning";
             }
         },
@@ -164,7 +171,14 @@ export default defineComponent({
                 game_path: this.$store.state.game_path,
                 install_type: this.$store.state.install_type
             } as GameInstall;
-            this.isBeingInstalled = true;
+
+            // set internal state according to current installation state
+            if (this.modStatus === ThunderstoreModStatus.OUTDATED) {
+                this.isBeingUpdated = true;
+            } else {
+                this.isBeingInstalled = true;
+            }
+
             await invoke("install_mod_caller", { gameInstall: game_install, thunderstoreModString: this.latestVersion.full_name }).then((message) => {
                 ElNotification({
                     title: `Installed ${mod.name}`,
@@ -183,6 +197,7 @@ export default defineComponent({
                 })
                 .finally(() => {
                     this.isBeingInstalled = false;
+                    this.isBeingUpdated = false;
                     this.$store.commit('loadInstalledMods');
                 });
         },
