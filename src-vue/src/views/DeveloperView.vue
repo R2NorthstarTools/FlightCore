@@ -123,22 +123,7 @@ export default defineComponent({
             });
         },
         async launchGameWithoutChecks() {
-            let game_install = {
-                game_path: this.$store.state.game_path,
-                install_type: this.$store.state.install_type
-            } as GameInstall;
-            await invoke("launch_northstar_caller", { gameInstall: game_install })
-                .then((message) => {
-                    console.log(message);
-                })
-                .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
-                });
+            this.$store.commit('launchGame', true);
         },
         async disableAllModsButCore() {
             let game_install = {
