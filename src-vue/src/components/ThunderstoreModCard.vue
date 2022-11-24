@@ -28,12 +28,12 @@
 
             <span style="display: flex">
                 <el-button
-                    :type="getModButtonType"
+                    :type="modButtonType"
                     style="flex: 6"
                     :loading="isBeingInstalled"
                     @click.stop="installMod(mod)"
                 >
-                    {{ getModButtonText }}
+                    {{ modButtonText }}
                 </el-button>
                 <el-button link type="info" class="infoBtn" @click="openURL(mod.package_url)">
                     <el-icon>
@@ -74,7 +74,7 @@ export default defineComponent({
         /**
          * Returns the status of a given mod.
          */
-        getModStatus(): ThunderstoreModStatus {
+        modStatus(): ThunderstoreModStatus {
             if (this.isBeingInstalled) {
                 return ThunderstoreModStatus.BEING_INSTALLED;
             }
@@ -101,8 +101,8 @@ export default defineComponent({
         /**
          * Returns button text associated to a mod.
          */
-        getModButtonText(): string {
-            switch (this.getModStatus) {
+        modButtonText(): string {
+            switch (this.modStatus) {
                 case ThunderstoreModStatus.BEING_INSTALLED:
                     return "Installing...";
                 case ThunderstoreModStatus.INSTALLED:
@@ -117,8 +117,8 @@ export default defineComponent({
         /**
          * Returns button type associated to a mod.
          */
-        getModButtonType(): string {
-            switch (this.getModStatus) {
+        modButtonType(): string {
+            switch (this.modStatus) {
                 case ThunderstoreModStatus.BEING_INSTALLED:
                     return "primary";
                 case ThunderstoreModStatus.INSTALLED:
