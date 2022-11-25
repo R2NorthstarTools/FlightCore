@@ -15,7 +15,7 @@ mod github;
 use github::release_notes::{get_northstar_release_notes, check_is_flightcore_outdated};
 
 mod repair_and_verify;
-use repair_and_verify::{clean_up_download_folder, disable_all_but_core, verify_game_files};
+use repair_and_verify::{clean_up_download_folder, disable_all_but_core, verify_game_files, get_log_list};
 
 mod mod_management;
 use mod_management::{
