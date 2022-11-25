@@ -28,8 +28,8 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from 'vue';
-import {ThunderstoreMod} from "../utils/thunderstore/ThunderstoreMod";
+import { defineComponent } from 'vue';
+import { ThunderstoreMod } from "../utils/thunderstore/ThunderstoreMod";
 import ThunderstoreModCard from "../components/ThunderstoreModCard.vue";
 
 export default defineComponent({
