@@ -10,6 +10,33 @@ use app::get_enabled_mods;
 
 use json5;
 
+/// Gets all currently installed and enabled/disabled mods to rebuild `enabledmods.json`
+pub fn rebuild_enabled_mods_json(game_install: GameInstall) -> Result<(), String> {
+    let enabledmods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
+    let mods_and_properties = get_installed_mods_and_properties(game_install)?;
+
+    // Create new mapping
+    let mut my_map = serde_json::Map::new();
+
+    // Build mapping
+    for ns_mod in mods_and_properties.into_iter() {
+        my_map.insert(ns_mod.name, serde_json::Value::Bool(ns_mod.enabled));
+    }
+
+    // Turn into serde object
+    let obj = serde_json::Value::Object(my_map);
+
+    // Write to file
+    println!("{}", serde_json::to_string_pretty(&obj).unwrap());
+    std::fs::write(
+        enabledmods_json_path,
+        serde_json::to_string_pretty(&obj).unwrap(),
+    )
+    .unwrap();
+
+    Ok(())
+}
+
 /// Set the status of a passed mod to enabled/disabled
 pub fn set_mod_enabled_status(
     game_install: GameInstall,
@@ -19,11 +46,16 @@ pub fn set_mod_enabled_status(
     let enabledmods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
 
     // Parse JSON
-    let mut res: serde_json::Value = get_enabled_mods(game_install)?;
+    let mut res: serde_json::Value = get_enabled_mods(game_install.clone())?;
 
     // Check if key exists
     if res.get(mod_name.clone()).is_none() {
-        return Err("Value not found in enabledmod.json".to_string());
+        // If it doesn't exist, rebuild `enabledmod.json`
+        println!("Value not found in `enabledmod.json`. Rebuilding file");
+        rebuild_enabled_mods_json(game_install.clone())?;
+
+        // Then try again
+        res = get_enabled_mods(game_install)?;
     }
 
     // Update value
