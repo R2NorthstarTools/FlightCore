@@ -13,7 +13,7 @@ import { Store } from 'tauri-plugin-store-api';
 import {router} from "../main";
 import ReleaseInfo from "../utils/ReleaseInfo";
 import { ThunderstoreMod } from '../utils/thunderstore/ThunderstoreMod';
-import {NorthstarMod} from "../utils/NorthstarMod";
+import { NorthstarMod } from "../utils/NorthstarMod";
 
 const persistentStore = new Store('flight-core-settings.json');
 
