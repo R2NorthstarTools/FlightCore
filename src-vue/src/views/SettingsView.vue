@@ -19,12 +19,21 @@
         <br />
         <br />
         UI design inspired by <el-link :underline="false" target="_blank" href="https://github.com/TFORevive/tforevive_launcher/" type="primary">TFORevive Launcher</el-link> (not yet public)
+
+        <h3>Testing:</h3>
+
+        <el-button type="primary" @click="toggleReleaseCandidate">
+            Toggle Release Candidate
+        </el-button>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import { ElNotification } from 'element-plus';
+import { ReleaseCanal } from "../utils/ReleaseCanal";
+import { Store } from 'tauri-plugin-store-api';
+const persistentStore = new Store('flight-core-settings.json');
 
 export default defineComponent({
     name: "SettingsView",
@@ -54,6 +63,28 @@ export default defineComponent({
         },
         async updateGamePath() {
             this.$store.commit('updateGamePath');
+        },
+        async toggleReleaseCandidate() {
+            // Flip between RELEASE and RELEASE_CANDIDATE
+            this.$store.state.northstar_release_canal = this.$store.state.northstar_release_canal === ReleaseCanal.RELEASE
+                ? ReleaseCanal.RELEASE_CANDIDATE
+                : ReleaseCanal.RELEASE;
+
+            // Save change in persistent store
+            await persistentStore.set('northstar-release-canal', { value: this.$store.state.northstar_release_canal });
+
+            // Update current state so that update check etc can be performed
+            this.$store.commit("checkNorthstarUpdates");
+
+            console.log(this.$store.state)
+
+            // Display notification to highlight change
+            ElNotification({
+                title: `${this.$store.state.northstar_release_canal}`,
+                message: `Switched release channel to: "${this.$store.state.northstar_release_canal}"`,
+                type: 'success',
+                position: 'bottom-right'
+            });
         }
     },
     mounted() {
