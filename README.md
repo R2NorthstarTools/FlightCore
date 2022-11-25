@@ -10,11 +10,11 @@ A [Northstar](https://northstar.tf/) installer, updater, and soon to be mod-mana
 
 ## Roadmap
 
---> See https://github.com/GeckoEidechse/FlightCore/issues/1
+--> See https://github.com/R2NorthstarTools/FlightCore/issues/1
 
 ## Download
 
-Head to over to [releases](https://github.com/GeckoEidechse/FlightCore/releases) and download
+Head to over to [releases](https://github.com/R2NorthstarTools/FlightCore/releases) and download
 - **Windows:** `FlightCore_X.Y.Z_x64_en-US.msi`
 or
 - **Linux:** `flight-core_X.Y.Z_amd64.AppImage` .
