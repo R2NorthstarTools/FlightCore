@@ -29,13 +29,20 @@ export default {
     close() {
       appWindow.close()
     }
-  }
+  },
+    computed: {
+      bgStyle(): string {
+          // @ts-ignore
+          const shouldBlur = ['/thunderstoreMods'].includes(this.$route.path);
+          return `filter: brightness(0.8) ${shouldBlur ? 'blur(5px)' : ''};`;
+      }
+    }
 }
 </script>
 
 <template>
   <div class="app-inner">
-    <div id="fc_bg__container" />
+    <div id="fc_bg__container" :style="bgStyle"/>
 
     <el-menu
         default-active="/"
@@ -47,6 +54,7 @@ export default {
         <el-menu-item index="/">Play</el-menu-item>
         <el-menu-item index="/changelog">Changelog</el-menu-item>
         <el-menu-item index="/mods">Mods</el-menu-item>
+        <el-menu-item index="/thunderstoreMods">Thunderstore</el-menu-item>
         <el-menu-item index="/settings">Settings</el-menu-item>
         <el-menu-item index="/dev" v-if="$store.state.developer_mode">Dev</el-menu-item>
     </el-menu>
