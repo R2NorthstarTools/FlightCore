@@ -12,10 +12,10 @@ As for splitting logic between _frontend_ and _backend_, state and UI related lo
 
 ## Setup
 
-Make sure you have the necessary dependencies installed: https://tauri.app/v1/guides/getting-started/prerequisites
+Make sure you have the necessary dependencies for Tauri installed as described in this link: https://tauri.app/v1/guides/getting-started/prerequisites
 
 
-Install `npm` dependencies with 
+Then, install `npm` dependencies with
 
 ```sh
 npm install
