@@ -33,6 +33,12 @@ Then for developing
 npx tauri dev
 ```
 
+## Tauri
+
+An introduction to Tauri can be seen in this short YouTube video: https://youtu.be/-X8evddpu7M
+
+A longer Tauri tutorial can be found here: https://youtu.be/kRoGYgAuZQE
+
 ## Tips
 
 Note that you can adjust the behaviour of Tauri windows in `tauri.conf.json`, e.g.
