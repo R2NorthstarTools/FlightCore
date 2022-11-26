@@ -56,6 +56,7 @@ export default {
         <el-menu-item index="/mods">Mods</el-menu-item>
         <el-menu-item index="/thunderstoreMods">Thunderstore</el-menu-item>
         <el-menu-item index="/settings">Settings</el-menu-item>
+        <el-menu-item index="/repair">Repair</el-menu-item>
         <el-menu-item index="/dev" v-if="$store.state.developer_mode">Dev</el-menu-item>
     </el-menu>
 
