@@ -1,6 +1,6 @@
 # Development
 
-FlightCore uses [Tauri](https://tauri.app/) as its UI framework. This means it is split into a **backend** written in [Rust](https://www.rust-lang.org/) and a frontend written in [Vue](https://vuejs.org/) and [TypeScript](https://www.typescriptlang.org/.)
+FlightCore uses [Tauri](https://tauri.app/) as its UI framework. This means it is split into a **backend** written in [Rust](https://www.rust-lang.org/) and a frontend written in [Vue](https://vuejs.org/) and [TypeScript](https://www.typescriptlang.org/).
 
 ## Design goals
 
