@@ -1,10 +1,14 @@
 <template>
     <div class="fc_repair__container">
-        <h3>Repair:</h3>
+        <h2>Repair:</h2>
+
+        <h3>Northstar:</h3>
 
         <el-button type="primary" @click="disableAllModsButCore">
             Disable all but core mods
         </el-button>
+
+        <h3>FlightCore:</h3>
 
         <el-button type="primary" @click="cleanUpDownloadFolder">
             Force delete temp download folder
