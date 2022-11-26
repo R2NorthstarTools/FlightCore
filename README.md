@@ -4,7 +4,7 @@
 
 # FlightCore
 
-A [Northstar](https://northstar.tf/) installer, updater, and soon to be mod-manager
+A [Northstar](https://northstar.tf/) installer, updater, and mod-manager
 
 ![FlightCore screenshot](assets/main-window-screenshot.png)
 
