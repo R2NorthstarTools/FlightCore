@@ -27,6 +27,7 @@ body {
   width: 100%;
   position: fixed;
   filter: brightness(0.8);
+  scale: 1.02;
 }
 
 .el-scrollbar {

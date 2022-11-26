@@ -12,6 +12,8 @@ import { open } from '@tauri-apps/api/dialog';
 import { Store } from 'tauri-plugin-store-api';
 import {router} from "../main";
 import ReleaseInfo from "../utils/ReleaseInfo";
+import { ThunderstoreMod } from '../utils/thunderstore/ThunderstoreMod';
+import { NorthstarMod } from "../utils/NorthstarMod";
 
 const persistentStore = new Store('flight-core-settings.json');
 
@@ -27,6 +29,9 @@ export interface FlightCoreStore {
     northstar_state: NorthstarState,
     northstar_release_canal: ReleaseCanal,
     releaseNotes: ReleaseInfo[],
+
+    thunderstoreMods: ThunderstoreMod[],
+    installed_mods: NorthstarMod[],
 
     northstar_is_running: boolean,
     origin_is_running: boolean
@@ -47,6 +52,9 @@ export const store = createStore<FlightCoreStore>({
             northstar_state: NorthstarState.GAME_NOT_FOUND,
             northstar_release_canal: ReleaseCanal.RELEASE,
             releaseNotes: [],
+
+            thunderstoreMods: [],
+            installed_mods: [],
 
             northstar_is_running: false,
             origin_is_running: false
@@ -215,6 +223,38 @@ export const store = createStore<FlightCoreStore>({
         async fetchReleaseNotes(state: FlightCoreStore) {
             if (state.releaseNotes.length !== 0) return;
             state.releaseNotes = await invoke("get_northstar_release_notes");
+        },
+        async fetchThunderstoreMods(state: FlightCoreStore) {
+            // To check if some Thunderstore mods are already installed/outdated, we need to load locally-installed mods.
+            await store.commit('loadInstalledMods');
+            if (state.thunderstoreMods.length !== 0) return;
+
+            const response = await fetch('https://northstar.thunderstore.io/api/v1/package/');
+            let mods = JSON.parse(await (await response.blob()).text());
+
+            // Remove some mods from listing
+            const removedMods = ['Northstar', 'NorthstarReleaseCandidate', 'r2modman'];
+            state.thunderstoreMods = mods.filter((mod: ThunderstoreMod) => !removedMods.includes(mod.name));
+        },
+        async loadInstalledMods(state: FlightCoreStore) {
+            let game_install = {
+                game_path: state.game_path,
+                install_type: state.install_type
+            } as GameInstall;
+            // Call back-end for installed mods
+            await invoke("get_installed_mods_caller", { gameInstall: game_install })
+                .then((message) => {
+                    state.installed_mods = (message as NorthstarMod[]);
+                })
+                .catch((error) => {
+                    console.error(error);
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                });
         }
     }
 });

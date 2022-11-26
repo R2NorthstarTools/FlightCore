@@ -17,6 +17,7 @@ const app = createApp(App);
 // styles
 import 'element-plus/theme-chalk/index.css';
 import './style.css'
+import ThunderstoreModsView from "./views/ThunderstoreModsView.vue";
 
 app.use(ElementPlus);
 
@@ -34,6 +35,7 @@ const routes = [
     { path: '/', name: 'Main', component: async () => PlayView},
     { path: '/changelog', name: 'Changelog', component: async () => ChangelogView},
     { path: '/mods', name: 'Mods', component: async () => ModsView},
+    { path: '/thunderstoreMods', name: 'Thunderstore mods', component: async () => ThunderstoreModsView},
     { path: '/settings', name: 'Settings', component: async () => SettingsView},
     { path: '/dev', name: 'Dev', component: async () => DeveloperView}
 ];

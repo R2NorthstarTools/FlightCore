@@ -1,6 +1,6 @@
 // Matches Rust struct (in lib.rs).
 export interface NorthstarMod {
-    name: String,
-    thunderstore_mod_string?: String,
+    name: string,
+    thunderstore_mod_string?: string,
     enabled: bool,
 }

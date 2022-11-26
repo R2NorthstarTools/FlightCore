@@ -12,7 +12,7 @@ pub struct ReleaseInfo {
 async fn fetch_github_releases_api(url: &str) -> Result<String, String> {
     println!("Fetching releases notes from GitHub API");
 
-    let user_agent = "GeckoEidechse/FlightCore";
+    let user_agent = "R2NorthstarTools/FlightCore";
     let client = reqwest::Client::new();
     let res = client
         .get(url)
@@ -33,7 +33,7 @@ async fn fetch_github_releases_api(url: &str) -> Result<String, String> {
 pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
     // Get newest version number from GitHub API
     println!("Checking GitHub API");
-    let url = "https://api.github.com/repos/GeckoEidechse/FlightCore/releases/latest";
+    let url = "https://api.github.com/repos/R2NorthstarTools/FlightCore/releases/latest";
     let res = fetch_github_releases_api(url).await?;
 
     let json_response: serde_json::Value =
