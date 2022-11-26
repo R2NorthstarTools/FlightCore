@@ -2,6 +2,14 @@
 
 FlightCore uses [Tauri](https://tauri.app/) as its UI framework. This means it is split into a **backend** written in [Rust](https://www.rust-lang.org/) and a frontend written in [Vue](https://vuejs.org/) and [TypeScript](https://www.typescriptlang.org/.)
 
+## Design goals
+
+In general FlightCore should _just work™_ for the majority of people using it. All errors should be caught and handled where possible. Thanks to CI and auto-updating, releases are easy to deploy and should be made whenever new features are available.
+
+Pro-user and developer oriented features should be hidden by default to avoid users activating them by accident but still easy enough to access such that it doesn't become a hassle using them.
+
+As for splitting logic between _frontend_ and _backend_, state and UI related logic should be done in frontend while all the remaining logic is done in backend. The backend should not hold state to avoid any concurrency issues in regards to asynchronous and multithreaded calls into the backend.
+
 ## Setup
 
 Make sure you have the necessary dependencies installed: https://tauri.app/v1/guides/getting-started/prerequisites
