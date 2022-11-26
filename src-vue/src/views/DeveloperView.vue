@@ -23,7 +23,7 @@
         </el-button>
 
         <el-button type="primary" @click="launchGameWithoutChecks">
-            Launch Northstar (bypass update check)
+            Launch Northstar (bypass all checks)
         </el-button>
 
         <h3>Mod install:</h3>

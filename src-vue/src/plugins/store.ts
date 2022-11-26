@@ -142,7 +142,7 @@ export const store = createStore<FlightCoreStore>({
             } as GameInstall;
 
             if (no_checks) {
-                await invoke("launch_northstar_caller", { gameInstall: game_install })
+                await invoke("launch_northstar_caller", { gameInstall: game_install, bypassChecks: no_checks })
                     .then((message) => {
                         console.log("Launched with bypassed checks");
                         console.log(message);
