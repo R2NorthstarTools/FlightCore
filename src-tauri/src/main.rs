@@ -99,6 +99,7 @@ fn main() {
             get_installed_mods_caller,
             install_mod_caller,
             clean_up_download_folder_caller,
+            useless_function,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -334,5 +335,22 @@ async fn clean_up_download_folder_caller(
     match clean_up_download_folder(game_install, force) {
         Ok(()) => Ok(()),
         Err(err) => Err(err.to_string()),
+    }
+}
+
+#[tauri::command]
+/// This is an example function that can be called by the frontend.
+/// The `#[tauri::command]` is an attribute that is used to annotate functions
+/// that can be called by the frontend.
+async fn useless_function(some_string: String, some_int: u32) -> Result<String, String> {
+    println!("Frontend sent us: {}", some_string);
+    println!("and it also sent us: {}", some_int);
+
+    // Return success or failure based on received int
+    if some_int == 0 {
+        Ok("This is a triumph, huge success!".to_string())
+    }
+    else {
+        Err("Oh no, some error has occured :(".to_string())
     }
 }

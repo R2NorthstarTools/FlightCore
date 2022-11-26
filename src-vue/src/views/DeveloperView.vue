@@ -31,6 +31,13 @@
             Install mod
         </el-button>
 
+        <h3>Development:</h3>
+        
+        <!-- This button can be used to clickly hook up a call to a backend function -->
+        <el-button type="primary" @click="uselessFunction">
+            Useless button
+        </el-button>
+
         <h3>Repair:</h3>
 
         <el-button type="primary" @click="disableAllModsButCore">
@@ -223,6 +230,31 @@ export default defineComponent({
             await persistentStore.clear();
             // ...and save
             await persistentStore.save();
+        },
+        // This function is called by the useless button
+        async uselessFunction() { 
+            let random_int = Math.floor(Math.random() * 3);
+            // The `invoke` is used to call the corresponding function in the backend
+            // All `invoke` calls are async
+            await invoke("useless_function", { someString: "Hello, World!", someInt: random_int })
+                .then((message) => {
+                    // Show user notification on success
+                    ElNotification({
+                        title: `Done`,
+                        message: (message as any),
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+                })
+                .catch((error) => {
+                    // Show user notification on error
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                });
         }
     }
 });
