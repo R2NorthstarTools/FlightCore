@@ -15,7 +15,7 @@ mod github;
 use github::release_notes::{get_northstar_release_notes, check_is_flightcore_outdated};
 
 mod repair_and_verify;
-use repair_and_verify::{clean_up_download_folder, disable_all_but_core, verify_game_files};
+use repair_and_verify::{clean_up_download_folder, disable_all_but_core, verify_game_files, get_log_list};
 
 mod mod_management;
 use mod_management::{
@@ -266,8 +266,11 @@ async fn update_northstar_caller(
 
 #[tauri::command]
 /// Launches Northstar
-async fn launch_northstar_caller(game_install: GameInstall) -> Result<String, String> {
-    launch_northstar(game_install)
+async fn launch_northstar_caller(
+    game_install: GameInstall,
+    bypass_checks: Option<bool>,
+) -> Result<String, String> {
+    launch_northstar(game_install, bypass_checks)
 }
 
 #[tauri::command]

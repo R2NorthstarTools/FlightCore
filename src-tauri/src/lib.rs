@@ -232,12 +232,31 @@ pub fn get_host_os() -> String {
     env::consts::OS.to_string()
 }
 
-pub fn launch_northstar(game_install: GameInstall) -> Result<String, String> {
+pub fn launch_northstar(
+    game_install: GameInstall,
+    bypass_checks: Option<bool>,
+) -> Result<String, String> {
     dbg!(game_install.clone());
 
-    // Some safety checks before, should have more in the future
-    if get_northstar_version_number(game_install.game_path.clone()).is_err() {
-        return Err(anyhow!("Not all checks were met").to_string());
+    let bypass_checks = match bypass_checks {
+        Some(bypass_checks) => bypass_checks,
+        None => false,
+    };
+
+    // Only check guards if bypassing checks is not enabled
+    if !bypass_checks {
+        // Some safety checks before, should have more in the future
+        if get_northstar_version_number(game_install.game_path.clone()).is_err() {
+            return Err(anyhow!("Not all checks were met").to_string());
+        }
+
+        // Require Origin to be running to launch Northstar
+        let origin_is_running = check_origin_running();
+        if !origin_is_running {
+            return Err(
+                anyhow!("Origin not running, start Origin before launching Northstar").to_string(),
+            );
+        }
     }
 
     let host_os = get_host_os();
@@ -260,14 +279,6 @@ pub fn launch_northstar(game_install: GameInstall) -> Result<String, String> {
     if std::env::set_current_dir(game_install.game_path.clone()).is_err() {
         // We failed to get to Titanfall2 directory
         return Err(anyhow!("Couldn't access Titanfall2 directory").to_string());
-    }
-
-    // Require Origin to be running to launch Northstar
-    let origin_is_running = check_origin_running();
-    if !origin_is_running {
-        return Err(
-            anyhow!("Origin not running, start Origin before launching Northstar").to_string(),
-        );
     }
 
     // Only Windows with Steam or Origin are supported at the moment
@@ -319,34 +330,6 @@ pub fn convert_release_candidate_number(version_number: String) -> String {
     // Works as intended for RCs < 10, e.g.  `v1.9.2-rc1`  -> `v1.9.201`
     // Doesn't work for larger numbers, e.g. `v1.9.2-rc11` -> `v1.9.2011` (should be `v1.9.211`)
     version_number.replace("-rc", "0").replace("00", "")
-}
-
-pub fn get_log_list(game_install: GameInstall) -> Result<Vec<std::path::PathBuf>, String> {
-    let ns_log_folder = format!("{}/R2Northstar/logs", game_install.game_path);
-
-    // Check if logs folder exists
-    if !std::path::Path::new(&ns_log_folder).exists() {
-        return Err("No logs folder found".to_string());
-    }
-
-    // List files in logs folder
-    let paths = std::fs::read_dir(ns_log_folder).unwrap();
-
-    // Stores paths of log files
-    let mut log_files: Vec<std::path::PathBuf> = Vec::new();
-
-    for path in paths {
-        let path = path.unwrap().path();
-        if path.display().to_string().contains("nslog") {
-            log_files.push(path);
-        }
-    }
-
-    if log_files.len() > 0 {
-        Ok(log_files)
-    } else {
-        Err("No logs found".to_string())
-    }
 }
 
 /// Returns a serde json object of the parsed `enabledmods.json` file

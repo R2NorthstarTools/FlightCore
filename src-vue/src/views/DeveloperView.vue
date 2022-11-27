@@ -16,10 +16,15 @@
             Check NSProton Compatibility
         </el-button>
 
+        <h3>Testing:</h3>
+
+        <el-button type="primary" @click="launchGameWithoutChecks">
+            Launch Northstar (bypass all checks)
+        </el-button>
+
         <h3>Mod install:</h3>
 
         <el-input v-model="mod_to_install_field_string" placeholder="Please input Thunderstore dependency string" clearable />
-
         <el-button type="primary" @click="installMod">
             Install mod
         </el-button>
@@ -91,6 +96,9 @@ export default defineComponent({
                     });
                     console.error(error);
                 });
+        },
+        async launchGameWithoutChecks() {
+            this.$store.commit('launchGame', true);
         },
         async disableAllModsButCore() {
             let game_install = {

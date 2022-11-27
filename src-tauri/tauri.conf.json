@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "FlightCore",
-    "version": "0.5.0"
+    "version": "1.0.0"
   },
   "tauri": {
     "allowlist": {
@@ -29,7 +29,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.github.geckoeidechse.flightcore",
+      "identifier": "com.github.r2northstartools.flightcore",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -54,7 +54,7 @@
       "active": true,
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEVBNjM3NzJGRDgxMTU4NUUKUldSZVdCSFlMM2RqNmdhK3pIZjhEYWg2WnZGSFJqdkhLSHNOSjNhaW5VQVFLaHV3YWFDTnFKWWQK",
       "endpoints": [
-        "https://github.com/GeckoEidechse/FlightCore/releases/latest/download/latest-release.json"
+        "https://github.com/R2NorthstarTools/FlightCore/releases/latest/download/latest-release.json"
       ],
       "dialog": true
     },

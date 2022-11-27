@@ -1,6 +1,12 @@
 //! This module deals with handling things around Northstar such as
 //! - getting version number
 
+pub const CORE_MODS: [&str; 3] = [
+    "Northstar.Client",
+    "Northstar.Custom",
+    "Northstar.CustomServers",
+];
+
 use crate::check_mod_version_number;
 use anyhow::anyhow;
 
@@ -12,20 +18,15 @@ pub fn get_northstar_version_number(game_path: String) -> Result<String, anyhow:
     // TODO:
     // Check if NorthstarLauncher.exe exists and check its version number
     let profile_folder = "R2Northstar";
-    let core_mods = [
-        "Northstar.Client",
-        "Northstar.Custom",
-        "Northstar.CustomServers",
-    ];
     let initial_version_number = match check_mod_version_number(format!(
         "{}/{}/mods/{}",
-        game_path, profile_folder, core_mods[0]
+        game_path, profile_folder, CORE_MODS[0]
     )) {
         Ok(version_number) => version_number,
         Err(err) => return Err(err),
     };
 
-    for core_mod in core_mods {
+    for core_mod in CORE_MODS {
         let current_version_number = match check_mod_version_number(format!(
             "{}/{}/mods/{}",
             game_path, profile_folder, core_mod
