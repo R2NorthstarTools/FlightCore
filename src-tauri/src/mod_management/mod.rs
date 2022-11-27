@@ -46,7 +46,19 @@ pub fn set_mod_enabled_status(
     let enabledmods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
 
     // Parse JSON
-    let mut res: serde_json::Value = get_enabled_mods(game_install.clone())?;
+    let mut res: serde_json::Value = match get_enabled_mods(game_install.clone()) {
+        Ok(res) => res,
+        Err(err) => {
+            println!("Couldn't parse `enabledmod.json`: {}", err);
+            println!("Rebuilding file.");
+
+            rebuild_enabled_mods_json(game_install.clone())?;
+
+            // Then try again
+            let res = get_enabled_mods(game_install.clone())?;
+            res
+        }
+    };
 
     // Check if key exists
     if res.get(mod_name.clone()).is_none() {
