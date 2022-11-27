@@ -25,6 +25,7 @@
         <h3>Mod install:</h3>
 
         <el-input v-model="mod_to_install_field_string" placeholder="Please input Thunderstore dependency string" clearable />
+
         <el-button type="primary" @click="installMod">
             Install mod
         </el-button>
