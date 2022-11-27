@@ -22,6 +22,9 @@
             Toggle Release Candidate
         </el-button>
 
+        <el-button type="primary" @click="launchGameWithoutChecks">
+            Launch Northstar (bypass all checks)
+        </el-button>
 
         <h3>Mod install:</h3>
 
@@ -128,6 +131,9 @@ export default defineComponent({
                 type: 'success',
                 position: 'bottom-right'
             });
+        },
+        async launchGameWithoutChecks() {
+            this.$store.commit('launchGame', true);
         },
         async disableAllModsButCore() {
             let game_install = {

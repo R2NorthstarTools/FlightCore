@@ -267,8 +267,11 @@ async fn update_northstar_caller(
 
 #[tauri::command]
 /// Launches Northstar
-async fn launch_northstar_caller(game_install: GameInstall) -> Result<String, String> {
-    launch_northstar(game_install)
+async fn launch_northstar_caller(
+    game_install: GameInstall,
+    bypass_checks: Option<bool>,
+) -> Result<String, String> {
+    launch_northstar(game_install, bypass_checks)
 }
 
 #[tauri::command]
