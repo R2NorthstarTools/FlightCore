@@ -135,7 +135,26 @@ export const store = createStore<FlightCoreStore>({
                 }
             }
         },
-        async launchGame(state: any) {
+        async launchGame(state: any, no_checks = false) {
+            let game_install = {
+                game_path: state.game_path,
+                install_type: state.install_type
+            } as GameInstall;
+
+            if (no_checks) {
+                await invoke("launch_northstar_caller", { gameInstall: game_install, bypassChecks: no_checks })
+                    .then((message) => {
+                        console.log("Launched with bypassed checks");
+                        console.log(message);
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        alert(error);
+                    });
+
+                return;
+            }
+
             // TODO update installation if release track was switched
             switch (state.northstar_state) {
                 // Install northstar if it wasn't detected.
@@ -185,11 +204,6 @@ export const store = createStore<FlightCoreStore>({
                         // If Origin isn't running, end here
                         return;
                     }
-
-                    let game_install = {
-                        game_path: state.game_path,
-                        install_type: state.install_type
-                    } as GameInstall;
                     await invoke("launch_northstar_caller", { gameInstall: game_install })
                         .then((message) => {
                             console.log(message);

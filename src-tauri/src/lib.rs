@@ -232,12 +232,31 @@ pub fn get_host_os() -> String {
     env::consts::OS.to_string()
 }
 
-pub fn launch_northstar(game_install: GameInstall) -> Result<String, String> {
+pub fn launch_northstar(
+    game_install: GameInstall,
+    bypass_checks: Option<bool>,
+) -> Result<String, String> {
     dbg!(game_install.clone());
 
-    // Some safety checks before, should have more in the future
-    if get_northstar_version_number(game_install.game_path.clone()).is_err() {
-        return Err(anyhow!("Not all checks were met").to_string());
+    let bypass_checks = match bypass_checks {
+        Some(bypass_checks) => bypass_checks,
+        None => false,
+    };
+
+    // Only check guards if bypassing checks is not enabled
+    if !bypass_checks {
+        // Some safety checks before, should have more in the future
+        if get_northstar_version_number(game_install.game_path.clone()).is_err() {
+            return Err(anyhow!("Not all checks were met").to_string());
+        }
+
+        // Require Origin to be running to launch Northstar
+        let origin_is_running = check_origin_running();
+        if !origin_is_running {
+            return Err(
+                anyhow!("Origin not running, start Origin before launching Northstar").to_string(),
+            );
+        }
     }
 
     let host_os = get_host_os();
@@ -260,14 +279,6 @@ pub fn launch_northstar(game_install: GameInstall) -> Result<String, String> {
     if std::env::set_current_dir(game_install.game_path.clone()).is_err() {
         // We failed to get to Titanfall2 directory
         return Err(anyhow!("Couldn't access Titanfall2 directory").to_string());
-    }
-
-    // Require Origin to be running to launch Northstar
-    let origin_is_running = check_origin_running();
-    if !origin_is_running {
-        return Err(
-            anyhow!("Origin not running, start Origin before launching Northstar").to_string(),
-        );
     }
 
     // Only Windows with Steam or Origin are supported at the moment
