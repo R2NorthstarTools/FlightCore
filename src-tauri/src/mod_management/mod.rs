@@ -27,7 +27,6 @@ pub fn rebuild_enabled_mods_json(game_install: GameInstall) -> Result<(), String
     let obj = serde_json::Value::Object(my_map);
 
     // Write to file
-    println!("{}", serde_json::to_string_pretty(&obj).unwrap());
     std::fs::write(
         enabledmods_json_path,
         serde_json::to_string_pretty(&obj).unwrap(),
