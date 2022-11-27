@@ -6,6 +6,7 @@ import { store } from './plugins/store';
 import PlayView from "./views/PlayView.vue";
 import ChangelogView from "./views/ChangelogView.vue";
 import ModsView from "./views/ModsView.vue";
+import ThunderstoreModsView from "./views/ThunderstoreModsView.vue";
 import SettingsView from "./views/SettingsView.vue";
 import RepairView from "./views/RepairView.vue";
 import DeveloperView from "./views/DeveloperView.vue";
@@ -18,7 +19,6 @@ const app = createApp(App);
 // styles
 import 'element-plus/theme-chalk/index.css';
 import './style.css'
-import ThunderstoreModsView from "./views/ThunderstoreModsView.vue";
 
 app.use(ElementPlus);
 

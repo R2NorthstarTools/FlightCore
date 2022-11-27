@@ -1,7 +1,7 @@
 /// Contains various functions to repair common issues and verifying installation
 
 use app::{get_enabled_mods, GameInstall};
-use crate::mod_management::set_mod_enabled_status;
+use crate::{mod_management::set_mod_enabled_status, northstar::CORE_MODS};
 use anyhow::anyhow;
 
 /// Verifies Titanfall2 game files
@@ -15,17 +15,10 @@ pub fn verify_game_files(game_install: GameInstall) -> Result<String, String> {
 pub fn disable_all_but_core(game_install: GameInstall) -> Result<(), String> {
     let current_mods = get_enabled_mods(game_install.clone())?;
 
-    // These are the mods we do not want to disable
-    let core_mods = [
-        "Northstar.Client",
-        "Northstar.Custom",
-        "Northstar.CustomServers",
-    ];
-    // let sub_values: Vec<HashMap<String, Value>> = serde_json::from_str(&json)?;
-
+    // Disable all mods, set core mods to enabled
     for (key, _value) in current_mods.as_object().unwrap() {
-        if core_mods.contains(&key.as_str()) {
-            // This is a core mod
+        if CORE_MODS.contains(&key.as_str()) {
+            // This is a core mod, we do not want to disable it
             set_mod_enabled_status(game_install.clone(), key.to_string(), true)?;
         } else {
             // Not a core mod
