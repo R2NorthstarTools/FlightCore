@@ -50,7 +50,7 @@ export default defineComponent({
                 }
             });
         },
-        selectOptions(): Object[] {
+        selectOptions(): {label: string, options: {value: ReleaseCanal, label: string}[]}[] {
             return [
                 {
                     label: 'In development',
