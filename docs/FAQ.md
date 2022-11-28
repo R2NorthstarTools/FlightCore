@@ -6,6 +6,16 @@ FlightCore is a Northstar installer, updater, and mod-manager for Northstar?
 
 You can use it to easily install and update Northstar as well as for installing, updating, and managing mods for Northstar.
 
+## What is Northstar?
+
+Northstar is a modding and custom server framework for Titanfall2.
+
+You use it to do stuff like
+
+- [this](https://www.youtube.com/watch?v=en06Y6CPMQg)
+- [or this](https://www.youtube.com/watch?v=suhBGqzDbNA)
+- [or this](https://www.youtube.com/watch?v=vyUxAwobY60)
+
 ## Why yet another Northstar intaller/updater/mod-manager instead of contributing to an existing one?
 
 The 3 main GUI tools for handling such tasks with Norhtstar are
