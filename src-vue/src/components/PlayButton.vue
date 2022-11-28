@@ -6,6 +6,14 @@ import { ReleaseCanal } from '../utils/ReleaseCanal';
 export default defineComponent({
     name: 'PlayButton',
     computed: {
+        currentCanal: {
+            get(): ReleaseCanal {
+                return this.$store.state.northstar_release_canal;
+            },
+            set(value: ReleaseCanal) {
+                console.log(value);
+            }
+        },
         playButtonLabel(): string {
             if (this.$store.state.northstar_is_running) {
                 return "Game is running";
@@ -75,7 +83,7 @@ export default defineComponent({
     <el-button :disabled="northstarIsRunning" type="primary" size="large" @click="launchGame" class="fc_launch__button">
         {{ playButtonLabel }}
     </el-button>
-    <el-select v-model="value" placeholder="Select">
+    <el-select v-model="currentCanal" placeholder="Select">
         <el-option-group
             v-for="group in selectOptions"
             :key="group.label"
