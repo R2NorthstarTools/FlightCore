@@ -1,5 +1,11 @@
 # FAQ
 
+## What is FlightCore?
+
+FlightCore is a Northstar installer, updater, and mod-manager for Northstar?
+
+You can use it to easily install and update Northstar as well as for installing, updating, and managing mods for Northstar.
+
 ## Why yet another Northstar intaller/updater/mod-manager instead of contributing to an existing one?
 
 The 3 main GUI tools for handling such tasks with Norhtstar are
