@@ -17,3 +17,7 @@ while they get most of the work done, each of them has their own problem.
 With that said, FlightCore is not written from scratch. For handling Northstar specific logic, functions are re-used from the CLI-only Northstar installer called [papa](https://github.com/AnActualEmerald/papa) by making use of the underlying library [libthermite](https://crates.io/crates/libthermite).
 
 The plan is to upstream any changes to `libthermite` so that it can be re-used by any other Rust-based Northstar installer.
+
+## I'd like to contribute to FlightCore, where do I start?
+
+Check [DEVELOPMENT.md](DEVELOPMENT.md)
