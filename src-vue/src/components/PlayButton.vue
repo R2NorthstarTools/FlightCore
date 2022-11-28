@@ -94,12 +94,33 @@ export default defineComponent({
 <style scoped>
 button {
     text-transform: uppercase;
-    border-radius: 2px;
+    border-radius: 2px 0 0 2px;
     padding: 30px;
     font-size: 15px;
+    margin-right: 0;
 }
 .fc_launch__button:focus {
     background-color: var(--el-color-primary);
     border-color: var(--el-color-primary);
+}
+
+/* Release canal selector */
+
+.el-select {
+    width: 0;
+    margin-right: 50px;
+    border-left: 1px solid rgb(176, 205, 255);
+}
+
+.el-select:deep(.el-input__wrapper) {
+    padding: 0 8px 0 0;
+    background-color: var(--el-color-primary);
+    border: none;
+    border-radius: 0 2px 2px 0;
+    height: 62px;
+}
+
+.el-select:deep(.el-icon) {
+    color: white !important;
 }
 </style>
