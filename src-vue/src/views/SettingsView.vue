@@ -64,27 +64,8 @@ export default defineComponent({
         async updateGamePath() {
             this.$store.commit('updateGamePath');
         },
-        async toggleReleaseCandidate() {
-            // Flip between RELEASE and RELEASE_CANDIDATE
-            this.$store.state.northstar_release_canal = this.$store.state.northstar_release_canal === ReleaseCanal.RELEASE
-                ? ReleaseCanal.RELEASE_CANDIDATE
-                : ReleaseCanal.RELEASE;
-
-            // Save change in persistent store
-            await persistentStore.set('northstar-release-canal', { value: this.$store.state.northstar_release_canal });
-
-            // Update current state so that update check etc can be performed
-            this.$store.commit("checkNorthstarUpdates");
-
-            console.log(this.$store.state)
-
-            // Display notification to highlight change
-            ElNotification({
-                title: `${this.$store.state.northstar_release_canal}`,
-                message: `Switched release channel to: "${this.$store.state.northstar_release_canal}"`,
-                type: 'success',
-                position: 'bottom-right'
-            });
+        toggleReleaseCandidate() {
+            this.$store.commit('toggleReleaseCandidate');
         }
     },
     mounted() {
