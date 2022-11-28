@@ -220,9 +220,12 @@ pub async fn install_northstar(
         .ok_or_else(|| panic!("Couldn't find Northstar on thunderstore???"))
         .unwrap();
 
-    do_install(nmod.versions.get(&nmod.latest).unwrap(), std::path::Path::new(game_path))
-        .await
-        .unwrap();
+    do_install(
+        nmod.versions.get(&nmod.latest).unwrap(),
+        std::path::Path::new(game_path),
+    )
+    .await
+    .unwrap();
 
     Ok(nmod.latest.clone())
 }
@@ -334,10 +337,7 @@ pub fn convert_release_candidate_number(version_number: String) -> String {
 
 /// Returns a serde json object of the parsed `enabledmods.json` file
 pub fn get_enabled_mods(game_install: GameInstall) -> Result<serde_json::value::Value, String> {
-    let enabledmods_json_path = format!(
-        "{}/R2Northstar/enabledmods.json",
-        game_install.game_path
-    );
+    let enabledmods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
 
     // Check for JSON file
     if !std::path::Path::new(&enabledmods_json_path).exists() {

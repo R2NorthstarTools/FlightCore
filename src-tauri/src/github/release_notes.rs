@@ -1,11 +1,11 @@
-use std::vec::Vec;
 use serde::{Deserialize, Serialize};
+use std::vec::Vec;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ReleaseInfo {
     pub name: String,
     pub published_at: String,
-    pub body: String
+    pub body: String,
 }
 
 // Fetches repo release API and returns response as string
@@ -55,7 +55,6 @@ pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
     Ok(version != newest_release_version)
 }
 
-
 #[tauri::command]
 pub async fn get_northstar_release_notes() -> Result<Vec<ReleaseInfo>, String> {
     let url = "https://api.github.com/repos/R2Northstar/Northstar/releases";
@@ -65,20 +64,24 @@ pub async fn get_northstar_release_notes() -> Result<Vec<ReleaseInfo>, String> {
         serde_json::from_str(&res).expect("JSON was not well-formatted");
     println!("Done checking GitHub API");
 
-    return Ok(
-        json_response.iter().map(|release| ReleaseInfo {
-            name: release.get("name")
+    return Ok(json_response
+        .iter()
+        .map(|release| ReleaseInfo {
+            name: release
+                .get("name")
                 .and_then(|value| value.as_str())
                 .unwrap()
                 .to_string(),
-            published_at: release.get("published_at")
+            published_at: release
+                .get("published_at")
                 .and_then(|value| value.as_str())
                 .unwrap()
                 .to_string(),
-            body: release.get("body")
+            body: release
+                .get("body")
                 .and_then(|value| value.as_str())
                 .unwrap()
                 .to_string(),
-        }).collect()
-    );
+        })
+        .collect());
 }
