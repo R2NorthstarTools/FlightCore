@@ -11,7 +11,9 @@ export default defineComponent({
                 return this.$store.state.northstar_release_canal;
             },
             set(value: ReleaseCanal) {
-                console.log(value);
+                if (value !== this.currentCanal) {
+                    this.$store.commit('toggleReleaseCandidate');
+                }
             }
         },
         playButtonLabel(): string {
