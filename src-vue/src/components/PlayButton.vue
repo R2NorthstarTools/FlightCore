@@ -113,11 +113,12 @@ button {
 }
 
 .el-select:deep(.el-input__wrapper) {
-    padding: 0 8px 0 0;
+    padding: 0 9px 0 0;
     background-color: var(--el-color-primary);
     border: none;
     border-radius: 0 2px 2px 0;
     height: 62px;
+    box-shadow: none !important;
 }
 
 .el-select:deep(.el-icon) {
