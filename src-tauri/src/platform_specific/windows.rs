@@ -1,5 +1,4 @@
 /// Windows specific code
-
 use powershell_script::PsScriptBuilder;
 use regex::Regex;
 

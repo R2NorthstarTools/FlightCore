@@ -5,8 +5,8 @@ use anyhow::{anyhow, Result};
 use app::NorthstarMod;
 use std::path::PathBuf;
 
-use app::GameInstall;
 use app::get_enabled_mods;
+use app::GameInstall;
 
 use json5;
 
@@ -82,7 +82,6 @@ pub fn set_mod_enabled_status(
     Ok(())
 }
 
-
 /// Parses `mod.json` for mod name
 // TODO: Maybe pass PathBuf or serde json object
 fn parse_mod_json_for_mod_name(mod_json_path: String) -> Result<String, anyhow::Error> {
@@ -121,7 +120,9 @@ fn parse_mod_json_for_thunderstore_mod_string(
 }
 
 /// Parse `mods` folder for installed mods.
-fn parse_installed_mods(game_install: GameInstall) -> Result<Vec<(String, Option<String>)>, String> {
+fn parse_installed_mods(
+    game_install: GameInstall,
+) -> Result<Vec<(String, Option<String>)>, String> {
     let ns_mods_folder = format!("{}/R2Northstar/mods/", game_install.game_path);
 
     let paths = std::fs::read_dir(ns_mods_folder).unwrap();
@@ -204,7 +205,6 @@ pub fn get_installed_mods_and_properties(
 }
 
 async fn get_ns_mod_download_url(thunderstore_mod_string: String) -> Result<String, String> {
-
     // TODO: This will crash the thread if not internet connection exist. `match` should be used instead
     let index = thermite::api::get_package_index().await.unwrap().to_vec();
 
@@ -230,7 +230,6 @@ fn add_thunderstore_mod_string(
     path_to_mod_json: String,
     thunderstore_mod_string: String,
 ) -> Result<(), anyhow::Error> {
-
     // Read file into string and parse it
     let data = std::fs::read_to_string(path_to_mod_json.clone())?;
     let parsed_json: serde_json::Value = json5::from_str(&data)?;
@@ -309,9 +308,8 @@ pub async fn fc_download_mod_and_install(
             Err(err) => {
                 if err.to_string() == "Cannot install Northstar as a mod!" {
                     continue; // For Northstar as a dependency, we just skip it
-                }
-                else {
-                    return Err(err.to_string())
+                } else {
+                    return Err(err.to_string());
                 }
             }
         };
@@ -319,7 +317,11 @@ pub async fn fc_download_mod_and_install(
 
     // Prevent installing Northstar as a mod
     // While it would fail during install anyway, having explicit error message is nicer
-    let blacklisted_mods = ["northstar-Northstar", "northstar-NorthstarReleaseCandidate", "ebkr-r2modman"];
+    let blacklisted_mods = [
+        "northstar-Northstar",
+        "northstar-NorthstarReleaseCandidate",
+        "ebkr-r2modman",
+    ];
     for blacklisted_mod in blacklisted_mods {
         if thunderstore_mod_string.contains(blacklisted_mod) {
             return Err("Cannot install Northstar as a mod!".to_string());
