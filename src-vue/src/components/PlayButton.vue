@@ -39,6 +39,28 @@ export default defineComponent({
                     value: Object.keys(ReleaseCanal)[Object.values(ReleaseCanal).indexOf(v)]
                 }
             });
+        },
+        selectOptions(): Object[] {
+            return [
+                {
+                    label: 'In development',
+                    options: [
+                        {
+                            value: ReleaseCanal.RELEASE_CANDIDATE,
+                            label: 'Northstar development release',
+                        },
+                    ]
+                },
+                {
+                    label: 'Live',
+                    options: [
+                        {
+                            value: ReleaseCanal.RELEASE,
+                            label: 'Northstar',
+                        },
+                    ]
+                }
+            ];
         }
     },
     methods: {
@@ -53,6 +75,20 @@ export default defineComponent({
     <el-button :disabled="northstarIsRunning" type="primary" size="large" @click="launchGame" class="fc_launch__button">
         {{ playButtonLabel }}
     </el-button>
+    <el-select v-model="value" placeholder="Select">
+        <el-option-group
+            v-for="group in selectOptions"
+            :key="group.label"
+            :label="group.label"
+        >
+            <el-option
+                v-for="item in group.options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+            />
+        </el-option-group>
+    </el-select>
 </template>
 
 <style scoped>
