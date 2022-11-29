@@ -52,6 +52,7 @@ export default defineComponent({
             },
             set(value: boolean): void {
                 this.$store.state.enableReleasesSwitch = value;
+                persistentStore.set('northstar-releases-switching', { value });
             }
         }
     },

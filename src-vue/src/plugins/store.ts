@@ -307,6 +307,12 @@ async function _initializeApp(state: any) {
         console.log("Value not found in store");
     }
 
+    // Grab "Enable releases switching" setting from store if possible
+    const valueFromStore: {value: boolean} | null = await persistentStore.get('northstar-releases-switching');
+    if (valueFromStore) {
+        state.enableReleasesSwitch = valueFromStore.value;
+    }
+
     // Get FlightCore version number
     state.flightcore_version = await invoke("get_flightcore_version_number");
 
