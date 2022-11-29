@@ -12,10 +12,6 @@ A [Northstar](https://northstar.tf/) installer, updater, and mod-manager
 
 ![FlightCore screenshot](docs/assets/main-window-screenshot.png)
 
-## Roadmap
-
---> See https://github.com/R2NorthstarTools/FlightCore/issues/1
-
 ## Download
 
 Head to over to [releases](https://github.com/R2NorthstarTools/FlightCore/releases) and download
@@ -26,3 +22,7 @@ or
 ## Development
 
 If you'd like to contribute to FlightCore, see [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)
+
+## Roadmap
+
+--> See https://github.com/R2NorthstarTools/FlightCore/issues/1
