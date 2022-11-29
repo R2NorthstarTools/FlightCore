@@ -1,5 +1,5 @@
 <template>
-    <div class="fc__developer__container fc-container">
+    <div class="fc-container">
         <el-scrollbar>
             <h3>Basic:</h3>
 
@@ -237,7 +237,4 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.fc__developer__container {
-    color: white;
-}
 </style>

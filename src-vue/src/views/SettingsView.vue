@@ -1,5 +1,5 @@
 <template>
-    <div class="fc_settings__container">
+    <div class="fc-container fc_settings__container">
         <!-- Game folder location -->
         <h3>Manage installation</h3>
         <el-input
@@ -67,8 +67,6 @@ export default defineComponent({
     max-width: 1200px;
     padding: 20px 30px;
     margin: 0 auto;
-    color: white;
-    position: relative;
 }
 
 h3:first-of-type {
