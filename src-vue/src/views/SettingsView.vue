@@ -21,10 +21,6 @@
         UI design inspired by <el-link :underline="false" target="_blank" href="https://github.com/TFORevive/tforevive_launcher/" type="primary">TFORevive Launcher</el-link> (not yet public)
 
         <h3>Testing:</h3>
-
-        <el-button type="primary" @click="toggleReleaseCandidate">
-            Toggle Release Candidate
-        </el-button>
     </div>
 </template>
 
@@ -63,9 +59,6 @@ export default defineComponent({
         },
         async updateGamePath() {
             this.$store.commit('updateGamePath');
-        },
-        toggleReleaseCandidate() {
-            this.$store.commit('toggleReleaseCandidate');
         }
     },
     mounted() {
