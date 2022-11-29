@@ -1,8 +1,7 @@
-/// Contains various functions to repair common issues and verifying installation
-
-use app::{get_enabled_mods, GameInstall};
 use crate::{mod_management::set_mod_enabled_status, northstar::CORE_MODS};
 use anyhow::anyhow;
+/// Contains various functions to repair common issues and verifying installation
+use app::{get_enabled_mods, GameInstall};
 
 /// Verifies Titanfall2 game files
 pub fn verify_game_files(game_install: GameInstall) -> Result<String, String> {
