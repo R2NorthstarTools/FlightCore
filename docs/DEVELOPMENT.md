@@ -33,6 +33,8 @@ Then for developing
 npx tauri dev
 ```
 
+Automatic recompiling on save is enabled for both the Rust and the Typescript/Vue code.
+
 ## Tauri
 
 An introduction to Tauri can be seen in this short YouTube video: https://youtu.be/-X8evddpu7M
