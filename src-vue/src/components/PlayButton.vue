@@ -53,7 +53,7 @@ export default defineComponent({
         selectOptions(): {label: string, options: {value: ReleaseCanal, label: string}[]}[] {
             return [
                 {
-                    label: 'In development',
+                    label: 'Beta',
                     options: [
                         {
                             value: ReleaseCanal.RELEASE_CANDIDATE,
@@ -62,7 +62,7 @@ export default defineComponent({
                     ]
                 },
                 {
-                    label: 'Live',
+                    label: 'Stable',
                     options: [
                         {
                             value: ReleaseCanal.RELEASE,
