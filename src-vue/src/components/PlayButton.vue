@@ -71,6 +71,9 @@ export default defineComponent({
                     ]
                 }
             ];
+        },
+        showReleaseSwitch(): boolean {
+            return this.$store.state.enableReleasesSwitch;
         }
     },
     methods: {
@@ -85,7 +88,7 @@ export default defineComponent({
     <el-button :disabled="northstarIsRunning" type="primary" size="large" @click="launchGame" class="fc_launch__button">
         {{ playButtonLabel }}
     </el-button>
-    <el-select v-model="currentCanal" placeholder="Select">
+    <el-select v-if="showReleaseSwitch" v-model="currentCanal" placeholder="Select">
         <el-option-group
             v-for="group in selectOptions"
             :key="group.label"
