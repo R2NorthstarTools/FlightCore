@@ -1,24 +1,28 @@
 <template>
-    <div class="fc-container fc_settings__container">
-        <!-- Game folder location -->
-        <h3>Manage installation</h3>
-        <el-input
-            v-model="$store.state.game_path"
-            class="w-50 m-2"
-            placeholder="Choose installation folder"
-            @click="updateGamePath"
-        >
-            <template #prepend>
-                <el-button icon="Folder" @click="updateGamePath"/>
-            </template>
-        </el-input>
-        <h3>About:</h3>
-        <div class="fc_northstar__version" @click="activateDeveloperMode">
-            FlightCore Version: {{ flightcoreVersion === '' ? 'Unknown version' : `${flightcoreVersion}` }}
-        </div>
-        <br />
-        <br />
-        UI design inspired by <el-link :underline="false" target="_blank" href="https://github.com/TFORevive/tforevive_launcher/" type="primary">TFORevive Launcher</el-link> (not yet public)
+    <div class="fc-container">
+        <el-scrollbar>
+            <div class="fc_settings__container">
+                <!-- Game folder location -->
+                <h3>Manage installation</h3>
+                <el-input
+                    v-model="$store.state.game_path"
+                    class="w-50 m-2"
+                    placeholder="Choose installation folder"
+                    @click="updateGamePath"
+                >
+                    <template #prepend>
+                        <el-button icon="Folder" @click="updateGamePath"/>
+                    </template>
+                </el-input>
+                <h3>About:</h3>
+                <div class="fc_northstar__version" @click="activateDeveloperMode">
+                    FlightCore Version: {{ flightcoreVersion === '' ? 'Unknown version' : `${flightcoreVersion}` }}
+                </div>
+                <br />
+                <br />
+                UI design inspired by <el-link :underline="false" target="_blank" href="https://github.com/TFORevive/tforevive_launcher/" type="primary">TFORevive Launcher</el-link> (not yet public)
+            </div>
+        </el-scrollbar>
     </div>
 </template>
 
@@ -65,7 +69,6 @@ export default defineComponent({
 <style scoped>
 .fc_settings__container {
     max-width: 1200px;
-    padding: 20px 30px;
     margin: 0 auto;
 }
 
