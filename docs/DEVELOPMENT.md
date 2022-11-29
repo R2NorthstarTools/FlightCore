@@ -62,6 +62,8 @@ Note that you can adjust the behaviour of Tauri windows in `tauri.conf.json`, e.
 
 ## Docs
 
+### Persistent store
+
 In regards to storing persistent data, FlightCore uses [`tauri-plugin-store`](https://github.com/tauri-apps/tauri-plugin-store). It's a key-value store accessed in frontend to load and store small amounts of data.
 
 The goal is to store as little data in there as possible and instead get the necessary info on app launch.
