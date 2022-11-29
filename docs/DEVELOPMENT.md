@@ -66,6 +66,10 @@ If you have any questions about the code please reach out via GitHub issues, DMs
 
 A lot of code was written in the process of learning Rust and Vue/Typescript so it might not always follow best practices. If you notice ways to improve it, please feel encouraged to open a PR with the change or open an issue pointing out potential points for improvement.
 
+### Frontend styling
+
+For Vue components FlightCore uses the [Element Plus](https://element-plus.org/) library. A list of available components can be found [here](https://element-plus.org/en-US/component/button.html).
+
 ### Interacting between frontend and backend
 
 The main way the frontend calls the backend is via the `invoke()` function provided by Tauri.
