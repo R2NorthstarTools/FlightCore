@@ -60,6 +60,10 @@ Note that you can adjust the behaviour of Tauri windows in `tauri.conf.json`, e.
 
 ## Docs
 
+### Frontend styling
+
+For Vue components FlightCore uses the [Element Plus](https://element-plus.org/) library. A list of available components can be found [here](https://element-plus.org/en-US/component/button.html).
+
 ### Interacting between frontend and backend
 
 The main way the frontend calls the backend is via the `invoke()` function provided by Tauri.
