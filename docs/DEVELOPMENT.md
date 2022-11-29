@@ -66,6 +66,63 @@ If you have any questions about the code please reach out via GitHub issues, DMs
 
 A lot of code was written in the process of learning Rust and Vue/Typescript so it might not always follow best practices. If you notice ways to improve it, please feel encouraged to open a PR with the change or open an issue pointing out potential points for improvement.
 
+### Interacting between frontend and backend
+
+The main way the frontend calls the backend is via the `invoke()` function provided by Tauri.
+
+So assuming you have a backend function
+
+```Rust
+fn my_func(some_string: String, some_int: u32) {}
+```
+
+You can call it from the frontend with:
+
+```Typescript
+await invoke("my_func", { someString: "Hello, World!", someInt: random_int })
+```
+
+Note the change between `snake_case` and `camelCase` in the function argument names. This is imposed by Tauri.
+
+For returning values after the function call using the `Result<T, E>` type in Rust is recommended.
+
+This means you'll have a function
+
+```Rust
+fn other_func() -> Result<u32, String> {}
+```
+
+which returns `Result<u32, String>`
+
+Now in the frontend when calling it you can for example
+
+```Typescript
+await invoke("other_func")
+  .then((message) => {
+    // Success
+    console.log(`Call returned: ${message}`)
+  })
+  .catch((error) => {
+    // Error
+    console.log(error)
+  });
+```
+
+but also
+
+```Typescript
+// Store return in `result` on success
+let result = await invoke("other_func")
+  .catch((error) => {
+    // Error
+    console.log(error)
+  });
+```
+
+For more info, see the Tauri docs: https://tauri.app/v1/guides/features/command/
+
+For periodic calls between backend and frontend you can use events. See the Tauri docs here: https://tauri.app/v1/guides/features/events/
+
 ### Persistent store
 
 In regards to storing persistent data, FlightCore uses [`tauri-plugin-store`](https://github.com/tauri-apps/tauri-plugin-store). It's a key-value store accessed in frontend to load and store small amounts of data.
