@@ -28,6 +28,7 @@ export interface FlightCoreStore {
     installed_northstar_version: string,
     northstar_state: NorthstarState,
     northstar_release_canal: ReleaseCanal,
+    enableReleasesSwitch: boolean,
     releaseNotes: ReleaseInfo[],
 
     thunderstoreMods: ThunderstoreMod[],
@@ -51,6 +52,7 @@ export const store = createStore<FlightCoreStore>({
             installed_northstar_version: "",
             northstar_state: NorthstarState.GAME_NOT_FOUND,
             northstar_release_canal: ReleaseCanal.RELEASE,
+            enableReleasesSwitch: false,
             releaseNotes: [],
 
             thunderstoreMods: [],

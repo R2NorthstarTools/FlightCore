@@ -21,6 +21,10 @@
         UI design inspired by <el-link :underline="false" target="_blank" href="https://github.com/TFORevive/tforevive_launcher/" type="primary">TFORevive Launcher</el-link> (not yet public)
 
         <h3>Testing:</h3>
+        <span>
+            Enable testing release channels
+            <el-switch v-model="enableReleasesSwitch"></el-switch>
+        </span>
     </div>
 </template>
 
@@ -42,6 +46,14 @@ export default defineComponent({
         flightcoreVersion(): string {
             return this.$store.state.flightcore_version;
         },
+        enableReleasesSwitch: {
+            get(): boolean {
+                return this.$store.state.enableReleasesSwitch;
+            },
+            set(value: boolean): void {
+                this.$store.state.enableReleasesSwitch = value;
+            }
+        }
     },
     methods: {
         activateDeveloperMode() {
@@ -85,5 +97,9 @@ h3:first-of-type {
 
 .el-input {
     width: 50%;
+}
+
+.el-switch {
+    margin-left: 50px;
 }
 </style>
