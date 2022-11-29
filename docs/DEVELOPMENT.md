@@ -1,6 +1,6 @@
 # Development
 
-FlightCore uses [Tauri](https://tauri.app/) as its UI framework. This means it is split into a **backend** written in [Rust](https://www.rust-lang.org/) and a frontend written in [Vue](https://vuejs.org/) and [TypeScript](https://www.typescriptlang.org/).
+FlightCore uses [Tauri](https://tauri.app/) as its UI framework. This means it is split into a **backend** written in [Rust](https://www.rust-lang.org/) and a **frontend** written in [Vue](https://vuejs.org/) and [TypeScript](https://www.typescriptlang.org/).
 
 ## Design goals
 
@@ -12,10 +12,10 @@ As for splitting logic between _frontend_ and _backend_, state and UI related lo
 
 ## Setup
 
-Make sure you have the necessary dependencies installed: https://tauri.app/v1/guides/getting-started/prerequisites
+Make sure you have the necessary dependencies for Tauri installed as described in this link: https://tauri.app/v1/guides/getting-started/prerequisites
 
 
-Install `npm` dependencies with 
+Then, install `npm` dependencies with
 
 ```sh
 npm install
@@ -32,6 +32,8 @@ Then for developing
 ```sh
 npx tauri dev
 ```
+
+Automatic recompiling on save is enabled for both the Rust and the Typescript/Vue code.
 
 ## Tauri
 
@@ -151,10 +153,6 @@ else {
 }
 
 ```
-
-## Building
-
-Release builds are generally done via CI. To build locally, make sure typescript is compiled (`./node_modules/.bin/rollup --config`), then run `npm run tauri build`.
 
 ## Other
 
