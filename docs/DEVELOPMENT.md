@@ -64,6 +64,8 @@ Note that you can adjust the behaviour of Tauri windows in `tauri.conf.json`, e.
 
 If you have any questions about the code please reach out via GitHub issues, DMs, or pinging `@Gecko` on the Northstar Discord.
 
+A lot of code was written in the process of learning Rust and Vue/Typescript so it might not always follow best practices. If you notice ways to improve it, please feel encouraged to open a PR with the change or open an issue pointing out potential points for improvement.
+
 ### Persistent store
 
 In regards to storing persistent data, FlightCore uses [`tauri-plugin-store`](https://github.com/tauri-apps/tauri-plugin-store). It's a key-value store accessed in frontend to load and store small amounts of data.
