@@ -74,6 +74,15 @@ export default defineComponent({
         },
         showReleaseSwitch(): boolean {
             return this.$store.state.enableReleasesSwitch;
+        },
+
+        /**
+         * Button has rounded edges on its right only if releases switching is enabled.
+         */
+        buttonRadiusStyle(): string {
+            return this.showReleaseSwitch
+                ? 'border-radius: 2px 0 0 2px;'
+                : 'border-radius: 2px';
         }
     },
     methods: {
@@ -85,7 +94,9 @@ export default defineComponent({
 </script>
 
 <template>
-    <el-button :disabled="northstarIsRunning" type="primary" size="large" @click="launchGame" class="fc_launch__button">
+    <el-button :disabled="northstarIsRunning"
+               type="primary" size="large" @click="launchGame"
+               class="fc_launch__button" :style="buttonRadiusStyle">
         {{ playButtonLabel }}
     </el-button>
     <el-select v-if="showReleaseSwitch" v-model="currentCanal" placeholder="Select">
@@ -107,7 +118,6 @@ export default defineComponent({
 <style scoped>
 button {
     text-transform: uppercase;
-    border-radius: 2px 0 0 2px;
     padding: 30px;
     font-size: 15px;
     margin-right: 0;
