@@ -12,12 +12,15 @@ A [Northstar](https://northstar.tf/) installer, updater, and mod-manager
 
 ![FlightCore screenshot](docs/assets/main-window-screenshot.png)
 
-## Download
+## Install
 
-Head to over to [releases](https://github.com/R2NorthstarTools/FlightCore/releases) and download
-- **Windows:** `FlightCore_X.Y.Z_x64_en-US.msi`
-or
-- **Linux:** `flight-core_X.Y.Z_amd64.AppImage` .
+Downloads are available on the [releases page](https://github.com/R2NorthstarTools/FlightCore/releases).
+
+**Windows:** Download `FlightCore_X.Y.Z_x64_en-US.msi` and then run the installer by double-clicking the file.
+
+**Linux:** Download `flight-core_X.Y.Z_amd64.AppImage`, put it in a preferred location and make it executable. A Flatpak version is planned for the future.
+
+All versions of FlightCore feature an auto-updater that will ask to self-update on new releases.
 
 ## Development
 
