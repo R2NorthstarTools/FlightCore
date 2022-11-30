@@ -57,7 +57,7 @@ export default defineComponent({
                     options: [
                         {
                             value: ReleaseCanal.RELEASE_CANDIDATE,
-                            label: 'Northstar development release',
+                            label: 'Northstar release candidate',
                         },
                     ]
                 },
