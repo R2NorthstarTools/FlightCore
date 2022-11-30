@@ -199,7 +199,12 @@ export const store = createStore<FlightCoreStore>({
                         })
                         .catch((error) => {
                             console.error(error);
-                            alert(error);
+                            ElNotification({
+                                title: 'Error',
+                                message: error,
+                                type: 'error',
+                                position: 'bottom-right'
+                            });
                         });
                     break;
 
