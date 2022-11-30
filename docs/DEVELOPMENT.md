@@ -162,6 +162,13 @@ else {
 
 This repo uses [EditorConfig](https://editorconfig.org/) to define some basic formatting rules. Find a plugin for your IDE [here](https://editorconfig.org/#download).
 
+For commit messages we use semantic commits. For more info see:
+
+- https://karma-runner.github.io/6.4/dev/git-commit-msg.html
+- https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716
+
+PR are generally squash merged to help with keeping a somewhat clean commit history where each commit builds without errors.
+
 ## Additional info
 
 Based on source code for the [Rust Tauri Introduction Video](https://www.youtube.com/watch?v=kRoGYgAuZQE&list=PL7r-PXl6ZPcCIOFaL7nVHXZvBmHNhrh_Q)
