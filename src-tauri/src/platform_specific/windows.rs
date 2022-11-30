@@ -20,7 +20,9 @@ pub fn origin_install_location_detection() -> Result<String, anyhow::Error> {
     let output = ps.run(r#"Get-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Respawn\Titanfall2\ -Name "Install Dir""#).unwrap();
 
     // Get command output as string
-    let string = output.stdout()?;
+    let string = output
+        .stdout()
+        .ok_or(anyhow!("Couldn't get PowerShell output"))?;
 
     // Regex the result out and return value accordingly
     let regex = Regex::new(r"(?m)Install Dir.+: (.+)\r\n")?;
