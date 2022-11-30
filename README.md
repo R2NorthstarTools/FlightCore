@@ -25,6 +25,10 @@ All versions of FlightCore feature an auto-updater that will ask to self-update 
 <a href="https://github.com/R2NorthstarTools/FlightCore/releases"><img src="https://img.shields.io/github/v/release/R2NorthstarTools/FlightCore" alt="GitHub release (latest by date)"></a>
 <img src="https://img.shields.io/github/downloads/R2NorthstarTools/FlightCore/latest/total" alt="GitHub release downloads (latest by date)">
 
+## Frequently Asked Questions (FAQ)
+
+Answers to frequently asked questions can be found in [docs/FAQ.md](docs/FAQ.md)
+
 ## Development
 
 If you'd like to contribute to FlightCore, see [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)
