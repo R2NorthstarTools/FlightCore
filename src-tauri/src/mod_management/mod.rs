@@ -5,10 +5,36 @@ use anyhow::{anyhow, Result};
 use app::NorthstarMod;
 use std::path::PathBuf;
 
-use app::GameInstall;
 use app::get_enabled_mods;
+use app::GameInstall;
 
 use json5;
+
+/// Gets all currently installed and enabled/disabled mods to rebuild `enabledmods.json`
+pub fn rebuild_enabled_mods_json(game_install: GameInstall) -> Result<(), String> {
+    let enabledmods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
+    let mods_and_properties = get_installed_mods_and_properties(game_install)?;
+
+    // Create new mapping
+    let mut my_map = serde_json::Map::new();
+
+    // Build mapping
+    for ns_mod in mods_and_properties.into_iter() {
+        my_map.insert(ns_mod.name, serde_json::Value::Bool(ns_mod.enabled));
+    }
+
+    // Turn into serde object
+    let obj = serde_json::Value::Object(my_map);
+
+    // Write to file
+    std::fs::write(
+        enabledmods_json_path,
+        serde_json::to_string_pretty(&obj).unwrap(),
+    )
+    .unwrap();
+
+    Ok(())
+}
 
 /// Set the status of a passed mod to enabled/disabled
 pub fn set_mod_enabled_status(
@@ -19,11 +45,28 @@ pub fn set_mod_enabled_status(
     let enabledmods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
 
     // Parse JSON
-    let mut res: serde_json::Value = get_enabled_mods(game_install)?;
+    let mut res: serde_json::Value = match get_enabled_mods(game_install.clone()) {
+        Ok(res) => res,
+        Err(err) => {
+            println!("Couldn't parse `enabledmod.json`: {}", err);
+            println!("Rebuilding file.");
+
+            rebuild_enabled_mods_json(game_install.clone())?;
+
+            // Then try again
+            let res = get_enabled_mods(game_install.clone())?;
+            res
+        }
+    };
 
     // Check if key exists
     if res.get(mod_name.clone()).is_none() {
-        return Err("Value not found in enabledmod.json".to_string());
+        // If it doesn't exist, rebuild `enabledmod.json`
+        println!("Value not found in `enabledmod.json`. Rebuilding file");
+        rebuild_enabled_mods_json(game_install.clone())?;
+
+        // Then try again
+        res = get_enabled_mods(game_install)?;
     }
 
     // Update value
@@ -38,7 +81,6 @@ pub fn set_mod_enabled_status(
 
     Ok(())
 }
-
 
 /// Parses `mod.json` for mod name
 // TODO: Maybe pass PathBuf or serde json object
@@ -78,7 +120,9 @@ fn parse_mod_json_for_thunderstore_mod_string(
 }
 
 /// Parse `mods` folder for installed mods.
-fn parse_installed_mods(game_install: GameInstall) -> Result<Vec<(String, Option<String>)>, String> {
+fn parse_installed_mods(
+    game_install: GameInstall,
+) -> Result<Vec<(String, Option<String>)>, String> {
     let ns_mods_folder = format!("{}/R2Northstar/mods/", game_install.game_path);
 
     let paths = std::fs::read_dir(ns_mods_folder).unwrap();
@@ -161,7 +205,6 @@ pub fn get_installed_mods_and_properties(
 }
 
 async fn get_ns_mod_download_url(thunderstore_mod_string: String) -> Result<String, String> {
-
     // TODO: This will crash the thread if not internet connection exist. `match` should be used instead
     let index = thermite::api::get_package_index().await.unwrap().to_vec();
 
@@ -187,7 +230,6 @@ fn add_thunderstore_mod_string(
     path_to_mod_json: String,
     thunderstore_mod_string: String,
 ) -> Result<(), anyhow::Error> {
-
     // Read file into string and parse it
     let data = std::fs::read_to_string(path_to_mod_json.clone())?;
     let parsed_json: serde_json::Value = json5::from_str(&data)?;
@@ -266,9 +308,8 @@ pub async fn fc_download_mod_and_install(
             Err(err) => {
                 if err.to_string() == "Cannot install Northstar as a mod!" {
                     continue; // For Northstar as a dependency, we just skip it
-                }
-                else {
-                    return Err(err.to_string())
+                } else {
+                    return Err(err.to_string());
                 }
             }
         };
@@ -276,7 +317,11 @@ pub async fn fc_download_mod_and_install(
 
     // Prevent installing Northstar as a mod
     // While it would fail during install anyway, having explicit error message is nicer
-    let blacklisted_mods = ["northstar-Northstar", "northstar-NorthstarReleaseCandidate", "ebkr-r2modman"];
+    let blacklisted_mods = [
+        "northstar-Northstar",
+        "northstar-NorthstarReleaseCandidate",
+        "ebkr-r2modman",
+    ];
     for blacklisted_mod in blacklisted_mods {
         if thunderstore_mod_string.contains(blacklisted_mod) {
             return Err("Cannot install Northstar as a mod!".to_string());

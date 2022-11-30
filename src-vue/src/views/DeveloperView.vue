@@ -1,52 +1,54 @@
 <template>
-    <div class="fc__developer__container">
-        <h3>Basic:</h3>
+    <div class="fc-container">
+        <el-scrollbar>
+            <h3>Basic:</h3>
 
-        <el-button type="primary" @click="disableDevMode">
-            Disable developer mode
-        </el-button>
+            <el-button type="primary" @click="disableDevMode">
+                Disable developer mode
+            </el-button>
 
-        <el-button type="primary" @click="crashApplication">
-            Panic button
-        </el-button>
+            <el-button type="primary" @click="crashApplication">
+                Panic button
+            </el-button>
 
-        <h3>Linux:</h3>
+            <h3>Linux:</h3>
 
-        <el-button type="primary" @click="checkLinuxCompatibility">
-            Check NSProton Compatibility
-        </el-button>
+            <el-button type="primary" @click="checkLinuxCompatibility">
+                Check NSProton Compatibility
+            </el-button>
 
-        <h3>Testing:</h3>
+            <h3>Testing:</h3>
 
-        <el-button type="primary" @click="launchGameWithoutChecks">
-            Launch Northstar (bypass all checks)
-        </el-button>
+            <el-button type="primary" @click="launchGameWithoutChecks">
+                Launch Northstar (bypass all checks)
+            </el-button>
 
-        <h3>Mod install:</h3>
+            <h3>Mod install:</h3>
 
-        <el-input v-model="mod_to_install_field_string" placeholder="Please input Thunderstore dependency string" clearable />
+            <el-input v-model="mod_to_install_field_string" placeholder="Please input Thunderstore dependency string (example: AuthorName-ModName-1.2.3)" clearable />
 
-        <el-button type="primary" @click="installMod">
-            Install mod
-        </el-button>
+            <el-button type="primary" @click="installMod">
+                Install mod
+            </el-button>
 
-        <h3>Repair:</h3>
+            <h3>Repair:</h3>
 
-        <el-button type="primary" @click="disableAllModsButCore">
-            Disable all but core mods
-        </el-button>
+            <el-button type="primary" @click="disableAllModsButCore">
+                Disable all but core mods
+            </el-button>
 
-        <el-button type="primary" @click="getInstalledMods">
-            Get installed mods
-        </el-button>
+            <el-button type="primary" @click="getInstalledMods">
+                Get installed mods
+            </el-button>
 
-        <el-button type="primary" @click="cleanUpDownloadFolder">
-            Force delete temp download folder
-        </el-button>
+            <el-button type="primary" @click="cleanUpDownloadFolder">
+                Force delete temp download folder
+            </el-button>
 
-        <el-button type="primary" @click="clearFlightCorePersistentStore">
-            Delete FlightCore persistent store
-        </el-button>
+            <el-button type="primary" @click="clearFlightCorePersistentStore">
+                Delete FlightCore persistent store
+            </el-button>
+        </el-scrollbar>
     </div>
 </template>
 
@@ -208,9 +210,4 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.fc__developer__container {
-    padding: 20px 30px;
-    color: white;
-    position: relative;
-}
 </style>

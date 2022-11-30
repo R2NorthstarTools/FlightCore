@@ -1,9 +1,21 @@
 # Development
 
-Make sure you have the necessary dependencies installed: https://tauri.app/v1/guides/getting-started/prerequisites
+FlightCore uses [Tauri](https://tauri.app/) as its UI framework. This means it is split into a **backend** written in [Rust](https://www.rust-lang.org/) and a **frontend** written in [Vue](https://vuejs.org/) and [TypeScript](https://www.typescriptlang.org/).
+
+## Design goals
+
+In general FlightCore should _just work™_ for the majority of people using it. All errors should be caught and handled where possible. Thanks to CI and auto-updating, releases are easy to deploy and should be made whenever new features are available.
+
+Pro-user and developer oriented features should be hidden by default to avoid users activating them by accident but still easy enough to access such that it doesn't become a hassle using them.
+
+As for splitting logic between _frontend_ and _backend_, state and UI related logic should be done in frontend while all the remaining logic is done in backend. The backend should not hold state to avoid any concurrency issues in regards to asynchronous and multithreaded calls into the backend.
+
+## Setup
+
+Make sure you have the necessary dependencies for Tauri installed as described in this link: https://tauri.app/v1/guides/getting-started/prerequisites
 
 
-Install `npm` dependencies with 
+Then, install `npm` dependencies with
 
 ```sh
 npm install
@@ -20,6 +32,14 @@ Then for developing
 ```sh
 npx tauri dev
 ```
+
+Automatic recompiling on save is enabled for both the Rust and the Typescript/Vue code.
+
+## Tauri
+
+An introduction to Tauri can be seen in this short YouTube video: https://youtu.be/-X8evddpu7M
+
+A longer Tauri tutorial can be found here: https://youtu.be/kRoGYgAuZQE
 
 ## Tips
 
@@ -41,6 +61,73 @@ Note that you can adjust the behaviour of Tauri windows in `tauri.conf.json`, e.
 ```
 
 ## Docs
+
+If you have any questions about the code please reach out via GitHub issues, DMs, or pinging `@Gecko` or `@Alystrasz` on the Northstar Discord.
+
+A lot of code was written in the process of learning Rust and Vue/Typescript so it might not always follow best practices. If you notice ways to improve it, please feel encouraged to open a PR with the change or open an issue pointing out potential points for improvement.
+
+### Frontend styling
+
+For Vue components FlightCore uses the [Element Plus](https://element-plus.org/) library. A list of available components can be found [here](https://element-plus.org/en-US/component/button.html).
+
+### Interacting between frontend and backend
+
+The main way the frontend calls the backend is via the `invoke()` function provided by Tauri.
+
+So assuming you have a backend function
+
+```Rust
+fn my_func(some_string: String, some_int: u32) {}
+```
+
+You can call it from the frontend with:
+
+```Typescript
+await invoke("my_func", { someString: "Hello, World!", someInt: random_int })
+```
+
+Note the change between `snake_case` and `camelCase` in the function argument names. This is imposed by Tauri.
+
+For returning values after the function call using the `Result<T, E>` type in Rust is recommended.
+
+This means you'll have a function
+
+```Rust
+fn other_func() -> Result<u32, String> {}
+```
+
+which returns `Result<u32, String>`
+
+Now in the frontend when calling it you can for example
+
+```Typescript
+await invoke("other_func")
+  .then((message) => {
+    // Success
+    console.log(`Call returned: ${message}`)
+  })
+  .catch((error) => {
+    // Error
+    console.log(error)
+  });
+```
+
+but also
+
+```Typescript
+// Store return in `result` on success
+let result = await invoke("other_func")
+  .catch((error) => {
+    // Error
+    console.log(error)
+  });
+```
+
+For more info, see the Tauri docs: https://tauri.app/v1/guides/features/command/
+
+For periodic calls between backend and frontend you can use events. See the Tauri docs here: https://tauri.app/v1/guides/features/events/
+
+### Persistent store
 
 In regards to storing persistent data, FlightCore uses [`tauri-plugin-store`](https://github.com/tauri-apps/tauri-plugin-store). It's a key-value store accessed in frontend to load and store small amounts of data.
 
@@ -70,10 +157,6 @@ else {
 }
 
 ```
-
-## Building
-
-Release builds are generally done via CI. To build locally, make sure typescript is compiled (`./node_modules/.bin/rollup --config`), then run `npm run tauri build`.
 
 ## Other
 
