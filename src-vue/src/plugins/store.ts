@@ -28,6 +28,7 @@ export interface FlightCoreStore {
     installed_northstar_version: string,
     northstar_state: NorthstarState,
     northstar_release_canal: ReleaseCanal,
+    enableReleasesSwitch: boolean,
     releaseNotes: ReleaseInfo[],
 
     thunderstoreMods: ThunderstoreMod[],
@@ -51,6 +52,7 @@ export const store = createStore<FlightCoreStore>({
             installed_northstar_version: "",
             northstar_state: NorthstarState.GAME_NOT_FOUND,
             northstar_release_canal: ReleaseCanal.RELEASE,
+            enableReleasesSwitch: false,
             releaseNotes: [],
 
             thunderstoreMods: [],
@@ -248,6 +250,26 @@ export const store = createStore<FlightCoreStore>({
                         position: 'bottom-right'
                     });
                 });
+        },
+        async toggleReleaseCandidate(state: FlightCoreStore) {
+            // Flip between RELEASE and RELEASE_CANDIDATE
+            state.northstar_release_canal = state.northstar_release_canal === ReleaseCanal.RELEASE
+                ? ReleaseCanal.RELEASE_CANDIDATE
+                : ReleaseCanal.RELEASE;
+
+            // Save change in persistent store
+            await persistentStore.set('northstar-release-canal', { value: state.northstar_release_canal });
+
+            // Update current state so that update check etc can be performed
+            store.commit("checkNorthstarUpdates");
+
+            // Display notification to highlight change
+            ElNotification({
+                title: `${state.northstar_release_canal}`,
+                message: `Switched release channel to: "${state.northstar_release_canal}"`,
+                type: 'success',
+                position: 'bottom-right'
+            });
         }
     }
 });
@@ -276,6 +298,12 @@ async function _initializeApp(state: any) {
     }
     else {
         console.log("Value not found in store");
+    }
+
+    // Grab "Enable releases switching" setting from store if possible
+    const valueFromStore: {value: boolean} | null = await persistentStore.get('northstar-releases-switching');
+    if (valueFromStore) {
+        state.enableReleasesSwitch = valueFromStore.value;
     }
 
     // Get FlightCore version number
