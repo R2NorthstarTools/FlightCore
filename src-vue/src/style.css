@@ -34,3 +34,9 @@ body {
   --el-scrollbar-opacity: 0.5;
   --el-scrollbar-hover-opacity: 0.7;
 }
+
+.fc-container {
+    position: relative;
+    height: calc(100% - var(--fc-menu_height));
+    color: white;
+}

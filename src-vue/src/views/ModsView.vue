@@ -1,5 +1,5 @@
 <template>
-    <div class="fc__mods__container">
+    <div class="fc-container">
         <el-scrollbar>
             <h3>Installed Mods:</h3>
             <div>
@@ -68,9 +68,5 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-.fc__mods__container {
-    color: white;
-    position: relative;
-}
+<style>
 </style>

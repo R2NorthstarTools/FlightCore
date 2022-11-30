@@ -1,5 +1,5 @@
 <template>
-    <div style="height: calc(100% - var(--fc-menu_height))">
+    <div class="fc-container">
         <div v-if="releases.length === 0" class="fc__changelog__container">
             <el-progress :show-text="false" :percentage="50" :indeterminate="true" />
         </div>
@@ -65,10 +65,6 @@ export default defineComponent({
 
 .fc__changelog__container {
     padding: 20px 30px;
-    position: relative;
-    overflow-y: auto;
-    height: calc(100% - var(--fc-menu_height));
-    color: white;
 }
 
 .el-timeline-item__timestamp {
