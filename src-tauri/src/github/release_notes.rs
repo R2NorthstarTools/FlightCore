@@ -52,7 +52,38 @@ pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
     let version = format!("v{}", version);
 
     // TODO: This shouldn't be a string compare but promper semver compare
-    Ok(version != newest_release_version)
+    let is_outdated = version != newest_release_version;
+
+    // If outdated, check how new the update is
+    if is_outdated {
+        // Extract release date from JSON
+        let release_date = json_response
+            .get("published_at")
+            .and_then(|value| value.as_str())
+            .unwrap();
+
+        // Time to wait (1 day)  h *  m *  s
+        let threshold_seconds = 24 * 60 * 60;
+
+        // Get current time
+        let current_time = chrono::Utc::now();
+
+        // Get latest release time from GitHub API response
+        let result = chrono::DateTime::parse_from_rfc3339(release_date)
+            .unwrap()
+            .with_timezone(&chrono::Utc);
+
+        // Check if current time is outside of threshold
+        let diff = current_time - result;
+        if diff.num_seconds() < threshold_seconds {
+            // User would be outdated but the newest release is recent
+            // therefore we do not wanna show outdated warning.
+            return Ok(false);
+        }
+        return Ok(true);
+    }
+
+    Ok(is_outdated)
 }
 
 #[tauri::command]
