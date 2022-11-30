@@ -53,6 +53,12 @@ export default defineComponent({
             set(value: boolean): void {
                 this.$store.state.enableReleasesSwitch = value;
                 persistentStore.set('northstar-releases-switching', { value });
+
+                // When disabling switch, we switch release canal to stable release, to avoid users being
+                // stuck with release candidate after disabling release switching.
+                if (!value && this.$store.state.northstar_release_canal !== ReleaseCanal.RELEASE) {
+                    this.$store.commit('toggleReleaseCandidate');
+                }
             }
         }
     },
