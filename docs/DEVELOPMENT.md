@@ -62,6 +62,10 @@ Note that you can adjust the behaviour of Tauri windows in `tauri.conf.json`, e.
 
 ## Docs
 
+If you have any questions about the code please reach out via GitHub issues, DMs, or pinging `@Gecko` or `@Alystrasz` on the Northstar Discord.
+
+A lot of code was written in the process of learning Rust and Vue/Typescript so it might not always follow best practices. If you notice ways to improve it, please feel encouraged to open a PR with the change or open an issue pointing out potential points for improvement.
+
 ### Frontend styling
 
 For Vue components FlightCore uses the [Element Plus](https://element-plus.org/) library. A list of available components can be found [here](https://element-plus.org/en-US/component/button.html).
