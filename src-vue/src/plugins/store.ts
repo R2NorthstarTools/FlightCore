@@ -192,18 +192,6 @@ export const store = createStore<FlightCoreStore>({
 
                 // Game is ready to play.
                 case NorthstarState.READY_TO_PLAY:
-                    // Show an error message if Origin is not running.
-                    if (!state.origin_is_running) {
-                        ElNotification({
-                            title: 'Origin is not running',
-                            message: "Northstar cannot launch while you're not authenticated with Origin.",
-                            type: 'warning',
-                            position: 'bottom-right'
-                        });
-
-                        // If Origin isn't running, end here
-                        return;
-                    }
                     await invoke("launch_northstar_caller", { gameInstall: game_install })
                         .then((message) => {
                             console.log(message);
