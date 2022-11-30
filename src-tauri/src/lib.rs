@@ -241,6 +241,21 @@ pub fn launch_northstar(
 ) -> Result<String, String> {
     dbg!(game_install.clone());
 
+    let host_os = get_host_os();
+
+    // Explicitly fail early certain (currently) unsupported install setups
+    if host_os != "windows"
+        || !(matches!(game_install.install_type, InstallType::STEAM)
+            || matches!(game_install.install_type, InstallType::ORIGIN)
+            || matches!(game_install.install_type, InstallType::UNKNOWN))
+    {
+        return Err(format!(
+            "Not yet implemented for \"{}\" with Titanfall2 installed via \"{:?}\"",
+            get_host_os(),
+            game_install.install_type
+        ));
+    }
+
     let bypass_checks = match bypass_checks {
         Some(bypass_checks) => bypass_checks,
         None => false,
@@ -260,21 +275,6 @@ pub fn launch_northstar(
                 anyhow!("Origin not running, start Origin before launching Northstar").to_string(),
             );
         }
-    }
-
-    let host_os = get_host_os();
-
-    // Explicetly fail early certain (currently) unsupported install setups
-    if host_os != "windows"
-        || !(matches!(game_install.install_type, InstallType::STEAM)
-            || matches!(game_install.install_type, InstallType::ORIGIN)
-            || matches!(game_install.install_type, InstallType::UNKNOWN))
-    {
-        return Err(format!(
-            "Not yet implemented for \"{}\" with Titanfall2 installed via \"{:?}\"",
-            get_host_os(),
-            game_install.install_type
-        ));
     }
 
     // Switch to Titanfall2 directory for launching
