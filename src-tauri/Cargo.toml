@@ -42,6 +42,8 @@ tauri-plugin-store = { git = "https://github.com/tauri-apps/tauri-plugin-store",
 json5 = "0.4.1"
 # Async recursion for recursive mod install
 async-recursion = "1.0.0"
+# For parsing timestamps
+chrono = "0.4.23"
 
 [features]
 # by default Tauri runs in production mode
