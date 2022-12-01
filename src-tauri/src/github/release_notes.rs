@@ -62,8 +62,8 @@ pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
             .and_then(|value| value.as_str())
             .unwrap();
 
-        // Time to wait (1 day)  h *  m *  s
-        let threshold_seconds = 24 * 60 * 60;
+        // Time to wait (2h)    h *  m *  s
+        let threshold_seconds = 2 * 60 * 60;
 
         // Get current time
         let current_time = chrono::Utc::now();
