@@ -28,8 +28,6 @@ anyhow = "1.0"
 libthermite = "0.3.4"
 # zip stuff
 zip = "0.6.2"
-# powershell interaction
-powershell_script = "1.0.4"
 # Regex
 regex = "1.6.0"
 # Read out running application process names
@@ -42,6 +40,8 @@ tauri-plugin-store = { git = "https://github.com/tauri-apps/tauri-plugin-store",
 json5 = "0.4.1"
 # Async recursion for recursive mod install
 async-recursion = "1.0.0"
+# Game scanner
+game-scanner = "1.1.4"
 # For parsing timestamps
 chrono = "0.4.23"
 
