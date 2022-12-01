@@ -1,39 +1,36 @@
 /// Windows specific code
-use powershell_script::PsScriptBuilder;
-use regex::Regex;
-
 use anyhow::{anyhow, Result};
 
 use crate::check_is_valid_game_path;
 
+const TITANFALL2_ORIGIN_IDS: [&str; 2] = ["Origin.OFR.50.0001452", "Origin.OFR.50.0001456"];
+
 /// Runs a powershell command and parses output to get Titanfall2 install location on Origin
 pub fn origin_install_location_detection() -> Result<String, anyhow::Error> {
-    dbg!();
-
-    // Run PowerShell command to get Titanfall2 Origin install path
-    let ps = PsScriptBuilder::new()
-        .no_profile(true)
-        .non_interactive(true)
-        .hidden(false)
-        .print_commands(false)
-        .build();
-    let output = ps.run(r#"Get-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Respawn\Titanfall2\ -Name "Install Dir""#).unwrap();
-
-    // Get command output as string
-    let string = output.stdout().unwrap();
-
-    // Regex the result out and return value accordingly
-    let regex = Regex::new(r"(?m)Install Dir.+: (.+)\r\n").unwrap();
-    let mut result = regex.captures_iter(&string);
-    match result.next() {
-        Some(mat) => {
-            let game_path = mat.get(1).map_or("", |m| m.as_str());
-            println!("{}", game_path);
-            match check_is_valid_game_path(game_path) {
-                Ok(()) => return Ok(game_path.to_owned()),
-                Err(err) => Err(err),
+    // Iterate over known Titanfall2 Origin IDs
+    for origin_id in TITANFALL2_ORIGIN_IDS {
+        match game_scanner::origin::find(origin_id) {
+            // Origin ID found as installed game
+            Ok(game) => {
+                if game.path.is_some() {
+                    let game_path = game.path.unwrap();
+                    let game_path_str = game_path.to_str().unwrap();
+                    match check_is_valid_game_path(game_path_str) {
+                        Ok(()) => {
+                            return Ok(game_path_str.to_string());
+                        }
+                        Err(err) => {
+                            println!("{}", err.to_string());
+                            continue; // Not a valid game path
+                        }
+                    }
+                }
+            }
+            Err(err) => {
+                println!("Couldn't find {origin_id}: {err}")
             }
         }
-        None => Err(anyhow!("No Origin install path found")),
     }
+
+    Err(anyhow!("No Origin install path found"))
 }
