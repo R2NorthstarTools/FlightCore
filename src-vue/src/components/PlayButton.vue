@@ -99,7 +99,8 @@ export default defineComponent({
                class="fc_launch__button" :style="buttonRadiusStyle">
         {{ playButtonLabel }}
     </el-button>
-    <el-select v-if="showReleaseSwitch" v-model="currentCanal" placeholder="Select">
+    <el-select v-if="showReleaseSwitch" :disabled="northstarIsRunning"
+               v-model="currentCanal" placeholder="Select">
         <el-option-group
             v-for="group in selectOptions"
             :key="group.label"
@@ -116,6 +117,7 @@ export default defineComponent({
 </template>
 
 <style scoped>
+
 button {
     text-transform: uppercase;
     padding: 30px;
@@ -142,6 +144,7 @@ button {
     border-radius: 0 2px 2px 0;
     height: 62px;
     box-shadow: none !important;
+    --el-disabled-bg-color: #a0cfff;
 }
 
 .el-select:deep(.el-icon) {
