@@ -42,6 +42,8 @@ json5 = "0.4.1"
 async-recursion = "1.0.0"
 # Game scanner
 game-scanner = "1.1.4"
+# For parsing timestamps
+chrono = "0.4.23"
 
 [features]
 # by default Tauri runs in production mode
