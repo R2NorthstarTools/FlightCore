@@ -183,8 +183,6 @@ async fn check_is_northstar_outdated(
         .expect("Couldn't find Northstar on thunderstore???");
     // .ok_or_else(|| anyhow!("Couldn't find Northstar on thunderstore???"))?;
 
-    dbg!(nmod);
-
     let version_number = match get_northstar_version_number(game_path) {
         Ok(version_number) => version_number,
         Err(err) => {
