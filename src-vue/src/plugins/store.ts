@@ -290,6 +290,9 @@ async function _initializeApp(state: any) {
         if (menu_bar_handle !== null) {
             menu_bar_handle.classList.toggle('developer_build');
         }
+    } else {
+        // Disable context menu in release build.
+        document.addEventListener('contextmenu', event => event.preventDefault());
     }
 
     // Grab Northstar release canal value from store if exists
