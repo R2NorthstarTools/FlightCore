@@ -2,7 +2,7 @@
 	<img src="docs/assets/Square310x310Logo.png" width="200px">
 	<br>
 	<br>
-	<a href="https://github.com/R2NorthstarTools/FlightCore/releases/download/v1.1.0/FlightCore_1.1.0_x64_en-US.msi"><img src="docs/assets/downloadbutton.png" width="300px"></a>
+	<a href="https://github.com/R2NorthstarTools/FlightCore/releases/download/v1.2.0/FlightCore_1.2.0_x64_en-US.msi"><img src="docs/assets/downloadbutton.png" width="300px"></a>
 	<br>
 </p>
 
