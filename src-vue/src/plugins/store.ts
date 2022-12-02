@@ -229,7 +229,9 @@ export const store = createStore<FlightCoreStore>({
 
             // Remove some mods from listing
             const removedMods = ['Northstar', 'NorthstarReleaseCandidate', 'r2modman'];
-            state.thunderstoreMods = mods.filter((mod: ThunderstoreMod) => !removedMods.includes(mod.name));
+            state.thunderstoreMods = mods.filter((mod: ThunderstoreMod) => {
+                return !removedMods.includes(mod.name) && !mod.is_deprecated;
+            });
         },
         async loadInstalledMods(state: FlightCoreStore) {
             let game_install = {
