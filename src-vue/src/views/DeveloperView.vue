@@ -1,6 +1,9 @@
 <template>
     <div class="fc-container">
         <el-scrollbar>
+            <el-alert title="Warning" type="error" :closable="false" effect="dark">
+                This page is designed for developers. Some of the buttons here can break your Northstar install if you do not know what you're doing!
+            </el-alert>
             <h3>Basic:</h3>
 
             <el-button type="primary" @click="disableDevMode">
