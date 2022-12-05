@@ -10,6 +10,12 @@ use app::GameInstall;
 
 use json5;
 
+pub const BLACKLISTED_MODS: [&str; 3] = [
+    "northstar-Northstar",
+    "northstar-NorthstarReleaseCandidate",
+    "ebkr-r2modman",
+];
+
 /// Gets all currently installed and enabled/disabled mods to rebuild `enabledmods.json`
 pub fn rebuild_enabled_mods_json(game_install: GameInstall) -> Result<(), String> {
     let enabledmods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
@@ -317,12 +323,7 @@ pub async fn fc_download_mod_and_install(
 
     // Prevent installing Northstar as a mod
     // While it would fail during install anyway, having explicit error message is nicer
-    let blacklisted_mods = [
-        "northstar-Northstar",
-        "northstar-NorthstarReleaseCandidate",
-        "ebkr-r2modman",
-    ];
-    for blacklisted_mod in blacklisted_mods {
+    for blacklisted_mod in BLACKLISTED_MODS {
         if thunderstore_mod_string.contains(blacklisted_mod) {
             return Err("Cannot install Northstar as a mod!".to_string());
         }
