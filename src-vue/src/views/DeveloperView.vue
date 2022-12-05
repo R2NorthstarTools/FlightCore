@@ -1,7 +1,7 @@
 <template>
     <div class="fc-container">
         <el-scrollbar>
-            <el-alert title="Warning" type="warning" :closable="false" effect="dark" show-icon>
+            <el-alert title="Warning" type="warning" :closable="false" show-icon>
                 This page is designed for developers. Some of the buttons here can break your Northstar install if you do not know what you're doing!
             </el-alert>
             <h3>Basic:</h3>
