@@ -220,9 +220,12 @@ pub async fn install_northstar(
         .ok_or_else(|| panic!("Couldn't find Northstar on thunderstore???"))
         .unwrap();
 
-    do_install(nmod.versions.get(&nmod.latest).unwrap(), std::path::Path::new(game_path))
-        .await
-        .unwrap();
+    do_install(
+        nmod.versions.get(&nmod.latest).unwrap(),
+        std::path::Path::new(game_path),
+    )
+    .await
+    .unwrap();
 
     Ok(nmod.latest.clone())
 }
@@ -237,6 +240,21 @@ pub fn launch_northstar(
     bypass_checks: Option<bool>,
 ) -> Result<String, String> {
     dbg!(game_install.clone());
+
+    let host_os = get_host_os();
+
+    // Explicitly fail early certain (currently) unsupported install setups
+    if host_os != "windows"
+        || !(matches!(game_install.install_type, InstallType::STEAM)
+            || matches!(game_install.install_type, InstallType::ORIGIN)
+            || matches!(game_install.install_type, InstallType::UNKNOWN))
+    {
+        return Err(format!(
+            "Not yet implemented for \"{}\" with Titanfall2 installed via \"{:?}\"",
+            get_host_os(),
+            game_install.install_type
+        ));
+    }
 
     let bypass_checks = match bypass_checks {
         Some(bypass_checks) => bypass_checks,
@@ -257,21 +275,6 @@ pub fn launch_northstar(
                 anyhow!("Origin not running, start Origin before launching Northstar").to_string(),
             );
         }
-    }
-
-    let host_os = get_host_os();
-
-    // Explicetly fail early certain (currently) unsupported install setups
-    if host_os != "windows"
-        || !(matches!(game_install.install_type, InstallType::STEAM)
-            || matches!(game_install.install_type, InstallType::ORIGIN)
-            || matches!(game_install.install_type, InstallType::UNKNOWN))
-    {
-        return Err(format!(
-            "Not yet implemented for \"{}\" with Titanfall2 installed via \"{:?}\"",
-            get_host_os(),
-            game_install.install_type
-        ));
     }
 
     // Switch to Titanfall2 directory for launching
@@ -334,10 +337,7 @@ pub fn convert_release_candidate_number(version_number: String) -> String {
 
 /// Returns a serde json object of the parsed `enabledmods.json` file
 pub fn get_enabled_mods(game_install: GameInstall) -> Result<serde_json::value::Value, String> {
-    let enabledmods_json_path = format!(
-        "{}/R2Northstar/enabledmods.json",
-        game_install.game_path
-    );
+    let enabledmods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
 
     // Check for JSON file
     if !std::path::Path::new(&enabledmods_json_path).exists() {

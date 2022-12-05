@@ -28,6 +28,7 @@ export interface FlightCoreStore {
     installed_northstar_version: string,
     northstar_state: NorthstarState,
     northstar_release_canal: ReleaseCanal,
+    enableReleasesSwitch: boolean,
     releaseNotes: ReleaseInfo[],
 
     thunderstoreMods: ThunderstoreMod[],
@@ -51,6 +52,7 @@ export const store = createStore<FlightCoreStore>({
             installed_northstar_version: "",
             northstar_state: NorthstarState.GAME_NOT_FOUND,
             northstar_release_canal: ReleaseCanal.RELEASE,
+            enableReleasesSwitch: false,
             releaseNotes: [],
 
             thunderstoreMods: [],
@@ -192,18 +194,6 @@ export const store = createStore<FlightCoreStore>({
 
                 // Game is ready to play.
                 case NorthstarState.READY_TO_PLAY:
-                    // Show an error message if Origin is not running.
-                    if (!state.origin_is_running) {
-                        ElNotification({
-                            title: 'Origin is not running',
-                            message: "Northstar cannot launch while you're not authenticated with Origin.",
-                            type: 'warning',
-                            position: 'bottom-right'
-                        });
-
-                        // If Origin isn't running, end here
-                        return;
-                    }
                     await invoke("launch_northstar_caller", { gameInstall: game_install })
                         .then((message) => {
                             console.log(message);
@@ -211,7 +201,12 @@ export const store = createStore<FlightCoreStore>({
                         })
                         .catch((error) => {
                             console.error(error);
-                            alert(error);
+                            ElNotification({
+                                title: 'Error',
+                                message: error,
+                                type: 'error',
+                                position: 'bottom-right'
+                            });
                         });
                     break;
 
@@ -234,7 +229,9 @@ export const store = createStore<FlightCoreStore>({
 
             // Remove some mods from listing
             const removedMods = ['Northstar', 'NorthstarReleaseCandidate', 'r2modman'];
-            state.thunderstoreMods = mods.filter((mod: ThunderstoreMod) => !removedMods.includes(mod.name));
+            state.thunderstoreMods = mods.filter((mod: ThunderstoreMod) => {
+                return !removedMods.includes(mod.name) && !mod.is_deprecated;
+            });
         },
         async loadInstalledMods(state: FlightCoreStore) {
             let game_install = {
@@ -255,6 +252,26 @@ export const store = createStore<FlightCoreStore>({
                         position: 'bottom-right'
                     });
                 });
+        },
+        async toggleReleaseCandidate(state: FlightCoreStore) {
+            // Flip between RELEASE and RELEASE_CANDIDATE
+            state.northstar_release_canal = state.northstar_release_canal === ReleaseCanal.RELEASE
+                ? ReleaseCanal.RELEASE_CANDIDATE
+                : ReleaseCanal.RELEASE;
+
+            // Save change in persistent store
+            await persistentStore.set('northstar-release-canal', { value: state.northstar_release_canal });
+
+            // Update current state so that update check etc can be performed
+            store.commit("checkNorthstarUpdates");
+
+            // Display notification to highlight change
+            ElNotification({
+                title: `${state.northstar_release_canal}`,
+                message: `Switched release channel to: "${state.northstar_release_canal}"`,
+                type: 'success',
+                position: 'bottom-right'
+            });
         }
     }
 });
@@ -273,6 +290,9 @@ async function _initializeApp(state: any) {
         if (menu_bar_handle !== null) {
             menu_bar_handle.classList.toggle('developer_build');
         }
+    } else {
+        // Disable context menu in release build.
+        document.addEventListener('contextmenu', event => event.preventDefault());
     }
 
     // Grab Northstar release canal value from store if exists
@@ -283,6 +303,12 @@ async function _initializeApp(state: any) {
     }
     else {
         console.log("Value not found in store");
+    }
+
+    // Grab "Enable releases switching" setting from store if possible
+    const valueFromStore: {value: boolean} | null = await persistentStore.get('northstar-releases-switching');
+    if (valueFromStore) {
+        state.enableReleasesSwitch = valueFromStore.value;
     }
 
     // Get FlightCore version number

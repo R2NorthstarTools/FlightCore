@@ -33,7 +33,7 @@ export default {
     computed: {
       bgStyle(): string {
           // @ts-ignore
-          const shouldBlur = ['/thunderstoreMods'].includes(this.$route.path);
+          const shouldBlur = this.$route.path !== "/";
           return `filter: brightness(0.8) ${shouldBlur ? 'blur(5px)' : ''};`;
       }
     }

@@ -12,10 +12,12 @@ use std::{
 use app::*;
 
 mod github;
-use github::release_notes::{get_northstar_release_notes, check_is_flightcore_outdated};
+use github::release_notes::{check_is_flightcore_outdated, get_northstar_release_notes};
 
 mod repair_and_verify;
-use repair_and_verify::{clean_up_download_folder, disable_all_but_core, verify_game_files, get_log_list};
+use repair_and_verify::{
+    clean_up_download_folder, disable_all_but_core, get_log_list, verify_game_files,
+};
 
 mod mod_management;
 use mod_management::{
@@ -180,8 +182,6 @@ async fn check_is_northstar_outdated(
         .find(|f| f.name.to_lowercase() == northstar_package_name.to_lowercase())
         .expect("Couldn't find Northstar on thunderstore???");
     // .ok_or_else(|| anyhow!("Couldn't find Northstar on thunderstore???"))?;
-
-    dbg!(nmod);
 
     let version_number = match get_northstar_version_number(game_path) {
         Ok(version_number) => version_number,
