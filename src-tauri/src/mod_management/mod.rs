@@ -10,6 +10,8 @@ use app::GameInstall;
 
 use json5;
 
+use crate::northstar::CORE_MODS;
+
 pub const BLACKLISTED_MODS: [&str; 3] = [
     "northstar-Northstar",
     "northstar-NorthstarReleaseCandidate",
@@ -382,4 +384,47 @@ pub async fn fc_download_mod_and_install(
     std::fs::remove_file(path).unwrap();
 
     Ok(())
+}
+
+/// Deletes a given Northstar mod folder
+fn delete_mod_folder(ns_mod_directory: String) -> Result<(), String> {
+    // TODO maybe remove again
+    let ns_mod_dir_path = std::path::Path::new(&ns_mod_directory);
+
+    // Safety check: Check whether `mod.json` exists and exit early if not
+    // If it does not exist, we might not be dealing with a Northstar mod
+    let mod_json_path = ns_mod_dir_path.join("mod.json");
+    if !mod_json_path.exists() {
+        // If it doesn't exist, return an error
+        return Err(format!("mod.json does not exist in {}", ns_mod_directory));
+    }
+
+    match std::fs::remove_dir_all(&ns_mod_directory) {
+        Ok(()) => Ok(()),
+        Err(err) => Err(format!("Failed deleting mod: {err}")),
+    }
+}
+
+/// Deletes a Northstar mod based on its name
+pub fn delete_northstar_mod(game_install: GameInstall, nsmod_name: String) -> Result<(), String> {
+    // Prevent deleting core mod
+    for core_mod in CORE_MODS {
+        if nsmod_name == core_mod {
+            return Err(format!("Cannot remove core mod {nsmod_name}"));
+        }
+    }
+
+    // Get installed mods
+    let installed_ns_mods = get_installed_mods_and_properties(game_install)?;
+
+    // Get folder name based on northstarmods
+    for installed_ns_mod in installed_ns_mods {
+        // Installed mod matches specified mod
+        if installed_ns_mod.name == nsmod_name {
+            // Delete folder
+            return delete_mod_folder(installed_ns_mod.directory);
+        }
+    }
+
+    Err(format!("Mod {nsmod_name} not found to be installed"))
 }

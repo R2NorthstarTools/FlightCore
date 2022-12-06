@@ -21,7 +21,7 @@ use repair_and_verify::{
 
 mod mod_management;
 use mod_management::{
-    fc_download_mod_and_install, get_installed_mods_and_properties, set_mod_enabled_status,
+    fc_download_mod_and_install, get_installed_mods_and_properties, set_mod_enabled_status, delete_northstar_mod,
 };
 
 mod northstar;
@@ -101,6 +101,7 @@ fn main() {
             get_installed_mods_caller,
             install_mod_caller,
             clean_up_download_folder_caller,
+            delete_northstar_mod_caller,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -338,4 +339,10 @@ async fn clean_up_download_folder_caller(
         Ok(()) => Ok(()),
         Err(err) => Err(err.to_string()),
     }
+}
+
+#[tauri::command]
+/// Deletes the specified mod
+async fn delete_northstar_mod_caller(game_install: GameInstall, nsmod_name: String) -> Result<(), String> {
+    delete_northstar_mod(game_install, nsmod_name)
 }

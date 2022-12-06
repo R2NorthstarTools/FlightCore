@@ -4,9 +4,11 @@
             <h3>Installed Mods:</h3>
             <div>
                 <el-card shadow="hover" v-for="mod in $store.state.installed_mods">
-                    <el-switch style="--el-switch-on-color: #13ce66; --el-switch-off-color: #8957e5" v-model="mod.enabled"
-                        :before-change="() => updateWhichModsEnabled(mod)" :loading="global_load_indicator" />
-                    {{mod.name}}
+                    <el-switch style="--el-switch-on-color: #13ce66; --el-switch-off-color: #8957e5"
+                        v-model="mod.enabled" :before-change="() => updateWhichModsEnabled(mod)"
+                        :loading="global_load_indicator" />
+                    <el-button type="danger" @click="deleteMod(mod)">Delete</el-button>
+                    {{ mod.name }}
                 </el-card>
             </div>
         </el-scrollbar>
@@ -63,6 +65,31 @@ export default defineComponent({
 
             this.global_load_indicator = false;
             return true;
+        },
+        async deleteMod(mod: NorthstarMod) {
+            console.log(mod)
+            let game_install = {
+                game_path: this.$store.state.game_path,
+                install_type: this.$store.state.install_type
+            } as GameInstall;
+            await invoke("delete_northstar_mod_caller", { gameInstall: game_install, nsmodName: mod.name })
+                .then((message) => {
+                    // Just a visual indicator that it worked
+                    ElNotification({
+                        title: `Success deleting ${mod.name}`,
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+                })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                });
+            this.$store.commit('loadInstalledMods');
         }
     }
 });
