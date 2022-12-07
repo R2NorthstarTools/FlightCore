@@ -5,5 +5,6 @@ export interface ThunderstoreMod {
     owner: string;
     rating_score: number;
     package_url: string;
+    is_deprecated: boolean;
     versions: ThunderstoreModVersion[];
 }

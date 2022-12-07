@@ -1,11 +1,11 @@
-use std::vec::Vec;
 use serde::{Deserialize, Serialize};
+use std::vec::Vec;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ReleaseInfo {
     pub name: String,
     pub published_at: String,
-    pub body: String
+    pub body: String,
 }
 
 // Fetches repo release API and returns response as string
@@ -52,9 +52,39 @@ pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
     let version = format!("v{}", version);
 
     // TODO: This shouldn't be a string compare but promper semver compare
-    Ok(version != newest_release_version)
-}
+    let is_outdated = version != newest_release_version;
 
+    // If outdated, check how new the update is
+    if is_outdated {
+        // Extract release date from JSON
+        let release_date = json_response
+            .get("published_at")
+            .and_then(|value| value.as_str())
+            .unwrap();
+
+        // Time to wait (2h)    h *  m *  s
+        let threshold_seconds = 2 * 60 * 60;
+
+        // Get current time
+        let current_time = chrono::Utc::now();
+
+        // Get latest release time from GitHub API response
+        let result = chrono::DateTime::parse_from_rfc3339(release_date)
+            .unwrap()
+            .with_timezone(&chrono::Utc);
+
+        // Check if current time is outside of threshold
+        let diff = current_time - result;
+        if diff.num_seconds() < threshold_seconds {
+            // User would be outdated but the newest release is recent
+            // therefore we do not wanna show outdated warning.
+            return Ok(false);
+        }
+        return Ok(true);
+    }
+
+    Ok(is_outdated)
+}
 
 #[tauri::command]
 pub async fn get_northstar_release_notes() -> Result<Vec<ReleaseInfo>, String> {
@@ -65,20 +95,24 @@ pub async fn get_northstar_release_notes() -> Result<Vec<ReleaseInfo>, String> {
         serde_json::from_str(&res).expect("JSON was not well-formatted");
     println!("Done checking GitHub API");
 
-    return Ok(
-        json_response.iter().map(|release| ReleaseInfo {
-            name: release.get("name")
+    return Ok(json_response
+        .iter()
+        .map(|release| ReleaseInfo {
+            name: release
+                .get("name")
                 .and_then(|value| value.as_str())
                 .unwrap()
                 .to_string(),
-            published_at: release.get("published_at")
+            published_at: release
+                .get("published_at")
                 .and_then(|value| value.as_str())
                 .unwrap()
                 .to_string(),
-            body: release.get("body")
+            body: release
+                .get("body")
                 .and_then(|value| value.as_str())
                 .unwrap()
                 .to_string(),
-        }).collect()
-    );
+        })
+        .collect());
 }
