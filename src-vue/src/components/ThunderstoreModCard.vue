@@ -166,6 +166,34 @@ export default defineComponent({
             return `${dependencyStringMembers[0]}-${dependencyStringMembers[1]}`;
         },
 
+        async deleteMod(mod: ThunderstoreMod) {
+            let game_install = {
+                game_path: this.$store.state.game_path,
+                install_type: this.$store.state.install_type
+            } as GameInstall;
+
+            await invoke("delete_thunderstore_mod_caller", { gameInstall: game_install, thunderstoreModString: this.latestVersion.full_name })
+                .then((message) => {
+                    ElNotification({
+                        title: `Removed ${mod.name}`,
+                        message: message as string,
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+                })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                })
+                .finally(() => {
+                    this.$store.commit('loadInstalledMods');
+                });
+        },
+
         async installMod (mod: ThunderstoreMod) {
             let game_install = {
                 game_path: this.$store.state.game_path,
