@@ -1,4 +1,4 @@
-use crate::{mod_management::set_mod_enabled_status, northstar::CORE_MODS};
+use crate::{mod_management::{set_mod_enabled_status, rebuild_enabled_mods_json}, northstar::CORE_MODS};
 use anyhow::anyhow;
 /// Contains various functions to repair common issues and verifying installation
 use app::{get_enabled_mods, GameInstall};
@@ -12,6 +12,10 @@ pub fn verify_game_files(game_install: GameInstall) -> Result<String, String> {
 /// Disables all mods except core ones
 /// Enables core mods if disabled
 pub fn disable_all_but_core(game_install: GameInstall) -> Result<(), String> {
+
+    // Rebuild `enabledmods.json` first to ensure all mods are added
+    rebuild_enabled_mods_json(game_install.clone())?;
+
     let current_mods = get_enabled_mods(game_install.clone())?;
 
     // Disable all mods, set core mods to enabled
