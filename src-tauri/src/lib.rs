@@ -35,6 +35,7 @@ pub struct NorthstarMod {
     pub name: String,
     pub thunderstore_mod_string: Option<String>,
     pub enabled: bool,
+    pub directory: String,
 }
 
 /// Check version number of a mod
