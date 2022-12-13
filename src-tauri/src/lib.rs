@@ -291,11 +291,11 @@ pub fn launch_northstar(
             || matches!(game_install.install_type, InstallType::ORIGIN)
             || matches!(game_install.install_type, InstallType::UNKNOWN))
     {
-        let _output =
-            std::process::Command::new(format!("{}/NorthstarLauncher.exe", game_install.game_path))
-                // .args(&["a", "b"])
-                .spawn()
-                .expect("failed to execute process");
+        let ns_exe_path = format!("{}/NorthstarLauncher.exe", game_install.game_path);
+        let _output = std::process::Command::new("C:\\Windows\\System32\\cmd.exe")
+            .args(&["/C", "start", "", &ns_exe_path])
+            .spawn()
+            .expect("failed to execute process");
         return Ok("Launched game".to_string());
     }
 
