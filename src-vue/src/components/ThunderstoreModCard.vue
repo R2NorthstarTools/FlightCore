@@ -46,7 +46,7 @@
                             <el-dropdown-item @click="openURL(mod.package_url)">
                                 More info
                             </el-dropdown-item>
-                            <el-dropdown-item>
+                            <el-dropdown-item v-if="modIsRemovable">
                                 Remove mod
                             </el-dropdown-item>
                         </el-dropdown-menu>
@@ -66,6 +66,7 @@ import {ThunderstoreModStatus} from "../utils/thunderstore/ThunderstoreModStatus
 import {NorthstarMod} from "../utils/NorthstarMod";
 import {GameInstall} from "../utils/GameInstall";
 import {ElNotification} from "element-plus";
+import { NorthstarState } from "../utils/NorthstarState";
 
 export default defineComponent({
     name: "ThunderstoreModCard",
@@ -147,6 +148,15 @@ export default defineComponent({
                 case ThunderstoreModStatus.BEING_UPDATED:
                     return "warning";
             }
+        },
+
+        /**
+         * Tells if a Thunderstore mod can be removed.
+         * This is used to tell if we should display the "Remove mod" option.
+         **/
+        modIsRemovable(): boolean {
+            return [ThunderstoreModStatus.INSTALLED, ThunderstoreModStatus.OUTDATED]
+                .includes(this.modStatus);
         },
 
         /**
