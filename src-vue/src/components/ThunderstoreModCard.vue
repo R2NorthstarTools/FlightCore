@@ -37,8 +37,15 @@
                 </el-button>
 
                 <!-- Information dropdown menu -->
-                <el-dropdown>
-                    <el-icon class="infoBtn">
+                 <el-button v-if="!modIsRemovable"
+                            link type="info" class="infoBtn" @click="openURL(mod.package_url)">
+                    <el-icon>
+                        <InfoFilled />
+                    </el-icon>
+                </el-button>
+
+                <el-dropdown v-else>
+                    <el-icon class="infoBtn moreBtn">
                         <MoreFilled />
                     </el-icon>
                     <template #dropdown>
@@ -46,7 +53,7 @@
                             <el-dropdown-item @click="openURL(mod.package_url)">
                                 More info
                             </el-dropdown-item>
-                            <el-dropdown-item v-if="modIsRemovable">
+                            <el-dropdown-item>
                                 Remove mod
                             </el-dropdown-item>
                         </el-dropdown-menu>
@@ -291,9 +298,12 @@ export default defineComponent({
 
 .infoBtn {
     width: 20px;
-    padding: 0;
+    padding: 0 !important;
     font-size: 20px;
     border: none;
+}
+
+.moreBtn {
     margin-left: 10px;
     height: auto;
 }
