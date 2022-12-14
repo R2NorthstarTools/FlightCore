@@ -35,11 +35,23 @@
                 >
                     {{ modButtonText }}
                 </el-button>
-                <el-button link type="info" class="infoBtn" @click="openURL(mod.package_url)">
-                    <el-icon>
-                        <InfoFilled />
+
+                <!-- Information dropdown menu -->
+                <el-dropdown>
+                    <el-icon class="infoBtn">
+                        <MoreFilled />
                     </el-icon>
-                </el-button>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <el-dropdown-item @click="openURL(mod.package_url)">
+                                More info
+                            </el-dropdown-item>
+                            <el-dropdown-item>
+                                Remove mod
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </template>
+                </el-dropdown>
             </span>
         </div>
     </el-card>
@@ -272,5 +284,7 @@ export default defineComponent({
     padding: 0;
     font-size: 20px;
     border: none;
+    margin-left: 10px;
+    height: auto;
 }
 </style>
