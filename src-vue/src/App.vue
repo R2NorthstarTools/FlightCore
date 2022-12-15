@@ -23,6 +23,9 @@ export default {
     store.commit('initialize');
   },
   methods: {
+    async toggleMaximize() {
+      await appWindow.toggleMaximize();
+    },
     minimize() {
       appWindow.minimize()
     },
@@ -63,6 +66,7 @@ export default {
 
     <div id="fc_window__controls">
         <el-button color="white" icon="SemiSelect" @click="minimize" circle />
+        <el-button color="white" icon="FullScreen" @click="toggleMaximize" circle />
         <el-button color="white" icon="CloseBold" @click="close" circle />
     </div>
   </div>
