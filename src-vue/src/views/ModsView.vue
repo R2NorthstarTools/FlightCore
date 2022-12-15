@@ -3,7 +3,8 @@
         <el-scrollbar>
             <h3>Installed Mods:</h3>
             <div>
-                <el-card shadow="hover" v-for="mod in installedMods" v-bind:key="mod.name">
+                <p v-if="installedMods.length === 0">No mods were found.</p>
+                <el-card v-else shadow="hover" v-for="mod in installedMods" v-bind:key="mod.name">
                     <el-switch style="--el-switch-on-color: #13ce66; --el-switch-off-color: #8957e5" v-model="mod.enabled"
                         :before-change="() => updateWhichModsEnabled(mod)" :loading="global_load_indicator" />
                     {{mod.name}}
