@@ -37,6 +37,7 @@ body {
 
 .fc-container {
     position: relative;
+    margin-top: var(--fc-menu_height);
     height: calc(100% - var(--fc-menu_height));
     color: white;
 }

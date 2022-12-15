@@ -47,7 +47,9 @@ export default {
   <div class="app-inner">
     <div id="fc_bg__container" :style="bgStyle"/>
 
-    <el-menu
+    <nav id="fc_menu-bar">
+      <!-- Navigation items -->
+      <el-menu
         default-active="/"
         router
         mode="horizontal"
@@ -61,6 +63,7 @@ export default {
         <el-menu-item index="/settings">Settings</el-menu-item>
         <el-menu-item index="/dev" v-if="$store.state.developer_mode">Dev</el-menu-item>
     </el-menu>
+    </nav>
 
     <router-view></router-view>
 
@@ -107,12 +110,19 @@ export default {
   height: calc(100% - var(--fc-menu_height));
 }
 
+#fc_menu-bar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: var(--fc-menu_height);
+}
+
 /* Header menu */
 #fc__menu_bar {
   background-image: radial-gradient(transparent 1px);
   backdrop-filter: saturate(50%) blur(4px);
   background-color: transparent;
-  height: var(--fc-menu_height);
+  height: 100%;
 }
 
 .developer_build {
