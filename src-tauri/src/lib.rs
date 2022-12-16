@@ -311,6 +311,12 @@ pub fn check_origin_running() -> bool {
     for _process in s.processes_by_name("Origin.exe") {
         // check here if this is your process
         // dbg!(process);
+        // There's at least one Origin process, so we can launch
+        return true;
+    }
+    // Alternatively, check for EA Desktop
+    for _process in s.processes_by_name("EADesktop.exe") {
+        // There's at least one EADesktop process, so we can launch
         return true;
     }
     false
