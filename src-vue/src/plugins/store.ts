@@ -245,16 +245,12 @@ export const store = createStore<FlightCoreStore>({
                 })
                 .catch((error) => {
                     console.error(error);
-                    // TODO discuss if we should delete this
-                    // If there's no other error case as "no install selected", I think we can get rid of it.
-                    /*
                     ElNotification({
                         title: 'Error',
                         message: error,
                         type: 'error',
                         position: 'bottom-right'
                     });
-                    */
                 });
         },
         async toggleReleaseCandidate(state: FlightCoreStore) {
