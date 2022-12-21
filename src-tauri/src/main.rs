@@ -3,7 +3,6 @@
     windows_subsystem = "windows"
 )]
 
-
 use std::{
     env,
     sync::{Arc, Mutex},
