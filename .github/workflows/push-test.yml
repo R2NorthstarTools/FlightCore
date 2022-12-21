@@ -45,6 +45,9 @@ jobs:
         rm src-tauri/tauri.conf.json
         mv src-tauri/tauri.conf.json.new src-tauri/tauri.conf.json
     - uses: Swatinem/rust-cache@v2 # Cache Rust build artifacts
+      with:
+        workspaces: |
+          src-tauri
     - name: install app dependencies and build it
       env:
         TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
