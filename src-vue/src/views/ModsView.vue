@@ -67,7 +67,6 @@ export default defineComponent({
             return true;
         },
         async deleteMod(mod: NorthstarMod) {
-            console.log(mod)
             let game_install = {
                 game_path: this.$store.state.game_path,
                 install_type: this.$store.state.install_type
