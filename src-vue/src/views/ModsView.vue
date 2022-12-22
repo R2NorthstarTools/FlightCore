@@ -7,7 +7,14 @@
                 <el-card v-else shadow="hover" v-for="mod in installedMods" v-bind:key="mod.name">
                     <el-switch style="--el-switch-on-color: #13ce66; --el-switch-off-color: #8957e5" v-model="mod.enabled"
                         :before-change="() => updateWhichModsEnabled(mod)" :loading="global_load_indicator" />
-                    <el-button type="danger" @click="deleteMod(mod)">Delete</el-button>
+                    <el-popconfirm
+                        title="Are you sure to delete this mod?"
+                        @confirm="deleteMod(mod)"
+                    >
+                        <template #reference>
+                            <el-button type="danger">Delete</el-button>
+                        </template>
+                    </el-popconfirm>
                     {{ mod.name }}
                 </el-card>
             </div>
