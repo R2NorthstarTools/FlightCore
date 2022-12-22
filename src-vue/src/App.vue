@@ -55,23 +55,24 @@ export default {
         mode="horizontal"
         id="fc__menu_items"
         data-tauri-drag-region
-    >
+      >
         <el-menu-item index="/">Play</el-menu-item>
         <el-menu-item index="/changelog">Changelog</el-menu-item>
         <el-menu-item index="/mods">Mods</el-menu-item>
         <el-menu-item index="/thunderstoreMods">Thunderstore</el-menu-item>
         <el-menu-item index="/settings">Settings</el-menu-item>
         <el-menu-item index="/dev" v-if="$store.state.developer_mode">Dev</el-menu-item>
-    </el-menu>
-    </nav>
+      </el-menu>
 
-    <router-view></router-view>
-
-    <div id="fc_window__controls">
+      <!-- Window controls -->
+      <div id="fc_window__controls">
         <el-button color="white" icon="SemiSelect" @click="minimize" circle />
         <el-button color="white" icon="FullScreen" @click="toggleMaximize" circle />
         <el-button color="white" icon="CloseBold" @click="close" circle />
-    </div>
+      </div>
+    </nav>
+
+    <router-view></router-view>
   </div>
 </template>
 
@@ -99,6 +100,8 @@ export default {
 #fc__menu_items {
   height: 100%;
   background-color: transparent;
+  float: left;
+  width: calc(100% - 148px); /* window controls container width */
 }
 
 #fc__menu_items .el-menu-item {
@@ -138,11 +141,8 @@ export default {
 
 /* Window controls */
 #fc_window__controls {
-  display: flex;
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: var(--fc-menu_height);
+  float: right;
+  height: 100%;
 }
 
 #fc_window__controls > button {
@@ -151,6 +151,7 @@ export default {
   margin: auto 5px;
   background: none;
   border: none;
+  height: 100%;
 }
 
 #fc_window__controls > button:hover {
