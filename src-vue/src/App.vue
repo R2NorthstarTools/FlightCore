@@ -115,6 +115,7 @@ export default {
   font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
   font-weight: bold;
   font-size: large;
+  background-color: transparent !important;
 }
 
 #fc__menu_items .el-menu-item:hover, #fc__menu_items .el-sub-menu__title {
@@ -122,9 +123,8 @@ export default {
   background-color: transparent;
 }
 
-#fc__menu_items .el-menu-item.is-active, #fc__menu_items .el-menu-item:focus, #fc__menu_items .el-sub-menu.is-active > .el-sub-menu__title {
+#fc__menu_items .el-menu-item.is-active, #fc__menu_items .el-sub-menu.is-active > .el-sub-menu__title {
   color: white !important;
-  background-color: transparent;
 }
 
 .app-inner > .fc__mods__container {
