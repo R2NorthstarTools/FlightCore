@@ -53,7 +53,7 @@ export default {
         default-active="/"
         router
         mode="horizontal"
-        id="fc__menu_bar"
+        id="fc__menu_items"
         data-tauri-drag-region
     >
         <el-menu-item index="/">Play</el-menu-item>
@@ -76,8 +76,18 @@ export default {
 </template>
 
 <style>
+#fc_menu-bar {
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  width: 100%;
+  height: var(--fc-menu_height);
+  background-image: radial-gradient(transparent 1px);
+  backdrop-filter: saturate(50%) blur(4px);
+}
+
 /* Borders reset */
-#fc__menu_bar {
+#fc__menu_bar, #fc__menu_items {
     border: none !important;
 }
 .app-inner {
@@ -86,7 +96,12 @@ export default {
 }
 
 /* Header item */
-#fc__menu_bar .el-menu-item {
+#fc__menu_items {
+  height: 100%;
+  background-color: transparent;
+}
+
+#fc__menu_items .el-menu-item {
   color: #b4b6b9;
   text-transform: uppercase;
   border: none !important;
@@ -95,12 +110,12 @@ export default {
   font-size: large;
 }
 
-#fc__menu_bar .el-menu-item:hover {
+#fc__menu_items .el-menu-item:hover {
   color: #c6c9ce;
   background-color: transparent;
 }
 
-#fc__menu_bar .el-menu-item.is-active, #fc__menu_bar .el-menu-item:focus {
+#fc__menu_items .el-menu-item.is-active, #fc__menu_items .el-menu-item:focus {
   color: white !important;
   background-color: transparent;
 }
@@ -110,21 +125,7 @@ export default {
   height: calc(100% - var(--fc-menu_height));
 }
 
-#fc_menu-bar {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  height: var(--fc-menu_height);
-}
-
 /* Header menu */
-#fc__menu_bar {
-  background-image: radial-gradient(transparent 1px);
-  backdrop-filter: saturate(50%) blur(4px);
-  background-color: transparent;
-  height: 100%;
-}
-
 .developer_build {
   background: repeating-linear-gradient(
     45deg,
