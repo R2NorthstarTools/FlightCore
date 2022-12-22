@@ -104,8 +104,12 @@ export default {
   width: calc(100% - 148px); /* window controls container width */
 }
 
-#fc__menu_items .el-menu-item {
+#fc__menu_items .el-menu-item, #fc__menu_items .el-sub-menu__title {
   color: #b4b6b9;
+  border-color: white;
+}
+
+.el-menu > .el-menu-item {
   text-transform: uppercase;
   border: none !important;
   font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
@@ -113,12 +117,12 @@ export default {
   font-size: large;
 }
 
-#fc__menu_items .el-menu-item:hover {
+#fc__menu_items .el-menu-item:hover, #fc__menu_items .el-sub-menu__title {
   color: #c6c9ce;
   background-color: transparent;
 }
 
-#fc__menu_items .el-menu-item.is-active, #fc__menu_items .el-menu-item:focus {
+#fc__menu_items .el-menu-item.is-active, #fc__menu_items .el-menu-item:focus, #fc__menu_items .el-sub-menu.is-active > .el-sub-menu__title {
   color: white !important;
   background-color: transparent;
 }
