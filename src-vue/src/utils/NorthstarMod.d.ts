@@ -3,4 +3,5 @@ export interface NorthstarMod {
     name: string,
     thunderstore_mod_string?: string,
     enabled: bool,
+    directory: string,
 }

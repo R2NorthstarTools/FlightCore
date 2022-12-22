@@ -126,15 +126,13 @@ fn parse_mod_json_for_thunderstore_mod_string(
 }
 
 /// Parse `mods` folder for installed mods.
-fn parse_installed_mods(
-    game_install: GameInstall,
-) -> Result<Vec<(String, Option<String>)>, String> {
+fn parse_installed_mods(game_install: GameInstall) -> Result<Vec<NorthstarMod>, String> {
     let ns_mods_folder = format!("{}/R2Northstar/mods/", game_install.game_path);
 
     let paths = std::fs::read_dir(ns_mods_folder).unwrap();
 
     let mut directories: Vec<PathBuf> = Vec::new();
-    let mut mods: Vec<(String, Option<String>)> = Vec::new();
+    let mut mods: Vec<NorthstarMod> = Vec::new();
 
     // Get list of folders in `mods` directory
     for path in paths {
@@ -167,8 +165,17 @@ fn parse_installed_mods(
                 Ok(thunderstore_mod_string) => Some(thunderstore_mod_string),
                 Err(_err) => None,
             };
+        // Get directory path
+        let mod_directory = directory.to_str().unwrap().to_string();
 
-        mods.push((mod_name, thunderstore_mod_string));
+        let ns_mod = NorthstarMod {
+            name: mod_name,
+            thunderstore_mod_string: thunderstore_mod_string,
+            enabled: false, // Placeholder
+            directory: mod_directory,
+        };
+
+        mods.push(ns_mod);
     }
 
     // Return found mod names
@@ -194,16 +201,12 @@ pub fn get_installed_mods_and_properties(
     let mapping = enabled_mods.as_object().unwrap();
 
     // Use list of installed mods and set enabled based on `enabledmods.json`
-    for (name, thunderstore_mod_string) in found_installed_mods {
-        let current_mod_enabled = match mapping.get(&name) {
+    for mut current_mod in found_installed_mods {
+        let current_mod_enabled = match mapping.get(&current_mod.name) {
             Some(enabled) => enabled.as_bool().unwrap(),
             None => true, // Northstar considers mods not in mapping as enabled.
         };
-        let current_mod: NorthstarMod = NorthstarMod {
-            name: name,
-            thunderstore_mod_string: thunderstore_mod_string,
-            enabled: current_mod_enabled,
-        };
+        current_mod.enabled = current_mod_enabled;
         installed_mods.push(current_mod);
     }
 
