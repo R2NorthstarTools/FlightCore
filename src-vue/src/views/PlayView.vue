@@ -91,6 +91,7 @@ export default defineComponent({
     position: fixed;
     padding: 10px 20px;
     color: #e8edef;
+    bottom: 43px;
 }
 
 .fc_version__line {

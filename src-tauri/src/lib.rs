@@ -291,11 +291,11 @@ pub fn launch_northstar(
             || matches!(game_install.install_type, InstallType::ORIGIN)
             || matches!(game_install.install_type, InstallType::UNKNOWN))
     {
-        let _output =
-            std::process::Command::new(format!("{}/NorthstarLauncher.exe", game_install.game_path))
-                // .args(&["a", "b"])
-                .spawn()
-                .expect("failed to execute process");
+        let ns_exe_path = format!("{}/NorthstarLauncher.exe", game_install.game_path);
+        let _output = std::process::Command::new("C:\\Windows\\System32\\cmd.exe")
+            .args(&["/C", "start", "", &ns_exe_path])
+            .spawn()
+            .expect("failed to execute process");
         return Ok("Launched game".to_string());
     }
 
@@ -311,6 +311,12 @@ pub fn check_origin_running() -> bool {
     for _process in s.processes_by_name("Origin.exe") {
         // check here if this is your process
         // dbg!(process);
+        // There's at least one Origin process, so we can launch
+        return true;
+    }
+    // Alternatively, check for EA Desktop
+    for _process in s.processes_by_name("EADesktop.exe") {
+        // There's at least one EADesktop process, so we can launch
         return true;
     }
     false

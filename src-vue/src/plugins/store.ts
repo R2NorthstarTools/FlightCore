@@ -238,6 +238,13 @@ export const store = createStore<FlightCoreStore>({
                 game_path: state.game_path,
                 install_type: state.install_type
             } as GameInstall;
+
+            // If there's no game path, prevent looking for installed mods.
+            if (state.game_path === undefined) {
+                console.warn('Cannot load installed mods since so game path is selected.');
+                return;
+            }
+
             // Call back-end for installed mods
             await invoke("get_installed_mods_caller", { gameInstall: game_install })
                 .then((message) => {
@@ -286,7 +293,8 @@ async function _initializeApp(state: any) {
         state.developer_mode = true;
 
         // Make menubar striped if debug build
-        let menu_bar_handle = document.querySelector('#fc__menu_bar');
+        let menu_bar_handle = document.querySelector('#fc_menu-bar');
+        console.log(menu_bar_handle);
         if (menu_bar_handle !== null) {
             menu_bar_handle.classList.toggle('developer_build');
         }
