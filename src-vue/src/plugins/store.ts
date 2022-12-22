@@ -293,7 +293,8 @@ async function _initializeApp(state: any) {
         state.developer_mode = true;
 
         // Make menubar striped if debug build
-        let menu_bar_handle = document.querySelector('#fc__menu_bar');
+        let menu_bar_handle = document.querySelector('#fc_menu-bar');
+        console.log(menu_bar_handle);
         if (menu_bar_handle !== null) {
             menu_bar_handle.classList.toggle('developer_build');
         }
