@@ -143,7 +143,9 @@ export default defineComponent({
 }
 
 .filter_container {
-    margin: 5px;
+    margin: 5px auto;
+    padding: 0 5px;
+    max-width: 1000px;
 }
 
 .el-input {
