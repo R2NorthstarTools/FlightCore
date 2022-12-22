@@ -129,10 +129,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.el-pagination {
-    float: right;
-}
-
 .fc__changelog__container {
     padding: 20px 30px;
 }
@@ -140,16 +136,6 @@ export default defineComponent({
 .el-timeline-item__timestamp {
     color: white !important;
     user-select: none !important;
-}
-
-.filter_container {
-    margin: 5px auto;
-    padding: 0 5px;
-    max-width: 1000px;
-}
-
-.el-input {
-    max-width: 300px;
 }
 
 .search {
@@ -177,6 +163,11 @@ export default defineComponent({
     .card-container {
         width: 574px;
     }
+
+    .el-pagination {
+        float: none;
+        margin-top: 5px;
+    }
 }
 
 @media (max-width: 624px) {
@@ -185,9 +176,34 @@ export default defineComponent({
     }
 }
 
+.filter_container {
+    margin-bottom: 10px;
+}
+
+.el-input {
+    max-width: 200px;
+}
+
+@media (min-width: 812px) {
+    .filter_container {
+        margin: 5px auto;
+        padding: 0 5px;
+        max-width: 1000px;
+    }
+
+    .el-pagination {
+        float: right;
+        margin: 0;
+    }
+}
+
 @media (min-width: 1000px) {
     .card-container {
         width: 940px;
+    }
+
+    .el-input {
+        max-width: 300px;
     }
 }
 
