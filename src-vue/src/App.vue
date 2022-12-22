@@ -23,6 +23,9 @@ export default {
     store.commit('initialize');
   },
   methods: {
+    async toggleMaximize() {
+      await appWindow.toggleMaximize();
+    },
     minimize() {
       appWindow.minimize()
     },
@@ -44,33 +47,48 @@ export default {
   <div class="app-inner">
     <div id="fc_bg__container" :style="bgStyle"/>
 
-    <el-menu
+    <nav id="fc_menu-bar">
+      <!-- Navigation items -->
+      <el-menu
         default-active="/"
         router
         mode="horizontal"
-        id="fc__menu_bar"
+        id="fc__menu_items"
         data-tauri-drag-region
-    >
+      >
         <el-menu-item index="/">Play</el-menu-item>
         <el-menu-item index="/changelog">Changelog</el-menu-item>
         <el-menu-item index="/mods">Mods</el-menu-item>
         <el-menu-item index="/thunderstoreMods">Thunderstore</el-menu-item>
         <el-menu-item index="/settings">Settings</el-menu-item>
         <el-menu-item index="/dev" v-if="$store.state.developer_mode">Dev</el-menu-item>
-    </el-menu>
+      </el-menu>
+
+      <!-- Window controls -->
+      <div id="fc_window__controls">
+        <el-button color="white" icon="SemiSelect" @click="minimize" circle />
+        <el-button color="white" icon="FullScreen" @click="toggleMaximize" circle />
+        <el-button color="white" icon="CloseBold" @click="close" circle />
+      </div>
+    </nav>
 
     <router-view></router-view>
-
-    <div id="fc_window__controls">
-        <el-button color="white" icon="SemiSelect" @click="minimize" circle />
-        <el-button color="white" icon="CloseBold" @click="close" circle />
-    </div>
   </div>
 </template>
 
 <style>
+#fc_menu-bar {
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  width: 100%;
+  height: var(--fc-menu_height);
+  background-image: radial-gradient(transparent 1px);
+  backdrop-filter: saturate(50%) blur(4px);
+}
+
 /* Borders reset */
-#fc__menu_bar {
+#fc__menu_bar, #fc__menu_items {
     border: none !important;
 }
 .app-inner {
@@ -79,23 +97,34 @@ export default {
 }
 
 /* Header item */
-#fc__menu_bar .el-menu-item {
+#fc__menu_items {
+  height: 100%;
+  background-color: transparent;
+  float: left;
+  width: calc(100% - 148px); /* window controls container width */
+}
+
+#fc__menu_items .el-menu-item, #fc__menu_items .el-sub-menu__title {
   color: #b4b6b9;
+  border-color: white;
+}
+
+.el-menu > .el-menu-item {
   text-transform: uppercase;
   border: none !important;
   font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
   font-weight: bold;
   font-size: large;
+  background-color: transparent !important;
 }
 
-#fc__menu_bar .el-menu-item:hover {
+#fc__menu_items .el-menu-item:hover, #fc__menu_items .el-sub-menu__title {
   color: #c6c9ce;
   background-color: transparent;
 }
 
-#fc__menu_bar .el-menu-item.is-active, #fc__menu_bar .el-menu-item:focus {
+#fc__menu_items .el-menu-item.is-active, #fc__menu_items .el-sub-menu.is-active > .el-sub-menu__title {
   color: white !important;
-  background-color: transparent;
 }
 
 .app-inner > .fc__mods__container {
@@ -104,13 +133,6 @@ export default {
 }
 
 /* Header menu */
-#fc__menu_bar {
-  background-image: radial-gradient(transparent 1px);
-  backdrop-filter: saturate(50%) blur(4px);
-  background-color: transparent;
-  height: var(--fc-menu_height);
-}
-
 .developer_build {
   background: repeating-linear-gradient(
     45deg,
@@ -123,11 +145,8 @@ export default {
 
 /* Window controls */
 #fc_window__controls {
-  display: flex;
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: var(--fc-menu_height);
+  float: right;
+  height: 100%;
 }
 
 #fc_window__controls > button {
@@ -136,6 +155,7 @@ export default {
   margin: auto 5px;
   background: none;
   border: none;
+  height: 100%;
 }
 
 #fc_window__controls > button:hover {
