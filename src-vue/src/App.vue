@@ -59,7 +59,7 @@ export default {
         <el-menu-item index="/">Play</el-menu-item>
         <el-menu-item index="/changelog" v-if="$store.state.changelog_view_visible">Changelog</el-menu-item>
         <el-menu-item index="/mods">Mods</el-menu-item>
-        <el-menu-item index="/thunderstoreMods">Thunderstore</el-menu-item>
+        <el-menu-item index="/thunderstoreMods" v-if="$store.state.thunderstore_view_visible">Thunderstore</el-menu-item>
         <el-menu-item index="/settings">Settings</el-menu-item>
         <el-menu-item index="/repair" v-if="$store.state.repair_view_visible">Repair</el-menu-item>
         <el-menu-item index="/dev" v-if="$store.state.developer_mode">Dev</el-menu-item>

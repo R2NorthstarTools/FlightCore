@@ -1,5 +1,8 @@
 <template>
     <div class="fc-container">
+        <el-button type="primary" @click="openThunderStoreView">
+            Search Thunderstore for mods
+        </el-button>
         <el-scrollbar>
             <h3>Installed Mods:</h3>
             <div>
@@ -20,6 +23,7 @@ import { ElNotification } from "element-plus";
 import { invoke } from '@tauri-apps/api/tauri';
 import { GameInstall } from "../utils/GameInstall";
 import { NorthstarMod } from "../utils/NorthstarMod"
+import { Tabs } from "../utils/Tabs";
 
 export default defineComponent({
     name: "ModsView",
@@ -69,6 +73,10 @@ export default defineComponent({
 
             this.global_load_indicator = false;
             return true;
+        },
+        async openThunderStoreView() {
+            this.$store.state.thunderstore_view_visible = true;
+            this.$store.commit('updateCurrentTab', Tabs.THUNDERSTORE);
         }
     }
 });

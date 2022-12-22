@@ -4,5 +4,6 @@ export enum Tabs {
     SETTINGS = '/settings',
     REPAIR = '/repair',
     DEV = '/dev',
-    MODS = '/mods'
+    MODS = '/mods',
+    THUNDERSTORE = '/thunderstoreMods'
 }
