@@ -57,7 +57,7 @@ export default {
         data-tauri-drag-region
       >
         <el-menu-item index="/">Play</el-menu-item>
-        <el-menu-item index="/changelog">Changelog</el-menu-item>
+        <el-menu-item index="/changelog" v-if="$store.state.changelog_view_visible">Changelog</el-menu-item>
         <el-menu-item index="/mods">Mods</el-menu-item>
         <el-menu-item index="/thunderstoreMods">Thunderstore</el-menu-item>
         <el-menu-item index="/settings">Settings</el-menu-item>

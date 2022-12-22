@@ -18,6 +18,7 @@ export default defineComponent({
     },
     methods: {
         showChangelogPage() {
+            this.$store.state.changelog_view_visible = true;
             this.$store.commit('updateCurrentTab', Tabs.CHANGELOG);
         }
     }
