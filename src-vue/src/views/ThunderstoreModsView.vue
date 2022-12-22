@@ -12,6 +12,14 @@
                     <div v-if="userIsTyping" class="modMessage search">
                         Searching mods...
                     </div>
+
+                    <!-- Pagination -->
+                    <el-pagination
+                        layout="prev, pager, next"
+                        :page-size="modsPerPage"
+                        :total="modsList.length"
+                        @current-change="(e) => currentPageIndex = e - 1"
+                    />
                 </div>
 
                 <!-- Message displayed if no mod matched searched words -->
@@ -19,13 +27,6 @@
                     No matching mod has been found.<br/>
                     Try another search!
                 </div>
-
-                <el-pagination
-                    layout="prev, pager, next"
-                    :page-size="modsPerPage"
-                    :total="modsList.length"
-                    @current-change="(e) => currentPageIndex = e - 1"
-                />
 
                 <!-- Mod cards -->
                 <thunderstore-mod-card v-for="mod of currentPageMods" v-bind:key="mod.name" :mod="mod" />
@@ -128,6 +129,10 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.el-pagination {
+    float: right;
+}
+
 .fc__changelog__container {
     padding: 20px 30px;
 }
