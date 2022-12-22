@@ -20,8 +20,15 @@
                     Try another search!
                 </div>
 
+                <el-pagination
+                    layout="prev, pager, next"
+                    :page-size="modsPerPage"
+                    :total="modsList.length"
+                    @current-change="(e) => currentPageIndex = e - 1"
+                />
+
                 <!-- Mod cards -->
-                <thunderstore-mod-card v-for="mod of modsList" v-bind:key="mod.name" :mod="mod" />
+                <thunderstore-mod-card v-for="mod of currentPageMods" v-bind:key="mod.name" :mod="mod" />
             </div>
         </el-scrollbar>
     </div>
@@ -44,6 +51,12 @@ export default defineComponent({
         },
         modsList(): ThunderstoreMod[] {
             return this.input.length === 0 || this.userIsTyping ? this.mods : this.filteredMods;
+        },
+        currentPageMods(): ThunderstoreMod[] {
+            const startIndex = this.currentPageIndex * this.modsPerPage;
+            const endIndexCandidate = startIndex + this.modsPerPage;
+            const endIndex =  endIndexCandidate > this.modsList.length ? this.modsList.length : endIndexCandidate;
+            return this.modsList.slice(startIndex, endIndex);
         }
     },
     data() {
@@ -52,7 +65,10 @@ export default defineComponent({
             filteredMods: [] as ThunderstoreMod[],
             modsBeingInstalled: [] as string[],
             userIsTyping: false,
-            debouncedSearch: this.debounce((i: string) => this.filterMods(i))
+            debouncedSearch: this.debounce((i: string) => this.filterMods(i)),
+
+            modsPerPage: 20,
+            currentPageIndex: 0
         };
     },
     methods: {
@@ -75,6 +91,8 @@ export default defineComponent({
          * lower case, to match mods regardless of font case.
          */
         filterMods(value: string) {
+            this.currentPageIndex = 0;
+
             if (value === '') {
                 this.filteredMods = [];
                 return;
