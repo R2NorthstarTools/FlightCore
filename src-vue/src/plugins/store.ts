@@ -20,6 +20,10 @@ const persistentStore = new Store('flight-core-settings.json');
 
 export interface FlightCoreStore {
     developer_mode: boolean,
+    repair_view_visible: boolean,
+    changelog_view_visible: boolean,
+    thunderstore_view_visible: boolean,
+
     game_path: string,
     install_type: InstallType,
 
@@ -44,6 +48,9 @@ export const store = createStore<FlightCoreStore>({
     state(): FlightCoreStore {
         return {
             developer_mode: false,
+            repair_view_visible: false,
+            changelog_view_visible: false,
+            thunderstore_view_visible: false,
             game_path: undefined as unknown as string,
             install_type: undefined as unknown as InstallType,
 

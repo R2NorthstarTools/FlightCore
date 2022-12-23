@@ -14,6 +14,12 @@
                         <el-button icon="Folder" @click="updateGamePath"/>
                     </template>
                 </el-input>
+
+                <h3>Other:</h3>
+                <el-button type="primary" @click="openRepairView">
+                    Open Repair options
+                </el-button>
+
                 <h3>About:</h3>
                 <div class="fc_northstar__version" @click="activateDeveloperMode">
                     FlightCore Version: {{ flightcoreVersion === '' ? 'Unknown version' : `${flightcoreVersion}` }}
@@ -35,6 +41,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { ElNotification } from 'element-plus';
+import { Tabs } from "../utils/Tabs";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { Store } from 'tauri-plugin-store-api';
 const persistentStore = new Store('flight-core-settings.json');
@@ -82,6 +89,10 @@ export default defineComponent({
         },
         async updateGamePath() {
             this.$store.commit('updateGamePath');
+        },
+        async openRepairView() {
+            this.$store.state.repair_view_visible = true;
+            this.$store.commit('updateCurrentTab', Tabs.REPAIR);
         }
     },
     mounted() {

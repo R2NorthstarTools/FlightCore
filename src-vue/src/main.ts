@@ -8,6 +8,7 @@ import ChangelogView from "./views/ChangelogView.vue";
 import ModsView from "./views/ModsView.vue";
 import ThunderstoreModsView from "./views/ThunderstoreModsView.vue";
 import SettingsView from "./views/SettingsView.vue";
+import RepairView from "./views/RepairView.vue";
 import DeveloperView from "./views/DeveloperView.vue";
 import {createRouter, createWebHashHistory} from "vue-router";
 
@@ -37,6 +38,7 @@ const routes = [
     { path: '/mods', name: 'Mods', component: async () => ModsView},
     { path: '/thunderstoreMods', name: 'Thunderstore mods', component: async () => ThunderstoreModsView},
     { path: '/settings', name: 'Settings', component: async () => SettingsView},
+    { path: '/repair', name: 'Repair', component: async () => RepairView},
     { path: '/dev', name: 'Dev', component: async () => DeveloperView}
 ];
 export const router = createRouter({
