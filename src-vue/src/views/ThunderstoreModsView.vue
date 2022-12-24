@@ -51,7 +51,7 @@ export default defineComponent({
             return this.$store.state.thunderstoreMods;
         },
         modsList(): ThunderstoreMod[] {
-            return this.input.length === 0 || this.userIsTyping ? this.mods : this.filteredMods;
+            return this.input.length !== 0 || this.userIsTyping ? this.filteredMods : this.mods;
         },
         currentPageMods(): ThunderstoreMod[] {
             const startIndex = this.currentPageIndex * this.modsPerPage;
@@ -93,12 +93,6 @@ export default defineComponent({
          */
         filterMods(value: string) {
             this.currentPageIndex = 0;
-
-            if (value === '') {
-                this.filteredMods = [];
-                return;
-            }
-
             const searchValue = value.toLowerCase();
 
             this.filteredMods = this.mods.filter((mod: ThunderstoreMod) => {
