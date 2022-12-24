@@ -50,6 +50,17 @@ export default defineComponent({
         mods(): ThunderstoreMod[] {
             return this.$store.state.thunderstoreMods;
         },
+        filteredMods(): ThunderstoreMod[] {
+            if (this.searchValue.length === 0) {
+                return this.mods;
+            }
+
+            return this.mods.filter((mod: ThunderstoreMod) => {
+                return mod.name.toLowerCase().includes(this.searchValue)
+                    || mod.owner.toLowerCase().includes(this.searchValue)
+                    || mod.versions[0].description.toLowerCase().includes(this.searchValue);
+            });
+        },
         modsList(): ThunderstoreMod[] {
             return this.input.length !== 0 || this.userIsTyping ? this.filteredMods : this.mods;
         },
@@ -62,8 +73,11 @@ export default defineComponent({
     },
     data() {
         return {
+            // This is the model for the search input.
             input: '',
-            filteredMods: [] as ThunderstoreMod[],
+            // This is the treated value of search input, updated every few milliseconds (debounced)
+            searchValue: '',
+
             modsBeingInstalled: [] as string[],
             userIsTyping: false,
             debouncedSearch: this.debounce((i: string) => this.filterMods(i)),
@@ -86,20 +100,15 @@ export default defineComponent({
 
         /**
          * This method is called each time search input is modified, and
-         * filters mods matching the input string.
+         * triggered filtered mods recomputing by updating the `searchValue`
+         * variable.
          *
          * This converts research string and all researched fields to
          * lower case, to match mods regardless of font case.
          */
         filterMods(value: string) {
             this.currentPageIndex = 0;
-            const searchValue = value.toLowerCase();
-
-            this.filteredMods = this.mods.filter((mod: ThunderstoreMod) => {
-                return mod.name.toLowerCase().includes(searchValue)
-                    || mod.owner.toLowerCase().includes(searchValue)
-                    || mod.versions[0].description.toLowerCase().includes(searchValue);
-            });
+            this.searchValue = value.toLowerCase();
         },
 
         /**
