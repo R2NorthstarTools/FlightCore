@@ -18,7 +18,7 @@
                         layout="prev, pager, next"
                         :page-size="modsPerPage"
                         :total="modsList.length"
-                        @current-change="(e) => currentPageIndex = e - 1"
+                        @current-change="(e: number) => currentPageIndex = e - 1"
                     />
                 </div>
 
