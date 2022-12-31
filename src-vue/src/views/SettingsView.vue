@@ -19,7 +19,12 @@
                 <div class="fc_parameter__panel">
                     <h3>Number of Thunderstore mods per page</h3>
                     <h6>This has an impact on display performances.</h6>
-                    <el-input v-model="$store.state.mods_per_page" type="number"></el-input>
+                    <el-input 
+                        v-model="$store.state.mods_per_page" 
+                        type="number"
+                        min="5"
+                        max="100"
+                    ></el-input>
                 </div>
 
                 <h3>About:</h3>
