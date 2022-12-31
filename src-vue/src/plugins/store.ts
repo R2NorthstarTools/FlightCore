@@ -35,7 +35,10 @@ export interface FlightCoreStore {
     installed_mods: NorthstarMod[],
 
     northstar_is_running: boolean,
-    origin_is_running: boolean
+    origin_is_running: boolean,
+
+    // user custom settings
+    mods_per_page: number
 }
 
 let notification_handle: NotificationHandle;
@@ -59,7 +62,9 @@ export const store = createStore<FlightCoreStore>({
             installed_mods: [],
 
             northstar_is_running: false,
-            origin_is_running: false
+            origin_is_running: false,
+
+            mods_per_page: 20
         }
     },
     mutations: {

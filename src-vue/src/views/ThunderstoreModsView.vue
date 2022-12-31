@@ -64,6 +64,9 @@ export default defineComponent({
         modsList(): ThunderstoreMod[] {
             return this.input.length !== 0 || this.userIsTyping ? this.filteredMods : this.mods;
         },
+        modsPerPage(): number {
+            return +this.$store.state.mods_per_page;
+        },
         currentPageMods(): ThunderstoreMod[] {
             const startIndex = this.currentPageIndex * this.modsPerPage;
             const endIndexCandidate = startIndex + this.modsPerPage;
@@ -82,7 +85,6 @@ export default defineComponent({
             userIsTyping: false,
             debouncedSearch: this.debounce((i: string) => this.filterMods(i)),
 
-            modsPerPage: 20,
             currentPageIndex: 0
         };
     },
