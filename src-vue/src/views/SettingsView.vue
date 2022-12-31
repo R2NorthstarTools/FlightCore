@@ -14,6 +14,14 @@
                         <el-button icon="Folder" @click="updateGamePath"/>
                     </template>
                 </el-input>
+
+                <!-- Thunderstore mods per page configuration -->
+                <div class="fc_parameter__panel">
+                    <h3>Number of Thunderstore mods per page</h3>
+                    <h6>This has an impact on display performances.</h6>
+                    <el-input v-model="$store.state.mods_per_page" type="number"></el-input>
+                </div>
+
                 <h3>About:</h3>
                 <div class="fc_northstar__version" @click="activateDeveloperMode">
                     FlightCore Version: {{ flightcoreVersion === '' ? 'Unknown version' : `${flightcoreVersion}` }}
@@ -109,5 +117,20 @@ h3:first-of-type {
 
 .el-switch {
     margin-left: 50px;
+}
+
+
+/* Parameter panel styles */
+.fc_parameter__panel {
+    margin: 30px 0;
+}
+
+.fc_parameter__panel h3 {
+    margin-bottom: 5px;
+}
+
+.fc_parameter__panel h6 {
+    margin-top: 0;
+    margin-bottom: 12px;
 }
 </style>
