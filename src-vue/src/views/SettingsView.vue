@@ -99,6 +99,13 @@ export default defineComponent({
     },
     mounted() {
         document.querySelector('input')!.disabled = true;
+    },
+    unmounted() {
+        const value = this.$store.state.mods_per_page;
+        if (value === '' || value < 5 || value > 100) {
+            console.warn('Incorrect value for modsPerPage, resetting it to 20.');
+            this.$store.state.mods_per_page = 20;
+        }
     }
 });
 </script>
