@@ -110,7 +110,7 @@ export default defineComponent({
         document.querySelector('input')!.disabled = true;
     },
     unmounted() {
-        if (this.modsPerPage === '' || this.modsPerPage < 5 || this.modsPerPage > 100) {
+        if (('' + this.modsPerPage) === '' || this.modsPerPage < 5 || this.modsPerPage > 100) {
             console.warn('Incorrect value for modsPerPage, resetting it to 20.');
             this.modsPerPage = 20;
         }
