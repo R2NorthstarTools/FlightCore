@@ -64,7 +64,7 @@ export const store = createStore<FlightCoreStore>({
             northstar_is_running: false,
             origin_is_running: false,
 
-            mods_per_page: 20
+            mods_per_page: 20,
         }
     },
     mutations: {
