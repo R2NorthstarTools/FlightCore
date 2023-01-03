@@ -38,7 +38,7 @@ export interface FlightCoreStore {
     origin_is_running: boolean,
 
     // user custom settings
-    mods_per_page: number
+    mods_per_page: number,
 }
 
 let notification_handle: NotificationHandle;
