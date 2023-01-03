@@ -78,28 +78,16 @@ export default defineComponent({
         return {
             // This is the model for the search input.
             input: '',
-            // This is the treated value of search input, updated every few milliseconds (debounced)
+            // This is the treated value of search input
             searchValue: '',
 
             modsBeingInstalled: [] as string[],
             userIsTyping: false,
-            debouncedSearch: this.debounce((i: string) => this.filterMods(i)),
 
             currentPageIndex: 0
         };
     },
     methods: {
-        /**
-         * This is a debounced version of the filterMods method, that calls
-         * filterMods when user has stopped typing in the search bar (i.e.
-         * waits 300ms).
-         * It allows not to trigger filtering method (which is costly) each
-         * time user inputs a character.
-         */
-        onFilterTextChange (searchString: string) {
-            this.debouncedSearch(searchString);
-        },
-
         /**
          * This method is called each time search input is modified, and
          * triggered filtered mods recomputing by updating the `searchValue`
@@ -108,26 +96,9 @@ export default defineComponent({
          * This converts research string and all researched fields to
          * lower case, to match mods regardless of font case.
          */
-        filterMods(value: string) {
+         onFilterTextChange(value: string) {
             this.currentPageIndex = 0;
             this.searchValue = value.toLowerCase();
-        },
-
-        /**
-         * This debounces a method, i.e. it prevents input method from being called
-         * multiple times in a short period of time.
-         * Stolen from https://www.freecodecamp.org/news/javascript-debounce-example/
-         */
-        debounce (func: Function, timeout = 200) {
-            let timer: any;
-            return (...args: any) => {
-                this.userIsTyping = true;
-                clearTimeout(timer);
-                timer = setTimeout(() => {
-                    this.userIsTyping = false;
-                    func.apply(this, args);
-                }, timeout);
-            };
         }
     }
 });
