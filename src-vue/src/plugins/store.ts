@@ -326,7 +326,7 @@ async function _initializeApp(state: any) {
 
     // Grab "Thunderstore mods per page" setting from store if possible
     const perPageFromStore: {value: number} | null = await persistentStore.get('thunderstore-mods-per-page');
-    if (perPageFromStore) {
+    if (perPageFromStore && perPageFromStore.value) {
         state.mods_per_page = perPageFromStore.value;
     }
 
