@@ -27,10 +27,8 @@ async fn fetch_github_releases_api(url: &str) -> Result<String, String> {
     Ok(res)
 }
 
-/// Checks if installed FlightCore version is up-to-date
-/// false -> FlightCore install is up-to-date
-/// true  -> FlightCore install is outdated
-pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
+/// Gets newest FlighCore version from GitHub
+async fn get_newest_flightcore_version() -> Result<(String, String), String> {
     // Get newest version number from GitHub API
     println!("Checking GitHub API");
     let url = "https://api.github.com/repos/R2NorthstarTools/FlightCore/releases/latest";
@@ -46,6 +44,21 @@ pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
         .and_then(|value| value.as_str())
         .unwrap();
 
+    // Extract release date from JSON
+    let release_date = json_response
+        .get("published_at")
+        .and_then(|value| value.as_str())
+        .unwrap();
+
+    Ok((newest_release_version.to_string(), release_date.to_string()))
+}
+
+/// Checks if installed FlightCore version is up-to-date
+/// false -> FlightCore install is up-to-date
+/// true  -> FlightCore install is outdated
+pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
+    let (newest_release_version, release_date) = get_newest_flightcore_version().await?;
+
     // Get version of installed FlightCore...
     let version = env!("CARGO_PKG_VERSION");
     // ...and format it
@@ -56,12 +69,6 @@ pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
 
     // If outdated, check how new the update is
     if is_outdated {
-        // Extract release date from JSON
-        let release_date = json_response
-            .get("published_at")
-            .and_then(|value| value.as_str())
-            .unwrap();
-
         // Time to wait (2h)    h *  m *  s
         let threshold_seconds = 2 * 60 * 60;
 
@@ -69,7 +76,7 @@ pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
         let current_time = chrono::Utc::now();
 
         // Get latest release time from GitHub API response
-        let result = chrono::DateTime::parse_from_rfc3339(release_date)
+        let result = chrono::DateTime::parse_from_rfc3339(&release_date)
             .unwrap()
             .with_timezone(&chrono::Utc);
 
