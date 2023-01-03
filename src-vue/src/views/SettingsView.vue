@@ -20,7 +20,7 @@
                     <h3>Number of Thunderstore mods per page</h3>
                     <h6>This has an impact on display performances.</h6>
                     <el-input 
-                        v-model="$store.state.mods_per_page" 
+                        v-model="modsPerPage" 
                         type="number"
                         min="5"
                         max="100"
@@ -77,6 +77,15 @@ export default defineComponent({
                     this.$store.commit('toggleReleaseCandidate');
                 }
             }
+        },
+        modsPerPage: {
+            get(): number {
+                return this.$store.state.mods_per_page;
+            },
+            set(value: number) {
+                this.$store.state.mods_per_page = value;
+                persistentStore.set('thunderstore-mods-per-page', { value });
+            }
         }
     },
     methods: {
@@ -101,10 +110,9 @@ export default defineComponent({
         document.querySelector('input')!.disabled = true;
     },
     unmounted() {
-        const value = this.$store.state.mods_per_page;
-        if (value === '' || value < 5 || value > 100) {
+        if (this.modsPerPage === '' || this.modsPerPage < 5 || this.modsPerPage > 100) {
             console.warn('Incorrect value for modsPerPage, resetting it to 20.');
-            this.$store.state.mods_per_page = 20;
+            this.modsPerPage = 20;
         }
     }
 });

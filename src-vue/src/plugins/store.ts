@@ -324,6 +324,12 @@ async function _initializeApp(state: any) {
         state.enableReleasesSwitch = valueFromStore.value;
     }
 
+    // Grab "Thunderstore mods per page" setting from store if possible
+    const perPageFromStore: {value: number} | null = await persistentStore.get('thunderstore-mods-per-page');
+    if (perPageFromStore) {
+        state.mods_per_page = perPageFromStore.value;
+    }
+
     // Get FlightCore version number
     state.flightcore_version = await invoke("get_flightcore_version_number");
 
