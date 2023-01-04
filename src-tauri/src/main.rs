@@ -12,7 +12,9 @@ use std::{
 use app::*;
 
 mod github;
-use github::release_notes::{check_is_flightcore_outdated, get_northstar_release_notes};
+use github::release_notes::{
+    check_is_flightcore_outdated, get_newest_flightcore_version, get_northstar_release_notes,
+};
 
 mod repair_and_verify;
 use repair_and_verify::{
@@ -102,7 +104,8 @@ fn main() {
             get_installed_mods_caller,
             install_mod_caller,
             clean_up_download_folder_caller,
-            delete_northstar_mod_caller,
+            get_newest_flightcore_version,
+            delete_northstar_mod,
             delete_thunderstore_mod_caller,
         ])
         .run(tauri::generate_context!())
@@ -341,15 +344,6 @@ async fn clean_up_download_folder_caller(
         Ok(()) => Ok(()),
         Err(err) => Err(err.to_string()),
     }
-}
-
-#[tauri::command]
-/// Deletes the specified mod
-async fn delete_northstar_mod_caller(
-    game_install: GameInstall,
-    nsmod_name: String,
-) -> Result<(), String> {
-    delete_northstar_mod(game_install, nsmod_name)
 }
 
 #[tauri::command]

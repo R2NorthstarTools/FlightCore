@@ -388,7 +388,6 @@ pub async fn fc_download_mod_and_install(
 
 /// Deletes a given Northstar mod folder
 fn delete_mod_folder(ns_mod_directory: String) -> Result<(), String> {
-    // TODO maybe remove again
     let ns_mod_dir_path = std::path::Path::new(&ns_mod_directory);
 
     // Safety check: Check whether `mod.json` exists and exit early if not
@@ -406,6 +405,7 @@ fn delete_mod_folder(ns_mod_directory: String) -> Result<(), String> {
 }
 
 /// Deletes a Northstar mod based on its name
+#[tauri::command]
 pub fn delete_northstar_mod(game_install: GameInstall, nsmod_name: String) -> Result<(), String> {
     // Prevent deleting core mod
     for core_mod in CORE_MODS {

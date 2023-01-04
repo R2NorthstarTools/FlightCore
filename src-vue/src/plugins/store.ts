@@ -5,6 +5,7 @@ import { InstallType } from "../utils/InstallType";
 import { invoke } from "@tauri-apps/api";
 import { GameInstall } from "../utils/GameInstall";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
+import { FlightCoreVersion } from "../utils/FlightCoreVersion";
 import { ElNotification, NotificationHandle } from 'element-plus';
 import { NorthstarState } from '../utils/NorthstarState';
 import { appDir } from '@tauri-apps/api/path';
@@ -35,7 +36,10 @@ export interface FlightCoreStore {
     installed_mods: NorthstarMod[],
 
     northstar_is_running: boolean,
-    origin_is_running: boolean
+    origin_is_running: boolean,
+
+    // user custom settings
+    mods_per_page: number,
 }
 
 let notification_handle: NotificationHandle;
@@ -59,7 +63,9 @@ export const store = createStore<FlightCoreStore>({
             installed_mods: [],
 
             northstar_is_running: false,
-            origin_is_running: false
+            origin_is_running: false,
+
+            mods_per_page: 20,
         }
     },
     mutations: {
@@ -319,6 +325,12 @@ async function _initializeApp(state: any) {
         state.enableReleasesSwitch = valueFromStore.value;
     }
 
+    // Grab "Thunderstore mods per page" setting from store if possible
+    const perPageFromStore: {value: number} | null = await persistentStore.get('thunderstore-mods-per-page');
+    if (perPageFromStore && perPageFromStore.value) {
+        state.mods_per_page = perPageFromStore.value;
+    }
+
     // Get FlightCore version number
     state.flightcore_version = await invoke("get_flightcore_version_number");
 
@@ -377,9 +389,10 @@ async function _checkForFlightCoreUpdates(state: FlightCoreStore) {
     let flightcore_is_outdated = await invoke("check_is_flightcore_outdated_caller") as boolean;
 
     if (flightcore_is_outdated) {
+        let newest_flightcore_version = await invoke("get_newest_flightcore_version") as FlightCoreVersion;
         ElNotification({
             title: 'FlightCore outdated!',
-            message: `Please update FlightCore. Running outdated version ${state.flightcore_version}`,
+            message: `Please update FlightCore.\nRunning outdated version ${state.flightcore_version}.\nNewest is ${newest_flightcore_version.tag_name}!`,
             type: 'warning',
             position: 'bottom-right',
             duration: 0 // Duration `0` means the notification will not auto-vanish
