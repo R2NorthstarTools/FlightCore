@@ -8,6 +8,12 @@ pub struct ReleaseInfo {
     pub body: String,
 }
 
+#[derive(Debug, Deserialize, Clone)]
+struct FlightCoreVersion {
+    tag_name: String,
+    published_at: String,
+}
+
 // Fetches repo release API and returns response as string
 async fn fetch_github_releases_api(url: &str) -> Result<String, String> {
     println!("Fetching releases notes from GitHub API");
@@ -34,23 +40,11 @@ async fn get_newest_flightcore_version() -> Result<(String, String), String> {
     let url = "https://api.github.com/repos/R2NorthstarTools/FlightCore/releases/latest";
     let res = fetch_github_releases_api(url).await?;
 
-    let json_response: serde_json::Value =
+    let flightcore_version: FlightCoreVersion =
         serde_json::from_str(&res).expect("JSON was not well-formatted");
     println!("Done checking GitHub API");
 
-    // Extract version number from JSON
-    let newest_release_version = json_response
-        .get("tag_name")
-        .and_then(|value| value.as_str())
-        .unwrap();
-
-    // Extract release date from JSON
-    let release_date = json_response
-        .get("published_at")
-        .and_then(|value| value.as_str())
-        .unwrap();
-
-    Ok((newest_release_version.to_string(), release_date.to_string()))
+    Ok((flightcore_version.tag_name, flightcore_version.published_at))
 }
 
 /// Checks if installed FlightCore version is up-to-date
