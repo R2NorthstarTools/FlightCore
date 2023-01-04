@@ -64,6 +64,8 @@ pub fn clean_up_download_folder(
     Ok(())
 }
 
+/// Get list of Northstar logs
+#[tauri::command]
 pub fn get_log_list(game_install: GameInstall) -> Result<Vec<std::path::PathBuf>, String> {
     let ns_log_folder = format!("{}/R2Northstar/logs", game_install.game_path);
 
