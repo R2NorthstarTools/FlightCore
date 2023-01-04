@@ -145,7 +145,8 @@ export default defineComponent({
 }
 
 .fc_bottom__pagination {
-    margin: 10px 0 15px !important;
+    padding-bottom: 20px !important;
+    padding-right: 10px;
 }
 
 /* Card container dynamic size */
