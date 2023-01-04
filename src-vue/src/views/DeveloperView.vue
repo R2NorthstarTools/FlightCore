@@ -111,7 +111,7 @@ export default defineComponent({
                 game_path: this.$store.state.game_path,
                 install_type: this.$store.state.install_type
             } as GameInstall;
-            await invoke("disable_all_but_core_caller", { gameInstall: game_install }).then((message) => {
+            await invoke("disable_all_but_core", { gameInstall: game_install }).then((message) => {
                 ElNotification({
                     title: 'Success',
                     message: "Disabled all mods but core",

@@ -11,6 +11,7 @@ pub fn verify_game_files(game_install: GameInstall) -> Result<String, String> {
 
 /// Disables all mods except core ones
 /// Enables core mods if disabled
+#[tauri::command]
 pub fn disable_all_but_core(game_install: GameInstall) -> Result<(), String> {
 
     // Rebuild `enabledmods.json` first to ensure all mods are added

@@ -94,7 +94,7 @@ fn main() {
             verify_game_files_caller,
             get_enabled_mods_caller,
             set_mod_enabled_status_caller,
-            disable_all_but_core_caller,
+            disable_all_but_core,
             is_debug_mode,
             get_northstar_release_notes,
             linux_checks,
@@ -298,11 +298,6 @@ async fn set_mod_enabled_status_caller(
     is_enabled: bool,
 ) -> Result<(), String> {
     set_mod_enabled_status(game_install, mod_name, is_enabled)
-}
-
-#[tauri::command]
-async fn disable_all_but_core_caller(game_install: GameInstall) -> Result<(), String> {
-    disable_all_but_core(game_install)
 }
 
 #[tauri::command]
