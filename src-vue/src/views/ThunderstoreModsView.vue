@@ -16,6 +16,7 @@
                     <!-- Pagination -->
                     <el-pagination
                         v-if="modsPerPage != 0"
+                        :currentPage="currentPageIndex + 1"
                         layout="prev, pager, next"
                         :page-size="modsPerPage"
                         :total="modsList.length"
@@ -32,6 +33,17 @@
                 <!-- Mod cards -->
                 <thunderstore-mod-card v-for="mod of currentPageMods" v-bind:key="mod.name" :mod="mod" />
             </div>
+
+            <!-- Bottom pagination -->
+            <el-pagination
+                class="fc_bottom__pagination"
+                v-if="modsPerPage != 0"
+                :currentPage="currentPageIndex + 1"
+                layout="prev, pager, next"
+                :page-size="modsPerPage"
+                :total="modsList.length"
+                @current-change="(e: number) => currentPageIndex = e - 1"
+            />
         </el-scrollbar>
     </div>
 </template>
@@ -130,6 +142,10 @@ export default defineComponent({
 
 .card-container {
     margin: 0 auto;
+}
+
+.fc_bottom__pagination {
+    margin: 10px 0 15px !important;
 }
 
 /* Card container dynamic size */
