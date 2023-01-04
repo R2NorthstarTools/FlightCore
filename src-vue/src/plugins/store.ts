@@ -36,7 +36,10 @@ export interface FlightCoreStore {
     installed_mods: NorthstarMod[],
 
     northstar_is_running: boolean,
-    origin_is_running: boolean
+    origin_is_running: boolean,
+
+    // user custom settings
+    mods_per_page: number,
 }
 
 let notification_handle: NotificationHandle;
@@ -60,7 +63,9 @@ export const store = createStore<FlightCoreStore>({
             installed_mods: [],
 
             northstar_is_running: false,
-            origin_is_running: false
+            origin_is_running: false,
+
+            mods_per_page: 20,
         }
     },
     mutations: {
@@ -318,6 +323,12 @@ async function _initializeApp(state: any) {
     const valueFromStore: {value: boolean} | null = await persistentStore.get('northstar-releases-switching');
     if (valueFromStore) {
         state.enableReleasesSwitch = valueFromStore.value;
+    }
+
+    // Grab "Thunderstore mods per page" setting from store if possible
+    const perPageFromStore: {value: number} | null = await persistentStore.get('thunderstore-mods-per-page');
+    if (perPageFromStore && perPageFromStore.value) {
+        state.mods_per_page = perPageFromStore.value;
     }
 
     // Get FlightCore version number
