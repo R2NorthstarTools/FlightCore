@@ -15,7 +15,7 @@
 
                     <!-- Pagination -->
                     <el-pagination
-                        v-if="modsPerPage != 0"
+                        v-if="shouldDisplayPagination"
                         :currentPage="currentPageIndex + 1"
                         layout="prev, pager, next"
                         :page-size="modsPerPage"
@@ -39,7 +39,7 @@
                 <div class="filter_container">
                     <el-pagination
                         class="fc_bottom__pagination"
-                        v-if="modsPerPage != 0"
+                        v-if="shouldDisplayPagination"
                         :currentPage="currentPageIndex + 1"
                         layout="prev, pager, next"
                         :page-size="modsPerPage"
@@ -93,6 +93,9 @@ export default defineComponent({
             const endIndexCandidate = startIndex + perPageValue;
             const endIndex =  endIndexCandidate > this.modsList.length ? this.modsList.length : endIndexCandidate;
             return this.modsList.slice(startIndex, endIndex);
+        },
+        shouldDisplayPagination(): boolean {
+            return this.modsPerPage != 0 && this.modsList.length > this.modsPerPage;
         }
     },
     data() {
