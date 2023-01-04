@@ -34,7 +34,7 @@ async fn fetch_github_releases_api(url: &str) -> Result<String, String> {
 }
 
 /// Gets newest FlighCore version from GitHub
-async fn get_newest_flightcore_version() -> Result<(String, String), String> {
+async fn get_newest_flightcore_version() -> Result<FlightCoreVersion, String> {
     // Get newest version number from GitHub API
     println!("Checking GitHub API");
     let url = "https://api.github.com/repos/R2NorthstarTools/FlightCore/releases/latest";
@@ -44,14 +44,16 @@ async fn get_newest_flightcore_version() -> Result<(String, String), String> {
         serde_json::from_str(&res).expect("JSON was not well-formatted");
     println!("Done checking GitHub API");
 
-    Ok((flightcore_version.tag_name, flightcore_version.published_at))
+    Ok(flightcore_version)
 }
 
 /// Checks if installed FlightCore version is up-to-date
 /// false -> FlightCore install is up-to-date
 /// true  -> FlightCore install is outdated
 pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
-    let (newest_release_version, release_date) = get_newest_flightcore_version().await?;
+    let flightcore_version = get_newest_flightcore_version().await?;
+    let newest_release_version = flightcore_version.tag_name;
+    let release_date = flightcore_version.published_at;
 
     // Get version of installed FlightCore...
     let version = env!("CARGO_PKG_VERSION");
