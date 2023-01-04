@@ -18,7 +18,10 @@
                 <!-- Thunderstore mods per page configuration -->
                 <div class="fc_parameter__panel">
                     <h3>Number of Thunderstore mods per page</h3>
-                    <h6>This has an impact on display performances when browsing Thunderstore mods.</h6>
+                    <h6>
+                        This has an impact on display performances when browsing Thunderstore mods.<br>
+                        Set this value to 0 to disable pagination.
+                    </h6>
                     <el-input 
                         v-model="modsPerPage" 
                         type="number"
