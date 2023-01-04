@@ -35,15 +35,19 @@
             </div>
 
             <!-- Bottom pagination -->
-            <el-pagination
-                class="fc_bottom__pagination"
-                v-if="modsPerPage != 0"
-                :currentPage="currentPageIndex + 1"
-                layout="prev, pager, next"
-                :page-size="modsPerPage"
-                :total="modsList.length"
-                @current-change="onBottomPaginationChange"
-            />
+            <div class="card-container">
+                <div class="filter_container">
+                    <el-pagination
+                        class="fc_bottom__pagination"
+                        v-if="modsPerPage != 0"
+                        :currentPage="currentPageIndex + 1"
+                        layout="prev, pager, next"
+                        :page-size="modsPerPage"
+                        :total="modsList.length"
+                        @current-change="onBottomPaginationChange"
+                    />
+                </div>
+            </div>
         </el-scrollbar>
     </div>
 </template>
