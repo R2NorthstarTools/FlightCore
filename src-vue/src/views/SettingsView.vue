@@ -22,7 +22,11 @@
                     <el-input 
                         v-model="modsPerPage" 
                         type="number"
-                    ></el-input>
+                    >
+                        <template #append>
+                            <el-button @click="modsPerPage = 20">Reset to default</el-button>
+                        </template>
+                    </el-input>
                 </div>
 
                 <h3>About:</h3>
