@@ -12,7 +12,9 @@ use std::{
 use app::*;
 
 mod github;
-use github::release_notes::{check_is_flightcore_outdated, get_northstar_release_notes};
+use github::release_notes::{
+    check_is_flightcore_outdated, get_newest_flightcore_version, get_northstar_release_notes,
+};
 
 mod repair_and_verify;
 use repair_and_verify::{
@@ -101,6 +103,7 @@ fn main() {
             get_installed_mods_caller,
             install_mod_caller,
             clean_up_download_folder_caller,
+            get_newest_flightcore_version,
             delete_northstar_mod_caller,
         ])
         .run(tauri::generate_context!())

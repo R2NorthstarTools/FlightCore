@@ -14,6 +14,24 @@
                         <el-button icon="Folder" @click="updateGamePath"/>
                     </template>
                 </el-input>
+
+                <!-- Thunderstore mods per page configuration -->
+                <div class="fc_parameter__panel">
+                    <h3>Number of Thunderstore mods per page</h3>
+                    <h6>
+                        This has an impact on display performances when browsing Thunderstore mods.<br>
+                        Set this value to 0 to disable pagination.
+                    </h6>
+                    <el-input 
+                        v-model="modsPerPage" 
+                        type="number"
+                    >
+                        <template #append>
+                            <el-button @click="modsPerPage = 20">Reset to default</el-button>
+                        </template>
+                    </el-input>
+                </div>
+
                 <h3>About:</h3>
                 <div class="fc_northstar__version" @click="activateDeveloperMode">
                     FlightCore Version: {{ flightcoreVersion === '' ? 'Unknown version' : `${flightcoreVersion}` }}
@@ -64,6 +82,15 @@ export default defineComponent({
                     this.$store.commit('toggleReleaseCandidate');
                 }
             }
+        },
+        modsPerPage: {
+            get(): number {
+                return this.$store.state.mods_per_page;
+            },
+            set(value: number) {
+                this.$store.state.mods_per_page = value;
+                persistentStore.set('thunderstore-mods-per-page', { value });
+            }
         }
     },
     methods: {
@@ -86,6 +113,12 @@ export default defineComponent({
     },
     mounted() {
         document.querySelector('input')!.disabled = true;
+    },
+    unmounted() {
+        if (('' + this.modsPerPage) === '') {
+            console.warn('Incorrect value for modsPerPage, resetting it to 20.');
+            this.modsPerPage = 20;
+        }
     }
 });
 </script>
@@ -109,5 +142,20 @@ h3:first-of-type {
 
 .el-switch {
     margin-left: 50px;
+}
+
+
+/* Parameter panel styles */
+.fc_parameter__panel {
+    margin: 30px 0;
+}
+
+.fc_parameter__panel h3 {
+    margin-bottom: 5px;
+}
+
+.fc_parameter__panel h6 {
+    margin-top: 0;
+    margin-bottom: 12px;
 }
 </style>
