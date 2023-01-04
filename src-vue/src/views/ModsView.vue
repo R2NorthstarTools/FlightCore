@@ -83,7 +83,7 @@ export default defineComponent({
                 game_path: this.$store.state.game_path,
                 install_type: this.$store.state.install_type
             } as GameInstall;
-            await invoke("delete_northstar_mod_caller", { gameInstall: game_install, nsmodName: mod.name })
+            await invoke("delete_northstar_mod", { gameInstall: game_install, nsmodName: mod.name })
                 .then((message) => {
                     // Just a visual indicator that it worked
                     ElNotification({

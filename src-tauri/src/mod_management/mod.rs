@@ -405,6 +405,7 @@ fn delete_mod_folder(ns_mod_directory: String) -> Result<(), String> {
 }
 
 /// Deletes a Northstar mod based on its name
+#[tauri::command]
 pub fn delete_northstar_mod(game_install: GameInstall, nsmod_name: String) -> Result<(), String> {
     // Prevent deleting core mod
     for core_mod in CORE_MODS {
