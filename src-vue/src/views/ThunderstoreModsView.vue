@@ -15,6 +15,7 @@
 
                     <!-- Pagination -->
                     <el-pagination
+                        v-if="modsPerPage != 0"
                         layout="prev, pager, next"
                         :page-size="modsPerPage"
                         :total="modsList.length"
@@ -68,8 +69,11 @@ export default defineComponent({
             return parseInt(this.$store.state.mods_per_page);
         },
         currentPageMods(): ThunderstoreMod[] {
-            const startIndex = this.currentPageIndex * this.modsPerPage;
-            const endIndexCandidate = startIndex + this.modsPerPage;
+            // User might want to display all mods on one page.
+            const perPageValue = this.modsPerPage != 0 ? this.modsPerPage : this.modsList.length;
+
+            const startIndex = this.currentPageIndex * perPageValue;
+            const endIndexCandidate = startIndex + perPageValue;
             const endIndex =  endIndexCandidate > this.modsList.length ? this.modsList.length : endIndexCandidate;
             return this.modsList.slice(startIndex, endIndex);
         }
