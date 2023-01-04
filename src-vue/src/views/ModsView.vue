@@ -1,24 +1,30 @@
 <template>
-    <div class="fc-container">
-        <el-scrollbar>
-            <h3>Installed Mods:</h3>
-            <div>
-                <p v-if="installedMods.length === 0">No mods were found.</p>
-                <el-card v-else shadow="hover" v-for="mod in installedMods" v-bind:key="mod.name">
-                    <el-switch style="--el-switch-on-color: #13ce66; --el-switch-off-color: #8957e5" v-model="mod.enabled"
-                        :before-change="() => updateWhichModsEnabled(mod)" :loading="global_load_indicator" />
-                    <el-popconfirm
-                        title="Are you sure to delete this mod?"
-                        @confirm="deleteMod(mod)"
-                    >
-                        <template #reference>
-                            <el-button type="danger">Delete</el-button>
-                        </template>
-                    </el-popconfirm>
-                    {{ mod.name }}
-                </el-card>
-            </div>
-        </el-scrollbar>
+    <div class="fc-container" style="display: flex">
+        <!-- Local mods/Thunderstore mods menu -->
+        <nav class="fc_mods__menu"></nav>
+
+        <!-- Mods content -->
+        <div class="fc_mods__container">
+            <el-scrollbar>
+                <h3>Installed Mods:</h3>
+                <div>
+                    <p v-if="installedMods.length === 0">No mods were found.</p>
+                    <el-card v-else shadow="hover" v-for="mod in installedMods" v-bind:key="mod.name">
+                        <el-switch style="--el-switch-on-color: #13ce66; --el-switch-off-color: #8957e5" v-model="mod.enabled"
+                                   :before-change="() => updateWhichModsEnabled(mod)" :loading="global_load_indicator" />
+                        <el-popconfirm
+                            title="Are you sure to delete this mod?"
+                            @confirm="deleteMod(mod)"
+                        >
+                            <template #reference>
+                                <el-button type="danger">Delete</el-button>
+                            </template>
+                        </el-popconfirm>
+                        {{ mod.name }}
+                    </el-card>
+                </div>
+            </el-scrollbar>
+        </div>
     </div>
 </template>
 
@@ -109,4 +115,14 @@ export default defineComponent({
 </script>
 
 <style>
+.fc_mods__menu {
+    display: flex;
+    width: 200px;
+}
+
+.fc_mods__container {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+}
 </style>
