@@ -92,7 +92,7 @@ fn main() {
             check_is_flightcore_outdated_caller,
             get_log_list_caller,
             verify_game_files_caller,
-            set_mod_enabled_status_caller,
+            set_mod_enabled_status,
             disable_all_but_core,
             is_debug_mode,
             get_northstar_release_notes,
@@ -281,15 +281,6 @@ async fn get_log_list_caller(game_install: GameInstall) -> Result<Vec<std::path:
 #[tauri::command]
 async fn verify_game_files_caller(game_install: GameInstall) -> Result<String, String> {
     verify_game_files(game_install)
-}
-
-#[tauri::command]
-async fn set_mod_enabled_status_caller(
-    game_install: GameInstall,
-    mod_name: String,
-    is_enabled: bool,
-) -> Result<(), String> {
-    set_mod_enabled_status(game_install, mod_name, is_enabled)
 }
 
 #[tauri::command]

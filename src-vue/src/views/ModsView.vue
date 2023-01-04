@@ -48,7 +48,7 @@ export default defineComponent({
 
             // enable/disable specific mod
             try {
-                await invoke("set_mod_enabled_status_caller", {
+                await invoke("set_mod_enabled_status", {
                     gameInstall: game_install,
                     modName: mod.name,
                     // Need to set it to the opposite of current state,

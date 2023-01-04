@@ -43,6 +43,7 @@ pub fn rebuild_enabled_mods_json(game_install: GameInstall) -> Result<(), String
 }
 
 /// Set the status of a passed mod to enabled/disabled
+#[tauri::command]
 pub fn set_mod_enabled_status(
     game_install: GameInstall,
     mod_name: String,
