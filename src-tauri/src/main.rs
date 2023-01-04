@@ -105,7 +105,7 @@ fn main() {
             clean_up_download_folder_caller,
             get_newest_flightcore_version,
             delete_northstar_mod,
-            delete_thunderstore_mod_caller,
+            delete_thunderstore_mod,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -306,13 +306,4 @@ async fn clean_up_download_folder_caller(
         Ok(()) => Ok(()),
         Err(err) => Err(err.to_string()),
     }
-}
-
-#[tauri::command]
-/// Deletes the mods part of the specified Thunderstore mod
-async fn delete_thunderstore_mod_caller(
-    game_install: GameInstall,
-    thunderstore_mod_string: String,
-) -> Result<(), String> {
-    delete_thunderstore_mod(game_install, thunderstore_mod_string)
 }

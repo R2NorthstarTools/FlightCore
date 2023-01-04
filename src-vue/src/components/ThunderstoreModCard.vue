@@ -201,7 +201,7 @@ export default defineComponent({
                 install_type: this.$store.state.install_type
             } as GameInstall;
 
-            await invoke("delete_thunderstore_mod_caller", { gameInstall: game_install, thunderstoreModString: this.latestVersion.full_name })
+            await invoke("delete_thunderstore_mod", { gameInstall: game_install, thunderstoreModString: this.latestVersion.full_name })
                 .then((message) => {
                     ElNotification({
                         title: `Removed ${mod.name}`,

@@ -432,6 +432,7 @@ pub fn delete_northstar_mod(game_install: GameInstall, nsmod_name: String) -> Re
 }
 
 /// Deletes all NorthstarMods related to a Thunderstore mod
+#[tauri::command]
 pub fn delete_thunderstore_mod(game_install: GameInstall, thunderstore_mod_string: String) -> Result<(), String> {
     // Prevent deleting core mod
     for core_ts_mod in BLACKLISTED_MODS {
