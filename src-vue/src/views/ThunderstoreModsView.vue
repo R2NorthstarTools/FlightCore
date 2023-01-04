@@ -3,7 +3,7 @@
         <div v-if="mods.length === 0" class="fc__changelog__container">
             <el-progress :show-text="false" :percentage="50" :indeterminate="true" />
         </div>
-        <el-scrollbar v-else class="container">
+        <el-scrollbar v-else class="container" ref="scrollbar">
             <div class="card-container">
                 <!-- Search filters -->
                 <div class="filter_container">
@@ -42,16 +42,17 @@
                 layout="prev, pager, next"
                 :page-size="modsPerPage"
                 :total="modsList.length"
-                @current-change="(e: number) => currentPageIndex = e - 1"
+                @current-change="onBottomPaginationChange"
             />
         </el-scrollbar>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import {defineComponent, ref} from 'vue';
 import { ThunderstoreMod } from "../utils/thunderstore/ThunderstoreMod";
 import ThunderstoreModCard from "../components/ThunderstoreModCard.vue";
+import {ElScrollbar, ScrollbarInstance} from "element-plus";
 
 export default defineComponent({
     name: "ThunderstoreModsView",
@@ -115,6 +116,14 @@ export default defineComponent({
          onFilterTextChange(value: string) {
             this.currentPageIndex = 0;
             this.searchValue = value.toLowerCase();
+        },
+
+        /**
+         * This updates current pagination and scrolls view to the top.
+         */
+        onBottomPaginationChange(index: number) {
+            this.currentPageIndex = index - 1;
+            (this.$refs.scrollbar as ScrollbarInstance).scrollTo({ top: 0, behavior: 'smooth' });
         }
     }
 });
