@@ -99,8 +99,10 @@ export default defineComponent({
                         type: 'error',
                         position: 'bottom-right'
                     });
+                })
+                .finally(() => {
+                    this.$store.commit('loadInstalledMods');
                 });
-            this.$store.commit('loadInstalledMods');
         }
     }
 });
