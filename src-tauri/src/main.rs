@@ -92,7 +92,6 @@ fn main() {
             check_is_flightcore_outdated_caller,
             get_log_list_caller,
             verify_game_files_caller,
-            get_enabled_mods_caller,
             set_mod_enabled_status_caller,
             disable_all_but_core,
             is_debug_mode,
@@ -282,13 +281,6 @@ async fn get_log_list_caller(game_install: GameInstall) -> Result<Vec<std::path:
 #[tauri::command]
 async fn verify_game_files_caller(game_install: GameInstall) -> Result<String, String> {
     verify_game_files(game_install)
-}
-
-#[tauri::command]
-async fn get_enabled_mods_caller(
-    game_install: GameInstall,
-) -> Result<serde_json::value::Value, String> {
-    get_enabled_mods(game_install)
 }
 
 #[tauri::command]
