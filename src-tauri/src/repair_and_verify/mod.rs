@@ -4,6 +4,7 @@ use anyhow::anyhow;
 use app::{get_enabled_mods, GameInstall};
 
 /// Verifies Titanfall2 game files
+#[tauri::command]
 pub fn verify_game_files(game_install: GameInstall) -> Result<String, String> {
     dbg!(game_install);
     Err("TODO, not yet implemented".to_string())

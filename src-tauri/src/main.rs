@@ -91,7 +91,7 @@ fn main() {
             launch_northstar_caller,
             check_is_flightcore_outdated_caller,
             get_log_list_caller,
-            verify_game_files_caller,
+            verify_game_files,
             set_mod_enabled_status,
             disable_all_but_core,
             is_debug_mode,
@@ -276,11 +276,6 @@ async fn launch_northstar_caller(
 /// Get list of Northstar logs
 async fn get_log_list_caller(game_install: GameInstall) -> Result<Vec<std::path::PathBuf>, String> {
     get_log_list(game_install)
-}
-
-#[tauri::command]
-async fn verify_game_files_caller(game_install: GameInstall) -> Result<String, String> {
-    verify_game_files(game_install)
 }
 
 #[tauri::command]
