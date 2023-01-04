@@ -101,6 +101,7 @@ fn main() {
             get_installed_mods_caller,
             install_mod_caller,
             clean_up_download_folder_caller,
+            create_new_window,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -338,4 +339,17 @@ async fn clean_up_download_folder_caller(
         Ok(()) => Ok(()),
         Err(err) => Err(err.to_string()),
     }
+}
+
+#[tauri::command]
+/// Spawns repair window
+async fn create_new_window(handle: tauri::AppHandle) -> Result<(), String> {
+    let _repair_window = tauri::WindowBuilder::new(
+        &handle,
+        "RepairWindow",
+        tauri::WindowUrl::App("this/path/does/nothing?".into())
+    )
+    .build()
+    .unwrap();
+    Ok(())
 }
