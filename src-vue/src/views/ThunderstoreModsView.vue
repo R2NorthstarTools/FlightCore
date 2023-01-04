@@ -53,7 +53,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, ref} from 'vue';
+import { defineComponent, ref } from 'vue';
 import { ThunderstoreMod } from "../utils/thunderstore/ThunderstoreMod";
 import ThunderstoreModCard from "../components/ThunderstoreModCard.vue";
 import {ElScrollbar, ScrollbarInstance} from "element-plus";
