@@ -133,7 +133,7 @@ export default defineComponent({
                 game_path: this.$store.state.game_path,
                 install_type: this.$store.state.install_type
             } as GameInstall;
-            await invoke("get_installed_mods_caller", { gameInstall: game_install }).then((message) => {
+            await invoke("get_installed_mods_and_properties", { gameInstall: game_install }).then((message) => {
                 // Simply console logging for now
                 // In the future we should display the installed mods somewhere
                 console.log(message);

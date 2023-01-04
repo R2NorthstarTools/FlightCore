@@ -185,6 +185,7 @@ fn parse_installed_mods(game_install: GameInstall) -> Result<Vec<NorthstarMod>, 
 /// Gets list of installed mods and their properties
 /// - name
 /// - is enabled?
+#[tauri::command]
 pub fn get_installed_mods_and_properties(
     game_install: GameInstall,
 ) -> Result<Vec<NorthstarMod>, String> {

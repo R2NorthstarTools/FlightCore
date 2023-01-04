@@ -98,7 +98,7 @@ fn main() {
             is_debug_mode,
             get_northstar_release_notes,
             linux_checks,
-            get_installed_mods_caller,
+            get_installed_mods_and_properties,
             install_mod_caller,
             clean_up_download_folder_caller,
         ])
@@ -298,11 +298,6 @@ async fn set_mod_enabled_status_caller(
     is_enabled: bool,
 ) -> Result<(), String> {
     set_mod_enabled_status(game_install, mod_name, is_enabled)
-}
-
-#[tauri::command]
-async fn get_installed_mods_caller(game_install: GameInstall) -> Result<Vec<NorthstarMod>, String> {
-    get_installed_mods_and_properties(game_install)
 }
 
 #[tauri::command]
