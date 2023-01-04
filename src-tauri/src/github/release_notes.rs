@@ -51,9 +51,9 @@ async fn get_newest_flightcore_version() -> Result<FlightCoreVersion, String> {
 /// false -> FlightCore install is up-to-date
 /// true  -> FlightCore install is outdated
 pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
-    let flightcore_version = get_newest_flightcore_version().await?;
-    let newest_release_version = flightcore_version.tag_name;
-    let release_date = flightcore_version.published_at;
+    let newest_flightcore_release = get_newest_flightcore_version().await?;
+    let newest_release_version = newest_flightcore_release.tag_name;
+    let release_date = newest_flightcore_release.published_at;
 
     // Get version of installed FlightCore...
     let version = env!("CARGO_PKG_VERSION");
