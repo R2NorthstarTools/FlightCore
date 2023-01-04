@@ -8,8 +8,8 @@ pub struct ReleaseInfo {
     pub body: String,
 }
 
-#[derive(Debug, Deserialize, Clone)]
-struct FlightCoreVersion {
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct FlightCoreVersion {
     tag_name: String,
     published_at: String,
 }
@@ -34,7 +34,8 @@ async fn fetch_github_releases_api(url: &str) -> Result<String, String> {
 }
 
 /// Gets newest FlighCore version from GitHub
-async fn get_newest_flightcore_version() -> Result<FlightCoreVersion, String> {
+#[tauri::command]
+pub async fn get_newest_flightcore_version() -> Result<FlightCoreVersion, String> {
     // Get newest version number from GitHub API
     println!("Checking GitHub API");
     let url = "https://api.github.com/repos/R2NorthstarTools/FlightCore/releases/latest";

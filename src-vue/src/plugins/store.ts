@@ -5,6 +5,7 @@ import { InstallType } from "../utils/InstallType";
 import { invoke } from "@tauri-apps/api";
 import { GameInstall } from "../utils/GameInstall";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
+import { FlightCoreVersion } from "../utils/FlightCoreVersion";
 import { ElNotification, NotificationHandle } from 'element-plus';
 import { NorthstarState } from '../utils/NorthstarState';
 import { appDir } from '@tauri-apps/api/path';
@@ -377,9 +378,10 @@ async function _checkForFlightCoreUpdates(state: FlightCoreStore) {
     let flightcore_is_outdated = await invoke("check_is_flightcore_outdated_caller") as boolean;
 
     if (flightcore_is_outdated) {
+        let newest_flightcore_version = await invoke("get_newest_flightcore_version") as FlightCoreVersion;
         ElNotification({
             title: 'FlightCore outdated!',
-            message: `Please update FlightCore. Running outdated version ${state.flightcore_version}`,
+            message: `Please update FlightCore.\nRunning outdated version ${state.flightcore_version}.\nNewest is ${newest_flightcore_version.tag_name}!`,
             type: 'warning',
             position: 'bottom-right',
             duration: 0 // Duration `0` means the notification will not auto-vanish
