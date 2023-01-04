@@ -64,9 +64,9 @@
         "resizable": true,
         "decorations": false,
         "title": "FlightCore",
-        "height": 600,
+        "height": 800,
         "minHeight": 300,
-        "width": 1000,
+        "width": 1280,
         "minWidth": 600
       }
     ]
