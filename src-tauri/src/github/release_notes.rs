@@ -52,8 +52,6 @@ async fn get_newest_flightcore_version() -> Result<FlightCoreVersion, String> {
 /// true  -> FlightCore install is outdated
 pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
     let newest_flightcore_release = get_newest_flightcore_version().await?;
-    let newest_release_version = newest_flightcore_release.tag_name;
-    let release_date = newest_flightcore_release.published_at;
 
     // Get version of installed FlightCore...
     let version = env!("CARGO_PKG_VERSION");
@@ -61,7 +59,7 @@ pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
     let version = format!("v{}", version);
 
     // TODO: This shouldn't be a string compare but promper semver compare
-    let is_outdated = version != newest_release_version;
+    let is_outdated = version != newest_flightcore_release.tag_name;
 
     // If outdated, check how new the update is
     if is_outdated {
@@ -72,7 +70,7 @@ pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
         let current_time = chrono::Utc::now();
 
         // Get latest release time from GitHub API response
-        let result = chrono::DateTime::parse_from_rfc3339(&release_date)
+        let result = chrono::DateTime::parse_from_rfc3339(&newest_flightcore_release.published_at)
             .unwrap()
             .with_timezone(&chrono::Utc);
 
