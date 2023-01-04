@@ -65,7 +65,7 @@ export default defineComponent({
             return this.input.length !== 0 || this.userIsTyping ? this.filteredMods : this.mods;
         },
         modsPerPage(): number {
-            return +this.$store.state.mods_per_page;
+            return parseInt(this.$store.state.mods_per_page);
         },
         currentPageMods(): ThunderstoreMod[] {
             const startIndex = this.currentPageIndex * this.modsPerPage;
