@@ -53,7 +53,7 @@
                             <el-dropdown-item @click="openURL(mod.package_url)">
                                 More info
                             </el-dropdown-item>
-                            <el-dropdown-item>
+                            <el-dropdown-item  @click="deleteMod(mod)">
                                 Remove mod
                             </el-dropdown-item>
                         </el-dropdown-menu>
