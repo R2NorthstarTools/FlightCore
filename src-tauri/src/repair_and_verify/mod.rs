@@ -4,6 +4,7 @@ use anyhow::anyhow;
 use app::{get_enabled_mods, GameInstall};
 
 /// Verifies Titanfall2 game files
+#[tauri::command]
 pub fn verify_game_files(game_install: GameInstall) -> Result<String, String> {
     dbg!(game_install);
     Err("TODO, not yet implemented".to_string())
@@ -11,6 +12,7 @@ pub fn verify_game_files(game_install: GameInstall) -> Result<String, String> {
 
 /// Disables all mods except core ones
 /// Enables core mods if disabled
+#[tauri::command]
 pub fn disable_all_but_core(game_install: GameInstall) -> Result<(), String> {
 
     // Rebuild `enabledmods.json` first to ensure all mods are added
@@ -62,6 +64,8 @@ pub fn clean_up_download_folder(
     Ok(())
 }
 
+/// Get list of Northstar logs
+#[tauri::command]
 pub fn get_log_list(game_install: GameInstall) -> Result<Vec<std::path::PathBuf>, String> {
     let ns_log_folder = format!("{}/R2Northstar/logs", game_install.game_path);
 
