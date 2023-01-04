@@ -252,7 +252,7 @@ export const store = createStore<FlightCoreStore>({
             }
 
             // Call back-end for installed mods
-            await invoke("get_installed_mods_caller", { gameInstall: game_install })
+            await invoke("get_installed_mods_and_properties", { gameInstall: game_install })
                 .then((message) => {
                     state.installed_mods = (message as NorthstarMod[]);
                 })

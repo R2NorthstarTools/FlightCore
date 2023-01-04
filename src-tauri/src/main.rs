@@ -93,15 +93,14 @@ fn main() {
             update_northstar_caller,
             launch_northstar_caller,
             check_is_flightcore_outdated_caller,
-            get_log_list_caller,
-            verify_game_files_caller,
-            get_enabled_mods_caller,
-            set_mod_enabled_status_caller,
-            disable_all_but_core_caller,
+            get_log_list,
+            verify_game_files,
+            set_mod_enabled_status,
+            disable_all_but_core,
             is_debug_mode,
             get_northstar_release_notes,
             linux_checks,
-            get_installed_mods_caller,
+            get_installed_mods_and_properties,
             install_mod_caller,
             clean_up_download_folder_caller,
             get_newest_flightcore_version,
@@ -277,43 +276,6 @@ async fn launch_northstar_caller(
     bypass_checks: Option<bool>,
 ) -> Result<String, String> {
     launch_northstar(game_install, bypass_checks)
-}
-
-#[tauri::command]
-/// Get list of Northstar logs
-async fn get_log_list_caller(game_install: GameInstall) -> Result<Vec<std::path::PathBuf>, String> {
-    get_log_list(game_install)
-}
-
-#[tauri::command]
-async fn verify_game_files_caller(game_install: GameInstall) -> Result<String, String> {
-    verify_game_files(game_install)
-}
-
-#[tauri::command]
-async fn get_enabled_mods_caller(
-    game_install: GameInstall,
-) -> Result<serde_json::value::Value, String> {
-    get_enabled_mods(game_install)
-}
-
-#[tauri::command]
-async fn set_mod_enabled_status_caller(
-    game_install: GameInstall,
-    mod_name: String,
-    is_enabled: bool,
-) -> Result<(), String> {
-    set_mod_enabled_status(game_install, mod_name, is_enabled)
-}
-
-#[tauri::command]
-async fn disable_all_but_core_caller(game_install: GameInstall) -> Result<(), String> {
-    disable_all_but_core(game_install)
-}
-
-#[tauri::command]
-async fn get_installed_mods_caller(game_install: GameInstall) -> Result<Vec<NorthstarMod>, String> {
-    get_installed_mods_and_properties(game_install)
 }
 
 #[tauri::command]
