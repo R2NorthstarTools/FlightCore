@@ -248,7 +248,7 @@ export const store = createStore<FlightCoreStore>({
                 .reduce((accumulator: string[], modCategories: string[]) => {
                     accumulator.push( ...modCategories.filter((cat: string) => !accumulator.includes(cat)) );
                     return accumulator;
-                })
+                }, [])
                 .sort();
         },
         async loadInstalledMods(state: FlightCoreStore) {
