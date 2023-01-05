@@ -19,6 +19,20 @@
                 <!-- Search inputs -->
                 <h5>Filter</h5>
                 <el-input v-model="input" placeholder="Search" clearable @input="onFilterTextChange" />
+                <el-select
+                    v-if="!show_local_mods"
+                    v-model="modCategories"
+                    multiple
+                    placeholder="Select categories"
+                >
+                    <el-option
+                        v-for="item in $store.state.thunderstoreModsCategories"
+                        :key="item"
+                        :label="item"
+                        :value="item"
+                    />
+                </el-select>
+
             </el-menu>
         </nav>
 
@@ -73,6 +87,8 @@ export default defineComponent({
             input: '',
             // This is the treated value of search input
             searchValue: '',
+            // Selected mod categories
+            modCategories: []
         }
     },
     async mounted() {
@@ -162,6 +178,7 @@ export default defineComponent({
 <style>
 .fc_mods__menu {
     display: flex;
+    max-width: 222px;
     min-width: 222px;
     padding: 10px;
 }
@@ -200,5 +217,10 @@ export default defineComponent({
 .fc_mods__menu > .el-menu > .el-menu-item.is-active {
     color: white;
     background-color: #4e4e4e7a;
+}
+
+.el-select {
+    width: 100%;
+    margin-top: 5px;
 }
 </style>
