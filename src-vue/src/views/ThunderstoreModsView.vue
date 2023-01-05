@@ -5,14 +5,7 @@
         </div>
         <el-scrollbar v-else class="container" ref="scrollbar">
             <div class="card-container">
-                <!-- Search filters -->
-                <div class="filter_container">
-                    <!-- Message displayed when user is typing in search bar -->
-                    <div v-if="userIsTyping" class="modMessage search">
-                        Searching mods...
-                    </div>
-
-                    <!-- Pagination -->
+                <div class="pagination_container">
                     <el-pagination
                         v-if="shouldDisplayPagination"
                         :currentPage="currentPageIndex + 1"
@@ -35,7 +28,7 @@
 
             <!-- Bottom pagination -->
             <div class="card-container">
-                <div class="filter_container">
+                <div class="pagination_container">
                     <el-pagination
                         class="fc_bottom__pagination"
                         v-if="shouldDisplayPagination"
@@ -180,34 +173,25 @@ export default defineComponent({
     }
 }
 
-.filter_container {
-    margin-bottom: 10px;
+.pagination_container {
+    margin: 5px auto;
+    padding: 0 5px;
+    max-width: 1000px;
+    justify-content: center;
+    display: flex;
 }
 
-.el-input {
-    max-width: 200px;
+.el-pagination {
+    margin: 0;
 }
 
 @media (min-width: 812px) {
-    .filter_container {
-        margin: 5px auto;
-        padding: 0 5px;
-        max-width: 1000px;
-    }
-
-    .el-pagination {
-        float: right;
-        margin: 0;
-    }
+    
 }
 
 @media (min-width: 1000px) {
     .card-container {
         width: 940px;
-    }
-
-    .el-input {
-        max-width: 300px;
     }
 }
 
