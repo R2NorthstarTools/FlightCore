@@ -153,7 +153,6 @@ export default defineComponent({
          * lower case, to match mods regardless of font case.
          */
          onFilterTextChange(value: string) {
-            this.currentPageIndex = 0;
             this.searchValue = value.toLowerCase();
         },
     }

@@ -116,6 +116,13 @@ export default defineComponent({
             this.currentPageIndex = index - 1;
             (this.$refs.scrollbar as ScrollbarInstance).scrollTo({ top: 0, behavior: 'smooth' });
         }
+    },
+    watch: {
+        searchValue(_: string, __: string) {
+            if (this.currentPageIndex !== 0) {
+                this.currentPageIndex = 0;
+            }
+        }
     }
 });
 </script>
