@@ -3,6 +3,7 @@ import { ElNotification } from 'element-plus';
 import { Tabs } from "../utils/Tabs";
 import PlayButton from '../components/PlayButton.vue';
 import { defineComponent } from "vue";
+import { invoke } from "@tauri-apps/api";
 
 export default defineComponent({
     components: {
@@ -19,6 +20,25 @@ export default defineComponent({
     methods: {
         showChangelogPage() {
             this.$store.commit('updateCurrentTab', Tabs.CHANGELOG);
+        },
+        async getServerPlayerCount() {
+            await invoke("get_server_player_count").then((message) => {
+                // Show user notificatio if mod install completed.
+                ElNotification({
+                    title: `Done`,
+                    message: `${message}`,
+                    type: 'success',
+                    position: 'bottom-right'
+                });
+            })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                });
         }
     }
 });
@@ -34,6 +54,9 @@ export default defineComponent({
             </div>
         </div>
         <div>
+            <el-button type="primary" @click="getServerPlayerCount">
+                TODO
+            </el-button>
             <PlayButton />
             <div v-if="$store.state.developer_mode" id="fc_services__status">
                 <div>
