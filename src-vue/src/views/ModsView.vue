@@ -62,6 +62,7 @@
                 v-else 
                 :input="input"
                 :searchValue="searchValue"
+                :selectedCategories="modCategories"
             />
         </div>
     </div>

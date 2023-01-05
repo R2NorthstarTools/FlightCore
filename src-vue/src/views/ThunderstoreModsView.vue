@@ -64,6 +64,10 @@ export default defineComponent({
         searchValue: {
             required: true,
             type: String
+        },
+        selectedCategories: {
+            required: true,
+            type: Object as () => string[]
         }
     },
     computed: {
@@ -71,18 +75,28 @@ export default defineComponent({
             return this.$store.state.thunderstoreMods;
         },
         filteredMods(): ThunderstoreMod[] {
-            if (this.searchValue.length === 0) {
+            if (this.searchValue.length === 0 && this.selectedCategories.length === 0) {
                 return this.mods;
             }
 
             return this.mods.filter((mod: ThunderstoreMod) => {
-                return mod.name.toLowerCase().includes(this.searchValue)
-                    || mod.owner.toLowerCase().includes(this.searchValue)
-                    || mod.versions[0].description.toLowerCase().includes(this.searchValue);
+                // Filter with search words (only if search field isn't empty)
+                const inputMatches: boolean = this.searchValue.length === 0
+                    || (mod.name.toLowerCase().includes(this.searchValue)
+                        || mod.owner.toLowerCase().includes(this.searchValue)
+                        || mod.versions[0].description.toLowerCase().includes(this.searchValue));
+
+                // Filter with categories (only if some categories are selected)
+                const categoriesMatch: boolean = this.selectedCategories.length === 0
+                    || mod.categories
+                        .filter((category: string) => this.selectedCategories.includes(category))
+                        .length === this.selectedCategories.length;
+
+                return inputMatches && categoriesMatch;
             });
         },
         modsList(): ThunderstoreMod[] {
-            return this.input.length !== 0 || this.userIsTyping ? this.filteredMods : this.mods;
+            return this.input.length !== 0 || this.selectedCategories.length !== 0 || this.userIsTyping ? this.filteredMods : this.mods;
         },
         modsPerPage(): number {
             return parseInt(this.$store.state.mods_per_page);
