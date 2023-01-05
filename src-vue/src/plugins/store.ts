@@ -391,10 +391,8 @@ async function _initializeApp(state: any) {
 
     await invoke("get_server_player_count")
         .then((message) => {
-            let playercount = (message as any)[0];
-            let servercount = (message as any)[1];
-            state.player_count = playercount;
-            state.server_count = servercount;
+            state.player_count = (message as any)[0];
+            state.server_count = (message as any)[1];
         })
         .catch((error) => {
             console.warn("Failed getting player/server count");
