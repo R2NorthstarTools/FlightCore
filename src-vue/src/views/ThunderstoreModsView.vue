@@ -144,35 +144,6 @@ export default defineComponent({
     margin: 0 auto;
 }
 
-.fc_bottom__pagination {
-    padding-bottom: 20px !important;
-    padding-right: 10px;
-}
-
-/* Card container dynamic size */
-@media (max-width: 1000px) {
-    .card-container {
-        width: 752px;
-    }
-}
-
-@media (max-width: 812px) {
-    .card-container {
-        width: 574px;
-    }
-
-    .el-pagination {
-        float: none;
-        margin-top: 5px;
-    }
-}
-
-@media (max-width: 624px) {
-    .card-container {
-        width: 376px;
-    }
-}
-
 .pagination_container {
     margin: 5px auto;
     padding: 0 5px;
@@ -185,31 +156,40 @@ export default defineComponent({
     margin: 0;
 }
 
-@media (min-width: 812px) {
-    
+.fc_bottom__pagination {
+    padding-bottom: 20px !important;
+    padding-right: 10px;
 }
 
-@media (min-width: 1000px) {
+/* Card container dynamic size */
+
+/* 1 card */
+.card-container {
+    width: 183px;
+    background-color: green;
+}
+
+/* 2 cards */
+@media (min-width: 658px) {
     .card-container {
-        width: 940px;
+        width: 376px;
+        background-color: yellow;
     }
 }
 
-@media (min-width: 1188px) {
+/* 3 cards */
+@media (min-width: 866px) {
     .card-container {
-        width: 1128px;
+        width: 564px;
+        background-color: blue;
     }
 }
 
-@media (min-width: 1376px) {
+/* 4 cards */
+@media (min-width: 1036px) {
     .card-container {
-        width: 1316px;
-    }
-}
-
-@media (min-width: 1565px) {
-    .card-container {
-        width: 1505px;
+        width: 752px;
+        background-color: red;
     }
 }
 </style>
