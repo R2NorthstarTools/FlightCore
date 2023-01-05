@@ -29,6 +29,7 @@ use mod_management::{
 mod northstar;
 use northstar::get_northstar_version_number;
 
+use serde::{Deserialize, Serialize};
 use tauri::Manager;
 use tauri_plugin_store::PluginBuilder;
 use tokio::time::sleep;
@@ -104,6 +105,7 @@ fn main() {
             clean_up_download_folder_caller,
             get_newest_flightcore_version,
             delete_northstar_mod,
+            get_server_player_count,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -304,4 +306,40 @@ async fn clean_up_download_folder_caller(
         Ok(()) => Ok(()),
         Err(err) => Err(err.to_string()),
     }
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct NorthstarServer {
+    #[serde(rename = "playerCount")]
+    player_count: i32,
+}
+
+/// Gets server and playercount from master server API
+#[tauri::command]
+async fn get_server_player_count() -> Result<(i32, usize), String> {
+    println!("Fetching releases notes from GitHub API");
+
+    let url = "https://northstar.tf/client/servers";
+    let user_agent = "R2NorthstarTools/FlightCore";
+    let client = reqwest::Client::new();
+    let res = client
+        .get(url)
+        .header(reqwest::header::USER_AGENT, user_agent)
+        .send()
+        .await
+        .unwrap()
+        .text()
+        .await
+        .unwrap();
+
+    let ns_servers: Vec<NorthstarServer> =
+        serde_json::from_str(&res).expect("JSON was not well-formatted");
+
+    // Get server count
+    let server_count = ns_servers.len();
+
+    // Sum up player count
+    let total_player_count: i32 = ns_servers.iter().map(|server| server.player_count).sum();
+
+    Ok((total_player_count, server_count))
 }
