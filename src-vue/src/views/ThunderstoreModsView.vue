@@ -125,6 +125,11 @@ export default defineComponent({
     padding: 20px 30px;
 }
 
+.fc-container:deep(.el-scrollbar__view) {
+    padding-left: 0;
+    padding-right: 0;
+}
+
 .el-timeline-item__timestamp {
     color: white !important;
     user-select: none !important;
