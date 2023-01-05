@@ -162,7 +162,7 @@ export default defineComponent({
 <style>
 .fc_mods__menu {
     display: flex;
-    width: 222px;
+    min-width: 222px;
     padding: 10px;
 }
 
