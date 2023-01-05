@@ -136,6 +136,11 @@ export default defineComponent({
             if (this.currentPageIndex !== 0) {
                 this.currentPageIndex = 0;
             }
+        },
+        selectedCategories(_: string[], __: string[]) {
+            if (this.currentPageIndex !== 0) {
+                this.currentPageIndex = 0;
+            }
         }
     }
 });
