@@ -163,33 +163,26 @@ export default defineComponent({
 
 /* Card container dynamic size */
 
-/* 1 card */
 .card-container {
-    width: 183px;
-    background-color: green;
-}
+    --thunderstore-mod-card-width: 178px;
+    --thunderstore-mod-card-margin: 5px;
+    --thunderstore-mod-card-columns-count: 1;
 
-/* 2 cards */
+    width: calc(var(--thunderstore-mod-card-width) * var(--thunderstore-mod-card-columns-count) + var(--thunderstore-mod-card-margin) * 2 * var(--thunderstore-mod-card-columns-count));
+}
 @media (min-width: 658px) {
     .card-container {
-        width: 376px;
-        background-color: yellow;
+        --thunderstore-mod-card-columns-count: 2;
     }
 }
-
-/* 3 cards */
 @media (min-width: 866px) {
     .card-container {
-        width: 564px;
-        background-color: blue;
+        --thunderstore-mod-card-columns-count: 3;
     }
 }
-
-/* 4 cards */
 @media (min-width: 1036px) {
     .card-container {
-        width: 752px;
-        background-color: red;
+        --thunderstore-mod-card-columns-count: 4;
     }
 }
 </style>
