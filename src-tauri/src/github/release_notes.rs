@@ -1,3 +1,4 @@
+use crate::constants::APP_USER_AGENT;
 use serde::{Deserialize, Serialize};
 use std::vec::Vec;
 
@@ -18,11 +19,10 @@ pub struct FlightCoreVersion {
 async fn fetch_github_releases_api(url: &str) -> Result<String, String> {
     println!("Fetching releases notes from GitHub API");
 
-    let user_agent = "R2NorthstarTools/FlightCore";
     let client = reqwest::Client::new();
     let res = client
         .get(url)
-        .header(reqwest::header::USER_AGENT, user_agent)
+        .header(reqwest::header::USER_AGENT, APP_USER_AGENT)
         .send()
         .await
         .unwrap()
