@@ -420,23 +420,23 @@ function _initializeListeners(state: any) {
  */
 async function _get_northstar_version_number(state: any) {
     await invoke("get_northstar_version_number_caller", { gamePath: state.game_path })
-    .then((message) => {
-        let northstar_version_number: string = message as string;
-        state.installed_northstar_version = northstar_version_number;
-        state.northstar_state = NorthstarState.READY_TO_PLAY;
+        .then((message) => {
+            let northstar_version_number: string = message as string;
+            state.installed_northstar_version = northstar_version_number;
+            state.northstar_state = NorthstarState.READY_TO_PLAY;
 
-        invoke("check_is_northstar_outdated", { gamePath: state.game_path, northstarPackageName: state.northstar_release_canal })
-            .then((message) => {
-                if (message) {
-                    state.northstar_state = NorthstarState.MUST_UPDATE;
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-                alert(error);
-            });
-    })
-    .catch((error) => {
-        state.northstar_state = NorthstarState.INSTALL;
-    })
+            invoke("check_is_northstar_outdated", { gamePath: state.game_path, northstarPackageName: state.northstar_release_canal })
+                .then((message) => {
+                    if (message) {
+                        state.northstar_state = NorthstarState.MUST_UPDATE;
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                    alert(error);
+                });
+        })
+        .catch((error) => {
+            state.northstar_state = NorthstarState.INSTALL;
+        })
 }
