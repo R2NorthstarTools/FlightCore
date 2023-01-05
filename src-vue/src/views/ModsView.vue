@@ -1,7 +1,22 @@
 <template>
     <div class="fc-container" style="display: flex">
         <!-- Local mods/Thunderstore mods menu -->
-        <nav class="fc_mods__menu"></nav>
+        <nav class="fc_mods__menu">
+            <el-menu
+                default-active="1"
+                text-color="#fff"
+            >
+                <h5>Mods</h5>
+                <el-menu-item index="1">
+                    <el-icon><Folder /></el-icon>
+                    <span>Local</span>
+                </el-menu-item>
+                <el-menu-item index="2">
+                    <el-icon><Connection /></el-icon>
+                    <span>Online</span>
+                </el-menu-item>
+            </el-menu>
+        </nav>
 
         <!-- Mods content -->
         <div class="fc_mods__container">
@@ -117,12 +132,39 @@ export default defineComponent({
 <style>
 .fc_mods__menu {
     display: flex;
-    width: 200px;
+    width: 222px;
+    padding: 10px;
 }
 
 .fc_mods__container {
     display: flex;
     width: 100%;
     flex-direction: column;
+}
+
+.fc_mods__menu h5 {
+    margin: 8px 0 16px 5px;
+}
+
+.fc_mods__menu > .el-menu {
+    background-color: transparent;
+    border: none;
+    width: 100%;
+}
+
+.fc_mods__menu > .el-menu > .el-menu-item {
+    height: 32px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    color: #e2e6e7;
+}
+
+.fc_mods__menu > .el-menu > .el-menu-item:hover {
+    background-color: #4e4e4e3b;
+}
+
+.fc_mods__menu > .el-menu > .el-menu-item.is-active {
+    color: white;
+    background-color: #4e4e4e7a;
 }
 </style>
