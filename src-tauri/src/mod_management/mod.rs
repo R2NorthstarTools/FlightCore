@@ -433,7 +433,10 @@ pub fn delete_northstar_mod(game_install: GameInstall, nsmod_name: String) -> Re
 
 /// Deletes all NorthstarMods related to a Thunderstore mod
 #[tauri::command]
-pub fn delete_thunderstore_mod(game_install: GameInstall, thunderstore_mod_string: String) -> Result<(), String> {
+pub fn delete_thunderstore_mod(
+    game_install: GameInstall,
+    thunderstore_mod_string: String,
+) -> Result<(), String> {
     // Prevent deleting core mod
     for core_ts_mod in BLACKLISTED_MODS {
         if thunderstore_mod_string == core_ts_mod {
@@ -449,7 +452,6 @@ pub fn delete_thunderstore_mod(game_install: GameInstall, thunderstore_mod_strin
 
     // Get folder name based on Thundestore mod string
     for installed_ns_mod in installed_ns_mods {
-
         if installed_ns_mod.thunderstore_mod_string.is_none() {
             // Not a Thunderstore mod
             continue;
@@ -463,7 +465,9 @@ pub fn delete_thunderstore_mod(game_install: GameInstall, thunderstore_mod_strin
     }
 
     if !(mod_folders_to_remove.len() > 0) {
-        return Err(format!("No Northstar mod matching {thunderstore_mod_string} found to be installed"));
+        return Err(format!(
+            "No Northstar mod matching {thunderstore_mod_string} found to be installed"
+        ));
     }
 
     // Delete given folders
