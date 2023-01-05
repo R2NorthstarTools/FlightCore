@@ -190,4 +190,24 @@ export default defineComponent({
         --thunderstore-mod-card-columns-count: 4;
     }
 }
+@media (min-width: 1196px) {
+    .card-container {
+        --thunderstore-mod-card-columns-count: 5;
+    }
+}
+@media (min-width: 1386px) {
+    .card-container {
+        --thunderstore-mod-card-columns-count: 6;
+    }
+}
+@media (min-width: 1576px) {
+    .card-container {
+        --thunderstore-mod-card-columns-count: 7;
+    }
+}
+@media (min-width: 1766px) {
+    .card-container {
+        --thunderstore-mod-card-columns-count: 8;
+    }
+}
 </style>
