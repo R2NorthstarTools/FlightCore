@@ -9,7 +9,7 @@ use std::{
     time::Duration,
 };
 
-use app::{*, constants::APP_USER_AGENT};
+use app::{*, constants::{APP_USER_AGENT, MASTER_SERVER_URL}};
 
 mod github;
 use github::release_notes::{
@@ -319,7 +319,8 @@ struct NorthstarServer {
 async fn get_server_player_count() -> Result<(i32, usize), String> {
     println!("Fetching releases notes from GitHub API");
 
-    let url = "https://northstar.tf/client/servers";
+    let server_browser_endpoint = "/client/servers";
+    let url = format!("{MASTER_SERVER_URL}{server_browser_endpoint}");
     let client = reqwest::Client::new();
     let res = client
         .get(url)
