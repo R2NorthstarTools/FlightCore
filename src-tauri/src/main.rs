@@ -9,7 +9,7 @@ use std::{
     time::Duration,
 };
 
-use app::*;
+use app::{*, constants::APP_USER_AGENT};
 
 mod github;
 use github::release_notes::{
@@ -320,11 +320,10 @@ async fn get_server_player_count() -> Result<(i32, usize), String> {
     println!("Fetching releases notes from GitHub API");
 
     let url = "https://northstar.tf/client/servers";
-    let user_agent = "R2NorthstarTools/FlightCore";
     let client = reqwest::Client::new();
     let res = client
         .get(url)
-        .header(reqwest::header::USER_AGENT, user_agent)
+        .header(reqwest::header::USER_AGENT, APP_USER_AGENT)
         .send()
         .await
         .unwrap()
