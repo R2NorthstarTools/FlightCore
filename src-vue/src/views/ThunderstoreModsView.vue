@@ -7,7 +7,6 @@
             <div class="card-container">
                 <!-- Search filters -->
                 <div class="filter_container">
-                    <el-input v-model="input" placeholder="Search" clearable @input="onFilterTextChange" />
                     <!-- Message displayed when user is typing in search bar -->
                     <div v-if="userIsTyping" class="modMessage search">
                         Searching mods...
@@ -64,6 +63,16 @@ export default defineComponent({
     async mounted() {
         this.$store.commit('fetchThunderstoreMods');
     },
+    props: {
+        input: {
+            required: true,
+            type: String
+        },
+        searchValue: {
+            required: true,
+            type: String
+        }
+    },
     computed: {
         mods(): ThunderstoreMod[] {
             return this.$store.state.thunderstoreMods;
@@ -100,11 +109,6 @@ export default defineComponent({
     },
     data() {
         return {
-            // This is the model for the search input.
-            input: '',
-            // This is the treated value of search input
-            searchValue: '',
-
             modsBeingInstalled: [] as string[],
             userIsTyping: false,
 
@@ -112,19 +116,6 @@ export default defineComponent({
         };
     },
     methods: {
-        /**
-         * This method is called each time search input is modified, and
-         * triggered filtered mods recomputing by updating the `searchValue`
-         * variable.
-         *
-         * This converts research string and all researched fields to
-         * lower case, to match mods regardless of font case.
-         */
-         onFilterTextChange(value: string) {
-            this.currentPageIndex = 0;
-            this.searchValue = value.toLowerCase();
-        },
-
         /**
          * This updates current pagination and scrolls view to the top.
          */

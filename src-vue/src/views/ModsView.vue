@@ -15,6 +15,9 @@
                     <el-icon><Connection /></el-icon>
                     <span>Online</span>
                 </el-menu-item>
+
+                <!-- Search input -->
+                <el-input v-model="input" placeholder="Search" clearable @input="onFilterTextChange" />
             </el-menu>
         </nav>
 
@@ -40,7 +43,11 @@
                 </div>
             </el-scrollbar>
 
-            <thunderstore-mods-view v-else />
+            <thunderstore-mods-view 
+                v-else 
+                :input="input"
+                :searchValue="searchValue"
+            />
         </div>
     </div>
 </template>
@@ -59,7 +66,12 @@ export default defineComponent({
     data() {
         return {
             global_load_indicator: false,
-            show_local_mods: true
+            show_local_mods: true,
+
+            // This is the model for the search input.
+            input: '',
+            // This is the treated value of search input
+            searchValue: '',
         }
     },
     async mounted() {
@@ -129,7 +141,20 @@ export default defineComponent({
                 .finally(() => {
                     this.$store.commit('loadInstalledMods');
                 });
-        }
+        },
+
+        /**
+         * This method is called each time search input is modified, and
+         * triggered filtered mods recomputing by updating the `searchValue`
+         * variable.
+         *
+         * This converts research string and all researched fields to
+         * lower case, to match mods regardless of font case.
+         */
+         onFilterTextChange(value: string) {
+            this.currentPageIndex = 0;
+            this.searchValue = value.toLowerCase();
+        },
     }
 });
 </script>
