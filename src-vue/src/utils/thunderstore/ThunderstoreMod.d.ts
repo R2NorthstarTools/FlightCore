@@ -7,4 +7,5 @@ export interface ThunderstoreMod {
     package_url: string;
     is_deprecated: boolean;
     versions: ThunderstoreModVersion[];
+    categories: string[];
 }
