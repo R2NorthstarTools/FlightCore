@@ -7,11 +7,11 @@
                 text-color="#fff"
             >
                 <h5>Mods</h5>
-                <el-menu-item index="1">
+                <el-menu-item index="1" @click="show_local_mods = true">
                     <el-icon><Folder /></el-icon>
                     <span>Local</span>
                 </el-menu-item>
-                <el-menu-item index="2">
+                <el-menu-item index="2" @click="show_local_mods = false">
                     <el-icon><Connection /></el-icon>
                     <span>Online</span>
                 </el-menu-item>
@@ -20,7 +20,7 @@
 
         <!-- Mods content -->
         <div class="fc_mods__container">
-            <el-scrollbar>
+            <el-scrollbar v-if="show_local_mods">
                 <h3>Installed Mods:</h3>
                 <div>
                     <p v-if="installedMods.length === 0">No mods were found.</p>
@@ -39,6 +39,8 @@
                     </el-card>
                 </div>
             </el-scrollbar>
+
+            <thunderstore-mods-view v-else />
         </div>
     </div>
 </template>
@@ -49,12 +51,15 @@ import { ElNotification } from "element-plus";
 import { invoke } from '@tauri-apps/api/tauri';
 import { GameInstall } from "../utils/GameInstall";
 import { NorthstarMod } from "../utils/NorthstarMod"
+import ThunderstoreModsView from "./ThunderstoreModsView.vue";
 
 export default defineComponent({
     name: "ModsView",
+    components: { ThunderstoreModsView },
     data() {
         return {
-            global_load_indicator: false
+            global_load_indicator: false,
+            show_local_mods: true
         }
     },
     async mounted() {
