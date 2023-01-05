@@ -11,7 +11,7 @@ import { NorthstarState } from '../utils/NorthstarState';
 import { appDir } from '@tauri-apps/api/path';
 import { open } from '@tauri-apps/api/dialog';
 import { Store } from 'tauri-plugin-store-api';
-import {router} from "../main";
+import { router } from "../main";
 import ReleaseInfo from "../utils/ReleaseInfo";
 import { ThunderstoreMod } from '../utils/thunderstore/ThunderstoreMod';
 import { NorthstarMod } from "../utils/NorthstarMod";
@@ -86,7 +86,7 @@ export const store = createStore<FlightCoreStore>({
             _initializeListeners(state);
         },
         updateCurrentTab(state: any, newTab: Tabs) {
-            router.push({path: newTab});
+            router.push({ path: newTab });
         },
         async updateGamePath(state: FlightCoreStore) {
             // Open a selection dialog for directories
@@ -320,13 +320,13 @@ async function _initializeApp(state: any) {
     }
 
     // Grab "Enable releases switching" setting from store if possible
-    const valueFromStore: {value: boolean} | null = await persistentStore.get('northstar-releases-switching');
+    const valueFromStore: { value: boolean } | null = await persistentStore.get('northstar-releases-switching');
     if (valueFromStore) {
         state.enableReleasesSwitch = valueFromStore.value;
     }
 
     // Grab "Thunderstore mods per page" setting from store if possible
-    const perPageFromStore: {value: number} | null = await persistentStore.get('thunderstore-mods-per-page');
+    const perPageFromStore: { value: number } | null = await persistentStore.get('thunderstore-mods-per-page');
     if (perPageFromStore && perPageFromStore.value) {
         state.mods_per_page = perPageFromStore.value;
     }
