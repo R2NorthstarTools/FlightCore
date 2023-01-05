@@ -1,5 +1,5 @@
 <template>
-    <div class="fc-container">
+    <div class="fc-container" style="padding: 0">
         <div v-if="mods.length === 0" class="fc__changelog__container">
             <el-progress :show-text="false" :percentage="50" :indeterminate="true" />
         </div>
