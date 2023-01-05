@@ -16,7 +16,8 @@
                     <span>Online</span>
                 </el-menu-item>
 
-                <!-- Search input -->
+                <!-- Search inputs -->
+                <h5>Filter</h5>
                 <el-input v-model="input" placeholder="Search" clearable @input="onFilterTextChange" />
             </el-menu>
         </nav>
@@ -174,6 +175,10 @@ export default defineComponent({
 
 .fc_mods__menu h5 {
     margin: 8px 0 16px 5px;
+}
+
+.fc_mods__menu h5:not(:first-child){
+    margin-top: 32px;
 }
 
 .fc_mods__menu > .el-menu {
