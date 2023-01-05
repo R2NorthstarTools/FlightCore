@@ -38,6 +38,9 @@ export interface FlightCoreStore {
     northstar_is_running: boolean,
     origin_is_running: boolean,
 
+    player_count: number,
+    server_count: number,
+
     // user custom settings
     mods_per_page: number,
 }
@@ -64,6 +67,9 @@ export const store = createStore<FlightCoreStore>({
 
             northstar_is_running: false,
             origin_is_running: false,
+
+            player_count: -1,
+            server_count: -1,
 
             mods_per_page: 20,
         }
@@ -382,6 +388,18 @@ async function _initializeApp(state: any) {
         // Check installed Northstar version if found
         await _get_northstar_version_number(state);
     }
+
+    await invoke("get_server_player_count")
+        .then((message) => {
+            let playercount = (message as any)[0];
+            let servercount = (message as any)[1];
+            state.player_count = playercount;
+            state.server_count = servercount;
+        })
+        .catch((error) => {
+            console.warn("Failed getting player/server count");
+            console.warn(error);
+        });
 }
 
 async function _checkForFlightCoreUpdates(state: FlightCoreStore) {

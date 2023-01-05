@@ -16,29 +16,16 @@ export default defineComponent({
         northstarVersion(): string {
             return this.$store.state.installed_northstar_version;
         },
+        playerCount(): number {
+            return this.$store.state.player_count;
+        },
+        serverCount(): number {
+            return this.$store.state.server_count;
+        },
     },
     methods: {
         showChangelogPage() {
             this.$store.commit('updateCurrentTab', Tabs.CHANGELOG);
-        },
-        async getServerPlayerCount() {
-            await invoke("get_server_player_count").then((message) => {
-                // Show user notificatio if mod install completed.
-                ElNotification({
-                    title: `Done`,
-                    message: `${message}`,
-                    type: 'success',
-                    position: 'bottom-right'
-                });
-            })
-                .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
-                });
         }
     }
 });
@@ -52,11 +39,13 @@ export default defineComponent({
             <div v-if="northstarVersion !== ''" class="fc_changelog__link" @click="showChangelogPage">
                 (see patch notes)
             </div>
+            <br />
+            <div>
+                {{ playerCount }} Players,
+                {{ serverCount }} Servers
+            </div>
         </div>
         <div>
-            <el-button type="primary" @click="getServerPlayerCount">
-                TODO
-            </el-button>
             <PlayButton />
             <div v-if="$store.state.developer_mode" id="fc_services__status">
                 <div>
