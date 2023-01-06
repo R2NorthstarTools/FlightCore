@@ -19,6 +19,14 @@
                 <!-- Search inputs -->
                 <h5>Filter</h5>
                 <el-input v-model="input" placeholder="Search" clearable @input="onFilterTextChange" />
+                <el-select v-model="sortValue" placeholder="Sort mods">
+                    <el-option
+                        v-for="item of sortValues"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    />
+                </el-select>
                 <el-select
                     v-if="!show_local_mods"
                     v-model="modCategories"
@@ -63,6 +71,7 @@
                 :input="input"
                 :searchValue="searchValue"
                 :selectedCategories="modCategories"
+                clearable
             />
         </div>
     </div>
@@ -75,6 +84,8 @@ import { invoke } from '@tauri-apps/api/tauri';
 import { GameInstall } from "../utils/GameInstall";
 import { NorthstarMod } from "../utils/NorthstarMod"
 import ThunderstoreModsView from "./ThunderstoreModsView.vue";
+// @ts-ignore (why though?)
+import { SortOptions } from "../utils/SortOptions.d.ts";
 
 export default defineComponent({
     name: "ModsView",
@@ -89,7 +100,8 @@ export default defineComponent({
             // This is the treated value of search input
             searchValue: '',
             // Selected mod categories
-            modCategories: []
+            modCategories: [],
+            sortValue: ''
         }
     },
     async mounted() {
@@ -98,6 +110,12 @@ export default defineComponent({
     computed: {
         installedMods(): NorthstarMod[] {
             return this.$store.state.installed_mods;
+        },
+        sortValues(): {label: string, value: string}[] {
+            return Object.keys(SortOptions).map((key: string) => ({
+                value: key,
+                label: SortOptions[key]
+            }));
         }
     },
     methods: {
