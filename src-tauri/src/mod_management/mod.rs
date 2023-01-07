@@ -18,6 +18,31 @@ pub const BLACKLISTED_MODS: [&str; 3] = [
     "ebkr-r2modman",
 ];
 
+#[derive(Debug, Clone)]
+struct ParsedThunderstoreModString {
+    author_name: String,
+    mod_name: String,
+    version: Option<String>,
+}
+
+impl std::str::FromStr for ParsedThunderstoreModString {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut parts = s.split("-");
+
+        let author_name = parts.next().unwrap().to_string();
+        let mod_name = parts.next().unwrap().to_string();
+        let version = parts.next().map(|s| s.to_string());
+
+        Ok(ParsedThunderstoreModString {
+            author_name,
+            mod_name,
+            version,
+        })
+    }
+}
+
 /// Gets all currently installed and enabled/disabled mods to rebuild `enabledmods.json`
 pub fn rebuild_enabled_mods_json(game_install: GameInstall) -> Result<(), String> {
     let enabledmods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
@@ -444,6 +469,9 @@ pub fn delete_thunderstore_mod(
         }
     }
 
+    let parsed_ts_mod_string: ParsedThunderstoreModString =
+        thunderstore_mod_string.parse().unwrap();
+
     // Get installed mods
     let installed_ns_mods = get_installed_mods_and_properties(game_install)?;
 
@@ -457,8 +485,16 @@ pub fn delete_thunderstore_mod(
             continue;
         }
 
+        let installed_ns_mod_ts_string: ParsedThunderstoreModString = installed_ns_mod
+            .thunderstore_mod_string
+            .unwrap()
+            .parse()
+            .unwrap();
+
         // Installed mod matches specified Thunderstore mod string
-        if installed_ns_mod.thunderstore_mod_string.unwrap() == thunderstore_mod_string {
+        if parsed_ts_mod_string.author_name == installed_ns_mod_ts_string.author_name
+            && parsed_ts_mod_string.mod_name == installed_ns_mod_ts_string.mod_name
+        {
             // Add folder to list of folder to remove
             mod_folders_to_remove.push(installed_ns_mod.directory);
         }
