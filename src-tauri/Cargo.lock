@@ -1818,17 +1818,14 @@ dependencies = [
 
 [[package]]
 name = "libthermite"
-version = "0.3.4"
+version = "0.4.0-rc.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9ced5f2756672c1379a5ee41771af8e1ead525a9f6b1e2a2139105a6754f6bb5"
+checksum = "20679c4ed3e63c7f3c60a5a1accabd89db7d8759cf232963ad754fdf649c3229"
 dependencies = [
- "directories",
  "futures-util",
  "indicatif",
  "log",
- "regex",
  "reqwest",
- "ron",
  "serde",
  "serde_json",
  "thiserror",
@@ -2992,17 +2989,6 @@ dependencies = [
  "wasm-bindgen-futures",
  "web-sys",
  "windows 0.37.0",
-]
-
-[[package]]
-name = "ron"
-version = "0.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "300a51053b1cb55c80b7a9fde4120726ddf25ca241a1cbb926626f62fb136bff"
-dependencies = [
- "base64",
- "bitflags",
- "serde",
 ]
 
 [[package]]

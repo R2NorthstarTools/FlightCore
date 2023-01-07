@@ -237,32 +237,6 @@ async fn get_ns_mod_download_url(thunderstore_mod_string: String) -> Result<Stri
     Err("Could not find mod on Thunderstore".to_string())
 }
 
-/// Adds given Thunderstore mod string to the given `mod.json`
-/// This way we can later check whether a mod is outdated based on the TS mod string
-fn add_thunderstore_mod_string(
-    path_to_mod_json: String,
-    thunderstore_mod_string: String,
-) -> Result<(), anyhow::Error> {
-    // Read file into string and parse it
-    let data = std::fs::read_to_string(path_to_mod_json.clone())?;
-    let parsed_json: serde_json::Value = json5::from_str(&data)?;
-
-    // Insert the Thunderstore mod string
-    let mut parsed_json = parsed_json.as_object().unwrap().clone();
-    parsed_json.insert(
-        "ThunderstoreModString".to_string(),
-        serde_json::Value::String(thunderstore_mod_string),
-    );
-
-    // And write back to disk
-    std::fs::write(
-        path_to_mod_json,
-        serde_json::to_string_pretty(&parsed_json)?,
-    )?;
-
-    Ok(())
-}
-
 /// Returns a vector of modstrings containing the dependencies of a given mod
 async fn get_mod_dependencies(
     thunderstore_mod_string: String,
@@ -352,35 +326,18 @@ pub async fn fc_download_mod_and_install(
     );
 
     // Download the mod
-    let f = match thermite::core::actions::download_file(&download_url, path.clone()).await {
+    let f = match thermite::core::manage::download_file(&download_url, path.clone()).await {
         Ok(f) => f,
         Err(e) => return Err(e.to_string()),
     };
 
     // Extract the mod to the mods directory
-    let pkg = match thermite::core::actions::install_mod(&f, std::path::Path::new(&mods_directory))
+    match thermite::core::manage::install_mod(&f, std::path::Path::new(&mods_directory))
     {
-        Ok(pkg) => pkg,
+        Ok(()) => (),
         Err(err) => return Err(err.to_string()),
     };
-    dbg!(pkg.clone());
 
-    // Add Thunderstore mod string to `mod.json` of installed NorthstarMods
-    for nsmod in pkg.mods {
-        let path_to_current_mod_json = format!(
-            "{}/{}/mod.json",
-            mods_directory,
-            nsmod.path.to_string_lossy()
-        );
-        match add_thunderstore_mod_string(path_to_current_mod_json, thunderstore_mod_string.clone())
-        {
-            Ok(()) => (),
-            Err(err) => {
-                println!("Failed setting modstring for {}", nsmod.name);
-                println!("{}", err);
-            }
-        }
-    }
 
     // Delete downloaded zip file
     std::fs::remove_file(path).unwrap();
