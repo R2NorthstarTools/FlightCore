@@ -4,6 +4,7 @@ use anyhow::{anyhow, Context, Result};
 
 mod northstar;
 
+pub mod constants;
 mod platform_specific;
 #[cfg(target_os = "windows")]
 use platform_specific::windows;
