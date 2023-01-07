@@ -502,7 +502,7 @@ pub fn delete_thunderstore_mod(
 
     if !(mod_folders_to_remove.len() > 0) {
         return Err(format!(
-            "No Northstar mod matching {thunderstore_mod_string} found to be installed"
+            "No mods removed as no Northstar mods matching {thunderstore_mod_string} were found to be installed."
         ));
     }
 
