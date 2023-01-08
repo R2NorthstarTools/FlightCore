@@ -389,10 +389,10 @@ async function _initializeApp(state: any) {
         await _get_northstar_version_number(state);
     }
 
-    await invoke("get_server_player_count")
+    await invoke<[number, number]>("get_server_player_count")
         .then((message) => {
-            state.player_count = (message as any)[0];
-            state.server_count = (message as any)[1];
+            state.player_count = message[0];
+            state.server_count = message[1];
         })
         .catch((error) => {
             console.warn("Failed getting player/server count");
