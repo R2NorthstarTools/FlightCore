@@ -106,7 +106,7 @@ export default defineComponent({
     },
     async mounted() {
         this.$store.commit('loadInstalledMods');
-        this.sortValue = this.sortValues[3];
+        this.sortValue = this.sortValues[3].value;
     },
     computed: {
         installedMods(): NorthstarMod[] {
