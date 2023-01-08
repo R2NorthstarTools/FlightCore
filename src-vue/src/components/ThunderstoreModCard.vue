@@ -74,6 +74,7 @@ import {NorthstarMod} from "../utils/NorthstarMod";
 import {GameInstall} from "../utils/GameInstall";
 import {ElNotification} from "element-plus";
 import { NorthstarState } from "../utils/NorthstarState";
+import { ElMessageBox } from "element-plus";
 
 export default defineComponent({
     name: "ThunderstoreModCard",
@@ -196,31 +197,47 @@ export default defineComponent({
         },
 
         async deleteMod(mod: ThunderstoreMod) {
-            let game_install = {
-                game_path: this.$store.state.game_path,
-                install_type: this.$store.state.install_type
-            } as GameInstall;
 
-            await invoke("delete_thunderstore_mod", { gameInstall: game_install, thunderstoreModString: this.latestVersion.full_name })
-                .then((message) => {
-                    ElNotification({
-                        title: `Removed ${mod.name}`,
-                        message: message as string,
-                        type: 'success',
-                        position: 'bottom-right'
-                    });
+            // Show pop-up to confirm delete
+            ElMessageBox.confirm(
+                'Delete Thunderstore mod?',
+                'Warning',
+                {
+                    confirmButtonText: 'OK',
+                    cancelButtonText: 'Cancel',
+                    type: 'warning',
+                }
+            )
+                .then(async () => { // Deletion confirmed
+                    let game_install = {
+                        game_path: this.$store.state.game_path,
+                        install_type: this.$store.state.install_type
+                    } as GameInstall;
+
+                    await invoke("delete_thunderstore_mod", { gameInstall: game_install, thunderstoreModString: this.latestVersion.full_name })
+                        .then((message) => {
+                            ElNotification({
+                                title: `Removed ${mod.name}`,
+                                message: message as string,
+                                type: 'success',
+                                position: 'bottom-right'
+                            });
+                        })
+                        .catch((error) => {
+                            ElNotification({
+                                title: 'Error',
+                                message: error,
+                                type: 'error',
+                                position: 'bottom-right'
+                            });
+                        })
+                        .finally(() => {
+                            this.$store.commit('loadInstalledMods');
+                        });
                 })
-                .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
+                .catch(() => { // Deletion cancelled
+                    console.log("Deleting Thunderstore mod cancelled.")
                 })
-                .finally(() => {
-                    this.$store.commit('loadInstalledMods');
-                });
         },
 
         async installMod (mod: ThunderstoreMod) {
