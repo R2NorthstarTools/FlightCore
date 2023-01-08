@@ -18,6 +18,31 @@ pub const BLACKLISTED_MODS: [&str; 3] = [
     "ebkr-r2modman",
 ];
 
+#[derive(Debug, Clone)]
+struct ParsedThunderstoreModString {
+    author_name: String,
+    mod_name: String,
+    version: Option<String>,
+}
+
+impl std::str::FromStr for ParsedThunderstoreModString {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut parts = s.split("-");
+
+        let author_name = parts.next().unwrap().to_string();
+        let mod_name = parts.next().unwrap().to_string();
+        let version = parts.next().map(|s| s.to_string());
+
+        Ok(ParsedThunderstoreModString {
+            author_name,
+            mod_name,
+            version,
+        })
+    }
+}
+
 /// Gets all currently installed and enabled/disabled mods to rebuild `enabledmods.json`
 pub fn rebuild_enabled_mods_json(game_install: GameInstall) -> Result<(), String> {
     let enabledmods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
@@ -429,4 +454,62 @@ pub fn delete_northstar_mod(game_install: GameInstall, nsmod_name: String) -> Re
     }
 
     Err(format!("Mod {nsmod_name} not found to be installed"))
+}
+
+/// Deletes all NorthstarMods related to a Thunderstore mod
+#[tauri::command]
+pub fn delete_thunderstore_mod(
+    game_install: GameInstall,
+    thunderstore_mod_string: String,
+) -> Result<(), String> {
+    // Prevent deleting core mod
+    for core_ts_mod in BLACKLISTED_MODS {
+        if thunderstore_mod_string == core_ts_mod {
+            return Err(format!("Cannot remove core mod {thunderstore_mod_string}"));
+        }
+    }
+
+    let parsed_ts_mod_string: ParsedThunderstoreModString =
+        thunderstore_mod_string.parse().unwrap();
+
+    // Get installed mods
+    let installed_ns_mods = get_installed_mods_and_properties(game_install)?;
+
+    // List of mod folders to remove
+    let mut mod_folders_to_remove: Vec<String> = Vec::new();
+
+    // Get folder name based on Thundestore mod string
+    for installed_ns_mod in installed_ns_mods {
+        if installed_ns_mod.thunderstore_mod_string.is_none() {
+            // Not a Thunderstore mod
+            continue;
+        }
+
+        let installed_ns_mod_ts_string: ParsedThunderstoreModString = installed_ns_mod
+            .thunderstore_mod_string
+            .unwrap()
+            .parse()
+            .unwrap();
+
+        // Installed mod matches specified Thunderstore mod string
+        if parsed_ts_mod_string.author_name == installed_ns_mod_ts_string.author_name
+            && parsed_ts_mod_string.mod_name == installed_ns_mod_ts_string.mod_name
+        {
+            // Add folder to list of folder to remove
+            mod_folders_to_remove.push(installed_ns_mod.directory);
+        }
+    }
+
+    if !(mod_folders_to_remove.len() > 0) {
+        return Err(format!(
+            "No mods removed as no Northstar mods matching {thunderstore_mod_string} were found to be installed."
+        ));
+    }
+
+    // Delete given folders
+    for mod_folder in mod_folders_to_remove {
+        delete_mod_folder(mod_folder)?;
+    }
+
+    Ok(())
 }
