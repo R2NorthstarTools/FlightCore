@@ -49,6 +49,7 @@ import { defineComponent, ref } from 'vue';
 import { ThunderstoreMod } from "../utils/thunderstore/ThunderstoreMod";
 import ThunderstoreModCard from "../components/ThunderstoreModCard.vue";
 import { ElScrollbar, ScrollbarInstance } from "element-plus";
+import { SortOptions } from "../utils/SortOptions.d";
 
 export default defineComponent({
     name: "ThunderstoreModsView",
@@ -68,7 +69,11 @@ export default defineComponent({
         selectedCategories: {
             required: true,
             type: Object as () => string[]
-        }
+        },
+        modSorting: {
+            type: String as () => SortOptions,
+            default: SortOptions.DATE_DESC
+        },
     },
     computed: {
         mods(): ThunderstoreMod[] {

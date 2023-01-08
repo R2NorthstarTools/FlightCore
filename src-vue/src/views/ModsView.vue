@@ -71,6 +71,7 @@
                 :input="input"
                 :searchValue="searchValue"
                 :selectedCategories="modCategories"
+                :modSorting="sortValue"
                 clearable
             />
         </div>
