@@ -50,6 +50,7 @@ import { ThunderstoreMod } from "../utils/thunderstore/ThunderstoreMod";
 import ThunderstoreModCard from "../components/ThunderstoreModCard.vue";
 import { ElScrollbar, ScrollbarInstance } from "element-plus";
 import { SortOptions } from "../utils/SortOptions.d";
+import { ThunderstoreModVersion } from '../utils/thunderstore/ThunderstoreModVersion';
 
 export default defineComponent({
     name: "ThunderstoreModsView",
@@ -120,6 +121,20 @@ export default defineComponent({
                     break;
                 case SortOptions.DATE_DESC:
                     compare = (a: ThunderstoreMod, b: ThunderstoreMod) => -1 * a.date_updated.localeCompare(b.date_updated);
+                    break;
+                case SortOptions.MOST_DOWNLOADED:
+                    compare = (a: ThunderstoreMod, b: ThunderstoreMod) => {
+                        const aTotal = a.versions.reduce((prev, next) => {
+                            return {downloads: prev.downloads + next.downloads} as ThunderstoreModVersion;
+                        }).downloads;
+                        const bTotal = b.versions.reduce((prev, next) => {
+                            return {downloads: prev.downloads + next.downloads} as ThunderstoreModVersion;
+                        }).downloads;
+                        return -1 * (aTotal - bTotal);
+                    };
+                    break;
+                case SortOptions.TOP_RATED:
+                    compare = (a: ThunderstoreMod, b: ThunderstoreMod) => -1 * a.rating_score - b.rating_score;
                     break;
                 default:
                     throw new Error('Unknown mod sorting.');

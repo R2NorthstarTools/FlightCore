@@ -3,6 +3,6 @@ export enum SortOptions {
     NAME_DESC = 'By name (Z to A)',
     DATE_ASC = 'By date (from oldest)',
     DATE_DESC = 'By date (from newest)',
-    DOWNLOADED_ASC = "Less downloaded",
-    DOWNLOADED_DESC = "Most downloaded"
+    MOST_DOWNLOADED = "Most downloaded",
+    TOP_RATED = "Top rated"
 }
