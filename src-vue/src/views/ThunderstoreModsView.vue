@@ -101,7 +101,31 @@ export default defineComponent({
             });
         },
         modsList(): ThunderstoreMod[] {
-            return this.input.length !== 0 || this.selectedCategories.length !== 0 || this.userIsTyping ? this.filteredMods : this.mods;
+            // Use filtered mods if user is searching, vanilla list otherwise.
+            const mods: ThunderstoreMod[] = this.input.length !== 0 || this.selectedCategories.length !== 0 || this.userIsTyping 
+                ? this.filteredMods 
+                : this.mods;
+
+            // Sort mods regarding user selected algorithm.
+            let compare: (a: ThunderstoreMod, b: ThunderstoreMod) => number = null;
+            switch(SortOptions[this.modSorting]) {
+                case SortOptions.NAME_ASC:
+                    compare = (a: ThunderstoreMod, b: ThunderstoreMod) => a.name.localeCompare(b.name);
+                    break;
+                case SortOptions.NAME_DESC:
+                    compare = (a: ThunderstoreMod, b: ThunderstoreMod) => -1 * a.name.localeCompare(b.name);
+                    break;
+                case SortOptions.DATE_ASC:
+                    compare = (a: ThunderstoreMod, b: ThunderstoreMod) => a.date_updated.localeCompare(b.date_updated);
+                    break;
+                case SortOptions.DATE_DESC:
+                    compare = (a: ThunderstoreMod, b: ThunderstoreMod) => -1 * a.date_updated.localeCompare(b.date_updated);
+                    break;
+                default:
+                    throw new Error('Unknown mod sorting.');
+            }
+
+            return mods.sort(compare);
         },
         modsPerPage(): number {
             return parseInt(this.$store.state.mods_per_page);
