@@ -19,7 +19,11 @@
                 <!-- Search inputs -->
                 <h5>Filter</h5>
                 <el-input v-model="input" placeholder="Search" clearable @input="onFilterTextChange" />
-                <el-select v-model="sortValue" placeholder="Sort mods">
+                <el-select
+                    v-if="!show_local_mods"
+                    v-model="sortValue" 
+                    placeholder="Sort mods"
+                >
                     <el-option
                         v-for="item of sortValues"
                         :key="item.value"
