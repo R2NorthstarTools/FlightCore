@@ -51,7 +51,6 @@
         <!-- Mods content -->
         <div class="fc_mods__container">
             <el-scrollbar v-if="show_local_mods">
-                <h3>Installed Mods:</h3>
                 <div>
                     <p v-if="installedMods.length === 0">No mods were found.</p>
                     <el-card v-else shadow="hover" v-for="mod in installedMods" v-bind:key="mod.name">
