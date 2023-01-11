@@ -331,8 +331,11 @@ pub async fn fc_download_mod_and_install(
         Err(e) => return Err(e.to_string()),
     };
 
+    // Get Thunderstore mod author
+    let author = thunderstore_mod_string.split("-").next().unwrap();
+
     // Extract the mod to the mods directory
-    match thermite::core::manage::install_mod(&f, std::path::Path::new(&mods_directory))
+    match thermite::core::manage::install_mod(author, &f, std::path::Path::new(&mods_directory))
     {
         Ok(()) => (),
         Err(err) => return Err(err.to_string()),

@@ -25,7 +25,7 @@ steamlocate = "1.0.2"
 # Error messages
 anyhow = "1.0"
 # libthermite for Northstar/mod install handling
-libthermite = "0.4.0-rc.1"
+libthermite = "0.4.0"
 # zip stuff
 zip = "0.6.2"
 # Regex
