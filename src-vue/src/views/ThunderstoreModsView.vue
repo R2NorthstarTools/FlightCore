@@ -48,7 +48,7 @@
 import { defineComponent, ref } from 'vue';
 import { ThunderstoreMod } from "../utils/thunderstore/ThunderstoreMod";
 import ThunderstoreModCard from "../components/ThunderstoreModCard.vue";
-import { ElScrollbar, ScrollbarInstance } from "element-plus";
+import { ElScrollbar, ScrollbarInstance, Sort } from "element-plus";
 import { SortOptions } from "../utils/SortOptions.d";
 import { ThunderstoreModVersion } from '../utils/thunderstore/ThunderstoreModVersion';
 
@@ -65,8 +65,8 @@ export default defineComponent({
         selectedCategories(): Object[] {
             return this.$store.state.search.selectedCategories;
         },
-        modSorting(): string {
-            return this.$store.state.search.sortValue;
+        modSorting(): SortOptions {
+            return Object.values(SortOptions)[Object.keys(SortOptions).indexOf(this.$store.state.search.sortValue)];
         },
         mods(): ThunderstoreMod[] {
             return this.$store.state.thunderstoreMods;
@@ -100,7 +100,7 @@ export default defineComponent({
 
             // Sort mods regarding user selected algorithm.
             let compare: (a: ThunderstoreMod, b: ThunderstoreMod) => number;
-            switch(SortOptions[this.modSorting]) {
+            switch(this.modSorting) {
                 case SortOptions.NAME_ASC:
                     compare = (a: ThunderstoreMod, b: ThunderstoreMod) => a.name.localeCompare(b.name);
                     break;

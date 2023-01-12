@@ -66,7 +66,7 @@ export default defineComponent({
         sortValues(): {label: string, value: string}[] {
             return Object.keys(SortOptions).map((key: string) => ({
                 value: key,
-                label: SortOptions[key]
+                label: Object.values(SortOptions)[Object.keys(SortOptions).indexOf(key)]
             }));
         }
     }
