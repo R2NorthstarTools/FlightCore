@@ -18,7 +18,7 @@
 
                 <!-- Search inputs -->
                 <h5>Filter</h5>
-                <el-input v-model="searchValue" placeholder="Search" clearable />
+                <el-input v-model="$store.state.search.searchValue" placeholder="Search" clearable />
                 <el-select
                     v-if="!show_local_mods"
                     v-model="sortValue" 
@@ -89,14 +89,6 @@ export default defineComponent({
         this.sortValue = this.sortValues[3].value;
     },
     computed: {
-        searchValue: {
-            get(): string {
-                return this.$store.state.search.searchValue;
-            },
-            set(value: string) {
-                this.$store.state.search.searchValue = value;
-            }
-        },
         sortValues(): {label: string, value: string}[] {
             return Object.keys(SortOptions).map((key: string) => ({
                 value: key,
