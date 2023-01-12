@@ -40,9 +40,12 @@ export default defineComponent({
                 (see patch notes)
             </div>
             <br />
-            <div>
+            <div v-if="playerCount >= 0">
                 {{ playerCount }} Players,
                 {{ serverCount }} Servers
+            </div>
+            <div v-else="playerCount >= 0">
+                Unable to load playercount
             </div>
         </div>
         <div>
