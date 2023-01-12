@@ -18,7 +18,7 @@
 
                 <!-- Search inputs -->
                 <h5>Filter</h5>
-                <el-input v-model="input" placeholder="Search" clearable @input="onFilterTextChange" />
+                <el-input v-model="searchValue" placeholder="Search" clearable />
                 <el-select
                     v-if="!show_local_mods"
                     v-model="sortValue" 
@@ -57,7 +57,6 @@
             <thunderstore-mods-view 
                 v-else 
                 :input="input"
-                :searchValue="searchValue"
                 :selectedCategories="modCategories"
                 :modSorting="sortValue"
                 clearable
@@ -85,8 +84,6 @@ export default defineComponent({
 
             // This is the model for the search input.
             input: '',
-            // This is the treated value of search input
-            searchValue: '',
             // Selected mod categories
             modCategories: [],
             sortValue: ''
@@ -96,25 +93,20 @@ export default defineComponent({
         this.sortValue = this.sortValues[3].value;
     },
     computed: {
+        searchValue: {
+            get(): string {
+                return this.$store.state.search.searchValue;
+            },
+            set(value: string) {
+                this.$store.state.search.searchValue = value;
+            }
+        },
         sortValues(): {label: string, value: string}[] {
             return Object.keys(SortOptions).map((key: string) => ({
                 value: key,
                 label: SortOptions[key]
             }));
         }
-    },
-    methods: {
-        /**
-         * This method is called each time search input is modified, and
-         * triggered filtered mods recomputing by updating the `searchValue`
-         * variable.
-         *
-         * This converts research string and all researched fields to
-         * lower case, to match mods regardless of font case.
-         */
-         onFilterTextChange(value: string) {
-            this.searchValue = value.toLowerCase();
-        },
     }
 });
 </script>

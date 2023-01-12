@@ -15,6 +15,7 @@ import {router} from "../main";
 import ReleaseInfo from "../utils/ReleaseInfo";
 import { ThunderstoreMod } from '../utils/thunderstore/ThunderstoreMod';
 import { NorthstarMod } from "../utils/NorthstarMod";
+import { searchModule } from './modules/search';
 
 const persistentStore = new Store('flight-core-settings.json');
 
@@ -46,6 +47,9 @@ export interface FlightCoreStore {
 let notification_handle: NotificationHandle;
 
 export const store = createStore<FlightCoreStore>({
+    modules: {
+        search: searchModule
+    },
     state(): FlightCoreStore {
         return {
             developer_mode: false,

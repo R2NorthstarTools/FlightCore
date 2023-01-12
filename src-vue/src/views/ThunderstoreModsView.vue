@@ -63,10 +63,6 @@ export default defineComponent({
             required: true,
             type: String
         },
-        searchValue: {
-            required: true,
-            type: String
-        },
         selectedCategories: {
             required: true,
             type: Object as () => string[]
@@ -77,6 +73,9 @@ export default defineComponent({
         },
     },
     computed: {
+        searchValue(): string {
+            return this.$store.getters.searchWords;
+        },
         mods(): ThunderstoreMod[] {
             return this.$store.state.thunderstoreMods;
         },
@@ -103,7 +102,7 @@ export default defineComponent({
         },
         modsList(): ThunderstoreMod[] {
             // Use filtered mods if user is searching, vanilla list otherwise.
-            const mods: ThunderstoreMod[] = this.input.length !== 0 || this.selectedCategories.length !== 0 || this.userIsTyping 
+            const mods: ThunderstoreMod[] = this.searchValue.length !== 0 || this.selectedCategories.length !== 0 || this.userIsTyping 
                 ? this.filteredMods 
                 : this.mods;
 
