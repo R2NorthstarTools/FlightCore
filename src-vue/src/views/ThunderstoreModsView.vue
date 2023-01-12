@@ -59,10 +59,6 @@ export default defineComponent({
         this.$store.commit('fetchThunderstoreMods');
     },
     props: {
-        selectedCategories: {
-            required: true,
-            type: Object as () => string[]
-        },
         modSorting: {
             type: String as () => SortOptions,
             default: SortOptions.DATE_DESC
@@ -71,6 +67,9 @@ export default defineComponent({
     computed: {
         searchValue(): string {
             return this.$store.getters.searchWords;
+        },
+        selectedCategories(): Object[] {
+            return this.$store.state.search.selectedCategories;
         },
         mods(): ThunderstoreMod[] {
             return this.$store.state.thunderstoreMods;

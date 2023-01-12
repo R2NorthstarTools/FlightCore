@@ -33,7 +33,7 @@
                 </el-select>
                 <el-select
                     v-if="!show_local_mods"
-                    v-model="modCategories"
+                    v-model="$store.state.search.selectedCategories"
                     multiple
                     placeholder="Select categories"
                 >
@@ -56,7 +56,6 @@
 
             <thunderstore-mods-view 
                 v-else
-                :selectedCategories="modCategories"
                 :modSorting="sortValue"
                 clearable
             />
@@ -79,8 +78,6 @@ export default defineComponent({
     data() {
         return {
             show_local_mods: true,
-            // Selected mod categories
-            modCategories: [],
             sortValue: ''
         }
     },
