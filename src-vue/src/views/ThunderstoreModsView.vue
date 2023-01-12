@@ -17,7 +17,7 @@
                 </div>
 
                 <!-- Message displayed if no mod matched searched words -->
-                <div v-if="filteredMods.length === 0 && input.length !== 0 && !userIsTyping" class="modMessage">
+                <div v-if="filteredMods.length === 0" class="modMessage">
                     No matching mod has been found.<br/>
                     Try another search!
                 </div>
