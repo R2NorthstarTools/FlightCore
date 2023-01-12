@@ -94,7 +94,7 @@ export default defineComponent({
         },
         modsList(): ThunderstoreMod[] {
             // Use filtered mods if user is searching, vanilla list otherwise.
-            const mods: ThunderstoreMod[] = this.searchValue.length !== 0 || this.selectedCategories.length !== 0 || this.userIsTyping 
+            const mods: ThunderstoreMod[] = this.searchValue.length !== 0 || this.selectedCategories.length !== 0
                 ? this.filteredMods 
                 : this.mods;
 
@@ -152,8 +152,6 @@ export default defineComponent({
     data() {
         return {
             modsBeingInstalled: [] as string[],
-            userIsTyping: false,
-
             currentPageIndex: 0
         };
     },
