@@ -68,8 +68,7 @@
 import { defineComponent } from "vue";
 import ThunderstoreModsView from "./ThunderstoreModsView.vue";
 import LocalModsView from "./mods/LocalModsView.vue";
-// @ts-ignore (why though?)
-import { SortOptions } from "../utils/SortOptions.d.ts";
+import { SortOptions } from "../utils/SortOptions.d";
 
 export default defineComponent({
     name: "ModsView",
