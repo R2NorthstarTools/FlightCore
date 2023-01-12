@@ -7,7 +7,8 @@ export const searchModule = {
         // This is the treated value of search input
         searchValue: '',
         // Selected mod categories
-        selectedCategories: []
+        selectedCategories: [],
+        sortValue: {label: '', value: ''}
     }),
     getters: {
         searchWords(state: SearchStoreState): string {

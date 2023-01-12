@@ -58,18 +58,15 @@ export default defineComponent({
     async mounted() {
         this.$store.commit('fetchThunderstoreMods');
     },
-    props: {
-        modSorting: {
-            type: String as () => SortOptions,
-            default: SortOptions.DATE_DESC
-        },
-    },
     computed: {
         searchValue(): string {
             return this.$store.getters.searchWords;
         },
         selectedCategories(): Object[] {
             return this.$store.state.search.selectedCategories;
+        },
+        modSorting(): string {
+            return this.$store.state.search.sortValue;
         },
         mods(): ThunderstoreMod[] {
             return this.$store.state.thunderstoreMods;

@@ -21,7 +21,7 @@
                 <el-input v-model="$store.state.search.searchValue" placeholder="Search" clearable />
                 <el-select
                     v-if="!show_local_mods"
-                    v-model="sortValue" 
+                    v-model="$store.state.search.sortValue" 
                     placeholder="Sort mods"
                 >
                     <el-option
@@ -56,7 +56,6 @@
 
             <thunderstore-mods-view 
                 v-else
-                :modSorting="sortValue"
                 clearable
             />
         </div>
@@ -78,11 +77,10 @@ export default defineComponent({
     data() {
         return {
             show_local_mods: true,
-            sortValue: ''
         }
     },
     async mounted() {
-        this.sortValue = this.sortValues[3].value;
+        this.$store.state.search.sortValue = this.sortValues[3].value;
     },
     computed: {
         sortValues(): {label: string, value: string}[] {
