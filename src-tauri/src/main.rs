@@ -23,7 +23,8 @@ use repair_and_verify::{
 
 mod mod_management;
 use mod_management::{
-    fc_download_mod_and_install, get_installed_mods_and_properties, set_mod_enabled_status, delete_northstar_mod,
+    delete_northstar_mod, delete_thunderstore_mod, fc_download_mod_and_install,
+    get_installed_mods_and_properties, set_mod_enabled_status,
 };
 
 mod northstar;
@@ -104,6 +105,7 @@ fn main() {
             clean_up_download_folder_caller,
             get_newest_flightcore_version,
             delete_northstar_mod,
+            delete_thunderstore_mod,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
