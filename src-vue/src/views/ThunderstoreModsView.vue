@@ -99,7 +99,7 @@ export default defineComponent({
                 : this.mods;
 
             // Sort mods regarding user selected algorithm.
-            let compare: (a: ThunderstoreMod, b: ThunderstoreMod) => number = null;
+            let compare: (a: ThunderstoreMod, b: ThunderstoreMod) => number;
             switch(SortOptions[this.modSorting]) {
                 case SortOptions.NAME_ASC:
                     compare = (a: ThunderstoreMod, b: ThunderstoreMod) => a.name.localeCompare(b.name);
