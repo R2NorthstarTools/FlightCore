@@ -12,7 +12,7 @@
                 v-if="show_local_mods"
             />
 
-            <thunderstore-mods-view 
+            <thunderstore-mods-view
                 v-else
                 clearable
             />
@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import ThunderstoreModsView from "./ThunderstoreModsView.vue";
+import ThunderstoreModsView from "./mods/ThunderstoreModsView.vue";
 import LocalModsView from "./mods/LocalModsView.vue";
 import ModsMenu from "../components/ModsMenu.vue";
 
