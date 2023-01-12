@@ -129,7 +129,7 @@ export default defineComponent({
                     };
                     break;
                 case SortOptions.TOP_RATED:
-                    compare = (a: ThunderstoreMod, b: ThunderstoreMod) => -1 * a.rating_score - b.rating_score;
+                    compare = (a: ThunderstoreMod, b: ThunderstoreMod) => -1 * (a.rating_score - b.rating_score);
                     break;
                 default:
                     throw new Error('Unknown mod sorting.');
