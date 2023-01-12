@@ -55,8 +55,7 @@
             />
 
             <thunderstore-mods-view 
-                v-else 
-                :input="input"
+                v-else
                 :selectedCategories="modCategories"
                 :modSorting="sortValue"
                 clearable
@@ -81,9 +80,6 @@ export default defineComponent({
     data() {
         return {
             show_local_mods: true,
-
-            // This is the model for the search input.
-            input: '',
             // Selected mod categories
             modCategories: [],
             sortValue: ''

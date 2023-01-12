@@ -59,10 +59,6 @@ export default defineComponent({
         this.$store.commit('fetchThunderstoreMods');
     },
     props: {
-        input: {
-            required: true,
-            type: String
-        },
         selectedCategories: {
             required: true,
             type: Object as () => string[]
