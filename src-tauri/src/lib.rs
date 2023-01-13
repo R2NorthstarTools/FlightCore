@@ -4,6 +4,7 @@ use anyhow::{anyhow, Context, Result};
 
 mod northstar;
 
+pub mod constants;
 mod platform_specific;
 #[cfg(target_os = "windows")]
 use platform_specific::windows;
@@ -36,6 +37,12 @@ pub struct NorthstarMod {
     pub thunderstore_mod_string: Option<String>,
     pub enabled: bool,
     pub directory: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct NorthstarServer {
+    #[serde(rename = "playerCount")]
+    pub player_count: i32,
 }
 
 /// Check version number of a mod
@@ -183,7 +190,7 @@ async fn do_install(nmod: &thermite::model::ModVersion, game_path: &std::path::P
     let download_path = format!("{}/{}", download_directory.clone(), filename);
     println!("{}", download_path);
 
-    let nfile = thermite::core::actions::download_file(&nmod.url, download_path)
+    let nfile = thermite::core::manage::download_file(&nmod.url, download_path)
         .await
         .unwrap();
 

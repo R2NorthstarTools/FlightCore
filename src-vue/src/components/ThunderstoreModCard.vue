@@ -35,11 +35,30 @@
                 >
                     {{ modButtonText }}
                 </el-button>
-                <el-button link type="info" class="infoBtn" @click="openURL(mod.package_url)">
+
+                <!-- Information dropdown menu -->
+                 <el-button v-if="!modIsRemovable"
+                            link type="info" class="infoBtn" @click="openURL(mod.package_url)">
                     <el-icon>
                         <InfoFilled />
                     </el-icon>
                 </el-button>
+
+                <el-dropdown v-else>
+                    <el-icon class="infoBtn moreBtn">
+                        <MoreFilled />
+                    </el-icon>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <el-dropdown-item @click="openURL(mod.package_url)">
+                                More info
+                            </el-dropdown-item>
+                            <el-dropdown-item  @click="deleteMod(mod)">
+                                Remove mod
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </template>
+                </el-dropdown>
             </span>
         </div>
     </el-card>
@@ -54,6 +73,8 @@ import {ThunderstoreModStatus} from "../utils/thunderstore/ThunderstoreModStatus
 import {NorthstarMod} from "../utils/NorthstarMod";
 import {GameInstall} from "../utils/GameInstall";
 import {ElNotification} from "element-plus";
+import { NorthstarState } from "../utils/NorthstarState";
+import { ElMessageBox } from "element-plus";
 
 export default defineComponent({
     name: "ThunderstoreModCard",
@@ -138,6 +159,15 @@ export default defineComponent({
         },
 
         /**
+         * Tells if a Thunderstore mod can be removed.
+         * This is used to tell if we should display the "Remove mod" option.
+         **/
+        modIsRemovable(): boolean {
+            return [ThunderstoreModStatus.INSTALLED, ThunderstoreModStatus.OUTDATED]
+                .includes(this.modStatus);
+        },
+
+        /**
          * This computes the total count of downloads of a given mod, by adding
          * download count of each of its releases.
          */
@@ -164,6 +194,50 @@ export default defineComponent({
         getThunderstoreDependencyStringPrefix (dependency: string): string {
             const dependencyStringMembers = dependency.split('-');
             return `${dependencyStringMembers[0]}-${dependencyStringMembers[1]}`;
+        },
+
+        async deleteMod(mod: ThunderstoreMod) {
+
+            // Show pop-up to confirm delete
+            ElMessageBox.confirm(
+                'Delete Thunderstore mod?',
+                'Warning',
+                {
+                    confirmButtonText: 'OK',
+                    cancelButtonText: 'Cancel',
+                    type: 'warning',
+                }
+            )
+                .then(async () => { // Deletion confirmed
+                    let game_install = {
+                        game_path: this.$store.state.game_path,
+                        install_type: this.$store.state.install_type
+                    } as GameInstall;
+
+                    await invoke("delete_thunderstore_mod", { gameInstall: game_install, thunderstoreModString: this.latestVersion.full_name })
+                        .then((message) => {
+                            ElNotification({
+                                title: `Removed ${mod.name}`,
+                                message: message as string,
+                                type: 'success',
+                                position: 'bottom-right'
+                            });
+                        })
+                        .catch((error) => {
+                            ElNotification({
+                                title: 'Error',
+                                message: error,
+                                type: 'error',
+                                position: 'bottom-right'
+                            });
+                        })
+                        .finally(() => {
+                            this.$store.commit('loadInstalledMods');
+                        });
+                })
+                .catch(() => { // Deletion cancelled
+                    console.log("Deleting Thunderstore mod cancelled.")
+                })
         },
 
         async installMod (mod: ThunderstoreMod) {
@@ -241,8 +315,13 @@ export default defineComponent({
 
 .infoBtn {
     width: 20px;
-    padding: 0;
+    padding: 0 !important;
     font-size: 20px;
     border: none;
+}
+
+.moreBtn {
+    margin-left: 10px;
+    height: auto;
 }
 </style>
