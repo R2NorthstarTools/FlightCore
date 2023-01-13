@@ -3,7 +3,6 @@ import { ElNotification } from 'element-plus';
 import { Tabs } from "../utils/Tabs";
 import PlayButton from '../components/PlayButton.vue';
 import { defineComponent } from "vue";
-import { invoke } from "@tauri-apps/api";
 
 export default defineComponent({
     components: {
@@ -15,12 +14,6 @@ export default defineComponent({
         },
         northstarVersion(): string {
             return this.$store.state.installed_northstar_version;
-        },
-        playerCount(): number {
-            return this.$store.state.player_count;
-        },
-        serverCount(): number {
-            return this.$store.state.server_count;
         },
     },
     methods: {
@@ -38,13 +31,6 @@ export default defineComponent({
             {{ northstarVersion === '' ? 'Unknown version' : `v${northstarVersion}` }}
             <div v-if="northstarVersion !== ''" class="fc_changelog__link" @click="showChangelogPage">
                 (see patch notes)
-            </div>
-            <div v-if="playerCount >= 0">
-                {{ playerCount }} Players,
-                {{ serverCount }} Servers
-            </div>
-            <div v-else="playerCount >= 0">
-                Unable to load playercount
             </div>
         </div>
         <div>
