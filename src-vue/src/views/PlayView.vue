@@ -39,7 +39,6 @@ export default defineComponent({
             <div v-if="northstarVersion !== ''" class="fc_changelog__link" @click="showChangelogPage">
                 (see patch notes)
             </div>
-            <br />
             <div v-if="playerCount >= 0">
                 {{ playerCount }} Players,
                 {{ serverCount }} Servers
