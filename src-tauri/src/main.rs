@@ -310,11 +310,6 @@ async fn clean_up_download_folder_caller(
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-struct NorthstarServer {
-    #[serde(rename = "playerCount")]
-    player_count: i32,
-}
 
 /// Gets server and playercount from master server API
 #[tauri::command]
