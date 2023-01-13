@@ -319,7 +319,6 @@ struct NorthstarServer {
 /// Gets server and playercount from master server API
 #[tauri::command]
 async fn get_server_player_count() -> Result<(i32, usize), String> {
-    println!("Fetching releases notes from GitHub API");
 
     let server_browser_endpoint = "/client/servers";
     let url = format!("{MASTER_SERVER_URL}{server_browser_endpoint}");
