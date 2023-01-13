@@ -3,6 +3,8 @@ use async_recursion::async_recursion;
 
 use anyhow::{anyhow, Result};
 use app::NorthstarMod;
+use serde::{Deserialize, Serialize};
+use std::io::Read;
 use std::path::PathBuf;
 
 use app::get_enabled_mods;
@@ -41,6 +43,12 @@ impl std::str::FromStr for ParsedThunderstoreModString {
             version,
         })
     }
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct ThunderstoreManifest {
+    name: String,
+    version_number: String,
 }
 
 /// Gets all currently installed and enabled/disabled mods to rebuild `enabledmods.json`
@@ -133,6 +141,7 @@ fn parse_mod_json_for_mod_name(mod_json_path: String) -> Result<String, anyhow::
 }
 
 /// Parses `mod.json` for Thunderstore mod string
+/// This is a legacy function as nowadays `manifest.json` should be in Northtar mods folder and read from there
 // TODO: Maybe pass PathBuf or serde json object
 fn parse_mod_json_for_thunderstore_mod_string(
     mod_json_path: String,
@@ -151,6 +160,33 @@ fn parse_mod_json_for_thunderstore_mod_string(
     };
 
     Ok(thunderstore_mod_string.to_string())
+}
+
+/// Parses `manifest.json` for Thunderstore mod string
+fn parse_for_thunderstore_mod_string(nsmod_path: String) -> Result<String, anyhow::Error> {
+    let mod_json_path = format!("{}/mod.json", nsmod_path);
+    let manifest_json_path = format!("{}/manifest.json", nsmod_path);
+    let ts_author_txt_path = format!("{}/thunderstore_author.txt", nsmod_path);
+
+    // Attempt legacy method for getting Thunderstore string first
+    match parse_mod_json_for_thunderstore_mod_string(mod_json_path) {
+        Ok(thunderstore_mod_string) => return Ok(thunderstore_mod_string),
+        Err(_err) => (),
+    }
+
+    // Check if `manifest.json` exists and parse
+    let data = std::fs::read_to_string(manifest_json_path)?;
+    let thunderstore_manifest: ThunderstoreManifest = json5::from_str(&data)?;
+
+    // Check if `thunderstore_author.txt` exists and parse
+    let mut file = std::fs::File::open(ts_author_txt_path)?;
+    let mut thunderstore_author = String::new();
+    file.read_to_string(&mut thunderstore_author)?;
+
+    // Build mod string
+    let thunderstore_mod_string = format!("{}-{}-{}", thunderstore_author, thunderstore_manifest.name, thunderstore_manifest.version_number);
+
+    Ok(thunderstore_mod_string)
 }
 
 /// Parse `mods` folder for installed mods.
@@ -174,8 +210,9 @@ fn parse_installed_mods(game_install: GameInstall) -> Result<Vec<NorthstarMod>, 
 
     // Iterate over folders and check if they are Northstar mods
     for directory in directories {
+        let directory_str = directory.to_str().unwrap().to_string();
         // Check if mod.json exists
-        let mod_json_path = format!("{}/mod.json", directory.to_str().unwrap());
+        let mod_json_path = format!("{}/mod.json", directory_str);
         if !std::path::Path::new(&mod_json_path).exists() {
             continue;
         }
@@ -188,8 +225,9 @@ fn parse_installed_mods(game_install: GameInstall) -> Result<Vec<NorthstarMod>, 
                 continue;
             }
         };
+        // Get Thunderstore mod string if it exists
         let thunderstore_mod_string =
-            match parse_mod_json_for_thunderstore_mod_string(mod_json_path.clone()) {
+            match parse_for_thunderstore_mod_string(directory_str) {
                 Ok(thunderstore_mod_string) => Some(thunderstore_mod_string),
                 Err(_err) => None,
             };
@@ -260,32 +298,6 @@ async fn get_ns_mod_download_url(thunderstore_mod_string: String) -> Result<Stri
     }
 
     Err("Could not find mod on Thunderstore".to_string())
-}
-
-/// Adds given Thunderstore mod string to the given `mod.json`
-/// This way we can later check whether a mod is outdated based on the TS mod string
-fn add_thunderstore_mod_string(
-    path_to_mod_json: String,
-    thunderstore_mod_string: String,
-) -> Result<(), anyhow::Error> {
-    // Read file into string and parse it
-    let data = std::fs::read_to_string(path_to_mod_json.clone())?;
-    let parsed_json: serde_json::Value = json5::from_str(&data)?;
-
-    // Insert the Thunderstore mod string
-    let mut parsed_json = parsed_json.as_object().unwrap().clone();
-    parsed_json.insert(
-        "ThunderstoreModString".to_string(),
-        serde_json::Value::String(thunderstore_mod_string),
-    );
-
-    // And write back to disk
-    std::fs::write(
-        path_to_mod_json,
-        serde_json::to_string_pretty(&parsed_json)?,
-    )?;
-
-    Ok(())
 }
 
 /// Returns a vector of modstrings containing the dependencies of a given mod
@@ -377,35 +389,21 @@ pub async fn fc_download_mod_and_install(
     );
 
     // Download the mod
-    let f = match thermite::core::actions::download_file(&download_url, path.clone()).await {
+    let f = match thermite::core::manage::download_file(&download_url, path.clone()).await {
         Ok(f) => f,
         Err(e) => return Err(e.to_string()),
     };
 
+    // Get Thunderstore mod author
+    let author = thunderstore_mod_string.split("-").next().unwrap();
+
     // Extract the mod to the mods directory
-    let pkg = match thermite::core::actions::install_mod(&f, std::path::Path::new(&mods_directory))
+    match thermite::core::manage::install_mod(author, &f, std::path::Path::new(&mods_directory))
     {
-        Ok(pkg) => pkg,
+        Ok(()) => (),
         Err(err) => return Err(err.to_string()),
     };
-    dbg!(pkg.clone());
 
-    // Add Thunderstore mod string to `mod.json` of installed NorthstarMods
-    for nsmod in pkg.mods {
-        let path_to_current_mod_json = format!(
-            "{}/{}/mod.json",
-            mods_directory,
-            nsmod.path.to_string_lossy()
-        );
-        match add_thunderstore_mod_string(path_to_current_mod_json, thunderstore_mod_string.clone())
-        {
-            Ok(()) => (),
-            Err(err) => {
-                println!("Failed setting modstring for {}", nsmod.name);
-                println!("{}", err);
-            }
-        }
-    }
 
     // Delete downloaded zip file
     std::fs::remove_file(path).unwrap();
