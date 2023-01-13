@@ -9,7 +9,7 @@ use std::{
     time::Duration,
 };
 
-use app::{*, constants::{APP_USER_AGENT, MASTER_SERVER_URL}};
+use app::{*, constants::{APP_USER_AGENT, MASTER_SERVER_URL, SERVER_BROWSER_ENDPOINT}};
 
 mod github;
 use github::release_notes::{
@@ -315,8 +315,7 @@ async fn clean_up_download_folder_caller(
 #[tauri::command]
 async fn get_server_player_count() -> Result<(i32, usize), String> {
 
-    let server_browser_endpoint = "/client/servers";
-    let url = format!("{MASTER_SERVER_URL}{server_browser_endpoint}");
+    let url = format!("{MASTER_SERVER_URL}{SERVER_BROWSER_ENDPOINT}");
     let client = reqwest::Client::new();
     let res = client
         .get(url)
@@ -336,6 +335,8 @@ async fn get_server_player_count() -> Result<(i32, usize), String> {
 
     // Sum up player count
     let total_player_count: i32 = ns_servers.iter().map(|server| server.player_count).sum();
+
+    dbg!((total_player_count, server_count));
 
     Ok((total_player_count, server_count))
 }
