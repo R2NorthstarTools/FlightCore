@@ -39,6 +39,12 @@ pub struct NorthstarMod {
     pub directory: String,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct NorthstarServer {
+    #[serde(rename = "playerCount")]
+    pub player_count: i32,
+}
+
 /// Check version number of a mod
 pub fn check_mod_version_number(path_to_mod_folder: String) -> Result<String, anyhow::Error> {
     // println!("{}", format!("{}/mod.json", path_to_mod_folder));
