@@ -15,6 +15,7 @@ import { router } from "../main";
 import ReleaseInfo from "../utils/ReleaseInfo";
 import { ThunderstoreMod } from '../utils/thunderstore/ThunderstoreMod';
 import { NorthstarMod } from "../utils/NorthstarMod";
+import { searchModule } from './modules/search';
 
 const persistentStore = new Store('flight-core-settings.json');
 
@@ -33,6 +34,7 @@ export interface FlightCoreStore {
     releaseNotes: ReleaseInfo[],
 
     thunderstoreMods: ThunderstoreMod[],
+    thunderstoreModsCategories: string[],
     installed_mods: NorthstarMod[],
 
     northstar_is_running: boolean,
@@ -48,6 +50,9 @@ export interface FlightCoreStore {
 let notification_handle: NotificationHandle;
 
 export const store = createStore<FlightCoreStore>({
+    modules: {
+        search: searchModule
+    },
     state(): FlightCoreStore {
         return {
             developer_mode: false,
@@ -63,6 +68,7 @@ export const store = createStore<FlightCoreStore>({
             releaseNotes: [],
 
             thunderstoreMods: [],
+            thunderstoreModsCategories: [],
             installed_mods: [],
 
             northstar_is_running: false,
@@ -244,6 +250,16 @@ export const store = createStore<FlightCoreStore>({
             state.thunderstoreMods = mods.filter((mod: ThunderstoreMod) => {
                 return !removedMods.includes(mod.name) && !mod.is_deprecated;
             });
+
+            // Retrieve categories from mods
+            state.thunderstoreModsCategories = mods
+                .map((mod: ThunderstoreMod) => mod.categories)
+                .filter((modCategories: string[]) => modCategories.length !== 0)
+                .reduce((accumulator: string[], modCategories: string[]) => {
+                    accumulator.push( ...modCategories.filter((cat: string) => !accumulator.includes(cat)) );
+                    return accumulator;
+                }, [])
+                .sort();
         },
         async loadInstalledMods(state: FlightCoreStore) {
             let game_install = {

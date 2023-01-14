@@ -59,7 +59,6 @@ export default {
         <el-menu-item index="/">Play</el-menu-item>
         <el-menu-item index="/changelog">Changelog</el-menu-item>
         <el-menu-item index="/mods">Mods</el-menu-item>
-        <el-menu-item index="/thunderstoreMods">Thunderstore</el-menu-item>
         <el-menu-item index="/settings">Settings</el-menu-item>
         <el-menu-item index="/dev" v-if="$store.state.developer_mode">Dev</el-menu-item>
       </el-menu>
@@ -109,7 +108,7 @@ export default {
   border-color: white;
 }
 
-.el-menu > .el-menu-item {
+#fc__menu_items > .el-menu-item {
   text-transform: uppercase;
   border: none !important;
   font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
