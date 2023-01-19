@@ -3,7 +3,8 @@ use serde::{Deserialize, Serialize};
 use ts_rs::TS;
 use std::vec::Vec;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
 pub struct ReleaseInfo {
     pub name: String,
     pub published_at: String,
