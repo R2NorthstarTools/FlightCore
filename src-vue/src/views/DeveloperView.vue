@@ -51,6 +51,11 @@
             <el-button type="primary" @click="clearFlightCorePersistentStore">
                 Delete FlightCore persistent store
             </el-button>
+            <h3>Testing</h3>
+
+            <el-button type="primary" @click="getLauncherPRs">
+                Get launcher PRs
+            </el-button>
         </el-scrollbar>
     </div>
 </template>
@@ -61,13 +66,14 @@ import { invoke } from "@tauri-apps/api";
 import { ElNotification } from "element-plus";
 import { GameInstall } from "../utils/GameInstall";
 import { Store } from 'tauri-plugin-store-api';
+import { PullsApiResponse } from "../utils/PullsApiResponse";
 const persistentStore = new Store('flight-core-settings.json');
 
 export default defineComponent({
     name: "DeveloperView",
     data() {
         return {
-            mod_to_install_field_string : "",
+            mod_to_install_field_string: "",
         }
     },
     methods: {
@@ -207,7 +213,27 @@ export default defineComponent({
             await persistentStore.clear();
             // ...and save
             await persistentStore.save();
-        }
+        },
+        async getLauncherPRs() {
+            await invoke<PullsApiResponse>("get_launcher_prs").then((message) => {
+                console.log(message);
+                // Show user notification if mod install completed.
+                ElNotification({
+                    title: `Done`,
+                    message: `${message}`,
+                    type: 'success',
+                    position: 'bottom-right'
+                });
+            })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                });
+        },
     }
 });
 </script>
