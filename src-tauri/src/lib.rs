@@ -13,6 +13,7 @@ use platform_specific::linux;
 
 use serde::{Deserialize, Serialize};
 use sysinfo::SystemExt;
+use ts_rs::TS;
 use zip::ZipArchive;
 
 use northstar::get_northstar_version_number;
@@ -31,7 +32,8 @@ pub struct GameInstall {
     pub install_type: InstallType,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
 pub struct NorthstarMod {
     pub name: String,
     pub thunderstore_mod_string: Option<String>,
