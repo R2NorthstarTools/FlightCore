@@ -5,7 +5,7 @@ import { InstallType } from "../utils/InstallType";
 import { invoke } from "@tauri-apps/api";
 import { GameInstall } from "../utils/GameInstall";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
-import { FlightCoreVersion } from "../utils/FlightCoreVersion";
+import { FlightCoreVersion } from "../../../src-tauri/bindings/FlightCoreVersion";
 import { ElNotification, NotificationHandle } from 'element-plus';
 import { NorthstarState } from '../utils/NorthstarState';
 import { appDir } from '@tauri-apps/api/path';
