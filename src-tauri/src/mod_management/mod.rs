@@ -184,7 +184,10 @@ fn parse_for_thunderstore_mod_string(nsmod_path: String) -> Result<String, anyho
     file.read_to_string(&mut thunderstore_author)?;
 
     // Build mod string
-    let thunderstore_mod_string = format!("{}-{}-{}", thunderstore_author, thunderstore_manifest.name, thunderstore_manifest.version_number);
+    let thunderstore_mod_string = format!(
+        "{}-{}-{}",
+        thunderstore_author, thunderstore_manifest.name, thunderstore_manifest.version_number
+    );
 
     Ok(thunderstore_mod_string)
 }
@@ -226,11 +229,10 @@ fn parse_installed_mods(game_install: GameInstall) -> Result<Vec<NorthstarMod>, 
             }
         };
         // Get Thunderstore mod string if it exists
-        let thunderstore_mod_string =
-            match parse_for_thunderstore_mod_string(directory_str) {
-                Ok(thunderstore_mod_string) => Some(thunderstore_mod_string),
-                Err(_err) => None,
-            };
+        let thunderstore_mod_string = match parse_for_thunderstore_mod_string(directory_str) {
+            Ok(thunderstore_mod_string) => Some(thunderstore_mod_string),
+            Err(_err) => None,
+        };
         // Get directory path
         let mod_directory = directory.to_str().unwrap().to_string();
 
@@ -398,12 +400,10 @@ pub async fn fc_download_mod_and_install(
     let author = thunderstore_mod_string.split("-").next().unwrap();
 
     // Extract the mod to the mods directory
-    match thermite::core::manage::install_mod(author, &f, std::path::Path::new(&mods_directory))
-    {
+    match thermite::core::manage::install_mod(author, &f, std::path::Path::new(&mods_directory)) {
         Ok(()) => (),
         Err(err) => return Err(err.to_string()),
     };
-
 
     // Delete downloaded zip file
     std::fs::remove_file(path).unwrap();
