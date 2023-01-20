@@ -1,8 +1,10 @@
 use crate::github::release_notes::fetch_github_releases_api;
 
 use serde::{Deserialize, Serialize};
+use ts_rs::TS;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
 pub struct PullsApiResponseElement {
     number: i64,
     title: String,

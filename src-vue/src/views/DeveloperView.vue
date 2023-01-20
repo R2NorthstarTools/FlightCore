@@ -66,7 +66,7 @@ import { invoke } from "@tauri-apps/api";
 import { ElNotification } from "element-plus";
 import { GameInstall } from "../utils/GameInstall";
 import { Store } from 'tauri-plugin-store-api';
-import { PullsApiResponse } from "../utils/PullsApiResponse";
+import { PullsApiResponseElement } from "../../../src-tauri/bindings/PullsApiResponseElement";
 const persistentStore = new Store('flight-core-settings.json');
 
 export default defineComponent({
@@ -215,7 +215,7 @@ export default defineComponent({
             await persistentStore.save();
         },
         async getLauncherPRs() {
-            await invoke<PullsApiResponse>("get_launcher_prs").then((message) => {
+            await invoke<PullsApiResponseElement>("get_launcher_prs").then((message) => {
                 console.log(message);
                 // Show user notification if mod install completed.
                 ElNotification({
