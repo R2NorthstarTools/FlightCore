@@ -284,8 +284,19 @@ async fn get_ns_mod_download_url(thunderstore_mod_string: String) -> Result<Stri
     // TODO: This will crash the thread if not internet connection exist. `match` should be used instead
     let index = thermite::api::get_package_index().await.unwrap().to_vec();
 
-    // String replace works but more care should be taken in the future
-    let ts_mod_string_url = thunderstore_mod_string.replace("-", "/");
+    // Parse mod string
+    let parsed_ts_mod_string: ParsedThunderstoreModString = match thunderstore_mod_string.parse() {
+        Ok(res) => res,
+        Err(_) => return Err("Failed to parse mod string".to_string()),
+    };
+
+    // Encode as URL
+    let ts_mod_string_url = format!(
+        "{}/{}/{}",
+        parsed_ts_mod_string.author_name,
+        parsed_ts_mod_string.mod_name,
+        parsed_ts_mod_string.version.unwrap()
+    );
 
     for ns_mod in index {
         // Iterate over all versions of a given mod
