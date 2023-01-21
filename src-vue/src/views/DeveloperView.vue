@@ -215,7 +215,7 @@ export default defineComponent({
             await persistentStore.save();
         },
         async getLauncherPRs() {
-            await invoke<PullsApiResponseElement>("get_launcher_prs").then((message) => {
+            await invoke<PullsApiResponseElement[]>("get_launcher_prs").then((message) => {
                 console.log(message);
                 // Show user notification if mod install completed.
                 ElNotification({
