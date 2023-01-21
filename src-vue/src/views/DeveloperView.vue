@@ -53,9 +53,17 @@
             </el-button>
             <h3>Testing</h3>
 
-            <el-button type="primary" @click="getLauncherPRs">
-                Get launcher PRs
-            </el-button>
+            <el-collapse>
+                <el-collapse-item title="Launcher PRs" name="1">
+                    <el-button type="primary" @click="getLauncherPRs">
+                        Get launcher PRs
+                    </el-button>
+                    <p v-if="pull_requests.length === 0">No PRs loaded</p>
+                    <el-card v-else shadow="hover" v-for="pull_request in pull_requests" v-bind:key="pull_request.url">
+                        <el-button type="primary">Install</el-button> {{ pull_request.number }}: {{ pull_request.title }}
+                    </el-card>
+                </el-collapse-item>
+            </el-collapse>
         </el-scrollbar>
     </div>
 </template>
@@ -71,6 +79,11 @@ const persistentStore = new Store('flight-core-settings.json');
 
 export default defineComponent({
     name: "DeveloperView",
+    computed: {
+        pull_requests(): PullsApiResponseElement[] {
+            return this.$store.state.pull_requests;
+        }
+    },
     data() {
         return {
             mod_to_install_field_string: "",
@@ -224,6 +237,7 @@ export default defineComponent({
                     type: 'success',
                     position: 'bottom-right'
                 });
+                this.$store.state.pull_requests = message;
             })
                 .catch((error) => {
                     ElNotification({
