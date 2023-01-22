@@ -30,7 +30,6 @@ use mod_management::{
 mod northstar;
 use northstar::get_northstar_version_number;
 
-use serde::{Deserialize, Serialize};
 use tauri::Manager;
 use tauri_plugin_store::PluginBuilder;
 use tokio::time::sleep;
