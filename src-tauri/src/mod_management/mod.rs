@@ -184,7 +184,10 @@ fn parse_for_thunderstore_mod_string(nsmod_path: String) -> Result<String, anyho
     file.read_to_string(&mut thunderstore_author)?;
 
     // Build mod string
-    let thunderstore_mod_string = format!("{}-{}-{}", thunderstore_author, thunderstore_manifest.name, thunderstore_manifest.version_number);
+    let thunderstore_mod_string = format!(
+        "{}-{}-{}",
+        thunderstore_author, thunderstore_manifest.name, thunderstore_manifest.version_number
+    );
 
     Ok(thunderstore_mod_string)
 }
@@ -226,11 +229,10 @@ fn parse_installed_mods(game_install: GameInstall) -> Result<Vec<NorthstarMod>, 
             }
         };
         // Get Thunderstore mod string if it exists
-        let thunderstore_mod_string =
-            match parse_for_thunderstore_mod_string(directory_str) {
-                Ok(thunderstore_mod_string) => Some(thunderstore_mod_string),
-                Err(_err) => None,
-            };
+        let thunderstore_mod_string = match parse_for_thunderstore_mod_string(directory_str) {
+            Ok(thunderstore_mod_string) => Some(thunderstore_mod_string),
+            Err(_err) => None,
+        };
         // Get directory path
         let mod_directory = directory.to_str().unwrap().to_string();
 
@@ -284,8 +286,19 @@ async fn get_ns_mod_download_url(thunderstore_mod_string: String) -> Result<Stri
     // TODO: This will crash the thread if not internet connection exist. `match` should be used instead
     let index = thermite::api::get_package_index().await.unwrap().to_vec();
 
-    // String replace works but more care should be taken in the future
-    let ts_mod_string_url = thunderstore_mod_string.replace("-", "/");
+    // Parse mod string
+    let parsed_ts_mod_string: ParsedThunderstoreModString = match thunderstore_mod_string.parse() {
+        Ok(res) => res,
+        Err(_) => return Err("Failed to parse mod string".to_string()),
+    };
+
+    // Encode as URL
+    let ts_mod_string_url = format!(
+        "{}/{}/{}",
+        parsed_ts_mod_string.author_name,
+        parsed_ts_mod_string.mod_name,
+        parsed_ts_mod_string.version.unwrap()
+    );
 
     for ns_mod in index {
         // Iterate over all versions of a given mod
@@ -398,12 +411,10 @@ pub async fn fc_download_mod_and_install(
     let author = thunderstore_mod_string.split("-").next().unwrap();
 
     // Extract the mod to the mods directory
-    match thermite::core::manage::install_mod(author, &f, std::path::Path::new(&mods_directory))
-    {
+    match thermite::core::manage::install_mod(author, &f, std::path::Path::new(&mods_directory)) {
         Ok(()) => (),
         Err(err) => return Err(err.to_string()),
     };
-
 
     // Delete downloaded zip file
     std::fs::remove_file(path).unwrap();
