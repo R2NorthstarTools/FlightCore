@@ -9,7 +9,10 @@ use std::{
     time::Duration,
 };
 
-use app::{*, constants::{APP_USER_AGENT, MASTER_SERVER_URL, SERVER_BROWSER_ENDPOINT}};
+use app::{
+    constants::{APP_USER_AGENT, MASTER_SERVER_URL, SERVER_BROWSER_ENDPOINT},
+    *,
+};
 
 mod github;
 use github::release_notes::{
@@ -31,7 +34,6 @@ use mod_management::{
 mod northstar;
 use northstar::get_northstar_version_number;
 
-use serde::{Deserialize, Serialize};
 use tauri::Manager;
 use tauri_plugin_store::PluginBuilder;
 use tokio::time::sleep;
@@ -312,11 +314,9 @@ async fn clean_up_download_folder_caller(
     }
 }
 
-
 /// Gets server and playercount from master server API
 #[tauri::command]
 async fn get_server_player_count() -> Result<(i32, usize), String> {
-
     let url = format!("{MASTER_SERVER_URL}{SERVER_BROWSER_ENDPOINT}");
     let client = reqwest::Client::new();
     let res = client
