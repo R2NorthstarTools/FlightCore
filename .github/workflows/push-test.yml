@@ -14,6 +14,22 @@ jobs:
         run: |
           python3 scripts/check_version_numbers.py
 
+  # Ensure correct Rust code formatting
+  fmt:
+    name: format-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - run: rustup component add rustfmt
+      - uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --manifest-path src-tauri/Cargo.toml --all -- --check
 
   test-tauri:
     needs: ensure-same-version
@@ -48,11 +64,6 @@ jobs:
       with:
         workspaces: |
           src-tauri
-    - name: format-check
-      uses: actions-rs/cargo@v1
-      with:
-        command: fmt
-        args: --manifest-path src-tauri/Cargo.toml --all -- --check
     - name: install app dependencies and build it
       env:
         TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
