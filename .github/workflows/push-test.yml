@@ -48,6 +48,12 @@ jobs:
       with:
         workspaces: |
           src-tauri
+    - name: format-check
+      uses: actions-rs/cargo@v1
+      with:
+        path: src-tauri
+        command: fmt
+        args: --all -- --check
     - name: install app dependencies and build it
       env:
         TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
