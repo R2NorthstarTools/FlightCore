@@ -15,7 +15,7 @@ pub struct PullsApiResponseElement {
 #[tauri::command]
 pub async fn get_launcher_prs() -> Result<Vec<PullsApiResponseElement>, String> {
     let json_response = match fetch_github_releases_api(
-        "https://api.github.com/repos/R2Northstar/NorthstarMods/pulls",
+        "https://api.github.com/repos/R2Northstar/NorthstarLauncher/pulls",
     )
     .await
     {
