@@ -9,10 +9,15 @@ use std::{
     time::Duration,
 };
 
-use app::*;
+use app::{
+    constants::{APP_USER_AGENT, MASTER_SERVER_URL, SERVER_BROWSER_ENDPOINT},
+    *,
+};
 
 mod github;
-use github::release_notes::{check_is_flightcore_outdated, get_northstar_release_notes};
+use github::release_notes::{
+    check_is_flightcore_outdated, get_newest_flightcore_version, get_northstar_release_notes,
+};
 
 mod repair_and_verify;
 use repair_and_verify::{
@@ -21,7 +26,8 @@ use repair_and_verify::{
 
 mod mod_management;
 use mod_management::{
-    fc_download_mod_and_install, get_installed_mods_and_properties, set_mod_enabled_status,
+    delete_northstar_mod, delete_thunderstore_mod, fc_download_mod_and_install,
+    get_installed_mods_and_properties, set_mod_enabled_status,
 };
 
 mod northstar;
@@ -90,17 +96,20 @@ fn main() {
             update_northstar_caller,
             launch_northstar_caller,
             check_is_flightcore_outdated_caller,
-            get_log_list_caller,
-            verify_game_files_caller,
-            get_enabled_mods_caller,
-            set_mod_enabled_status_caller,
-            disable_all_but_core_caller,
+            get_log_list,
+            verify_game_files,
+            set_mod_enabled_status,
+            disable_all_but_core,
             is_debug_mode,
             get_northstar_release_notes,
             linux_checks,
-            get_installed_mods_caller,
+            get_installed_mods_and_properties,
             install_mod_caller,
             clean_up_download_folder_caller,
+            get_newest_flightcore_version,
+            delete_northstar_mod,
+            get_server_player_count,
+            delete_thunderstore_mod,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -274,43 +283,6 @@ async fn launch_northstar_caller(
 }
 
 #[tauri::command]
-/// Get list of Northstar logs
-async fn get_log_list_caller(game_install: GameInstall) -> Result<Vec<std::path::PathBuf>, String> {
-    get_log_list(game_install)
-}
-
-#[tauri::command]
-async fn verify_game_files_caller(game_install: GameInstall) -> Result<String, String> {
-    verify_game_files(game_install)
-}
-
-#[tauri::command]
-async fn get_enabled_mods_caller(
-    game_install: GameInstall,
-) -> Result<serde_json::value::Value, String> {
-    get_enabled_mods(game_install)
-}
-
-#[tauri::command]
-async fn set_mod_enabled_status_caller(
-    game_install: GameInstall,
-    mod_name: String,
-    is_enabled: bool,
-) -> Result<(), String> {
-    set_mod_enabled_status(game_install, mod_name, is_enabled)
-}
-
-#[tauri::command]
-async fn disable_all_but_core_caller(game_install: GameInstall) -> Result<(), String> {
-    disable_all_but_core(game_install)
-}
-
-#[tauri::command]
-async fn get_installed_mods_caller(game_install: GameInstall) -> Result<Vec<NorthstarMod>, String> {
-    get_installed_mods_and_properties(game_install)
-}
-
-#[tauri::command]
 /// Installs the specified mod
 async fn install_mod_caller(
     game_install: GameInstall,
@@ -338,4 +310,33 @@ async fn clean_up_download_folder_caller(
         Ok(()) => Ok(()),
         Err(err) => Err(err.to_string()),
     }
+}
+
+/// Gets server and playercount from master server API
+#[tauri::command]
+async fn get_server_player_count() -> Result<(i32, usize), String> {
+    let url = format!("{MASTER_SERVER_URL}{SERVER_BROWSER_ENDPOINT}");
+    let client = reqwest::Client::new();
+    let res = client
+        .get(url)
+        .header(reqwest::header::USER_AGENT, APP_USER_AGENT)
+        .send()
+        .await
+        .unwrap()
+        .text()
+        .await
+        .unwrap();
+
+    let ns_servers: Vec<NorthstarServer> =
+        serde_json::from_str(&res).expect("JSON was not well-formatted");
+
+    // Get server count
+    let server_count = ns_servers.len();
+
+    // Sum up player count
+    let total_player_count: i32 = ns_servers.iter().map(|server| server.player_count).sum();
+
+    dbg!((total_player_count, server_count));
+
+    Ok((total_player_count, server_count))
 }

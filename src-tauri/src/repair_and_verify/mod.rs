@@ -1,9 +1,13 @@
-use crate::{mod_management::{set_mod_enabled_status, rebuild_enabled_mods_json}, northstar::CORE_MODS};
+use crate::{
+    mod_management::{rebuild_enabled_mods_json, set_mod_enabled_status},
+    northstar::CORE_MODS,
+};
 use anyhow::anyhow;
 /// Contains various functions to repair common issues and verifying installation
 use app::{get_enabled_mods, GameInstall};
 
 /// Verifies Titanfall2 game files
+#[tauri::command]
 pub fn verify_game_files(game_install: GameInstall) -> Result<String, String> {
     dbg!(game_install);
     Err("TODO, not yet implemented".to_string())
@@ -11,8 +15,8 @@ pub fn verify_game_files(game_install: GameInstall) -> Result<String, String> {
 
 /// Disables all mods except core ones
 /// Enables core mods if disabled
+#[tauri::command]
 pub fn disable_all_but_core(game_install: GameInstall) -> Result<(), String> {
-
     // Rebuild `enabledmods.json` first to ensure all mods are added
     rebuild_enabled_mods_json(game_install.clone())?;
 
@@ -62,6 +66,8 @@ pub fn clean_up_download_folder(
     Ok(())
 }
 
+/// Get list of Northstar logs
+#[tauri::command]
 pub fn get_log_list(game_install: GameInstall) -> Result<Vec<std::path::PathBuf>, String> {
     let ns_log_folder = format!("{}/R2Northstar/logs", game_install.game_path);
 

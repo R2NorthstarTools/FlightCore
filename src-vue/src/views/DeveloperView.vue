@@ -111,7 +111,7 @@ export default defineComponent({
                 game_path: this.$store.state.game_path,
                 install_type: this.$store.state.install_type
             } as GameInstall;
-            await invoke("disable_all_but_core_caller", { gameInstall: game_install }).then((message) => {
+            await invoke("disable_all_but_core", { gameInstall: game_install }).then((message) => {
                 ElNotification({
                     title: 'Success',
                     message: "Disabled all mods but core",
@@ -133,7 +133,7 @@ export default defineComponent({
                 game_path: this.$store.state.game_path,
                 install_type: this.$store.state.install_type
             } as GameInstall;
-            await invoke("get_installed_mods_caller", { gameInstall: game_install }).then((message) => {
+            await invoke("get_installed_mods_and_properties", { gameInstall: game_install }).then((message) => {
                 // Simply console logging for now
                 // In the future we should display the installed mods somewhere
                 console.log(message);
@@ -162,7 +162,7 @@ export default defineComponent({
             } as GameInstall;
             let mod_to_install = this.mod_to_install_field_string;
             await invoke("install_mod_caller", { gameInstall: game_install, thunderstoreModString: mod_to_install }).then((message) => {
-                // Show user notificatio if mod install completed.
+                // Show user notification if mod install completed.
                 ElNotification({
                     title: `Installed ${mod_to_install}`,
                     message: message as string,
@@ -185,7 +185,7 @@ export default defineComponent({
                 install_type: this.$store.state.install_type
             } as GameInstall;
             await invoke("clean_up_download_folder_caller", { gameInstall: game_install, force: true }).then((message) => {
-                // Show user notificatio if mod install completed.
+                // Show user notification if task completed.
                 ElNotification({
                     title: `Done`,
                     message: `Done`,
