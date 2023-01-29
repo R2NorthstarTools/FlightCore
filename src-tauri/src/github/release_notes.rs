@@ -1,7 +1,7 @@
 use crate::constants::APP_USER_AGENT;
 use serde::{Deserialize, Serialize};
-use ts_rs::TS;
 use std::vec::Vec;
+use ts_rs::TS;
 
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
 #[ts(export)]
