@@ -50,7 +50,7 @@ export default {
     <nav id="fc_menu-bar">
       <!-- Navigation items -->
       <el-menu
-        default-active="/"
+        :default-active="$route.path"
         router
         mode="horizontal"
         id="fc__menu_items"
