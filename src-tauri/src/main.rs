@@ -15,7 +15,7 @@ use app::{
 };
 
 mod github;
-use github::pull_requests::{apply_launcher_pr, get_launcher_prs};
+use github::pull_requests::{apply_launcher_pr, get_launcher_prs, get_mods_prs};
 use github::release_notes::{
     check_is_flightcore_outdated, get_newest_flightcore_version, get_northstar_release_notes,
 };
@@ -113,6 +113,7 @@ fn main() {
             delete_thunderstore_mod,
             get_launcher_prs,
             apply_launcher_pr,
+            get_mods_prs,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

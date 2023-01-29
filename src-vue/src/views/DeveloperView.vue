@@ -64,6 +64,18 @@
                     </el-card>
                 </el-collapse-item>
             </el-collapse>
+
+            <el-collapse>
+                <el-collapse-item title="Mods PRs" name="1">
+                    <el-button type="primary" @click="getModsPRs">
+                        Get Mods PRs
+                    </el-button>
+                    <p v-if="pull_requests_mods.length === 0">No PRs loaded</p>
+                    <el-card v-else shadow="hover" v-for="pull_request in pull_requests_mods" v-bind:key="pull_request.url">
+                        <el-button type="primary" @click="installModsPR(pull_request)">Install</el-button> {{ pull_request.number }}: {{ pull_request.title }}
+                    </el-card>
+                </el-collapse-item>
+            </el-collapse>
         </el-scrollbar>
     </div>
 </template>
@@ -82,7 +94,10 @@ export default defineComponent({
     computed: {
         pull_requests_launcher(): PullsApiResponseElement[] {
             return this.$store.state.pull_requests_launcher;
-        }
+        },
+        pull_requests_mods(): PullsApiResponseElement[] {
+            return this.$store.state.pull_requests_mods;
+        },
     },
     data() {
         return {
@@ -248,9 +263,51 @@ export default defineComponent({
                     });
                 });
         },
+        async getModsPRs() {
+            await invoke<PullsApiResponseElement[]>("get_mods_prs").then((message) => {
+                console.log(message);
+                // Show user notification if mod install completed.
+                ElNotification({
+                    title: `Done`,
+                    message: `Loaded pull requests`,
+                    type: 'success',
+                    position: 'bottom-right'
+                });
+                this.$store.state.pull_requests_mods = message;
+            })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                });
+        },
         async installLauncherPR(pull_request: PullsApiResponseElement) {
             console.log(pull_request);
             await invoke("apply_launcher_pr", {prNumber: pull_request.number, gameInstallPath: this.$store.state.game_path}).then((message) => {
+                console.log(message);
+                // Show user notification if mod install completed.
+                ElNotification({
+                    title: `Done`,
+                    message: `Installed ${pull_request.number}: "${pull_request.title}"`,
+                    type: 'success',
+                    position: 'bottom-right'
+                });
+            })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                });
+        },
+        async installModsPR(pull_request: PullsApiResponseElement) {
+            console.log(pull_request);
+            await invoke("apply_mods_pr", {prNumber: pull_request.number, gameInstallPath: this.$store.state.game_path}).then((message) => {
                 console.log(message);
                 // Show user notification if mod install completed.
                 ElNotification({

@@ -72,6 +72,26 @@ pub async fn get_launcher_prs() -> Result<Vec<PullsApiResponseElement>, String> 
     Ok(pulls_response)
 }
 
+/// Gets mod PRs
+#[tauri::command]
+pub async fn get_mods_prs() -> Result<Vec<PullsApiResponseElement>, String> {
+    let json_response = match fetch_github_releases_api(
+        "https://api.github.com/repos/R2Northstar/NorthstarMods/pulls",
+    )
+    .await
+    {
+        Ok(result) => result,
+        Err(err) => return Err(err.to_string()),
+    };
+
+    let pulls_response: Vec<PullsApiResponseElement> = match serde_json::from_str(&json_response) {
+        Ok(res) => res,
+        Err(err) => return Err(err.to_string()),
+    };
+
+    Ok(pulls_response)
+}
+
 pub async fn check_github_api(url: &str) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
     println!("Checking GitHub API");
 

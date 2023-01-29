@@ -45,6 +45,7 @@ export interface FlightCoreStore {
     server_count: number,
 
     pull_requests_launcher: PullsApiResponseElement[],
+    pull_requests_mods: PullsApiResponseElement[],
 
     // user custom settings
     mods_per_page: number,
@@ -81,6 +82,7 @@ export const store = createStore<FlightCoreStore>({
             server_count: -1,
 
             pull_requests_launcher: [],
+            pull_requests_mods: [],
 
             mods_per_page: 20,
         }
