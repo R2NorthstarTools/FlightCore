@@ -15,10 +15,10 @@ use app::{
 };
 
 mod github;
+use github::pull_requests::{apply_launcher_pr, get_launcher_prs};
 use github::release_notes::{
     check_is_flightcore_outdated, get_newest_flightcore_version, get_northstar_release_notes,
 };
-use github::pull_requests::{apply_launcher_pr, get_launcher_prs};
 
 mod repair_and_verify;
 use repair_and_verify::{
