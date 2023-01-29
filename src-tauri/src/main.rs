@@ -15,7 +15,7 @@ use app::{
 };
 
 mod github;
-use github::pull_requests::{apply_launcher_pr, get_launcher_prs, get_mods_prs};
+use github::pull_requests::{apply_launcher_pr, apply_mods_pr, get_launcher_prs, get_mods_prs};
 use github::release_notes::{
     check_is_flightcore_outdated, get_newest_flightcore_version, get_northstar_release_notes,
 };
@@ -114,6 +114,7 @@ fn main() {
             get_launcher_prs,
             apply_launcher_pr,
             get_mods_prs,
+            apply_mods_pr,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
