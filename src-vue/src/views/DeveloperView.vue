@@ -58,8 +58,8 @@
                     <el-button type="primary" @click="getLauncherPRs">
                         Get launcher PRs
                     </el-button>
-                    <p v-if="pull_requests.length === 0">No PRs loaded</p>
-                    <el-card v-else shadow="hover" v-for="pull_request in pull_requests" v-bind:key="pull_request.url">
+                    <p v-if="pull_requests_launcher.length === 0">No PRs loaded</p>
+                    <el-card v-else shadow="hover" v-for="pull_request in pull_requests_launcher" v-bind:key="pull_request.url">
                         <el-button type="primary" @click="installLauncherPR(pull_request)">Install</el-button> {{ pull_request.number }}: {{ pull_request.title }}
                     </el-card>
                 </el-collapse-item>
@@ -80,8 +80,8 @@ const persistentStore = new Store('flight-core-settings.json');
 export default defineComponent({
     name: "DeveloperView",
     computed: {
-        pull_requests(): PullsApiResponseElement[] {
-            return this.$store.state.pull_requests;
+        pull_requests_launcher(): PullsApiResponseElement[] {
+            return this.$store.state.pull_requests_launcher;
         }
     },
     data() {
@@ -237,7 +237,7 @@ export default defineComponent({
                     type: 'success',
                     position: 'bottom-right'
                 });
-                this.$store.state.pull_requests = message;
+                this.$store.state.pull_requests_launcher = message;
             })
                 .catch((error) => {
                     ElNotification({
