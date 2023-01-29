@@ -312,7 +312,7 @@ export default defineComponent({
                 // Show user notification if mod install completed.
                 ElNotification({
                     title: `Done`,
-                    message: `Installed ${pull_request.number}: "${pull_request.title}"`,
+                    message: `Installed ${pull_request.number}: "${pull_request.title}"\nMake sure to launch via batch file or by specifying correct profile!`,
                     type: 'success',
                     position: 'bottom-right'
                 });
