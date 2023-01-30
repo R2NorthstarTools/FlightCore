@@ -67,6 +67,9 @@
 
             <el-collapse>
                 <el-collapse-item title="Mods PRs" name="1">
+                    <el-alert title="Warning" type="warning" :closable="false" show-icon>
+                        Mod PRs are installed into a separate profile. Make sure to launch via 'r2ns-launch-mod-pr-version.bat' or via '-profile=R2Northstar-PR-test-managed-folder' to actually run the PR version!
+                    </el-alert>
                     <el-button type="primary" @click="getModsPRs">
                         Get Mods PRs
                     </el-button>
