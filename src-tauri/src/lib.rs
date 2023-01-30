@@ -124,14 +124,14 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
 }
 
 /// Checks whether the provided path is a valid Titanfall2 gamepath by checking against a certain set of criteria
-pub fn check_is_valid_game_path(game_install_path: &str) -> Result<(), anyhow::Error> {
+pub fn check_is_valid_game_path(game_install_path: &str) -> Result<(), String> {
     let path_to_titanfall2_exe = format!("{}/Titanfall2.exe", game_install_path);
     let is_correct_game_path = std::path::Path::new(&path_to_titanfall2_exe).exists();
     println!("Titanfall2.exe exists in path? {}", is_correct_game_path);
 
     // Exit early if wrong game path
     if !is_correct_game_path {
-        return Err(anyhow!("Incorrect game path \"{}\"", game_install_path)); // Return error cause wrong game path
+        return Err(format!("Incorrect game path \"{}\"", game_install_path)); // Return error cause wrong game path
     }
     Ok(())
 }
