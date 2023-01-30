@@ -127,15 +127,8 @@ fn unzip(zip_file_name: &str) -> String {
         }
 
         if (*file.name()).ends_with('/') {
-            // println!("File {} extracted to \"{}\"", i, outpath.display());
             fs::create_dir_all(&outpath).unwrap();
         } else {
-            // println!(
-            //     "File {} extracted to \"{}\" ({} bytes)",
-            //     i,
-            //     outpath.display(),
-            //     file.size()
-            // );
             if let Some(p) = outpath.parent() {
                 if !p.exists() {
                     fs::create_dir_all(p).unwrap();
