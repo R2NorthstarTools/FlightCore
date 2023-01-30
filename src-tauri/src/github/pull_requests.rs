@@ -143,8 +143,6 @@ fn unzip(zip_file_name: &str) -> String {
 }
 
 pub async fn check_github_api(url: &str) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
-    println!("Checking GitHub API");
-
     let client = reqwest::Client::new();
     let res = client
         .get(url)
@@ -157,14 +155,12 @@ pub async fn check_github_api(url: &str) -> Result<serde_json::Value, Box<dyn st
         .unwrap();
 
     let json: serde_json::Value = serde_json::from_str(&res).expect("JSON was not well-formatted");
-    println!("Done checking GitHub API");
 
     Ok(json)
 }
 
 /// Downloads a file from given URL
 async fn download_zip(download_url: String, location: String) -> Result<(), anyhow::Error> {
-    println!("Downloading file");
     let client = reqwest::Client::new();
     let resp = client
         .get(download_url)
@@ -174,7 +170,6 @@ async fn download_zip(download_url: String, location: String) -> Result<(), anyh
 
     // Error out earlier if non-successful response
     if !resp.status().is_success() {
-        println!("Status: {}", resp.status());
         // Return error cause wrong game path
         return Err(anyhow!(
             "Couldn't download zip. Received error code \"{}\"",
@@ -187,7 +182,6 @@ async fn download_zip(download_url: String, location: String) -> Result<(), anyh
     let bytes = resp.bytes().await?;
     let mut cursor = std::io::Cursor::new(bytes);
     std::io::copy(&mut cursor, &mut out)?;
-    println!("Download done");
     Ok(())
 }
 
@@ -316,7 +310,6 @@ async fn get_launcher_download_link(
             if workflow_run.head_sha == pull_request.head.sha {
                 // Check artifacts
                 let api_url = format!("https://api.github.com/repos/R2Northstar/NorthstarLauncher/actions/runs/{}/artifacts", workflow_run.id);
-                println!("Checking: {}", api_url);
                 let artifacts_response: ArtifactsResponse = serde_json::from_value(
                     check_github_api(&api_url).await.expect("Failed request"),
                 )
@@ -366,9 +359,6 @@ fn add_batch_file(game_install_path: &str) {
 /// Downloads selected launcher PR and extracts it into game install path
 #[tauri::command]
 pub async fn apply_launcher_pr(pr_number: i64, game_install_path: &str) -> Result<(), String> {
-    println!("{}", pr_number);
-    println!("{}", game_install_path);
-
     // Exit early if wrong game path
     check_is_valid_game_path(game_install_path)?;
 
@@ -376,8 +366,6 @@ pub async fn apply_launcher_pr(pr_number: i64, game_install_path: &str) -> Resul
 
     // get download link
     let download_url = get_launcher_download_link(pr_number, pulls_response).await?;
-
-    println!("{}", download_url);
 
     // download
     match download_zip(download_url, ".".to_string()).await {
@@ -387,11 +375,6 @@ pub async fn apply_launcher_pr(pr_number: i64, game_install_path: &str) -> Resul
 
     // extract
     let zip_extract_folder_name = unzip_launcher_zip("ns-dev-test-helper-temp-pr-files.zip");
-
-    println!("Zip extract done");
-
-    println!("Deleting temp zip download folder");
-
     fs::remove_file("ns-dev-test-helper-temp-pr-files.zip").unwrap();
 
     // Copy downloaded folder to game install folder
@@ -402,22 +385,14 @@ pub async fn apply_launcher_pr(pr_number: i64, game_install_path: &str) -> Resul
         }
     }
 
-    println!("Deleting old unzipped folder");
-
-    // Delete old copy
+    // Delete old unzipped
     fs::remove_dir_all(zip_extract_folder_name).unwrap();
-
-    println!("All done :D");
-
     Ok(())
 }
 
 /// Downloads selected mods PR and extracts it into profile in game install path
 #[tauri::command]
 pub async fn apply_mods_pr(pr_number: i64, game_install_path: &str) -> Result<(), String> {
-    println!("{}", pr_number);
-    println!("{}", game_install_path);
-
     // Exit early if wrong game path
     check_is_valid_game_path(game_install_path)?;
 
@@ -428,22 +403,14 @@ pub async fn apply_mods_pr(pr_number: i64, game_install_path: &str) -> Result<()
         Err(err) => return Err(err.to_string()),
     };
 
-    println!("{}", download_url);
-
     match download_zip(download_url, ".".to_string()).await {
         Ok(()) => (),
         Err(err) => return Err(err.to_string()),
     };
 
+    // Extract folder and delete zip
     let zip_extract_folder_name = unzip("ns-dev-test-helper-temp-pr-files.zip");
-
-    println!("Zip extract done");
-
-    println!("Deleting temp zip download folder");
-
     fs::remove_file("ns-dev-test-helper-temp-pr-files.zip").unwrap();
-
-    // TODO: delete downloaded zip folder again here
 
     // Delete previously managed folder
     if std::fs::remove_dir_all(format!(
@@ -458,13 +425,11 @@ pub async fn apply_mods_pr(pr_number: i64, game_install_path: &str) -> Result<()
         ))
         .exists()
         {
-            println!("Failed removing previous dir"); // TODO check if exists and only panic if no exists
+            println!("Failed removing previous dir");
         } else {
             println!("Failed removing folder that doesn't exist. Probably cause first run");
         }
     };
-
-    println!("Copying files to Titanfall2 install");
 
     // Copy downloaded folder to game install folder
     copy_dir_all(
@@ -476,16 +441,11 @@ pub async fn apply_mods_pr(pr_number: i64, game_install_path: &str) -> Result<()
     )
     .unwrap();
 
-    println!("Deleting old unzipped folder");
-
     // Delete old copy
     std::fs::remove_dir_all(zip_extract_folder_name).unwrap();
 
-    println!("Adding batch file to 1-click-run PR");
-
+    // Add batch file to launch right profile
     add_batch_file(game_install_path);
-
-    println!("All done :D");
 
     Ok(())
 }
