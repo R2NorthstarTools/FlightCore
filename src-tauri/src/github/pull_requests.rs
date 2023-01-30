@@ -1,6 +1,7 @@
 use crate::github::release_notes::fetch_github_releases_api;
 
 use anyhow::anyhow;
+use app::check_is_valid_game_path;
 use app::constants::APP_USER_AGENT;
 use serde::{Deserialize, Serialize};
 use std::fs;
@@ -362,19 +363,6 @@ fn add_batch_file(game_install_path: &str) {
     }
 }
 
-/// Checks whether the provided path is a valid Titanfall2 gamepath by checking against a certain set of criteria
-fn check_game_path(game_install_path: &str) -> Result<(), String> {
-    let is_correct_game_path =
-        std::path::Path::new(&format!("{}/Titanfall2.exe", game_install_path)).exists();
-    println!("Titanfall2.exe exists in path? {}", is_correct_game_path);
-
-    // Exit early if wrong game path
-    if !is_correct_game_path {
-        return Err(format!("Incorrect game path \"{}\"", game_install_path)); // Return error cause wrong game path
-    }
-    Ok(())
-}
-
 /// Downloads selected launcher PR and extracts it into game install path
 #[tauri::command]
 pub async fn apply_launcher_pr(pr_number: i64, game_install_path: &str) -> Result<(), String> {
@@ -382,7 +370,7 @@ pub async fn apply_launcher_pr(pr_number: i64, game_install_path: &str) -> Resul
     println!("{}", game_install_path);
 
     // Exit early if wrong game path
-    // check_game_path(game_install_path)?;
+    check_is_valid_game_path(game_install_path)?;
 
     let pulls_response = get_launcher_prs().await?;
 
@@ -431,7 +419,7 @@ pub async fn apply_mods_pr(pr_number: i64, game_install_path: &str) -> Result<()
     println!("{}", game_install_path);
 
     // Exit early if wrong game path
-    check_game_path(game_install_path)?;
+    check_is_valid_game_path(game_install_path)?;
 
     let pulls_response = get_mods_prs().await?;
 
