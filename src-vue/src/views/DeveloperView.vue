@@ -40,6 +40,10 @@
                 Disable all but core mods
             </el-button>
 
+            <el-button type="primary" @click="forceInstallNorthstar">
+                Force reinstall Northstar
+            </el-button>
+
             <el-button type="primary" @click="getInstalledMods">
                 Get installed mods
             </el-button>
@@ -61,6 +65,7 @@ import { invoke } from "@tauri-apps/api";
 import { ElNotification } from "element-plus";
 import { GameInstall } from "../utils/GameInstall";
 import { Store } from 'tauri-plugin-store-api';
+import { ReleaseCanal } from "../utils/ReleaseCanal";
 const persistentStore = new Store('flight-core-settings.json');
 
 export default defineComponent({
@@ -207,7 +212,22 @@ export default defineComponent({
             await persistentStore.clear();
             // ...and save
             await persistentStore.save();
-        }
+        },
+        async forceInstallNorthstar() {
+            let game_install = {
+                game_path: this.$store.state.game_path,
+                install_type: this.$store.state.install_type
+            } as GameInstall;
+            let install_northstar_result = invoke("install_northstar_caller", { gamePath: game_install.game_path, northstarPackageName: ReleaseCanal.RELEASE });
+            await install_northstar_result
+                .then((message) => {
+                    console.log(message);
+                })
+                .catch((error) => {
+                    console.error(error);
+                    alert(error);
+                });
+        },
     }
 });
 </script>
