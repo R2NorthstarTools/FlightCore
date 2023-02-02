@@ -71,6 +71,7 @@ pub fn clean_up_download_folder(
 pub fn get_log_list(game_install: GameInstall) -> Result<Vec<std::path::PathBuf>, String> {
     let ns_log_folder = format!("{}/R2Northstar/logs", game_install.game_path);
 
+    // List files in logs folder
     let paths = match std::fs::read_dir(ns_log_folder) {
         Ok(paths) => paths,
         Err(_err) => return Err("No logs folder found".to_string()),
