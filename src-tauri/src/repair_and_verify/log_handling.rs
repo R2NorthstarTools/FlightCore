@@ -1,0 +1,27 @@
+use regex::Regex;
+
+/// Parse logs for installed mods
+#[tauri::command]
+pub async fn parse_given_log_text_for_installed_mods(
+    log_text: String,
+) -> Result<Vec<String>, String> {
+    // Regex to capture mod loading
+    let regex = Regex::new(r"(?m)Loaded mod (.*) successfully\n").unwrap();
+
+    // Run regex, result will be an iterator over tuples containing the start and end indices for each match in the string
+    let result = regex.captures_iter(&log_text);
+
+    let mut mods = Vec::new();
+    for mat in result {
+        // Get the captured string, which is the first and only capturing group in the regex
+        match mat.get(1) {
+            Some(mod_name) => {
+                mods.push(mod_name.as_str().to_string());
+            }
+            None => println!("Failed parsing {:?}", mat), // log on failure
+        };
+    }
+
+    // Return the captured mod names
+    return Ok(mods);
+}

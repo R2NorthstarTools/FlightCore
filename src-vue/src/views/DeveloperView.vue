@@ -51,6 +51,19 @@
             <el-button type="primary" @click="clearFlightCorePersistentStore">
                 Delete FlightCore persistent store
             </el-button>
+
+            <h3>Tech support</h3>
+
+            <el-button type="primary" @click="parseGivenLogTextForMods">
+                Parse logs
+            </el-button>
+            <el-input
+                v-model="log_content"
+                type="textarea"
+                :rows="5"
+                placeholder="Paste log content here"
+
+            />
         </el-scrollbar>
     </div>
 </template>
@@ -63,11 +76,15 @@ import { GameInstall } from "../utils/GameInstall";
 import { Store } from 'tauri-plugin-store-api';
 const persistentStore = new Store('flight-core-settings.json');
 
+import { ref } from 'vue'
+const textarea = ref('')
+
 export default defineComponent({
     name: "DeveloperView",
     data() {
         return {
             mod_to_install_field_string : "",
+            log_content : "",
         }
     },
     methods: {
@@ -207,7 +224,29 @@ export default defineComponent({
             await persistentStore.clear();
             // ...and save
             await persistentStore.save();
-        }
+        },
+        async parseGivenLogTextForMods() {
+            let current_log_content = this.log_content;
+            await invoke("parse_given_log_text_for_installed_mods", { logText: current_log_content })
+                .then((message) => {
+                    console.log(message); // TODO present better here
+                    // Show user notification if task completed.
+                    ElNotification({
+                        title: `Done`,
+                        message: `${message}`,
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+                })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                });
+        },
     }
 });
 </script>

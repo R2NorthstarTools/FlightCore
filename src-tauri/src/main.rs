@@ -37,6 +37,8 @@ use tauri::Manager;
 use tauri_plugin_store::PluginBuilder;
 use tokio::time::sleep;
 
+use crate::repair_and_verify::log_handling::parse_given_log_text_for_installed_mods;
+
 #[derive(Default)]
 struct Counter(Arc<Mutex<i32>>);
 
@@ -110,6 +112,7 @@ fn main() {
             delete_northstar_mod,
             get_server_player_count,
             delete_thunderstore_mod,
+            parse_given_log_text_for_installed_mods,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
