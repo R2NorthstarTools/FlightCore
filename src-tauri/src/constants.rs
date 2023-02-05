@@ -22,3 +22,6 @@ pub const BLACKLISTED_MODS: [&str; 3] = [
     "northstar-NorthstarReleaseCandidate",
     "ebkr-r2modman",
 ];
+
+// Titanfall2 game IDs on Origin/EA-App
+pub const TITANFALL2_ORIGIN_IDS: [&str; 2] = ["Origin.OFR.50.0001452", "Origin.OFR.50.0001456"];

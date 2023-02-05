@@ -1,9 +1,7 @@
 /// Windows specific code
 use anyhow::{anyhow, Result};
 
-use crate::check_is_valid_game_path;
-
-const TITANFALL2_ORIGIN_IDS: [&str; 2] = ["Origin.OFR.50.0001452", "Origin.OFR.50.0001456"];
+use crate::{check_is_valid_game_path, constants::TITANFALL2_ORIGIN_IDS};
 
 /// Runs a powershell command and parses output to get Titanfall2 install location on Origin
 pub fn origin_install_location_detection() -> Result<String, anyhow::Error> {
