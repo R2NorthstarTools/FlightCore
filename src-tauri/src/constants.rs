@@ -14,3 +14,11 @@ pub const CORE_MODS: [&str; 3] = [
     "Northstar.Custom",
     "Northstar.CustomServers",
 ];
+
+// List of Thunderstoremods that shouldn't be installable
+// as they behave different than common Squirrel mods
+pub const BLACKLISTED_MODS: [&str; 3] = [
+    "northstar-Northstar",
+    "northstar-NorthstarReleaseCandidate",
+    "ebkr-r2modman",
+];

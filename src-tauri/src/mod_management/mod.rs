@@ -1,5 +1,6 @@
-use app::constants::CORE_MODS;
 // This file contains various mod management functions
+
+use app::constants::{BLACKLISTED_MODS, CORE_MODS};
 use async_recursion::async_recursion;
 
 use anyhow::{anyhow, Result};
@@ -12,12 +13,6 @@ use app::get_enabled_mods;
 use app::GameInstall;
 
 use json5;
-
-pub const BLACKLISTED_MODS: [&str; 3] = [
-    "northstar-Northstar",
-    "northstar-NorthstarReleaseCandidate",
-    "ebkr-r2modman",
-];
 
 #[derive(Debug, Clone)]
 struct ParsedThunderstoreModString {
