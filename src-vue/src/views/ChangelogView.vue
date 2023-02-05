@@ -23,7 +23,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import ReleaseInfo from '../utils/ReleaseInfo';
+import { ReleaseInfo } from "../../../src-tauri/bindings/ReleaseInfo";
 import { marked } from "marked";
 
 
