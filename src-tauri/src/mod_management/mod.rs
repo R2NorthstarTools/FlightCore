@@ -57,6 +57,8 @@ pub struct ModJson {
     name: String,
     #[serde(rename = "ThunderstoreModString")]
     thunderstore_mod_string: Option<String>,
+    #[serde(rename = "Version")]
+    version: Option<String>,
 }
 
 /// Gets all currently installed and enabled/disabled mods to rebuild `enabledmods.json`
@@ -212,6 +214,7 @@ fn parse_installed_mods(game_install: GameInstall) -> Result<Vec<NorthstarMod>, 
 
         let ns_mod = NorthstarMod {
             name: parsed_mod_json.name,
+            version: parsed_mod_json.version,
             thunderstore_mod_string: thunderstore_mod_string,
             enabled: false, // Placeholder
             directory: mod_directory,

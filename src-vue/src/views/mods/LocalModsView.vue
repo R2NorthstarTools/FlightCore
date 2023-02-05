@@ -13,7 +13,7 @@
                         <el-button type="danger">Delete</el-button>
                     </template>
                 </el-popconfirm>
-                {{ mod.name }}
+                {{ mod.name }} (v{{ mod.version }})
             </el-card>
         </div>
     </el-scrollbar>
