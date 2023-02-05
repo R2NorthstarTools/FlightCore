@@ -192,9 +192,7 @@ async fn do_install(nmod: &thermite::model::ModVersion, game_path: &std::path::P
     let download_path = format!("{}/{}", download_directory.clone(), filename);
     println!("{}", download_path);
 
-    let nfile = thermite::core::manage::download_file(&nmod.url, download_path)
-        .await
-        .unwrap();
+    let nfile = thermite::core::manage::download_file(&nmod.url, download_path).unwrap();
 
     println!("Extracting Northstar...");
     extract(nfile, game_path)?;
@@ -223,7 +221,7 @@ pub async fn install_northstar(
         None => "Northstar".to_string(),
     };
 
-    let index = thermite::api::get_package_index().await.unwrap().to_vec();
+    let index = thermite::api::get_package_index().unwrap().to_vec();
     let nmod = index
         .iter()
         .find(|f| f.name.to_lowercase() == northstar_package_name.to_lowercase())
