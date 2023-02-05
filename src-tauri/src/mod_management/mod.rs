@@ -51,6 +51,26 @@ pub struct ThunderstoreManifest {
     version_number: String,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct ModJson {
+    #[serde(rename = "Name")]
+    name: String,
+    // Currently unused fields commented out
+    // Comment in when needed
+    // #[serde(rename = "Description")]
+    // description: Option<String>,
+    // #[serde(rename = "Version")]
+    // version: Option<String>,
+    // #[serde(rename = "LoadPriority")]
+    // load_priority: Option<i32>,
+    // #[serde(rename = "ThunderstoreModString")]
+    // thunderstore_mod_string: Option<String>, // Added by older version of FlightCore
+    // #[serde(rename = "Authors")]
+    // authors: Option<Vec<String>>,
+    // #[serde(rename = "RequiredOnClient")]
+    // require_on_client: Option<bool>,
+}
+
 /// Gets all currently installed and enabled/disabled mods to rebuild `enabledmods.json`
 pub fn rebuild_enabled_mods_json(game_install: GameInstall) -> Result<(), String> {
     let enabledmods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
@@ -124,22 +144,6 @@ pub fn set_mod_enabled_status(
     Ok(())
 }
 
-/// Parses `mod.json` for mod name
-// TODO: Maybe pass PathBuf or serde json object
-fn parse_mod_json_for_mod_name(mod_json_path: String) -> Result<String, anyhow::Error> {
-    // Read file into string and parse it
-    let data = std::fs::read_to_string(mod_json_path)?;
-    let parsed_json: serde_json::Value = json5::from_str(&data)?;
-
-    // Extract mod name
-    let mod_name = match parsed_json.get("Name").and_then(|value| value.as_str()) {
-        Some(name) => name,
-        None => return Err(anyhow!("No name found")),
-    };
-
-    Ok(mod_name.to_string())
-}
-
 /// Parses `mod.json` for Thunderstore mod string
 /// This is a legacy function as nowadays `manifest.json` should be in Northtar mods folder and read from there
 // TODO: Maybe pass PathBuf or serde json object
@@ -193,12 +197,12 @@ fn parse_for_thunderstore_mod_string(nsmod_path: String) -> Result<String, anyho
 }
 
 /// Parse `mods` folder for installed mods.
-fn parse_installed_mods(game_install: GameInstall) -> Result<Vec<NorthstarMod>, String> {
+fn parse_installed_mods(game_install: GameInstall) -> Result<Vec<NorthstarMod>, anyhow::Error> {
     let ns_mods_folder = format!("{}/R2Northstar/mods/", game_install.game_path);
 
     let paths = match std::fs::read_dir(ns_mods_folder) {
         Ok(paths) => paths,
-        Err(_err) => return Err("No mods folder found".to_string()),
+        Err(_err) => return Err(anyhow!("No mods folder found")),
     };
 
     let mut directories: Vec<PathBuf> = Vec::new();
@@ -224,8 +228,11 @@ fn parse_installed_mods(game_install: GameInstall) -> Result<Vec<NorthstarMod>, 
         }
 
         // Parse mod.json and get mod name
-        let mod_name = match parse_mod_json_for_mod_name(mod_json_path.clone()) {
-            Ok(mod_name) => mod_name,
+
+        // Read file into string and parse it
+        let data = std::fs::read_to_string(mod_json_path.clone())?;
+        let parsed_mod_json: ModJson = match json5::from_str(&data) {
+            Ok(parsed_json) => parsed_json,
             Err(err) => {
                 println!("Failed parsing {} with {}", mod_json_path, err.to_string());
                 continue;
@@ -240,7 +247,7 @@ fn parse_installed_mods(game_install: GameInstall) -> Result<Vec<NorthstarMod>, 
         let mod_directory = directory.to_str().unwrap().to_string();
 
         let ns_mod = NorthstarMod {
-            name: mod_name,
+            name: parsed_mod_json.name,
             thunderstore_mod_string: thunderstore_mod_string,
             enabled: false, // Placeholder
             directory: mod_directory,
@@ -261,7 +268,10 @@ pub fn get_installed_mods_and_properties(
     game_install: GameInstall,
 ) -> Result<Vec<NorthstarMod>, String> {
     // Get actually installed mods
-    let found_installed_mods = parse_installed_mods(game_install.clone())?;
+    let found_installed_mods = match parse_installed_mods(game_install.clone()) {
+        Ok(res) => res,
+        Err(err) => return Err(err.to_string()),
+    };
 
     // Get enabled mods as JSON
     let enabled_mods: serde_json::Value = match get_enabled_mods(game_install) {
