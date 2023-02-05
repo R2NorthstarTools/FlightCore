@@ -57,18 +57,6 @@ pub struct ModJson {
     name: String,
     #[serde(rename = "ThunderstoreModString")]
     thunderstore_mod_string: Option<String>,
-    // Currently unused fields commented out
-    // Comment in when needed
-    // #[serde(rename = "Description")]
-    // description: Option<String>,
-    // #[serde(rename = "Version")]
-    // version: Option<String>,
-    // #[serde(rename = "LoadPriority")]
-    // load_priority: Option<i32>,
-    // #[serde(rename = "Authors")]
-    // authors: Option<Vec<String>>,
-    // #[serde(rename = "RequiredOnClient")]
-    // require_on_client: Option<bool>,
 }
 
 /// Gets all currently installed and enabled/disabled mods to rebuild `enabledmods.json`
