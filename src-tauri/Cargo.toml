@@ -1,6 +1,6 @@
 [package]
 name = "app"
-version = "1.6.0"
+version = "1.6.1"
 description = "A Tauri App"
 authors = ["you"]
 license = ""
@@ -44,6 +44,8 @@ async-recursion = "1.0.0"
 game-scanner = "1.1.4"
 # For parsing timestamps
 chrono = "0.4.23"
+# TypeScript bindings
+ts-rs = "6.1"
 
 [features]
 # by default Tauri runs in production mode
