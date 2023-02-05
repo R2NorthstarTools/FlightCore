@@ -77,9 +77,6 @@ import { Store } from 'tauri-plugin-store-api';
 import { ParsedLogResults } from "../../../src-tauri/bindings/ParsedLogResults";
 const persistentStore = new Store('flight-core-settings.json');
 
-import { ref } from 'vue'
-const textarea = ref('')
-
 export default defineComponent({
     name: "DeveloperView",
     data() {
