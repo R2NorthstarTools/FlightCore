@@ -158,6 +158,26 @@ else {
 
 ```
 
+### Auto-generating TypeScript bindings for Rust types
+
+This codebases uses [`ts-rs`](https://crates.io/crates/ts-rs) to generate TypeScript interfaces from Rust code.
+
+To generate new bindings, [use the appropriate macros](https://docs.rs/ts-rs/6.2.1/ts_rs/#get-started)
+
+```Rust
+use ts_rs::TS;
+
+#[derive(TS)]
+#[ts(export)]
+struct User {
+    user_id: i32,
+    first_name: String,
+    last_name: String,
+}
+```
+
+then simply run `cargo test`. The generated bindings are placed in `src-tauri/bindings/`. Make sure to add and commit them as well!
+
 ## Other
 
 This repo uses [EditorConfig](https://editorconfig.org/) to define some basic formatting rules. Find a plugin for your IDE [here](https://editorconfig.org/#download).

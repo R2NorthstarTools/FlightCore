@@ -1,15 +1,18 @@
 use crate::constants::APP_USER_AGENT;
 use serde::{Deserialize, Serialize};
 use std::vec::Vec;
+use ts_rs::TS;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
 pub struct ReleaseInfo {
     pub name: String,
     pub published_at: String,
     pub body: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
 pub struct FlightCoreVersion {
     tag_name: String,
     published_at: String,
