@@ -64,6 +64,25 @@
                 placeholder="Paste log content here"
 
             />
+            <div>
+                <el-table :data="logResults">
+                    <el-table-column prop="northstar_launcher_version"
+                        label="Northstar Launcher Version"></el-table-column>
+                    <el-table-column prop="installed_mods" label="Installed and enabled/disabled Mods">
+                        <template v-slot="{ row }">
+                            <ul>
+                                <li v-for="mod in row.installed_mods">
+                                    <el-icon class="no-inherit">
+                                        <Select v-if="mod.enabled" />
+                                        <Close v-else />
+                                    </el-icon>
+                                    {{ mod.mod_name }}
+                                </li>
+                            </ul>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </div>
         </el-scrollbar>
     </div>
 </template>
@@ -75,6 +94,7 @@ import { ElNotification } from "element-plus";
 import { GameInstall } from "../utils/GameInstall";
 import { Store } from 'tauri-plugin-store-api';
 import { ParsedLogResults } from "../../../src-tauri/bindings/ParsedLogResults";
+import { ParsedModFromLog } from "../../../src-tauri/bindings/ParsedModFromLog";
 const persistentStore = new Store('flight-core-settings.json');
 
 export default defineComponent({
@@ -83,6 +103,7 @@ export default defineComponent({
         return {
             mod_to_install_field_string : "",
             log_content : "",
+            logResults: [] as ParsedLogResults[]
         }
     },
     methods: {
@@ -228,6 +249,7 @@ export default defineComponent({
             await invoke<[ParsedLogResults]>("parse_given_log_text", { logText: current_log_content })
                 .then((message) => {
                     console.log(message); // TODO present better here
+                    this.logResults.push(message);
                     // Show user notification if task completed.
                     ElNotification({
                         title: `Done`,
