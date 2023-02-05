@@ -74,6 +74,7 @@ import { invoke } from "@tauri-apps/api";
 import { ElNotification } from "element-plus";
 import { GameInstall } from "../utils/GameInstall";
 import { Store } from 'tauri-plugin-store-api';
+import { ParsedLogResults } from "../../../src-tauri/bindings/ParsedLogResults";
 const persistentStore = new Store('flight-core-settings.json');
 
 import { ref } from 'vue'
@@ -227,7 +228,7 @@ export default defineComponent({
         },
         async parseGivenLogTextForMods() {
             let current_log_content = this.log_content;
-            await invoke("parse_given_log_text_for_installed_mods", { logText: current_log_content })
+            await invoke<[ParsedLogResults]>("parse_given_log_text_for_installed_mods", { logText: current_log_content })
                 .then((message) => {
                     console.log(message); // TODO present better here
                     // Show user notification if task completed.

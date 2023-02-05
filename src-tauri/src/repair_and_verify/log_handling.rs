@@ -1,10 +1,18 @@
 use regex::Regex;
+use serde::{Deserialize, Serialize};
+use ts_rs::TS;
+
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
+pub struct ParsedLogResults {
+    installed_mods: Vec<String>,
+}
 
 /// Parse logs for installed mods
 #[tauri::command]
 pub async fn parse_given_log_text_for_installed_mods(
     log_text: String,
-) -> Result<Vec<String>, String> {
+) -> Result<ParsedLogResults, String> {
     // Regex to capture mod loading
     let regex = Regex::new(r"(?m)Loaded mod (.*) successfully\n").unwrap();
 
@@ -22,6 +30,10 @@ pub async fn parse_given_log_text_for_installed_mods(
         };
     }
 
+    let parsed_log_results = ParsedLogResults {
+        installed_mods: mods,
+    };
+
     // Return the captured mod names
-    return Ok(mods);
+    return Ok(parsed_log_results);
 }
