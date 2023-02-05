@@ -9,10 +9,7 @@ pub struct ParsedLogResults {
 }
 
 /// Parse logs for installed mods
-#[tauri::command]
-pub async fn parse_given_log_text_for_installed_mods(
-    log_text: String,
-) -> Result<ParsedLogResults, String> {
+fn parse_given_log_text_for_installed_mods(log_text: String) -> Result<Vec<String>, String> {
     // Regex to capture mod loading
     let regex = Regex::new(r"(?m)Loaded mod (.*) successfully\n").unwrap();
 
@@ -30,10 +27,17 @@ pub async fn parse_given_log_text_for_installed_mods(
         };
     }
 
-    let parsed_log_results = ParsedLogResults {
-        installed_mods: mods,
-    };
-
     // Return the captured mod names
+    return Ok(mods);
+}
+
+/// Parse logs for installed mods
+#[tauri::command]
+pub async fn parse_given_log_text(log_text: String) -> Result<ParsedLogResults, String> {
+    let installed_mods = parse_given_log_text_for_installed_mods(log_text)?;
+
+    let parsed_log_results = ParsedLogResults { installed_mods };
+
+    // Return the parsed results
     return Ok(parsed_log_results);
 }
