@@ -55,6 +55,8 @@ pub struct ThunderstoreManifest {
 pub struct ModJson {
     #[serde(rename = "Name")]
     name: String,
+    #[serde(rename = "ThunderstoreModString")]
+    thunderstore_mod_string: Option<String>,
     // Currently unused fields commented out
     // Comment in when needed
     // #[serde(rename = "Description")]
@@ -63,8 +65,6 @@ pub struct ModJson {
     // version: Option<String>,
     // #[serde(rename = "LoadPriority")]
     // load_priority: Option<i32>,
-    // #[serde(rename = "ThunderstoreModString")]
-    // thunderstore_mod_string: Option<String>, // Added by older version of FlightCore
     // #[serde(rename = "Authors")]
     // authors: Option<Vec<String>>,
     // #[serde(rename = "RequiredOnClient")]
@@ -144,39 +144,10 @@ pub fn set_mod_enabled_status(
     Ok(())
 }
 
-/// Parses `mod.json` for Thunderstore mod string
-/// This is a legacy function as nowadays `manifest.json` should be in Northtar mods folder and read from there
-// TODO: Maybe pass PathBuf or serde json object
-fn parse_mod_json_for_thunderstore_mod_string(
-    mod_json_path: String,
-) -> Result<String, anyhow::Error> {
-    // Read file into string and parse it
-    let data = std::fs::read_to_string(mod_json_path)?;
-    let parsed_json: serde_json::Value = json5::from_str(&data)?;
-
-    // Extract TS mod string
-    let thunderstore_mod_string = match parsed_json
-        .get("ThunderstoreModString")
-        .and_then(|value| value.as_str())
-    {
-        Some(thunderstore_mod_string) => thunderstore_mod_string,
-        None => return Err(anyhow!("No ThunderstoreModString found")),
-    };
-
-    Ok(thunderstore_mod_string.to_string())
-}
-
 /// Parses `manifest.json` for Thunderstore mod string
 fn parse_for_thunderstore_mod_string(nsmod_path: String) -> Result<String, anyhow::Error> {
-    let mod_json_path = format!("{}/mod.json", nsmod_path);
     let manifest_json_path = format!("{}/manifest.json", nsmod_path);
     let ts_author_txt_path = format!("{}/thunderstore_author.txt", nsmod_path);
-
-    // Attempt legacy method for getting Thunderstore string first
-    match parse_mod_json_for_thunderstore_mod_string(mod_json_path) {
-        Ok(thunderstore_mod_string) => return Ok(thunderstore_mod_string),
-        Err(_err) => (),
-    }
 
     // Check if `manifest.json` exists and parse
     let data = std::fs::read_to_string(manifest_json_path)?;
@@ -239,9 +210,14 @@ fn parse_installed_mods(game_install: GameInstall) -> Result<Vec<NorthstarMod>, 
             }
         };
         // Get Thunderstore mod string if it exists
-        let thunderstore_mod_string = match parse_for_thunderstore_mod_string(directory_str) {
-            Ok(thunderstore_mod_string) => Some(thunderstore_mod_string),
-            Err(_err) => None,
+        let thunderstore_mod_string = match parsed_mod_json.thunderstore_mod_string {
+            // Attempt legacy method for getting Thunderstore string first
+            Some(ts_mod_string) => Some(ts_mod_string),
+            // Legacy method failed
+            None => match parse_for_thunderstore_mod_string(directory_str) {
+                Ok(thunderstore_mod_string) => Some(thunderstore_mod_string),
+                Err(_err) => None,
+            },
         };
         // Get directory path
         let mod_directory = directory.to_str().unwrap().to_string();
