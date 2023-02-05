@@ -1,3 +1,4 @@
+use app::constants::CORE_MODS;
 // This file contains various mod management functions
 use async_recursion::async_recursion;
 
@@ -11,8 +12,6 @@ use app::get_enabled_mods;
 use app::GameInstall;
 
 use json5;
-
-use crate::northstar::CORE_MODS;
 
 pub const BLACKLISTED_MODS: [&str; 3] = [
     "northstar-Northstar",
