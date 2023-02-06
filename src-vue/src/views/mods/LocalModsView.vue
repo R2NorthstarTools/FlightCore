@@ -15,6 +15,12 @@
                 </el-popconfirm>
                 {{ mod.name }}
                 (v{{ mod.version }})
+                <img
+                    v-if="mod.thunderstore_mod_string != null"
+                    src="/src/assets/thunderstore-icon.png"
+                    class="image"
+                    height="16"
+                />
             </el-card>
         </div>
     </el-scrollbar>
