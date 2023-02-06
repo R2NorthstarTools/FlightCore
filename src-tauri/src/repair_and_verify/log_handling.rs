@@ -14,6 +14,7 @@ pub struct ParsedModFromLog {
 pub struct ParsedLogResults {
     northstar_launcher_version: String,
     installed_mods: Vec<ParsedModFromLog>,
+    has_northstar_crashed: bool,
 }
 
 /// Parse logs for installed mods
@@ -93,15 +94,22 @@ fn parse_for_northstar_launcher_version(log_text: String) -> Result<String, Stri
     }
 }
 
+fn parse_log_for_crash(log_text: String) -> bool {
+    let pattern = Regex::new(r"(?m)Northstar has crashed!").unwrap();
+    pattern.is_match(&log_text)
+}
+
 /// Parse logs for installed mods
 #[tauri::command]
 pub async fn parse_given_log_text(log_text: String) -> Result<ParsedLogResults, String> {
     let installed_mods = parse_given_log_text_for_installed_mods(log_text.clone())?;
-    let northstar_launcher_version = parse_for_northstar_launcher_version(log_text)?;
+    let northstar_launcher_version = parse_for_northstar_launcher_version(log_text.clone())?;
+    let has_northstar_crashed = parse_log_for_crash(log_text);
 
     let parsed_log_results = ParsedLogResults {
         northstar_launcher_version,
         installed_mods,
+        has_northstar_crashed,
     };
 
     // Return the parsed results

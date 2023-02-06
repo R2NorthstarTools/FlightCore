@@ -81,6 +81,11 @@
                             </ul>
                         </template>
                     </el-table-column>
+                    <el-table-column prop="has_northstar_crashed" label="Northstar Crashed">
+                        <template v-slot="{ row }">
+                            {{ row.has_northstar_crashed }}
+                        </template>
+                    </el-table-column>
                 </el-table>
             </div>
         </el-scrollbar>
