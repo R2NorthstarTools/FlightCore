@@ -14,7 +14,7 @@
                     </template>
                 </el-popconfirm>
                 {{ mod.name }}
-                (v{{ mod.version }})
+                <span v-if="mod.version != null">(v{{ mod.version }})</span>
                 <img
                     v-if="mod.thunderstore_mod_string != null"
                     src="/src/assets/thunderstore-icon.png"
