@@ -13,9 +13,8 @@ import { open } from '@tauri-apps/api/dialog';
 import { Store } from 'tauri-plugin-store-api';
 import { router } from "../main";
 import { ReleaseInfo } from "../../../src-tauri/bindings/ReleaseInfo";
-import { ThunderstoreMod } from '../utils/thunderstore/ThunderstoreMod';
+import { ThunderstoreMod } from "../../../src-tauri/bindings/ThunderstoreMod";
 import { NorthstarMod } from "../../../src-tauri/bindings/NorthstarMod";
-import { ThunderstorePackageElement } from "../../../src-tauri/bindings/ThunderstorePackageElement";
 import { searchModule } from './modules/search';
 
 const persistentStore = new Store('flight-core-settings.json');
@@ -244,7 +243,7 @@ export const store = createStore<FlightCoreStore>({
             if (state.thunderstoreMods.length !== 0) return;
 
             let mods;
-            await invoke<ThunderstorePackageElement[]>("query_thunderstore_packages_api")
+            await invoke<ThunderstoreMod[]>("query_thunderstore_packages_api")
                 .then((message) => {
                     mods = message;
                 })

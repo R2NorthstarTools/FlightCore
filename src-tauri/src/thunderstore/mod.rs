@@ -8,7 +8,7 @@ use crate::mod_management::BLACKLISTED_MODS;
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, TS)]
 #[ts(export)]
-pub struct ThunderstorePackageElement {
+pub struct ThunderstoreMod {
     pub name: String,
     pub full_name: String,
     pub owner: String,
@@ -21,12 +21,12 @@ pub struct ThunderstorePackageElement {
     pub is_deprecated: bool,
     pub has_nsfw_content: bool,
     pub categories: Vec<String>,
-    pub versions: Vec<TSModVersion>,
+    pub versions: Vec<ThunderstoreModVersion>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, TS)]
 #[ts(export)]
-pub struct TSModVersion {
+pub struct ThunderstoreModVersion {
     pub name: String,
     pub full_name: String,
     pub description: String,
@@ -44,7 +44,7 @@ pub struct TSModVersion {
 
 /// Queries Thunderstore packages API
 #[tauri::command]
-pub async fn query_thunderstore_packages_api() -> Result<Vec<ThunderstorePackageElement>, String> {
+pub async fn query_thunderstore_packages_api() -> Result<Vec<ThunderstoreMod>, String> {
     println!("Fetching Thunderstore API");
 
     // Fetches
@@ -62,7 +62,7 @@ pub async fn query_thunderstore_packages_api() -> Result<Vec<ThunderstorePackage
         .unwrap();
 
     // Parse response
-    let parsed_json: Vec<ThunderstorePackageElement> = match serde_json::from_str(&res) {
+    let parsed_json: Vec<ThunderstoreMod> = match serde_json::from_str(&res) {
         Ok(res) => res,
         Err(err) => return Err(err.to_string()),
     };
@@ -72,7 +72,7 @@ pub async fn query_thunderstore_packages_api() -> Result<Vec<ThunderstorePackage
     let filtered_packages = parsed_json
         .into_iter()
         .filter(|package| !to_remove_set.contains(&package.full_name.as_ref()))
-        .collect::<Vec<ThunderstorePackageElement>>();
+        .collect::<Vec<ThunderstoreMod>>();
 
     Ok(filtered_packages)
 }
