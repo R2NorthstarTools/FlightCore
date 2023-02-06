@@ -1,8 +1,10 @@
 //! For interacting with Thunderstore API
-
 use app::constants::APP_USER_AGENT;
 use serde::{Deserialize, Serialize};
+use std::collections::HashSet;
 use ts_rs::TS;
+
+use crate::mod_management::BLACKLISTED_MODS;
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, TS)]
 #[ts(export)]
@@ -59,8 +61,18 @@ pub async fn query_thunderstore_api() -> Result<Vec<ThunderstorePackageElement>,
         .await
         .unwrap();
 
-    match serde_json::from_str(&res) {
-        Ok(res) => Ok(res),
-        Err(err) => Err(err.to_string()),
-    }
+    // Parse response
+    let parsed_json: Vec<ThunderstorePackageElement> = match serde_json::from_str(&res) {
+        Ok(res) => res,
+        Err(err) => return Err(err.to_string()),
+    };
+
+    // Remove some mods from listing
+    let to_remove_set: HashSet<&str> = BLACKLISTED_MODS.iter().map(|s| s.as_ref()).collect();
+    let filtered_packages = parsed_json
+        .into_iter()
+        .filter(|package| !to_remove_set.contains(&package.full_name.as_ref()))
+        .collect::<Vec<ThunderstorePackageElement>>();
+
+    Ok(filtered_packages)
 }
