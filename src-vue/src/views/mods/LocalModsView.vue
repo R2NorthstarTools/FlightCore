@@ -16,6 +16,7 @@
                 {{ mod.name }}
                 <img
                     v-if="mod.thunderstore_mod_string != null"
+                    title="This Northstar mod is part of a Thunderstore mod"
                     src="/src/assets/thunderstore-icon.png"
                     class="image"
                     height="16"
