@@ -33,6 +33,9 @@ use mod_management::{
 mod northstar;
 use northstar::get_northstar_version_number;
 
+mod thunderstore;
+use thunderstore::query_thunderstore_api;
+
 use tauri::Manager;
 use tauri_plugin_store::PluginBuilder;
 use tokio::time::sleep;
@@ -110,6 +113,7 @@ fn main() {
             delete_northstar_mod,
             get_server_player_count,
             delete_thunderstore_mod,
+            query_thunderstore_api,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
