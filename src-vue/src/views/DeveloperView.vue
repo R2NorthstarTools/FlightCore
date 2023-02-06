@@ -60,7 +60,10 @@
                     </el-button>
                     <p v-if="pull_requests_launcher.length === 0">No PRs loaded</p>
                     <el-card v-else shadow="hover" v-for="pull_request in pull_requests_launcher" v-bind:key="pull_request.url">
-                        <el-button type="primary" @click="installLauncherPR(pull_request)">Install</el-button> {{ pull_request.number }}: {{ pull_request.title }}
+                        <el-button type="primary" @click="installLauncherPR(pull_request)">Install</el-button>
+                        <a target="_blank" :href="pull_request.html_url">
+                            {{ pull_request.number }}: {{ pull_request.title }}
+                        </a>
                     </el-card>
                 </el-collapse-item>
             </el-collapse>
@@ -75,7 +78,10 @@
                     </el-button>
                     <p v-if="pull_requests_mods.length === 0">No PRs loaded</p>
                     <el-card v-else shadow="hover" v-for="pull_request in pull_requests_mods" v-bind:key="pull_request.url">
-                        <el-button type="primary" @click="installModsPR(pull_request)">Install</el-button> {{ pull_request.number }}: {{ pull_request.title }}
+                        <el-button type="primary" @click="installModsPR(pull_request)">Install</el-button>
+                        <a target="_blank" :href="pull_request.html_url">
+                            {{ pull_request.number }}: {{ pull_request.title }}
+                        </a>
                     </el-card>
                 </el-collapse-item>
             </el-collapse>

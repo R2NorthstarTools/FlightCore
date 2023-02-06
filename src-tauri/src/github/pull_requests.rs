@@ -33,6 +33,7 @@ pub struct PullsApiResponseElement {
     title: String,
     url: String,
     head: CommitHead,
+    html_url: String,
 }
 
 // GitHub API response JSON elements as structs
