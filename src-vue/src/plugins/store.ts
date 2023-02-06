@@ -242,7 +242,7 @@ export const store = createStore<FlightCoreStore>({
             await store.commit('loadInstalledMods');
             if (state.thunderstoreMods.length !== 0) return;
 
-            let mods;
+            let mods: ThunderstoreMod[] = [];
             await invoke<ThunderstoreMod[]>("query_thunderstore_packages_api")
                 .then((message) => {
                     mods = message;
