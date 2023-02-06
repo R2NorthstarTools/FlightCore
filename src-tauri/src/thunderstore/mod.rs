@@ -44,7 +44,7 @@ pub struct TSModVersion {
 
 /// Queries Thunderstore packages API
 #[tauri::command]
-pub async fn query_thunderstore_api() -> Result<Vec<ThunderstorePackageElement>, String> {
+pub async fn query_thunderstore_packages_api() -> Result<Vec<ThunderstorePackageElement>, String> {
     println!("Fetching Thunderstore API");
 
     // Fetches

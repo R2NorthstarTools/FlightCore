@@ -244,7 +244,7 @@ export const store = createStore<FlightCoreStore>({
             if (state.thunderstoreMods.length !== 0) return;
 
             let mods;
-            await invoke<ThunderstorePackageElement[]>("query_thunderstore_api")
+            await invoke<ThunderstorePackageElement[]>("query_thunderstore_packages_api")
                 .then((message) => {
                     mods = message;
                 })
@@ -252,6 +252,10 @@ export const store = createStore<FlightCoreStore>({
                     console.error(error);
                     return;
                 });
+
+            if (mods == undefined) {
+                return;
+            }
 
             // Remove some mods from listing
             state.thunderstoreMods = mods;
