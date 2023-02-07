@@ -36,6 +36,7 @@ pub struct GameInstall {
 #[ts(export)]
 pub struct NorthstarMod {
     pub name: String,
+    pub version: Option<String>,
     pub thunderstore_mod_string: Option<String>,
     pub enabled: bool,
     pub directory: String,

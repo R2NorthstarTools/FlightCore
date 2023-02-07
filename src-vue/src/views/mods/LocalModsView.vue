@@ -14,6 +14,7 @@
                     </template>
                 </el-popconfirm>
                 {{ mod.name }}
+                <span v-if="mod.version != null">(v{{ mod.version }})</span>
                 <img
                     v-if="mod.thunderstore_mod_string != null"
                     title="This Northstar mod is part of a Thunderstore mod"
