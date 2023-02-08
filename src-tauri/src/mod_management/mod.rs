@@ -57,6 +57,8 @@ pub struct ModJson {
     name: String,
     #[serde(rename = "ThunderstoreModString")]
     thunderstore_mod_string: Option<String>,
+    #[serde(rename = "Version")]
+    version: Option<String>,
 }
 
 /// Gets all currently installed and enabled/disabled mods to rebuild `enabledmods.json`
@@ -212,6 +214,7 @@ fn parse_installed_mods(game_install: GameInstall) -> Result<Vec<NorthstarMod>, 
 
         let ns_mod = NorthstarMod {
             name: parsed_mod_json.name,
+            version: parsed_mod_json.version,
             thunderstore_mod_string: thunderstore_mod_string,
             enabled: false, // Placeholder
             directory: mod_directory,
@@ -261,7 +264,7 @@ pub fn get_installed_mods_and_properties(
 
 async fn get_ns_mod_download_url(thunderstore_mod_string: String) -> Result<String, String> {
     // TODO: This will crash the thread if not internet connection exist. `match` should be used instead
-    let index = thermite::api::get_package_index().await.unwrap().to_vec();
+    let index = thermite::api::get_package_index().unwrap().to_vec();
 
     // Parse mod string
     let parsed_ts_mod_string: ParsedThunderstoreModString = match thunderstore_mod_string.parse() {
@@ -297,7 +300,7 @@ async fn get_mod_dependencies(
     dbg!(thunderstore_mod_string.clone());
 
     // TODO: This will crash the thread if not internet connection exist. `match` should be used instead
-    let index = thermite::api::get_package_index().await.unwrap().to_vec();
+    let index = thermite::api::get_package_index().unwrap().to_vec();
 
     // String replace works but more care should be taken in the future
     let ts_mod_string_url = thunderstore_mod_string.replace("-", "/");
@@ -379,7 +382,7 @@ pub async fn fc_download_mod_and_install(
     );
 
     // Download the mod
-    let f = match thermite::core::manage::download_file(&download_url, path.clone()).await {
+    let f = match thermite::core::manage::download_file(&download_url, path.clone()) {
         Ok(f) => f,
         Err(e) => return Err(e.to_string()),
     };

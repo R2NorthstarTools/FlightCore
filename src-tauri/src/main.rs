@@ -189,7 +189,7 @@ async fn check_is_northstar_outdated(
         None => "Northstar".to_string(),
     };
 
-    let index = thermite::api::get_package_index().await.unwrap().to_vec();
+    let index = thermite::api::get_package_index().unwrap().to_vec();
     let nmod = index
         .iter()
         .find(|f| f.name.to_lowercase() == northstar_package_name.to_lowercase())
