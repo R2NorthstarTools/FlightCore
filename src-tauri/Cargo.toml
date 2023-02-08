@@ -46,6 +46,8 @@ game-scanner = "1.1.4"
 chrono = "0.4.23"
 # TypeScript bindings
 ts-rs = "6.1"
+# const formatting
+const_format = "0.2.30"
 
 [features]
 # by default Tauri runs in production mode

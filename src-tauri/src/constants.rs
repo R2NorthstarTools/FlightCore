@@ -1,6 +1,8 @@
 // This file stores various global constants values
 
-pub const APP_USER_AGENT: &str = "R2NorthstarTools/FlightCore";
+use const_format::concatcp;
+
+pub const APP_USER_AGENT: &str = concatcp!("FlightCore/", env!("CARGO_PKG_VERSION"));
 
 // URL of the Northstar masterserver
 pub const MASTER_SERVER_URL: &str = "https://northstar.tf";
