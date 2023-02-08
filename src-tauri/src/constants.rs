@@ -2,6 +2,7 @@
 
 use const_format::concatcp;
 
+// FlightCore user agent for web requests
 pub const APP_USER_AGENT: &str = concatcp!("FlightCore/", env!("CARGO_PKG_VERSION"));
 
 // URL of the Northstar masterserver
