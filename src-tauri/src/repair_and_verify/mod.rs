@@ -1,4 +1,7 @@
-use crate::{mod_management::{set_mod_enabled_status, rebuild_enabled_mods_json}, northstar::CORE_MODS};
+use crate::{
+    mod_management::{rebuild_enabled_mods_json, set_mod_enabled_status},
+    northstar::CORE_MODS,
+};
 use anyhow::anyhow;
 /// Contains various functions to repair common issues and verifying installation
 use app::{get_enabled_mods, GameInstall};
@@ -14,7 +17,6 @@ pub fn verify_game_files(game_install: GameInstall) -> Result<String, String> {
 /// Enables core mods if disabled
 #[tauri::command]
 pub fn disable_all_but_core(game_install: GameInstall) -> Result<(), String> {
-
     // Rebuild `enabledmods.json` first to ensure all mods are added
     rebuild_enabled_mods_json(game_install.clone())?;
 
@@ -69,13 +71,11 @@ pub fn clean_up_download_folder(
 pub fn get_log_list(game_install: GameInstall) -> Result<Vec<std::path::PathBuf>, String> {
     let ns_log_folder = format!("{}/R2Northstar/logs", game_install.game_path);
 
-    // Check if logs folder exists
-    if !std::path::Path::new(&ns_log_folder).exists() {
-        return Err("No logs folder found".to_string());
-    }
-
     // List files in logs folder
-    let paths = std::fs::read_dir(ns_log_folder).unwrap();
+    let paths = match std::fs::read_dir(ns_log_folder) {
+        Ok(paths) => paths,
+        Err(_err) => return Err("No logs folder found".to_string()),
+    };
 
     // Stores paths of log files
     let mut log_files: Vec<std::path::PathBuf> = Vec::new();

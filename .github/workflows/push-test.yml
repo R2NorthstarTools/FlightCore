@@ -14,6 +14,56 @@ jobs:
         run: |
           python3 scripts/check_version_numbers.py
 
+  # Ensure correct Rust code formatting
+  formatting:
+    name: format-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - run: rustup component add rustfmt
+      - uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --manifest-path src-tauri/Cargo.toml --all -- --check
+
+  # Ensure committed bindings correct
+  autogen-ts-bindings-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - name: install dependencies (ubuntu only)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev webkit2gtk-4.0 libappindicator3-dev librsvg2-dev patchelf
+
+      - name: Move original TypeScript bindings
+        run: |
+          cp -r src-tauri/bindings original-bindings
+          rm -r src-tauri/bindings
+
+      - name: Create empty dist folder # Otherwise tests fail
+        run: mkdir src-vue/dist
+
+      - name: Run Tests
+        run: cargo test --manifest-path src-tauri/Cargo.toml
+
+      - name: Compare TypeScript Bindings
+        run: |
+          diff -r src-tauri/bindings original-bindings
+          if [[ $? -ne 0 ]]; then
+              echo "Generated bindings are different from committed bindings"
+              exit 1
+          fi
 
   test-tauri:
     needs: ensure-same-version

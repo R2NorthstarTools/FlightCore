@@ -14,6 +14,14 @@
                     </template>
                 </el-popconfirm>
                 {{ mod.name }}
+                <span v-if="mod.version != null">(v{{ mod.version }})</span>
+                <img
+                    v-if="mod.thunderstore_mod_string != null"
+                    title="This Northstar mod is part of a Thunderstore mod"
+                    src="/src/assets/thunderstore-icon.png"
+                    class="image"
+                    height="16"
+                />
             </el-card>
         </div>
     </el-scrollbar>
@@ -24,7 +32,7 @@ import { invoke } from '@tauri-apps/api';
 import { ElNotification } from 'element-plus';
 import { defineComponent } from 'vue';
 import { GameInstall } from '../../utils/GameInstall';
-import { NorthstarMod } from '../../utils/NorthstarMod';
+import { NorthstarMod } from "../../../../src-tauri/bindings/NorthstarMod";
 
 export default defineComponent({
     name: 'LocalModsView',

@@ -70,7 +70,7 @@ import {ThunderstoreMod} from "../utils/thunderstore/ThunderstoreMod";
 import {ThunderstoreModVersion} from "../utils/thunderstore/ThunderstoreModVersion";
 import {invoke, shell} from "@tauri-apps/api";
 import {ThunderstoreModStatus} from "../utils/thunderstore/ThunderstoreModStatus";
-import {NorthstarMod} from "../utils/NorthstarMod";
+import {NorthstarMod} from "../../../src-tauri/bindings/NorthstarMod";
 import {GameInstall} from "../utils/GameInstall";
 import {ElNotification} from "element-plus";
 import { NorthstarState } from "../utils/NorthstarState";

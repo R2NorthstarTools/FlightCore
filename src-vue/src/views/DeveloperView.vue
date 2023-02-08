@@ -162,7 +162,7 @@ export default defineComponent({
             } as GameInstall;
             let mod_to_install = this.mod_to_install_field_string;
             await invoke("install_mod_caller", { gameInstall: game_install, thunderstoreModString: mod_to_install }).then((message) => {
-                // Show user notificatio if mod install completed.
+                // Show user notification if mod install completed.
                 ElNotification({
                     title: `Installed ${mod_to_install}`,
                     message: message as string,
@@ -185,7 +185,7 @@ export default defineComponent({
                 install_type: this.$store.state.install_type
             } as GameInstall;
             await invoke("clean_up_download_folder_caller", { gameInstall: game_install, force: true }).then((message) => {
-                // Show user notificatio if mod install completed.
+                // Show user notification if task completed.
                 ElNotification({
                     title: `Done`,
                     message: `Done`,

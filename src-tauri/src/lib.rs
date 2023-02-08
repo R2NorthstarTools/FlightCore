@@ -13,6 +13,7 @@ use platform_specific::linux;
 
 use serde::{Deserialize, Serialize};
 use sysinfo::SystemExt;
+use ts_rs::TS;
 use zip::ZipArchive;
 
 use northstar::get_northstar_version_number;
@@ -31,9 +32,11 @@ pub struct GameInstall {
     pub install_type: InstallType,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
 pub struct NorthstarMod {
     pub name: String,
+    pub version: Option<String>,
     pub thunderstore_mod_string: Option<String>,
     pub enabled: bool,
     pub directory: String,
@@ -124,14 +127,14 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
 }
 
 /// Checks whether the provided path is a valid Titanfall2 gamepath by checking against a certain set of criteria
-pub fn check_is_valid_game_path(game_install_path: &str) -> Result<(), anyhow::Error> {
+pub fn check_is_valid_game_path(game_install_path: &str) -> Result<(), String> {
     let path_to_titanfall2_exe = format!("{}/Titanfall2.exe", game_install_path);
     let is_correct_game_path = std::path::Path::new(&path_to_titanfall2_exe).exists();
     println!("Titanfall2.exe exists in path? {}", is_correct_game_path);
 
     // Exit early if wrong game path
     if !is_correct_game_path {
-        return Err(anyhow!("Incorrect game path \"{}\"", game_install_path)); // Return error cause wrong game path
+        return Err(format!("Incorrect game path \"{}\"", game_install_path)); // Return error cause wrong game path
     }
     Ok(())
 }
@@ -190,9 +193,7 @@ async fn do_install(nmod: &thermite::model::ModVersion, game_path: &std::path::P
     let download_path = format!("{}/{}", download_directory.clone(), filename);
     println!("{}", download_path);
 
-    let nfile = thermite::core::manage::download_file(&nmod.url, download_path)
-        .await
-        .unwrap();
+    let nfile = thermite::core::manage::download_file(&nmod.url, download_path).unwrap();
 
     println!("Extracting Northstar...");
     extract(nfile, game_path)?;
@@ -221,7 +222,7 @@ pub async fn install_northstar(
         None => "Northstar".to_string(),
     };
 
-    let index = thermite::api::get_package_index().await.unwrap().to_vec();
+    let index = thermite::api::get_package_index().unwrap().to_vec();
     let nmod = index
         .iter()
         .find(|f| f.name.to_lowercase() == northstar_package_name.to_lowercase())
