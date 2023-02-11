@@ -221,7 +221,7 @@ export default defineComponent({
             let install_northstar_result = invoke("install_northstar_caller", { gamePath: game_install.game_path, northstarPackageName: ReleaseCanal.RELEASE });
             await install_northstar_result
                 .then((message) => {
-                    console.log(message);
+                    // TODO update variable tracking installed Northstar version here
                 })
                 .catch((error) => {
                     console.error(error);
