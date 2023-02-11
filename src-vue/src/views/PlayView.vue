@@ -38,11 +38,11 @@ export default defineComponent({
             <div v-if="northstarVersion !== ''" class="fc_changelog__link" @click="showChangelogPage">
                 (see patch notes)
             </div>
-            <div v-if="playerCount >= 0">
+            <div v-if="playerCount >= 0" class="fc-stats__container">
                 {{ playerCount }} Players,
                 {{ serverCount }} Servers
             </div>
-            <div v-else="playerCount >= 0">
+            <div v-else="playerCount >= 0" class="fc-stats__container">
                 Unable to load playercount
             </div>
         </div>
@@ -80,6 +80,10 @@ export default defineComponent({
 .fc_northstar__version__container {
     margin-bottom: 20px;
     color: rgb(168, 168, 168);
+}
+
+.fc-stats__container {
+    margin-top: 3px;
 }
 
 .fc_northstar__version, .fc_changelog__link {
