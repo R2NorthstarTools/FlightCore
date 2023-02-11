@@ -39,8 +39,8 @@ export default defineComponent({
                 (see patch notes)
             </div>
             <div v-if="playerCount >= 0" class="fc-stats__container">
-                {{ playerCount }} Players,
-                {{ serverCount }} Servers
+                {{ playerCount }} players,
+                {{ serverCount }} servers
             </div>
             <div v-else="playerCount >= 0" class="fc-stats__container">
                 Unable to load playercount
