@@ -1,13 +1,7 @@
 //! This module deals with handling things around Northstar such as
 //! - getting version number
 
-pub const CORE_MODS: [&str; 3] = [
-    "Northstar.Client",
-    "Northstar.Custom",
-    "Northstar.CustomServers",
-];
-
-use crate::check_mod_version_number;
+use crate::{check_mod_version_number, constants::CORE_MODS};
 use anyhow::anyhow;
 
 /// Returns the current Northstar version number as a string
