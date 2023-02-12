@@ -55,7 +55,7 @@
 
             <el-collapse>
                 <el-collapse-item title="Launcher PRs" name="1">
-                    <el-button type="primary" @click="getLauncherPRs">
+                    <el-button type="primary" @click="getPullRequests('LAUNCHER')">
                         Get launcher PRs
                     </el-button>
                     <p v-if="pull_requests_launcher.length === 0">No PRs loaded</p>
@@ -73,7 +73,7 @@
                     <el-alert title="Warning" type="warning" :closable="false" show-icon>
                         Mod PRs are installed into a separate profile. Make sure to launch via 'r2ns-launch-mod-pr-version.bat' or via '-profile=R2Northstar-PR-test-managed-folder' to actually run the PR version!
                     </el-alert>
-                    <el-button type="primary" @click="getModsPRs">
+                    <el-button type="primary" @click="getPullRequests('MODS')">
                         Get Mods PRs
                     </el-button>
                     <p v-if="pull_requests_mods.length === 0">No PRs loaded</p>
@@ -96,6 +96,7 @@ import { ElNotification } from "element-plus";
 import { GameInstall } from "../utils/GameInstall";
 import { Store } from 'tauri-plugin-store-api';
 import { PullsApiResponseElement } from "../../../src-tauri/bindings/PullsApiResponseElement";
+import { InstallType } from "../../../src-tauri/bindings/InstallType";
 const persistentStore = new Store('flight-core-settings.json');
 
 export default defineComponent({
@@ -251,8 +252,8 @@ export default defineComponent({
             // ...and save
             await persistentStore.save();
         },
-        async getLauncherPRs() {
-            await invoke<PullsApiResponseElement[]>("get_launcher_prs").then((message) => {
+        async getPullRequests(install_type: String) {
+            await invoke<PullsApiResponseElement[]>("get_pull_requests_wrapper", { installType: install_type }).then((message) => {
                 console.log(message);
                 // Show user notification if mod install completed.
                 ElNotification({
@@ -261,28 +262,19 @@ export default defineComponent({
                     type: 'success',
                     position: 'bottom-right'
                 });
-                this.$store.state.pull_requests_launcher = message;
-            })
-                .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
-                });
-        },
-        async getModsPRs() {
-            await invoke<PullsApiResponseElement[]>("get_mods_prs").then((message) => {
-                console.log(message);
-                // Show user notification if mod install completed.
-                ElNotification({
-                    title: `Done`,
-                    message: `Loaded pull requests`,
-                    type: 'success',
-                    position: 'bottom-right'
-                });
-                this.$store.state.pull_requests_mods = message;
+
+                switch (install_type) {
+                    case "MODS":
+                        this.$store.state.pull_requests_mods = message;
+                        break;
+
+                    case "LAUNCHER":
+                        this.$store.state.pull_requests_launcher = message;
+                        break;
+
+                    default:
+                        console.error("We should never end up here");
+                }
             })
                 .catch((error) => {
                     ElNotification({
