@@ -87,7 +87,9 @@ pub async fn get_pull_requests_wrapper(
 ) -> Result<Vec<PullsApiResponseElement>, String> {
     let api_pr_url = match install_type {
         PullRequestType::MODS => "https://api.github.com/repos/R2Northstar/NorthstarMods/pulls",
-        PullRequestType::LAUNCHER => "https://api.github.com/repos/R2Northstar/NorthstarLauncher/pulls",
+        PullRequestType::LAUNCHER => {
+            "https://api.github.com/repos/R2Northstar/NorthstarLauncher/pulls"
+        }
     };
 
     get_pull_requests(api_pr_url.to_string()).await
@@ -261,31 +263,19 @@ fn copy_dir_all(src: impl AsRef<Path>, dst: impl AsRef<Path>) -> io::Result<()> 
 }
 
 /// Gets GitHub download link of a mods PR
-fn get_mods_download_link(
-    pr_number: i64,
-    pulls_response: Vec<PullsApiResponseElement>,
-) -> Result<String, anyhow::Error> {
+fn get_mods_download_link(pull_request: PullsApiResponseElement) -> Result<String, anyhow::Error> {
     // {pr object} -> number == pr_number
     //             -> head -> ref
     //                     -> repo -> full_name
-    for pull_request in pulls_response {
-        // Early return if PR number is not the right one
-        if pull_request.number != pr_number {
-            continue;
-        }
 
-        // Use repo and branch name to get download link
-        let download_url = format!(
-            "https://github.com/{}/archive/refs/heads/{}.zip",
-            pull_request.head.repo.full_name, // repo name
-            pull_request.head.gh_ref,         // branch name
-        );
-        return Ok(download_url);
-    }
-    Err(anyhow!(
-        "Couldn't grab download link for PR \"{}\"",
-        pr_number
-    ))
+    // Use repo and branch name to get download link
+    let download_url = format!(
+        "https://github.com/{}/archive/refs/heads/{}.zip",
+        pull_request.head.repo.full_name, // repo name
+        pull_request.head.gh_ref,         // branch name
+    );
+
+    Ok(download_url)
 }
 
 /// Gets `nightly.link` artifact download link of a launcher PR
@@ -398,13 +388,14 @@ pub async fn apply_launcher_pr(pr_number: i64, game_install_path: &str) -> Resul
 
 /// Downloads selected mods PR and extracts it into profile in game install path
 #[tauri::command]
-pub async fn apply_mods_pr(pr_number: i64, game_install_path: &str) -> Result<(), String> {
+pub async fn apply_mods_pr(
+    pr_number: PullsApiResponseElement,
+    game_install_path: &str,
+) -> Result<(), String> {
     // Exit early if wrong game path
     check_is_valid_game_path(game_install_path)?;
 
-    let pulls_response = get_pull_requests_wrapper(PullRequestType::MODS).await?;
-
-    let download_url = match get_mods_download_link(pr_number, pulls_response) {
+    let download_url = match get_mods_download_link(pr_number) {
         Ok(url) => url,
         Err(err) => return Err(err.to_string()),
     };
