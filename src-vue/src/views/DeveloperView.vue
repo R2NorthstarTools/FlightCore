@@ -286,7 +286,6 @@ export default defineComponent({
                 });
         },
         async installLauncherPR(pull_request: PullsApiResponseElement) {
-            console.log(pull_request);
             await invoke("apply_launcher_pr", {prNumber: pull_request.number, gameInstallPath: this.$store.state.game_path}).then((message) => {
                 console.log(message);
                 // Show user notification if mod install completed.
@@ -309,7 +308,6 @@ export default defineComponent({
         async installModsPR(pull_request: PullsApiResponseElement) {
             console.log(pull_request);
             await invoke("apply_mods_pr", {prNumber: pull_request.number, gameInstallPath: this.$store.state.game_path}).then((message) => {
-                console.log(message);
                 // Show user notification if mod install completed.
                 ElNotification({
                     title: `Done`,
