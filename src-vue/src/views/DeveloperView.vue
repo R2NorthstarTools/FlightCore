@@ -252,7 +252,7 @@ export default defineComponent({
             // ...and save
             await persistentStore.save();
         },
-        async getPullRequests(pull_request_type: String) {
+        async getPullRequests(pull_request_type: PullRequestType) {
             await invoke<PullsApiResponseElement[]>("get_pull_requests_wrapper", { installType: pull_request_type }).then((message) => {
                 console.log(message);
                 // Show user notification if mod install completed.
