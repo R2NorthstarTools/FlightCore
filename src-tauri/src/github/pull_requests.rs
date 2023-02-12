@@ -60,7 +60,7 @@ struct ArtifactsResponse {
 
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
 #[ts(export)]
-pub enum InstallType {
+pub enum PullRequestType {
     MODS,
     LAUNCHER,
 }
@@ -83,11 +83,11 @@ pub async fn get_pull_requests(url: String) -> Result<Vec<PullsApiResponseElemen
 /// Gets either launcher or mods PRs
 #[tauri::command]
 pub async fn get_pull_requests_wrapper(
-    install_type: InstallType,
+    install_type: PullRequestType,
 ) -> Result<Vec<PullsApiResponseElement>, String> {
     let api_pr_url = match install_type {
-        InstallType::MODS => "https://api.github.com/repos/R2Northstar/NorthstarMods/pulls",
-        InstallType::LAUNCHER => "https://api.github.com/repos/R2Northstar/NorthstarLauncher/pulls",
+        PullRequestType::MODS => "https://api.github.com/repos/R2Northstar/NorthstarMods/pulls",
+        PullRequestType::LAUNCHER => "https://api.github.com/repos/R2Northstar/NorthstarLauncher/pulls",
     };
 
     get_pull_requests(api_pr_url.to_string()).await
@@ -368,7 +368,7 @@ pub async fn apply_launcher_pr(pr_number: i64, game_install_path: &str) -> Resul
     // Exit early if wrong game path
     check_is_valid_game_path(game_install_path)?;
 
-    let pulls_response = get_pull_requests_wrapper(InstallType::LAUNCHER).await?;
+    let pulls_response = get_pull_requests_wrapper(PullRequestType::LAUNCHER).await?;
 
     // get download link
     let download_url = get_launcher_download_link(pr_number, pulls_response).await?;
@@ -402,7 +402,7 @@ pub async fn apply_mods_pr(pr_number: i64, game_install_path: &str) -> Result<()
     // Exit early if wrong game path
     check_is_valid_game_path(game_install_path)?;
 
-    let pulls_response = get_pull_requests_wrapper(InstallType::MODS).await?;
+    let pulls_response = get_pull_requests_wrapper(PullRequestType::MODS).await?;
 
     let download_url = match get_mods_download_link(pr_number, pulls_response) {
         Ok(url) => url,

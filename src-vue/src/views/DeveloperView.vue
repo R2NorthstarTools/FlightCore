@@ -96,7 +96,7 @@ import { ElNotification } from "element-plus";
 import { GameInstall } from "../utils/GameInstall";
 import { Store } from 'tauri-plugin-store-api';
 import { PullsApiResponseElement } from "../../../src-tauri/bindings/PullsApiResponseElement";
-import { InstallType } from "../../../src-tauri/bindings/InstallType";
+import { PullRequestType } from "../../../src-tauri/bindings/PullRequestType";
 const persistentStore = new Store('flight-core-settings.json');
 
 export default defineComponent({
@@ -252,8 +252,8 @@ export default defineComponent({
             // ...and save
             await persistentStore.save();
         },
-        async getPullRequests(install_type: String) {
-            await invoke<PullsApiResponseElement[]>("get_pull_requests_wrapper", { installType: install_type }).then((message) => {
+        async getPullRequests(pull_request_type: String) {
+            await invoke<PullsApiResponseElement[]>("get_pull_requests_wrapper", { installType: pull_request_type }).then((message) => {
                 console.log(message);
                 // Show user notification if mod install completed.
                 ElNotification({
@@ -263,7 +263,7 @@ export default defineComponent({
                     position: 'bottom-right'
                 });
 
-                switch (install_type) {
+                switch (pull_request_type) {
                     case "MODS":
                         this.$store.state.pull_requests_mods = message;
                         break;
