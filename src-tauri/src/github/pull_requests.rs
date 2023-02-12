@@ -280,8 +280,7 @@ fn get_mods_download_link(pull_request: PullsApiResponseElement) -> Result<Strin
 
 /// Gets `nightly.link` artifact download link of a launcher PR
 async fn get_launcher_download_link(
-    pr_number: i64,
-    pulls_response: Vec<PullsApiResponseElement>,
+    pull_request: PullsApiResponseElement,
 ) -> Result<String, String> {
     // Crossreference with runs API
     let runs_response: ActionsRunsResponse = match check_github_api(
@@ -293,40 +292,32 @@ async fn get_launcher_download_link(
         Err(err) => return Err(format!("{}", err)),
     };
 
-    // Get top commit SHA
-    for pull_request in pulls_response {
-        // Early return if PR number is not the right one
-        if pull_request.number != pr_number {
-            continue;
-        }
+    // Cross-reference PR head commit sha against workflow runs
+    for workflow_run in &runs_response.workflow_runs {
+        // If head commit sha of run and PR match, grab CI output
+        if workflow_run.head_sha == pull_request.head.sha {
+            // Check artifacts
+            let api_url = format!("https://api.github.com/repos/R2Northstar/NorthstarLauncher/actions/runs/{}/artifacts", workflow_run.id);
+            let artifacts_response: ArtifactsResponse =
+                serde_json::from_value(check_github_api(&api_url).await.expect("Failed request"))
+                    .unwrap();
 
-        // Cross-reference PR head commit sha against workflow runs
-        for workflow_run in &runs_response.workflow_runs {
-            // If head commit sha of run and PR match, grab CI output
-            if workflow_run.head_sha == pull_request.head.sha {
-                // Check artifacts
-                let api_url = format!("https://api.github.com/repos/R2Northstar/NorthstarLauncher/actions/runs/{}/artifacts", workflow_run.id);
-                let artifacts_response: ArtifactsResponse = serde_json::from_value(
-                    check_github_api(&api_url).await.expect("Failed request"),
-                )
-                .unwrap();
+            // Iterate over artifacts
+            for artifact in artifacts_response.artifacts {
+                // Make sure run is from PR head commit
+                if artifact.workflow_run.head_sha == workflow_run.head_sha {
+                    dbg!(artifact.id);
 
-                // Iterate over artifacts
-                for artifact in artifacts_response.artifacts {
-                    // Make sure run is from PR head commit
-                    if artifact.workflow_run.head_sha == workflow_run.head_sha {
-                        dbg!(artifact.id);
-
-                        // Download artifact
-                        return Ok(format!("https://nightly.link/R2Northstar/NorthstarLauncher/actions/artifacts/{}.zip", artifact.id));
-                    }
+                    // Download artifact
+                    return Ok(format!("https://nightly.link/R2Northstar/NorthstarLauncher/actions/artifacts/{}.zip", artifact.id));
                 }
             }
         }
     }
+
     Err(format!(
         "Couldn't grab download link for PR \"{}\"",
-        pr_number
+        pull_request.number
     ))
 }
 
@@ -354,14 +345,15 @@ fn add_batch_file(game_install_path: &str) {
 
 /// Downloads selected launcher PR and extracts it into game install path
 #[tauri::command]
-pub async fn apply_launcher_pr(pr_number: i64, game_install_path: &str) -> Result<(), String> {
+pub async fn apply_launcher_pr(
+    pull_request: PullsApiResponseElement,
+    game_install_path: &str,
+) -> Result<(), String> {
     // Exit early if wrong game path
     check_is_valid_game_path(game_install_path)?;
 
-    let pulls_response = get_pull_requests_wrapper(PullRequestType::LAUNCHER).await?;
-
     // get download link
-    let download_url = get_launcher_download_link(pr_number, pulls_response).await?;
+    let download_url = get_launcher_download_link(pull_request).await?;
 
     // download
     match download_zip(download_url, ".".to_string()).await {
