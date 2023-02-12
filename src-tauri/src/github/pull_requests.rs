@@ -2,7 +2,7 @@ use crate::github::release_notes::fetch_github_releases_api;
 
 use anyhow::anyhow;
 use app::check_is_valid_game_path;
-use app::constants::APP_USER_AGENT;
+use app::constants::{APP_USER_AGENT, PULLS_API_ENDPOINT_LAUNCHER, PULLS_API_ENDPOINT_MODS};
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::fs::File;
@@ -86,10 +86,8 @@ pub async fn get_pull_requests_wrapper(
     install_type: PullRequestType,
 ) -> Result<Vec<PullsApiResponseElement>, String> {
     let api_pr_url = match install_type {
-        PullRequestType::MODS => "https://api.github.com/repos/R2Northstar/NorthstarMods/pulls",
-        PullRequestType::LAUNCHER => {
-            "https://api.github.com/repos/R2Northstar/NorthstarLauncher/pulls"
-        }
+        PullRequestType::MODS => PULLS_API_ENDPOINT_MODS,
+        PullRequestType::LAUNCHER => PULLS_API_ENDPOINT_LAUNCHER,
     };
 
     get_pull_requests(api_pr_url.to_string()).await
