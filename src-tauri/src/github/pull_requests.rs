@@ -389,13 +389,13 @@ pub async fn apply_launcher_pr(pr_number: i64, game_install_path: &str) -> Resul
 /// Downloads selected mods PR and extracts it into profile in game install path
 #[tauri::command]
 pub async fn apply_mods_pr(
-    pr_number: PullsApiResponseElement,
+    pull_request: PullsApiResponseElement,
     game_install_path: &str,
 ) -> Result<(), String> {
     // Exit early if wrong game path
     check_is_valid_game_path(game_install_path)?;
 
-    let download_url = match get_mods_download_link(pr_number) {
+    let download_url = match get_mods_download_link(pull_request) {
         Ok(url) => url,
         Err(err) => return Err(err.to_string()),
     };
