@@ -111,7 +111,7 @@ export default defineComponent({
     },
     data() {
         return {
-            mod_to_install_field_string: "",
+            mod_to_install_field_string : "",
         }
     },
     methods: {
