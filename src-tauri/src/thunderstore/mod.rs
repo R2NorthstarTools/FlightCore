@@ -1,10 +1,8 @@
 //! For interacting with Thunderstore API
-use app::constants::APP_USER_AGENT;
+use app::constants::{APP_USER_AGENT, BLACKLISTED_MODS};
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 use ts_rs::TS;
-
-use crate::mod_management::BLACKLISTED_MODS;
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, TS)]
 #[ts(export)]
