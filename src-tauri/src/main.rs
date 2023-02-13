@@ -47,6 +47,7 @@ fn main() {
         "https://f833732deb2240b0b2dc4abce97d0f1d@o1374052.ingest.sentry.io/6692177",
         sentry::ClientOptions {
             release: sentry::release_name!(),
+            attach_stacktrace: true,
             ..Default::default()
         },
     ));
