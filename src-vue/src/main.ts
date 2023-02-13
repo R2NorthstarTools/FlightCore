@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import { createI18n } from "vue-i18n";
 import App from './App.vue'
 import ElementPlus from "element-plus";
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
@@ -9,10 +10,21 @@ import ModsView from "./views/ModsView.vue";
 import SettingsView from "./views/SettingsView.vue";
 import DeveloperView from "./views/DeveloperView.vue";
 import {createRouter, createWebHashHistory} from "vue-router";
+import en from "./i18n/lang/en";
+import fr from "./i18n/lang/fr";
 
 
 const app = createApp(App);
 
+// internationalization
+const i18n = createI18n({
+    locale: 'en',
+    fallbackLocale: 'en',
+    messages: {
+        en, fr
+    }
+});
+app.use(i18n);
 
 // styles
 import 'element-plus/theme-chalk/index.css';
