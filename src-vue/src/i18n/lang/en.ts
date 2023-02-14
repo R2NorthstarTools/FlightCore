@@ -38,6 +38,11 @@ export default {
             delete: "Delete",
             part_of_ts_mod: "This Northstar mod is part of a Thunderstore mod",
             success_deleting: "Success deleting {modName}"
+        },
+
+        online: {
+            no_match: "No matching mod has been found.",
+            try_another_search: "Try another search!"
         }
     }
 };

@@ -18,8 +18,8 @@
 
                 <!-- Message displayed if no mod matched searched words -->
                 <div v-if="filteredMods.length === 0" class="modMessage">
-                    No matching mod has been found.<br/>
-                    Try another search!
+                    {{ $t('mods.online.no_match') }}<br/>
+                    {{ $t('mods.online.try_another_search') }}
                 </div>
 
                 <!-- Mod cards -->

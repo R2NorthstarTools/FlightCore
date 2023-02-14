@@ -38,6 +38,11 @@ export default {
             delete: "Supprimer",
             part_of_ts_mod: "Ce mod Northstar fait partie d'un mod Thunderstore",
             success_deleting: "Succès de la suppression de {modName}"
+        },
+
+        online: {
+            no_match: "Aucun mod correspondant n'a été trouvé.",
+            try_another_search: "Essayez une autre recherche !"
         }
     }
 };
