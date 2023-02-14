@@ -43,6 +43,24 @@ export default {
         online: {
             no_match: "Aucun mod correspondant n'a été trouvé.",
             try_another_search: "Essayez une autre recherche !"
+        },
+
+        menu: {
+            local: 'Local',
+            online: 'En ligne',
+            filter: 'Filtrer',
+            search: 'Chercher',
+            sort_mods: 'Trier les mods',
+            select_categories: 'Choisir les catégories',
+
+            sort: {
+                name_asc: 'Par nom (de A à Z)',
+                name_desc: 'Par nom (de Z à A)',
+                date_asc: 'Par date (du plus vieux)',
+                date_desc: 'Par date (du plus récent)',
+                most_downloaded: "Plus téléchargés",
+                top_rated: "Mieux notés"
+            }
         }
     }
 };
