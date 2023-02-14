@@ -1,4 +1,12 @@
 export default {
+    menu: {
+        play: 'Play',
+        changelog: 'Changelog',
+        mods: 'Mods',
+        settings: 'Settings',
+        dev: 'Dev'
+    },
+
     play: {
         button: {
             northstar_is_running: 'Game is running',

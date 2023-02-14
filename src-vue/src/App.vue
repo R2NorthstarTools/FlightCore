@@ -56,11 +56,11 @@ export default {
         id="fc__menu_items"
         data-tauri-drag-region
       >
-        <el-menu-item index="/">Play</el-menu-item>
-        <el-menu-item index="/changelog">Changelog</el-menu-item>
-        <el-menu-item index="/mods">Mods</el-menu-item>
-        <el-menu-item index="/settings">Settings</el-menu-item>
-        <el-menu-item index="/dev" v-if="$store.state.developer_mode">Dev</el-menu-item>
+        <el-menu-item index="/">{{ $t('menu.play') }}</el-menu-item>
+        <el-menu-item index="/changelog">{{ $t('menu.changelog') }}</el-menu-item>
+        <el-menu-item index="/mods">{{ $t('menu.mods') }}</el-menu-item>
+        <el-menu-item index="/settings">{{ $t('menu.settings') }}</el-menu-item>
+        <el-menu-item index="/dev" v-if="$store.state.developer_mode">{{ $t('menu.dev') }}</el-menu-item>
       </el-menu>
 
       <!-- Window controls -->

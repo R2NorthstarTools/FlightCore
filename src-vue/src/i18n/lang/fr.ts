@@ -1,4 +1,12 @@
 export default {
+    menu: {
+        play: 'Jouer',
+        changelog: 'Notes',
+        mods: 'Mods',
+        settings: 'Paramètres',
+        dev: 'Dev'
+    },
+
     play: {
         button: {
             northstar_is_running: "En cours d'utilisation",
