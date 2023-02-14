@@ -7,6 +7,10 @@ export default {
         dev: 'Dev'
     },
 
+    generic: {
+        error: 'Erreur',
+    },
+
     play: {
         button: {
             northstar_is_running: "En cours d'utilisation",
@@ -25,5 +29,15 @@ export default {
         unable_to_load_playercount: "Impossible de charger les statistiques",
         northstar_running: "Northstar est en cours d'exécution :",
         origin_running: "Origin est en cours d'exécution :"
+    },
+
+    mods: {
+        local: {
+            no_mods: "Aucun mod trouvé.",
+            delete_confirm: "Êtes-vous certain de vouloir supprimer ce mod ?",
+            delete: "Supprimer",
+            part_of_ts_mod: "Ce mod Northstar fait partie d'un mod Thunderstore",
+            success_deleting: "Succès de la suppression de {modName}"
+        }
     }
 };

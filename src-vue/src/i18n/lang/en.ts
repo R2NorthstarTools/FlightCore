@@ -7,6 +7,10 @@ export default {
         dev: 'Dev'
     },
 
+    generic: {
+        error: 'Error',
+    },
+
     play: {
         button: {
             northstar_is_running: 'Game is running',
@@ -25,5 +29,15 @@ export default {
         unable_to_load_playercount: "Unable to load playercount",
         northstar_running: "Northstar is running:",
         origin_running: "Origin is running:"
+    },
+
+    mods: {
+        local: {
+            no_mods: "No mods were found.",
+            delete_confirm: "Are you sure to delete this mod?",
+            delete: "Delete",
+            part_of_ts_mod: "This Northstar mod is part of a Thunderstore mod",
+            success_deleting: "Success deleting {modName}"
+        }
     }
 };
