@@ -9,6 +9,7 @@ export default {
 
     generic: {
         error: 'Erreur',
+        cancel: 'Annuler',
     },
 
     play: {
@@ -61,6 +62,23 @@ export default {
                 most_downloaded: "Plus téléchargés",
                 top_rated: "Mieux notés"
             }
+        },
+
+        card: {
+            button: {
+                being_installed: "Installation...",
+                being_updated: "Mise à jour...",
+                installed: "Installé",
+                install: "Installer",
+                outdated: "Mettre à jour"
+            },
+
+            more_info: "Plus d'informations",
+            remove: "Supprimer le mod",
+            remove_dialog_title: "Attention !",
+            remove_dialog_text: "Voulez-vous vraiment supprimer ce mod Thunderstore ?",
+            remove_success: "{modName} supprimé",
+            install_success: "{modName} installé"
         }
     }
 };

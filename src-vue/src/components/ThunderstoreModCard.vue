@@ -33,7 +33,7 @@
                     :loading="isBeingInstalled || isBeingUpdated"
                     @click.stop="installMod(mod)"
                 >
-                    {{ modButtonText }}
+                    {{ $t(modButtonText) }}
                 </el-button>
 
                 <!-- Information dropdown menu -->
@@ -51,10 +51,10 @@
                     <template #dropdown>
                         <el-dropdown-menu>
                             <el-dropdown-item @click="openURL(mod.package_url)">
-                                More info
+                                {{ $t('mods.card.more_info') }}
                             </el-dropdown-item>
                             <el-dropdown-item  @click="deleteMod(mod)">
-                                Remove mod
+                                {{ $t('mods.card.remove') }}
                             </el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
@@ -129,15 +129,15 @@ export default defineComponent({
         modButtonText(): string {
             switch (this.modStatus) {
                 case ThunderstoreModStatus.BEING_INSTALLED:
-                    return "Installing...";
+                    return "mods.card.button.being_installed";
                 case ThunderstoreModStatus.BEING_UPDATED:
-                    return "Updating...";
+                    return "mods.card.button.being_updated";
                 case ThunderstoreModStatus.INSTALLED:
-                    return "Installed";
+                    return "mods.card.button.installed";
                 case ThunderstoreModStatus.NOT_INSTALLED:
-                    return "Install";
+                    return "mods.card.button.install";
                 case ThunderstoreModStatus.OUTDATED:
-                    return "Update";
+                    return "mods.card.button.outdated";
             }
         },
 
@@ -200,11 +200,11 @@ export default defineComponent({
 
             // Show pop-up to confirm delete
             ElMessageBox.confirm(
-                'Delete Thunderstore mod?',
-                'Warning',
+                this.$t('mods.card.remove_dialog_text'),
+                this.$t('mods.card.remove_dialog_title'),
                 {
                     confirmButtonText: 'OK',
-                    cancelButtonText: 'Cancel',
+                    cancelButtonText: this.$t('generic.cancel'),
                     type: 'warning',
                 }
             )
@@ -217,7 +217,7 @@ export default defineComponent({
                     await invoke("delete_thunderstore_mod", { gameInstall: game_install, thunderstoreModString: this.latestVersion.full_name })
                         .then((message) => {
                             ElNotification({
-                                title: `Removed ${mod.name}`,
+                                title: this.$t('mods.card.remove_success', {modName: mod.name}),
                                 message: message as string,
                                 type: 'success',
                                 position: 'bottom-right'
@@ -225,7 +225,7 @@ export default defineComponent({
                         })
                         .catch((error) => {
                             ElNotification({
-                                title: 'Error',
+                                title: this.$t('generic.error'),
                                 message: error,
                                 type: 'error',
                                 position: 'bottom-right'
@@ -255,7 +255,7 @@ export default defineComponent({
 
             await invoke("install_mod_caller", { gameInstall: game_install, thunderstoreModString: this.latestVersion.full_name }).then((message) => {
                 ElNotification({
-                    title: `Installed ${mod.name}`,
+                    title: this.$t('mods.card.install_success', {modName: mod.name}),
                     message: message as string,
                     type: 'success',
                     position: 'bottom-right'
@@ -263,7 +263,7 @@ export default defineComponent({
             })
                 .catch((error) => {
                     ElNotification({
-                        title: 'Error',
+                        title: this.$t('generic.error'),
                         message: error,
                         type: 'error',
                         position: 'bottom-right'
