@@ -361,6 +361,12 @@ async function _initializeApp(state: any) {
         state.mods_per_page = perPageFromStore.value;
     }
 
+    // Initialize interface language
+    const lang: string | null = await persistentStore.get('lang');
+    if (lang === null) {
+        persistentStore.set('lang', navigator.language.substring(0, 2));
+    }
+
     // Get FlightCore version number
     state.flightcore_version = await invoke("get_flightcore_version_number");
 
