@@ -20,7 +20,7 @@ export default {
   data() {
     return {}
   },
-  mounted: async () => {
+  mounted: async function() {
     store.commit('initialize');
 
     // Initialize interface language
@@ -30,6 +30,7 @@ export default {
       lang = navigator.language.substring(0, 2);
       persistentStore.set('lang', lang);
     }
+    this.$root.$i18n.locale = lang;
   },
   methods: {
     async toggleMaximize() {
