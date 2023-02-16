@@ -17,7 +17,7 @@ import fr from "./i18n/lang/fr";
 const app = createApp(App);
 
 // internationalization
-const i18n = createI18n({
+export const i18n = createI18n({
     locale: 'en',
     fallbackLocale: 'en',
     messages: {

@@ -97,5 +97,37 @@ export default {
         enable_test_channels: "Enable testing release channels",
         dev_mode_enabled_title: "Watch out!",
         dev_mod_enabled_text: "Developer mode enabled."
+    },
+
+    notification: {
+        game_folder: {
+            new: {
+                title: "New game folder",
+                text: "Game folder was successfully updated."
+            },
+
+            wrong: {
+                title: "Wrong folder",
+                text: "Selected folder is not a valid Titanfall2 install."
+            },
+
+            not_found: {
+                title: "Titanfall2 not found!",
+                text: "Please manually select install location"
+            }
+        },
+
+        flightcore_outdated: {
+            title: "FlightCore outdated!",
+            text: "Please update FlightCore.\nRunning outdated version {oldVersion}.\nNewest is {newVersion}!"
+        }
+    },
+
+    channels: {
+        release: {
+            switch: {
+                text: "Switched release channel to"
+            }
+        }
     }
 };

@@ -97,5 +97,37 @@ export default {
         enable_test_channels: "Activer le test de versions de pré-production",
         dev_mode_enabled_title: "Attention !",
         dev_mod_enabled_text: "Mode développeur activé."
+    },
+
+    notification: {
+        game_folder: {
+            new: {
+                title: "Nouveau dossier",
+                text: "Le dossier du jeu a bien été mis à jour."
+            },
+
+            wrong: {
+                title: "Mauvais dossier",
+                text: "Le dossier sélectionné ne contient pas d'installation de Titanfall2."
+            },
+
+            not_found: {
+                title: "Titanfall2 non trouvé",
+                text: "Veuillez sélectionner manuellement le dossier du jeu."
+            }
+        },
+
+        flightcore_outdated: {
+            title: "Mise à jour disponible !",
+            text: "Veuillez mettre à jour FlightCore.\nVersion actuelle : {oldVersion}.\nNouvelle version : {newVersion}."
+        }
+    },
+
+    channels: {
+        release: {
+            switch: {
+                text: "Le canal de téléchargement a été réglé sur {canal}."
+            }
+        }
     }
 };
