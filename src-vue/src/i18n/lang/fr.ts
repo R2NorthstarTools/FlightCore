@@ -80,5 +80,20 @@ export default {
             remove_success: "{modName} supprimé",
             install_success: "{modName} installé"
         }
+    },
+
+    settings: {
+        manage_install: "Gérer l'installation",
+        choose_folder: "Choisir le dossier d'installation du jeu",
+        nb_ts_mods_per_page: "Nombre de mods Thunderstore par page",
+        nb_ts_mods_per_page_desc1: "Ce paramètre a un impact sur les performances d'affichage des mods Thunderstore.",
+        nb_ts_mods_per_page_desc2: "Réglez-le sur 0 pour désactiver la pagination.",
+        nb_ts_mods_reset: "Valeur par défaut",
+        about: "À propos:",
+        flightcore_version: "Version de FlightCore :",
+        testing: "Tests :",
+        enable_test_channels: "Activer le test de versions de pré-production",
+        dev_mode_enabled_title: "Attention !",
+        dev_mod_enabled_text: "Mode développeur activé."
     }
 };

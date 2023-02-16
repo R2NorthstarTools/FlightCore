@@ -80,5 +80,20 @@ export default {
             remove_success: "Removed {modName}",
             install_success: "Installed {modName}"
         }
+    },
+
+    settings: {
+        manage_install: "Manage installation",
+        choose_folder: "Choose installation folder",
+        nb_ts_mods_per_page: "Number of Thunderstore mods per page",
+        nb_ts_mods_per_page_desc1: "This has an impact on display performances when browsing Thunderstore mods.",
+        nb_ts_mods_per_page_desc2: "Set this value to 0 to disable pagination.",
+        nb_ts_mods_reset: "Reset to default",
+        about: "About:",
+        flightcore_version: "FlightCore version:",
+        testing: "Testing:",
+        enable_test_channels: "Enable testing release channels",
+        dev_mode_enabled_title: "Watch out!",
+        dev_mod_enabled_text: "Developer mode enabled."
     }
 };
