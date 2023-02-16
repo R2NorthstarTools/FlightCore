@@ -1,6 +1,8 @@
 <template>
     <el-select v-model="value" class="m-2" 
-        :placeholder="$t('settings.language_select')" size="large">
+        :placeholder="$t('settings.language_select')" size="large"
+        @change="onChange"
+    >
         <el-option
             v-for="item in options"
             :key="item.value"
@@ -28,5 +30,10 @@ export default defineComponent({
             }
         ]
     }),
+    methods: {
+        onChange(value: string) {
+            this.$root.$i18n.locale = value;
+        }
+    }
 })
 </script>
