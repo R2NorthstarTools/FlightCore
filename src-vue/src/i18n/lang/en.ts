@@ -126,7 +126,7 @@ export default {
     channels: {
         release: {
             switch: {
-                text: "Switched release channel to"
+                text: "Switched release channel to {canal}."
             }
         }
     }
