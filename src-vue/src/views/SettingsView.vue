@@ -97,7 +97,6 @@ export default defineComponent({
     },
     methods: {
         activateDeveloperMode() {
-            this.$root.$i18n.locale = "fr"
             this.developerModeClicks += 1;
             if (this.developerModeClicks >= 6) {
                 this.$store.state.developer_mode = true;
