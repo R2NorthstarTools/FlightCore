@@ -14,6 +14,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { Store } from 'tauri-plugin-store-api';
+const persistentStore = new Store('flight-core-settings.json');
 
 export default defineComponent({
     name: 'LanguageSelector',
@@ -33,6 +35,7 @@ export default defineComponent({
     methods: {
         onChange(value: string) {
             this.$root.$i18n.locale = value;
+            persistentStore.set('lang', value);
         }
     }
 })
