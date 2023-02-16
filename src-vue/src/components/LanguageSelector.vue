@@ -33,12 +33,12 @@ export default defineComponent({
         ]
     }),
     mounted: async function() {
-        const lang: string = await persistentStore.get('lang');
+        const lang: string = await persistentStore.get('lang') as string;
         this.value = lang;
     },
     methods: {
         onChange(value: string) {
-            this.$root.$i18n.locale = value;
+            this.$root!.$i18n.locale = value;
             persistentStore.set('lang', value);
         }
     }

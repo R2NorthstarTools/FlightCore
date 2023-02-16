@@ -30,7 +30,7 @@ export default {
       lang = navigator.language.substring(0, 2);
       persistentStore.set('lang', lang);
     }
-    this.$root.$i18n.locale = lang;
+    this.$root!.$i18n.locale = lang;
   },
   methods: {
     async toggleMaximize() {
