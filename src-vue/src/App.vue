@@ -7,6 +7,7 @@ import SettingsView from './views/SettingsView.vue';
 import { appWindow } from '@tauri-apps/api/window';
 import { store } from './plugins/store';
 import { window as tauriWindow } from "@tauri-apps/api";
+import { Store } from 'tauri-plugin-store-api';
 
 export default {
   components: {
@@ -19,8 +20,16 @@ export default {
   data() {
     return {}
   },
-  mounted: () => {
+  mounted: async () => {
     store.commit('initialize');
+
+    // Initialize interface language
+    const persistentStore = new Store('flight-core-settings.json');
+    let lang: string | null = await persistentStore.get('lang');
+    if (lang === null) {
+      lang = navigator.language.substring(0, 2);
+      persistentStore.set('lang', lang);
+    }
   },
   methods: {
     async toggleMaximize() {
