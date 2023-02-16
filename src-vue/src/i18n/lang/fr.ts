@@ -89,6 +89,8 @@ export default {
         nb_ts_mods_per_page_desc1: "Ce paramètre a un impact sur les performances d'affichage des mods Thunderstore.",
         nb_ts_mods_per_page_desc2: "Réglez-le sur 0 pour désactiver la pagination.",
         nb_ts_mods_reset: "Valeur par défaut",
+        language: 'Langue',
+        language_select: "Sélectionnez votre langue",
         about: "À propos:",
         flightcore_version: "Version de FlightCore :",
         testing: "Tests :",

@@ -34,6 +34,12 @@
                     </el-input>
                 </div>
 
+                <!-- Interface localization -->
+                <div class="fc_parameter__panel">
+                    <h3>{{ $t('settings.language') }}</h3>
+                    <language-selector/>
+                </div>
+
                 <h3>{{ $t('settings.about') }}</h3>
                 <div class="fc_northstar__version" @click="activateDeveloperMode">
                     {{ $t('settings.flightcore_version') }} {{ flightcoreVersion === '' ? 'Unknown version' : `${flightcoreVersion}` }}
@@ -57,10 +63,14 @@ import { defineComponent } from "vue";
 import { ElNotification } from 'element-plus';
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { Store } from 'tauri-plugin-store-api';
+import LanguageSelector from "../components/LanguageSelector.vue";
 const persistentStore = new Store('flight-core-settings.json');
 
 export default defineComponent({
     name: "SettingsView",
+    components: {
+        LanguageSelector
+    },
     data() {
         return {
             developerModeClicks: 0
@@ -138,7 +148,7 @@ h3:first-of-type {
     font-weight: unset;
 }
 
-.el-input {
+.el-input, .el-select {
     width: 50%;
 }
 
