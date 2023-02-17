@@ -46,11 +46,11 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import { ThunderstoreMod } from "../../utils/thunderstore/ThunderstoreMod";
+import { ThunderstoreMod } from "../../../../src-tauri/bindings/ThunderstoreMod";
 import ThunderstoreModCard from "../../components/ThunderstoreModCard.vue";
 import { ElScrollbar, ScrollbarInstance } from "element-plus";
 import { SortOptions } from "../../utils/SortOptions.d";
-import { ThunderstoreModVersion } from '../../utils/thunderstore/ThunderstoreModVersion';
+import { ThunderstoreModVersion } from "../../../../src-tauri/bindings/ThunderstoreModVersion";
 
 export default defineComponent({
     name: "ThunderstoreModsView",

@@ -34,6 +34,9 @@ use mod_management::{
 mod northstar;
 use northstar::get_northstar_version_number;
 
+mod thunderstore;
+use thunderstore::query_thunderstore_packages_api;
+
 use tauri::Manager;
 use tauri_plugin_store::PluginBuilder;
 use tokio::time::sleep;
@@ -48,6 +51,7 @@ fn main() {
         "https://f833732deb2240b0b2dc4abce97d0f1d@o1374052.ingest.sentry.io/6692177",
         sentry::ClientOptions {
             release: sentry::release_name!(),
+            attach_stacktrace: true,
             ..Default::default()
         },
     ));
@@ -111,6 +115,7 @@ fn main() {
             delete_northstar_mod,
             get_server_player_count,
             delete_thunderstore_mod,
+            query_thunderstore_packages_api,
             get_pull_requests_wrapper,
             apply_launcher_pr,
             apply_mods_pr,
