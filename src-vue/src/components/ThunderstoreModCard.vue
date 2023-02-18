@@ -66,8 +66,8 @@
 
 <script lang="ts">
 import {defineComponent} from "vue";
-import {ThunderstoreMod} from "../utils/thunderstore/ThunderstoreMod";
-import {ThunderstoreModVersion} from "../utils/thunderstore/ThunderstoreModVersion";
+import {ThunderstoreMod} from "../../../src-tauri/bindings/ThunderstoreMod";
+import {ThunderstoreModVersion} from "../../../src-tauri/bindings/ThunderstoreModVersion";
 import {invoke, shell} from "@tauri-apps/api";
 import {ThunderstoreModStatus} from "../utils/thunderstore/ThunderstoreModStatus";
 import {NorthstarMod} from "../../../src-tauri/bindings/NorthstarMod";
