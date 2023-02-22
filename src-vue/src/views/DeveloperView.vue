@@ -218,14 +218,40 @@ export default defineComponent({
                 game_path: this.$store.state.game_path,
                 install_type: this.$store.state.install_type
             } as GameInstall;
+
+            // Send notification telling the user to wait for the process to finish
+            const notification = ElNotification({
+                title: 'Force reinstalling Northstar',
+                message: 'Please wait',
+                duration: 0,
+                type: 'info',
+                position: 'bottom-right'
+            });
+
             let install_northstar_result = invoke("install_northstar_caller", { gamePath: game_install.game_path, northstarPackageName: ReleaseCanal.RELEASE });
             await install_northstar_result
                 .then((message) => {
+                    // Send notification
+                    ElNotification({
+                        title: `Done`,
+                        message: `Successfully reinstalled Northstar`,
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
                     this.$store.commit('checkNorthstarUpdates');
                 })
                 .catch((error) => {
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
                     console.error(error);
-                    alert(error);
+                })
+                .finally(() => {
+                    // Clear old notification
+                    notification.close();
                 });
         },
     }
