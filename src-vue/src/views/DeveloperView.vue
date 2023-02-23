@@ -4,6 +4,12 @@
             <el-alert title="Warning" type="warning" :closable="false" show-icon>
                 This page is designed for developers. Some of the buttons here can break your Northstar install if you do not know what you're doing!
             </el-alert>
+
+            <h1>TODO</h1>
+            <el-button type="primary" @click="createNewWindow">
+                Open Repair window
+            </el-button>
+
             <h3>Basic:</h3>
 
             <el-button type="primary" @click="disableDevMode">
@@ -207,7 +213,26 @@ export default defineComponent({
             await persistentStore.clear();
             // ...and save
             await persistentStore.save();
-        }
+        },
+        async createNewWindow() {
+            await invoke("create_new_window").then((message) => {
+                // Show user notificatio if mod install completed.
+                ElNotification({
+                    title: `Done`,
+                    message: `Done`,
+                    type: 'success',
+                    position: 'bottom-right'
+                });
+            })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                });
+        },
     }
 });
 </script>

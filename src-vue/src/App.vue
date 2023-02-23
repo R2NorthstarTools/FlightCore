@@ -47,7 +47,7 @@ export default {
   <div class="app-inner">
     <div id="fc_bg__container" :style="bgStyle"/>
 
-    <nav id="fc_menu-bar">
+    <nav id="fc_menu-bar" v-if="$route.path !== '/repair'"><!-- Hide menu bar in repair view -->
       <!-- Navigation items -->
       <el-menu
         :default-active="$route.path"
