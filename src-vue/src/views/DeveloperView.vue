@@ -271,7 +271,6 @@ export default defineComponent({
             await invoke<Tag[]>("get_list_of_tags")
                 .then((message) => {
                     this.ns_release_tags = message;
-                    // Show user notification if mod install completed.
                     ElNotification({
                         type: 'success',
                         position: 'bottom-right'
