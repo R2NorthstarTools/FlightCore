@@ -114,7 +114,7 @@ fn main() {
             delete_northstar_mod,
             get_server_player_count,
             delete_thunderstore_mod,
-            create_new_window,
+            open_repair_window,
             query_thunderstore_packages_api,
         ])
         .run(tauri::generate_context!())
@@ -349,7 +349,7 @@ async fn get_server_player_count() -> Result<(i32, usize), String> {
 
 #[tauri::command]
 /// Spawns repair window
-async fn create_new_window(handle: tauri::AppHandle) -> Result<(), String> {
+async fn open_repair_window(handle: tauri::AppHandle) -> Result<(), String> {
     let _repair_window = tauri::WindowBuilder::new(
         &handle,
         "RepairWindow",
