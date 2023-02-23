@@ -5,11 +5,6 @@
                 This page is designed for developers. Some of the buttons here can break your Northstar install if you do not know what you're doing!
             </el-alert>
 
-            <h1>TODO</h1>
-            <el-button type="primary" @click="createNewWindow">
-                Open Repair window
-            </el-button>
-
             <h3>Basic:</h3>
 
             <el-button type="primary" @click="disableDevMode">
@@ -41,6 +36,10 @@
             </el-button>
 
             <h3>Repair:</h3>
+
+            <el-button type="primary" @click="createNewWindow">
+                Open Repair window
+            </el-button>
 
             <el-button type="primary" @click="getInstalledMods">
                 Get installed mods
