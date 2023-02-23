@@ -1,6 +1,10 @@
 <template>
     <div class="fc-container">
         <el-scrollbar>
+            <el-alert title="Info" type="info" :closable="false" show-icon>
+                This window contains various functionality to repair common issues with Northstar and FlightCore.
+            </el-alert>
+
             <h1>Repair</h1>
 
             <h2>Northstar</h2>
