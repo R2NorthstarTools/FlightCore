@@ -4,6 +4,39 @@
             <el-alert title="Warning" type="warning" :closable="false" show-icon>
                 This page is designed for developers. Some of the buttons here can break your Northstar install if you do not know what you're doing!
             </el-alert>
+
+            <el-button type="primary" @click="getTags">
+                Get tags
+            </el-button>
+
+            <el-select v-model="firstTag" class="m-2" placeholder="First tag">
+                <el-option
+                    v-for="item in ns_release_tags"
+                    :key="item.name"
+                    :label="item.name"
+                    :value="item.name"
+                />
+            </el-select>
+            <el-select v-model="secondTag" class="m-2" placeholder="Second tag">
+                <el-option
+                    v-for="item in ns_release_tags"
+                    :key="item.name"
+                    :label="item.name"
+                    :value="item.name"
+                />
+            </el-select>
+
+            <el-button type="primary" @click="compareTags">
+                Compare Tags
+            </el-button>
+
+            <el-input
+                v-model="release_notes_text"
+                type="textarea"
+                :rows="5"
+                placeholder="Output"
+            />
+
             <h3>Basic:</h3>
 
             <el-button type="primary" @click="disableDevMode">
@@ -61,14 +94,40 @@ import { invoke } from "@tauri-apps/api";
 import { ElNotification } from "element-plus";
 import { GameInstall } from "../utils/GameInstall";
 import { Store } from 'tauri-plugin-store-api';
+import { Tag } from "../../../src-tauri/bindings/Tag";
 const persistentStore = new Store('flight-core-settings.json');
 
 export default defineComponent({
     name: "DeveloperView",
     data() {
         return {
-            mod_to_install_field_string : "",
+            mod_to_install_field_string: "",
+            release_notes_text : "",
+            first_tag:  { name: '' },
+            second_tag:  { name: '' },
+            ns_release_tags: [] as Tag[],
         }
+    },
+    computed: {
+        ns_release_tags(): Tag[] {
+            return this.ns_release_tags;
+        },
+        firstTag: {
+            get(): Tag {
+                return this.first_tag;
+            },
+            set(value: Tag) {
+                this.first_tag = value;
+            }
+        },
+        secondTag: {
+            get(): Tag {
+                return this.second_tag;
+            },
+            set(value: Tag) {
+                this.second_tag = value;
+            }
+        },
     },
     methods: {
         disableDevMode() {
@@ -207,7 +266,44 @@ export default defineComponent({
             await persistentStore.clear();
             // ...and save
             await persistentStore.save();
-        }
+        },
+        async getTags() {
+            await invoke<Tag[]>("get_list_of_tags")
+                .then((message) => {
+                    this.ns_release_tags = message;
+                    // Show user notification if mod install completed.
+                    ElNotification({
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+                })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                });
+        },
+        async compareTags() {
+            await invoke<string>("compare_tags", {firstTag: this.firstTag, secondTag: this.secondTag})
+                .then((message) => {
+                    this.release_notes_text = message;
+                    ElNotification({
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+                })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                });
+        },
     }
 });
 </script>

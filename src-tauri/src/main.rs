@@ -18,6 +18,7 @@ mod github;
 use github::release_notes::{
     check_is_flightcore_outdated, get_newest_flightcore_version, get_northstar_release_notes,
 };
+use github::{compare_tags, get_list_of_tags};
 
 mod repair_and_verify;
 use repair_and_verify::{
@@ -115,6 +116,8 @@ fn main() {
             get_server_player_count,
             delete_thunderstore_mod,
             query_thunderstore_packages_api,
+            get_list_of_tags,
+            compare_tags,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
