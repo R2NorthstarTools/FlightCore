@@ -112,10 +112,12 @@ jobs:
     - name: Upload Linux artifact
       uses: actions/upload-artifact@v2
       with:
+        name: linux-artifacts
         path: |
           src-tauri/target/release/bundle/appimage/*
     - name: Upload Windows artifact
       uses: actions/upload-artifact@v2
       with:
+        name: windows-artifacts
         path: |
           src-tauri/target/release/bundle/msi/*
