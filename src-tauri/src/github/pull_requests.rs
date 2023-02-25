@@ -373,6 +373,8 @@ pub async fn apply_launcher_pr(
 
     // Delete old unzipped
     fs::remove_dir_all(zip_extract_folder_name).unwrap();
+
+    println!("All done with installing launcher PR");
     Ok(())
 }
 
@@ -434,5 +436,6 @@ pub async fn apply_mods_pr(
     // Add batch file to launch right profile
     add_batch_file(game_install_path);
 
+    println!("All done with installing mods PR");
     Ok(())
 }
