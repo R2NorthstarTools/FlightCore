@@ -63,7 +63,8 @@
                         Get launcher PRs
                     </el-button>
                     <p v-if="pull_requests_launcher.length === 0">No PRs loaded</p>
-                    <el-card v-else shadow="hover" v-for="pull_request in pull_requests_launcher" v-bind:key="pull_request.url">
+                    <el-card v-else shadow="hover" v-for="pull_request in pull_requests_launcher"
+                        v-bind:key="pull_request.url">
                         <el-button type="primary" @click="installLauncherPR(pull_request)">Install</el-button>
                         <a target="_blank" :href="pull_request.html_url">
                             {{ pull_request.number }}: {{ pull_request.title }}
@@ -75,7 +76,9 @@
             <el-collapse>
                 <el-collapse-item title="Mods PRs" name="1">
                     <el-alert title="Warning" type="warning" :closable="false" show-icon>
-                        Mod PRs are installed into a separate profile. Make sure to launch via 'r2ns-launch-mod-pr-version.bat' or via '-profile=R2Northstar-PR-test-managed-folder' to actually run the PR version!
+                        Mod PRs are installed into a separate profile. Make sure to launch via
+                        'r2ns-launch-mod-pr-version.bat' or via '-profile=R2Northstar-PR-test-managed-folder' to actually
+                        run the PR version!
                     </el-alert>
                     <el-button type="primary" @click="getPullRequests('MODS')">
                         Get Mods PRs
@@ -258,29 +261,30 @@ export default defineComponent({
             await persistentStore.save();
         },
         async getPullRequests(pull_request_type: PullRequestType) {
-            await invoke<PullsApiResponseElement[]>("get_pull_requests_wrapper", { installType: pull_request_type }).then((message) => {
-                console.log(message);
-                // Show user notification if mod install completed.
-                ElNotification({
-                    title: `Done`,
-                    message: `Loaded pull requests`,
-                    type: 'success',
-                    position: 'bottom-right'
-                });
+            await invoke<PullsApiResponseElement[]>("get_pull_requests_wrapper", { installType: pull_request_type })
+                .then((message) => {
+                    console.log(message);
+                    // Show user notification if mod install completed.
+                    ElNotification({
+                        title: `Done`,
+                        message: `Loaded pull requests`,
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
 
-                switch (pull_request_type) {
-                    case "MODS":
-                        this.$store.state.pull_requests_mods = message;
-                        break;
+                    switch (pull_request_type) {
+                        case "MODS":
+                            this.$store.state.pull_requests_mods = message;
+                            break;
 
-                    case "LAUNCHER":
-                        this.$store.state.pull_requests_launcher = message;
-                        break;
+                        case "LAUNCHER":
+                            this.$store.state.pull_requests_launcher = message;
+                            break;
 
-                    default:
-                        console.error("We should never end up here");
-                }
-            })
+                        default:
+                            console.error("We should never end up here");
+                    }
+                })
                 .catch((error) => {
                     ElNotification({
                         title: 'Error',
@@ -291,16 +295,17 @@ export default defineComponent({
                 });
         },
         async installLauncherPR(pull_request: PullsApiResponseElement) {
-            await invoke("apply_launcher_pr", {pullRequest: pull_request, gameInstallPath: this.$store.state.game_path}).then((message) => {
-                console.log(message);
-                // Show user notification if mod install completed.
-                ElNotification({
-                    title: `Done`,
-                    message: `Installed ${pull_request.number}: "${pull_request.title}"`,
-                    type: 'success',
-                    position: 'bottom-right'
-                });
-            })
+            await invoke("apply_launcher_pr", { pullRequest: pull_request, gameInstallPath: this.$store.state.game_path })
+                .then((message) => {
+                    console.log(message);
+                    // Show user notification if mod install completed.
+                    ElNotification({
+                        title: `Done`,
+                        message: `Installed ${pull_request.number}: "${pull_request.title}"`,
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+                })
                 .catch((error) => {
                     ElNotification({
                         title: 'Error',
@@ -312,15 +317,16 @@ export default defineComponent({
         },
         async installModsPR(pull_request: PullsApiResponseElement) {
             console.log(pull_request);
-            await invoke("apply_mods_pr", {pullRequest: pull_request, gameInstallPath: this.$store.state.game_path}).then((message) => {
-                // Show user notification if mod install completed.
-                ElNotification({
-                    title: `Done`,
-                    message: `Installed ${pull_request.number}: "${pull_request.title}"\nMake sure to launch via batch file or by specifying correct profile!`,
-                    type: 'success',
-                    position: 'bottom-right'
-                });
-            })
+            await invoke("apply_mods_pr", { pullRequest: pull_request, gameInstallPath: this.$store.state.game_path })
+                .then((message) => {
+                    // Show user notification if mod install completed.
+                    ElNotification({
+                        title: `Done`,
+                        message: `Installed ${pull_request.number}: "${pull_request.title}"\nMake sure to launch via batch file or by specifying correct profile!`,
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+                })
                 .catch((error) => {
                     ElNotification({
                         title: 'Error',
