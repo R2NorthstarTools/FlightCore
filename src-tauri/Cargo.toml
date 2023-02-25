@@ -16,6 +16,7 @@ rust-version = "1.65"
 # c.f.: https://doc.rust-lang.org/cargo/reference/profiles.html#debug
 # This is done to see line numbers in stack trace on sentry.io
 debug = 2
+strip = false
 
 [build-dependencies]
 tauri-build = { version = "1.2", features = [] }
