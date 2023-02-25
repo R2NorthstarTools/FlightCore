@@ -143,6 +143,8 @@ async fn is_debug_mode() -> bool {
 /// Returns true if linux compatible
 async fn linux_checks() -> Result<(), String> {
     // Different behaviour depending on OS
+    // MacOS is missing as it is not a target
+    // in turn this means this application will not build on MacOS.
     #[cfg(target_os = "windows")]
     {
         Err("Not available on Windows".to_string())
