@@ -188,15 +188,8 @@ export default defineComponent({
             await persistentStore.save();
         },
         async createNewWindow() {
-            await invoke("open_repair_window").then((message) => {
-                // Show user notificatio if mod install completed.
-                ElNotification({
-                    title: `Done`,
-                    message: `Done`,
-                    type: 'success',
-                    position: 'bottom-right'
-                });
-            })
+            await invoke("open_repair_window")
+                .then((message) => { })
                 .catch((error) => {
                     ElNotification({
                         title: 'Error',

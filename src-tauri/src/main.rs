@@ -351,15 +351,21 @@ async fn get_server_player_count() -> Result<(i32, usize), String> {
 /// Spawns repair window
 async fn open_repair_window(handle: tauri::AppHandle) -> Result<(), String> {
     // Spawn new window
-    let repair_window = tauri::WindowBuilder::new(
+    let repair_window = match tauri::WindowBuilder::new(
         &handle,
         "RepairWindow",
         tauri::WindowUrl::App("/#/repair".into()),
     )
     .build()
-    .unwrap();
+    {
+        Ok(res) => res,
+        Err(err) => return Err(err.to_string()),
+    };
 
     // Set window title
-    repair_window.set_title("FlightCore Repair Window").unwrap();
+    match repair_window.set_title("FlightCore Repair Window") {
+        Ok(()) => (),
+        Err(err) => return Err(err.to_string()),
+    };
     Ok(())
 }
