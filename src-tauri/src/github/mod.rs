@@ -132,7 +132,7 @@ fn generate_flightcore_release_notes(commits: Vec<String>) -> String {
 
     // Order in which the sections should be displayed
     let section_order = vec![
-        "feat", "fix", "docs", "style", "refactor", "test", "chore", "other",
+        "feat", "fix", "docs", "style", "refactor", "build", "test", "chore", "other",
     ];
 
     // Go over commit types and generate notes
@@ -145,6 +145,7 @@ fn generate_flightcore_release_notes(commits: Vec<String>) -> String {
                     "docs" => "**Documentation:**",
                     "style" => "**Styles:**",
                     "refactor" => "**Code Refactoring:**",
+                    "build" => "**Build:**",
                     "test" => "**Tests:**",
                     "chore" => "**Chores:**",
                     _ => "**Other:**",
