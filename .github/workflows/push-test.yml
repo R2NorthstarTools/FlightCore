@@ -109,9 +109,16 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
-    - name: upload build artifact
+    - name: Upload Linux artifact
       uses: actions/upload-artifact@v2
       with:
+        name: linux-artifacts
         path: |
           src-tauri/target/release/bundle/appimage/*
+    - name: Upload Windows artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: windows-artifacts
+        path: |
           src-tauri/target/release/bundle/msi/*
+          src-tauri/target/release/app.pdb

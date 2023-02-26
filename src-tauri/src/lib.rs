@@ -9,6 +9,7 @@ mod platform_specific;
 #[cfg(target_os = "windows")]
 use platform_specific::windows;
 
+#[cfg(target_os = "linux")]
 use platform_specific::linux;
 
 use serde::{Deserialize, Serialize};
@@ -67,7 +68,7 @@ pub fn check_mod_version_number(path_to_mod_folder: String) -> Result<String, an
 // I intend to add more linux related stuff to check here, so making a func
 // for now tho it only checks `ldd --version`
 // - salmon
-
+#[cfg(target_os = "linux")]
 pub fn linux_checks_librs() -> Result<(), String> {
     // Perform various checks in terms of Linux compatibility
     // Return early with error message if a check fails
