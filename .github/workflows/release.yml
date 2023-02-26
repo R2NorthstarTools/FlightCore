@@ -60,6 +60,7 @@ jobs:
         path: |
           src-tauri/target/release/bundle/appimage/*AppImage*
           src-tauri/target/release/bundle/msi/*msi*
+          src-tauri/target/release/app.pdb
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
