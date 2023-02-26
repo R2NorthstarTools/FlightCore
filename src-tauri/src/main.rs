@@ -145,12 +145,18 @@ async fn is_debug_mode() -> bool {
 #[tauri::command]
 /// Returns true if linux compatible
 async fn linux_checks() -> Result<(), String> {
-    // Early return if Windows
-    if get_host_os() == "windows" {
-        return Err("Not available on Windows".to_string());
+    // Different behaviour depending on OS
+    // MacOS is missing as it is not a target
+    // in turn this means this application will not build on MacOS.
+    #[cfg(target_os = "windows")]
+    {
+        Err("Not available on Windows".to_string())
     }
 
-    linux_checks_librs()
+    #[cfg(target_os = "linux")]
+    {
+        linux_checks_librs()
+    }
 }
 
 #[tauri::command]
