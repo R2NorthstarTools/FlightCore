@@ -53,4 +53,8 @@ export default defineComponent({
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.fc-container {
+    padding-top: 0px;
+}
+</style>
