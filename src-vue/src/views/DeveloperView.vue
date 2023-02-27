@@ -330,7 +330,6 @@ export default defineComponent({
                 });
         },
         async installModsPR(pull_request: PullsApiResponseElement) {
-            console.log(pull_request);
 
             // Send notification telling the user to wait for the process to finish
             const notification = ElNotification({
