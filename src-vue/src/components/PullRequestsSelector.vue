@@ -4,6 +4,7 @@
             <el-collapse-item title="Launcher PRs" name="1">
                 <p v-if="pull_requests_launcher.length === 0">
                     <el-progress
+                        :show-text="false"
                         :percentage="100"
                         status="warning"
                         :indeterminate="true"
@@ -30,6 +31,7 @@
                 </div>
                 <p v-if="pull_requests_mods.length === 0">
                     <el-progress
+                        :show-text="false"
                         :percentage="100"
                         status="warning"
                         :indeterminate="true"
