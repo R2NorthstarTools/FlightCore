@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-collapse>
+        <el-collapse accordion>
             <el-collapse-item title="Launcher PRs" name="1">
                 <el-button type="primary" @click="getPullRequests('LAUNCHER')">
                     Get launcher PRs
@@ -14,10 +14,8 @@
                     </a>
                 </el-card>
             </el-collapse-item>
-        </el-collapse>
 
-        <el-collapse>
-            <el-collapse-item title="Mods PRs" name="1">
+            <el-collapse-item title="Mods PRs" name="2">
                 <el-alert title="Warning" type="warning" :closable="false" show-icon>
                     Mod PRs are installed into a separate profile. Make sure to launch via
                     'r2ns-launch-mod-pr-version.bat' or via '-profile=R2Northstar-PR-test-managed-folder' to actually
