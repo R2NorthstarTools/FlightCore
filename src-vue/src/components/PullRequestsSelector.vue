@@ -101,6 +101,15 @@ export default defineComponent({
                 });
         },
         async installLauncherPR(pull_request: PullsApiResponseElement) {
+            // Send notification telling the user to wait for the process to finish
+            const notification = ElNotification({
+                title: `Installing launcher PR ${pull_request.number}`,
+                message: 'Please wait',
+                duration: 0,
+                type: 'info',
+                position: 'bottom-right'
+            });
+
             await invoke("apply_launcher_pr", { pullRequest: pull_request, gameInstallPath: this.$store.state.game_path })
                 .then((message) => {
                     console.log(message);
@@ -119,10 +128,22 @@ export default defineComponent({
                         type: 'error',
                         position: 'bottom-right'
                     });
+                })
+                .finally(() => {
+                    // Clear old notification
+                    notification.close();
                 });
         },
         async installModsPR(pull_request: PullsApiResponseElement) {
-            console.log(pull_request);
+            // Send notification telling the user to wait for the process to finish
+            const notification = ElNotification({
+                title: `Installing mods PR ${pull_request.number}`,
+                message: 'Please wait',
+                duration: 0,
+                type: 'info',
+                position: 'bottom-right'
+            });
+
             await invoke("apply_mods_pr", { pullRequest: pull_request, gameInstallPath: this.$store.state.game_path })
                 .then((message) => {
                     // Show user notification if mod install completed.
@@ -140,6 +161,10 @@ export default defineComponent({
                         type: 'error',
                         position: 'bottom-right'
                     });
+                })
+                .finally(() => {
+                    // Clear old notification
+                    notification.close();
                 });
         },
     }
