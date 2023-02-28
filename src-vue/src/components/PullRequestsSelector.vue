@@ -157,5 +157,13 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.el-collapse {
+    border-radius: var(--el-border-radius-base);
+    overflow: hidden;
+}
 
+:deep(.el-collapse-item__header) {
+    padding-left: 10px;
+    font-size: 14px;
+}
 </style>
