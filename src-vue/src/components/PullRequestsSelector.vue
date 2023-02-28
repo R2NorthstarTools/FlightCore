@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-collapse accordion @change="onChange">
+        <el-collapse @change="onChange">
             <el-collapse-item title="Launcher PRs" name="1">
                 <p v-if="pull_requests_launcher.length === 0">
                     <el-progress
