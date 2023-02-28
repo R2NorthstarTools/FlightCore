@@ -78,15 +78,6 @@ export default defineComponent({
         async getPullRequests(pull_request_type: PullRequestType) {
             await invoke<PullsApiResponseElement[]>("get_pull_requests_wrapper", { installType: pull_request_type })
                 .then((message) => {
-                    console.log(message);
-                    // Show user notification if mod install completed.
-                    ElNotification({
-                        title: `Done`,
-                        message: `Loaded pull requests`,
-                        type: 'success',
-                        position: 'bottom-right'
-                    });
-
                     switch (pull_request_type) {
                         case "MODS":
                             this.$store.state.pull_requests_mods = message;
@@ -94,7 +85,6 @@ export default defineComponent({
 
                         case "LAUNCHER":
                             this.$store.state.pull_requests_launcher = message;
-                            console.log(message);
                             break;
 
                         default:
