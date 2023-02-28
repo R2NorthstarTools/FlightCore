@@ -69,9 +69,9 @@ export default defineComponent({
     },
     methods: {
         onChange(e: string) {
-            if (e === '1') {
+            if (e === '1' && this.pull_requests_launcher.length === 0) {
                 this.getPullRequests('LAUNCHER');
-            } else {
+            } else if (e === '2' && this.pull_requests_mods.length === 0) {
                 this.getPullRequests('MODS');
             }
         },
