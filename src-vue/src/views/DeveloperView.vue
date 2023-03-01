@@ -106,7 +106,7 @@ export default defineComponent({
     name: "DeveloperView",
     data() {
         return {
-            mod_to_install_field_string: "",
+            mod_to_install_field_string : "",
             release_notes_text : "",
             first_tag:  { name: '' },
             second_tag:  { name: '' },
