@@ -280,41 +280,46 @@ fn get_mods_download_link(pull_request: PullsApiResponseElement) -> Result<Strin
 async fn get_launcher_download_link(
     pull_request: PullsApiResponseElement,
 ) -> Result<String, String> {
-    // Crossreference with runs API
-    let runs_response: ActionsRunsResponse = match check_github_api(
-        "https://api.github.com/repos/R2Northstar/NorthstarLauncher/actions/runs",
-    )
-    .await
-    {
-        Ok(result) => serde_json::from_value(result).unwrap(),
-        Err(err) => return Err(format!("{}", err)),
-    };
+    // Iterate over the first 10 pages of
+    for i in 1..=10 {
+        // Crossreference with runs API
+        let runs_response: ActionsRunsResponse = match check_github_api(&format!(
+            "https://api.github.com/repos/R2Northstar/NorthstarLauncher/actions/runs?page={}",
+            i
+        ))
+        .await
+        {
+            Ok(result) => serde_json::from_value(result).unwrap(),
+            Err(err) => return Err(format!("{}", err)),
+        };
 
-    // Cross-reference PR head commit sha against workflow runs
-    for workflow_run in &runs_response.workflow_runs {
-        // If head commit sha of run and PR match, grab CI output
-        if workflow_run.head_sha == pull_request.head.sha {
-            // Check artifacts
-            let api_url = format!("https://api.github.com/repos/R2Northstar/NorthstarLauncher/actions/runs/{}/artifacts", workflow_run.id);
-            let artifacts_response: ArtifactsResponse =
-                serde_json::from_value(check_github_api(&api_url).await.expect("Failed request"))
-                    .unwrap();
+        // Cross-reference PR head commit sha against workflow runs
+        for workflow_run in &runs_response.workflow_runs {
+            // If head commit sha of run and PR match, grab CI output
+            if workflow_run.head_sha == pull_request.head.sha {
+                // Check artifacts
+                let api_url = format!("https://api.github.com/repos/R2Northstar/NorthstarLauncher/actions/runs/{}/artifacts", workflow_run.id);
+                let artifacts_response: ArtifactsResponse = serde_json::from_value(
+                    check_github_api(&api_url).await.expect("Failed request"),
+                )
+                .unwrap();
 
-            // Iterate over artifacts
-            for artifact in artifacts_response.artifacts {
-                // Make sure run is from PR head commit
-                if artifact.workflow_run.head_sha == workflow_run.head_sha {
-                    dbg!(artifact.id);
+                // Iterate over artifacts
+                for artifact in artifacts_response.artifacts {
+                    // Make sure run is from PR head commit
+                    if artifact.workflow_run.head_sha == workflow_run.head_sha {
+                        dbg!(artifact.id);
 
-                    // Download artifact
-                    return Ok(format!("https://nightly.link/R2Northstar/NorthstarLauncher/actions/artifacts/{}.zip", artifact.id));
+                        // Download artifact
+                        return Ok(format!("https://nightly.link/R2Northstar/NorthstarLauncher/actions/artifacts/{}.zip", artifact.id));
+                    }
                 }
             }
         }
     }
 
     Err(format!(
-        "Couldn't grab download link for PR \"{}\"",
+        "Couldn't grab download link for PR \"{}\". PR might be too old and therefore no CI build has been deleted. Maybe ask author to update?",
         pull_request.number
     ))
 }
