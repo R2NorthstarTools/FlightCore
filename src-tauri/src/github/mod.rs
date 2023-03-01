@@ -13,17 +13,11 @@ pub struct Tag {
 struct CommitInfo {
     sha: String,
     commit: Commit,
-    author: CommitAuthor,
 }
 
 #[derive(Debug, Deserialize)]
 struct Commit {
     message: String,
-}
-
-#[derive(Debug, Deserialize)]
-struct CommitAuthor {
-    login: String,
 }
 
 #[derive(Debug, Deserialize)]
@@ -64,7 +58,6 @@ pub fn compare_tags(first_tag: String, second_tag: String) -> Result<String, Str
     let repo = "R2NorthstarTools/FlightCore";
 
     let mut full_patch_notes = "".to_string();
-    let mut authors_set = std::collections::HashSet::new();
 
     let mut patch_notes: Vec<String> = [].to_vec();
     println!("{}", repo);
@@ -101,25 +94,9 @@ pub fn compare_tags(first_tag: String, second_tag: String) -> Result<String, Str
             "{}",
             commit.commit.message.split('\n').next().unwrap()
         ));
-
-        // Store authors in set
-        authors_set.insert(commit.author.login);
     }
 
     full_patch_notes += &generate_flightcore_release_notes(patch_notes);
-
-    // Convert the set to a sorted vector.
-    let mut sorted_vec: Vec<String> = authors_set.into_iter().collect();
-    sorted_vec.sort();
-
-    // Define a string to prepend to each element.
-    let prefix = "@";
-
-    // Create a new list with the prefix prepended to each element.
-    let prefixed_list: Vec<String> = sorted_vec.iter().map(|s| prefix.to_owned() + s).collect();
-
-    full_patch_notes += &"\n\n**Contributors:**\n";
-    full_patch_notes += &prefixed_list.join(" ");
 
     Ok(full_patch_notes.to_string())
 }
