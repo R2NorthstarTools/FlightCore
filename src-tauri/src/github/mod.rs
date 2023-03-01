@@ -106,18 +106,18 @@ pub fn compare_tags(first_tag: String, second_tag: String) -> Result<String, Str
 
 use std::collections::HashMap;
 
+// Order in which the sections should be displayed
+const SECTION_ORDER: [&str; 9] = [
+    "feat", "fix", "docs", "style", "refactor", "build", "test", "chore", "other",
+];
+
 /// Generate release notes in the format used for FlightCore
 fn generate_flightcore_release_notes(commits: Vec<String>) -> String {
     let grouped_commits = group_commits_by_type(commits);
     let mut release_notes = String::new();
 
-    // Order in which the sections should be displayed
-    let section_order = vec![
-        "feat", "fix", "docs", "style", "refactor", "build", "test", "chore", "other",
-    ];
-
     // Go over commit types and generate notes
-    for commit_type in section_order {
+    for commit_type in SECTION_ORDER {
         if let Some(commit_list) = grouped_commits.get(commit_type) {
             if !commit_list.is_empty() {
                 let section_title = match commit_type {
@@ -150,19 +150,27 @@ fn generate_flightcore_release_notes(commits: Vec<String>) -> String {
 /// Commmit messages that are not formatted accordingly are marked as "other"
 fn group_commits_by_type(commits: Vec<String>) -> HashMap<String, Vec<String>> {
     let mut grouped_commits: HashMap<String, Vec<String>> = HashMap::new();
+    let mut other_commits: Vec<String> = vec![];
 
     for commit in commits {
         let commit_parts: Vec<&str> = commit.splitn(2, ":").collect();
         if commit_parts.len() == 2 {
-            let commit_type = commit_parts[0].trim().to_lowercase();
-            let commit_message = commit_parts[1].trim().to_string();
-            let commit_list = grouped_commits.entry(commit_type).or_insert(vec![]);
-            commit_list.push(commit_message);
+            let commit_type = commit_parts[0].to_lowercase();
+            let commit_description = commit_parts[1].trim().to_string();
+
+            // Check if known commit type
+            if SECTION_ORDER.contains(&commit_type.as_str()) {
+                let commit_list = grouped_commits.entry(commit_type.to_string()).or_default();
+                commit_list.push(commit_description);
+            } else {
+                // otherwise add to list of "other"
+                other_commits.push(commit.to_string());
+            }
         } else {
-            let commit_list = grouped_commits.entry("other".to_string()).or_insert(vec![]);
-            commit_list.push(commit.to_string());
+            other_commits.push(commit.to_string());
         }
     }
+    grouped_commits.insert("other".to_string(), other_commits);
 
     grouped_commits
 }
