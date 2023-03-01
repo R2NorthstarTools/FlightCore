@@ -28,3 +28,8 @@ pub const BLACKLISTED_MODS: [&str; 3] = [
 
 // Titanfall2 game IDs on Origin/EA-App
 pub const TITANFALL2_ORIGIN_IDS: [&str; 2] = ["Origin.OFR.50.0001452", "Origin.OFR.50.0001456"];
+
+// Order in which the sections for release notes should be displayed
+pub const SECTION_ORDER: [&str; 9] = [
+    "feat", "fix", "docs", "style", "refactor", "build", "test", "chore", "other",
+];

@@ -1,6 +1,6 @@
 pub mod release_notes;
 
-use app::constants::APP_USER_AGENT;
+use app::constants::{APP_USER_AGENT, SECTION_ORDER};
 use serde::{Deserialize, Serialize};
 use ts_rs::TS;
 
@@ -105,11 +105,6 @@ pub fn compare_tags(first_tag: String, second_tag: String) -> Result<String, Str
 }
 
 use std::collections::HashMap;
-
-// Order in which the sections should be displayed
-const SECTION_ORDER: [&str; 9] = [
-    "feat", "fix", "docs", "style", "refactor", "build", "test", "chore", "other",
-];
 
 /// Generate release notes in the format used for FlightCore
 fn generate_flightcore_release_notes(commits: Vec<String>) -> String {
