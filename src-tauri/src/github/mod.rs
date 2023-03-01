@@ -25,6 +25,7 @@ struct Comparison {
     commits: Vec<CommitInfo>,
 }
 
+/// Get a list of tags on the FlightCore repo
 #[tauri::command]
 pub fn get_list_of_tags() -> Result<Vec<Tag>, String> {
     // Set the repository name.
@@ -43,6 +44,7 @@ pub fn get_list_of_tags() -> Result<Vec<Tag>, String> {
     Ok(tags)
 }
 
+/// Use GitHub API to compare two tags of the same repo against each other and get the resulting changes
 #[tauri::command]
 pub fn compare_tags(first_tag: String, second_tag: String) -> Result<String, String> {
     // pub fn compare_tags(first_tag: Tag, second_tag: Tag) -> Result<(), String> {
@@ -83,7 +85,7 @@ pub fn compare_tags(first_tag: String, second_tag: String) -> Result<String, Str
         second_tag
     );
 
-    //
+    // Iterate over all commits in the diff
     for commit in commits {
         println!(
             "  * {} : {}",
@@ -103,6 +105,7 @@ pub fn compare_tags(first_tag: String, second_tag: String) -> Result<String, Str
 
 use std::collections::HashMap;
 
+/// Generate release notes in the format used for FlightCore
 fn generate_flightcore_release_notes(commits: Vec<String>) -> String {
     let grouped_commits = group_commits_by_type(commits);
     let mut release_notes = String::new();
