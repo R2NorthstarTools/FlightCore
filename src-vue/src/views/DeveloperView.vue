@@ -20,6 +20,10 @@
                 Check NSProton Compatibility
             </el-button>
 
+            <el-button type="primary" @click="installNSProton">
+                Install NSProton
+            </el-button>
+
             <h3>Testing:</h3>
 
             <el-button type="primary" @click="launchGameWithoutChecks">
@@ -198,6 +202,26 @@ export default defineComponent({
                     position: 'bottom-right'
                 });
             })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                });
+        },
+        async installNSProton() {
+            await invoke("install_northstar_proton_wrapper")
+                .then((message) => {
+                    // Show user notification if task completed.
+                    ElNotification({
+                        title: `Done`,
+                        message: `Done`,
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+                })
                 .catch((error) => {
                     ElNotification({
                         title: 'Error',

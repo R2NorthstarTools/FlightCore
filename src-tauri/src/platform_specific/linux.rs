@@ -3,6 +3,31 @@
 use regex::Regex;
 use std::process::Command;
 
+/// Downloads and installs NS proton
+/// Assumes Steam install
+pub fn abcdefgh() -> Result<(), thermite::prelude::ThermiteError> {
+    // Get latest NorthstarProton release
+    let latest = thermite::core::latest_release()?;
+
+    dbg!(latest.clone());
+
+    // TODO: get tmp folder path
+    let path = format!("{}.zip", "nsproton-temp");
+
+    dbg!(path.clone());
+
+    // Download NorthstarProton release
+    let archive = thermite::core::download_ns_proton(latest, path)?;
+    dbg!("Download done");
+
+    // TODO: Get Steam Proton dir
+
+    // Extract to Proton dir
+    thermite::core::install_ns_proton(&archive, "todo")?;
+    dbg!("Install done");
+    Ok(())
+}
+
 pub fn check_glibc_v() -> f32 {
     let out = Command::new("/bin/ldd")
         .arg("--version")

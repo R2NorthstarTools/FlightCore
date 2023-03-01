@@ -1830,9 +1830,11 @@ version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "80ab0312cd1bab244b8b1abd8a0f48b771d4591d4521344468e91a26d6d9fad0"
 dependencies = [
+ "flate2",
  "json5",
  "serde",
  "serde_json",
+ "tar",
  "thiserror",
  "tracing",
  "ureq",

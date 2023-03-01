@@ -33,6 +33,11 @@ use mod_management::{
 mod northstar;
 use northstar::get_northstar_version_number;
 
+// #[cfg(target_os = "linux")]
+mod platform_specific;
+#[cfg(target_os = "linux")]
+use platform_specific::linux::abcdefgh;
+
 mod thunderstore;
 use thunderstore::query_thunderstore_packages_api;
 
@@ -114,6 +119,7 @@ fn main() {
             delete_northstar_mod,
             get_server_player_count,
             delete_thunderstore_mod,
+            install_northstar_proton_wrapper,
             query_thunderstore_packages_api,
         ])
         .run(tauri::generate_context!())
@@ -350,4 +356,17 @@ async fn get_server_player_count() -> Result<(i32, usize), String> {
     dbg!((total_player_count, server_count));
 
     Ok((total_player_count, server_count))
+}
+
+#[tauri::command]
+fn install_northstar_proton_wrapper() -> Result<(), String> {
+    #[cfg(target_os = "linux")]
+    match abcdefgh() {
+        Ok(()) => Ok(()),
+        Err(err) => Err(err.to_string()),
+    }
+    #[cfg(target_os = "windows")]
+    {
+        Err("Not supported on Windows".to_string())
+    }
 }
