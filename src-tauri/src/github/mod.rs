@@ -73,10 +73,8 @@ pub fn compare_tags(first_tag: String, second_tag: String) -> Result<String, Str
         second_tag
     );
 
-    dbg!(comparison_url.clone());
     let comparison: Comparison = client.get(&comparison_url).send().unwrap().json().unwrap();
     let commits = comparison.commits;
-    dbg!();
 
     // Display the list of commits.
     println!(
