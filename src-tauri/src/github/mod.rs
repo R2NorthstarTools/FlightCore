@@ -2,6 +2,7 @@ pub mod release_notes;
 
 use app::constants::{APP_USER_AGENT, SECTION_ORDER};
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use ts_rs::TS;
 
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
@@ -101,8 +102,6 @@ pub fn compare_tags(first_tag: String, second_tag: String) -> Result<String, Str
 
     Ok(full_patch_notes.to_string())
 }
-
-use std::collections::HashMap;
 
 /// Generate release notes in the format used for FlightCore
 fn generate_flightcore_release_notes(commits: Vec<String>) -> String {
