@@ -1,5 +1,6 @@
 pub mod release_notes;
 
+use app::constants::APP_USER_AGENT;
 use serde::{Deserialize, Serialize};
 use ts_rs::TS;
 
@@ -33,7 +34,7 @@ pub fn get_list_of_tags() -> Result<Vec<Tag>, String> {
 
     // Create a `reqwest` client with a user agent.
     let client = reqwest::blocking::Client::builder()
-        .user_agent("my-awesome-app")
+        .user_agent(APP_USER_AGENT)
         .build()
         .unwrap();
 
@@ -53,7 +54,7 @@ pub fn compare_tags(first_tag: String, second_tag: String) -> Result<String, Str
 
     // Create a `reqwest` client with a user agent.
     let client = reqwest::blocking::Client::builder()
-        .user_agent("my-awesome-app")
+        .user_agent(APP_USER_AGENT)
         .build()
         .unwrap();
 
