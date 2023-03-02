@@ -15,7 +15,7 @@ export const pullRequestModule = {
         pull_requests_mods: [],
     }),
     mutations: {
-        async getPullRequests(state, pull_request_type: PullRequestType) {
+        async getPullRequests(state: PullRequestStoreState, pull_request_type: PullRequestType) {
             await invoke<PullsApiResponseElement[]>("get_pull_requests_wrapper", { installType: pull_request_type })
                 .then((message) => {
                     switch (pull_request_type) {
