@@ -78,29 +78,7 @@ export default defineComponent({
             }
         },
         async getPullRequests(pull_request_type: PullRequestType) {
-            await invoke<PullsApiResponseElement[]>("get_pull_requests_wrapper", { installType: pull_request_type })
-                .then((message) => {
-                    switch (pull_request_type) {
-                        case "MODS":
-                            this.$store.state.pullrequests.pull_requests_mods = message;
-                            break;
-
-                        case "LAUNCHER":
-                            this.$store.state.pullrequests.pull_requests_launcher = message;
-                            break;
-
-                        default:
-                            console.error("We should never end up here");
-                    }
-                })
-                .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
-                });
+            this.$store.commit('getPullRequests', pull_request_type);
         },
         async installLauncherPR(pull_request: PullsApiResponseElement) {
             // Send notification telling the user to wait for the process to finish
