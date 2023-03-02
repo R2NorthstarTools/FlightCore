@@ -61,10 +61,10 @@ export default defineComponent({
     name: 'PullRequestsSelector',
     computed: {
         pull_requests_launcher(): PullsApiResponseElement[] {
-            return this.$store.state.pull_requests_launcher;
+            return this.$store.state.pullrequests.pull_requests_launcher;
         },
         pull_requests_mods(): PullsApiResponseElement[] {
-            return this.$store.state.pull_requests_mods;
+            return this.$store.state.pullrequests.pull_requests_mods;
         },
     },
     methods: {
@@ -82,11 +82,11 @@ export default defineComponent({
                 .then((message) => {
                     switch (pull_request_type) {
                         case "MODS":
-                            this.$store.state.pull_requests_mods = message;
+                            this.$store.state.pullrequests.pull_requests_mods = message;
                             break;
 
                         case "LAUNCHER":
-                            this.$store.state.pull_requests_launcher = message;
+                            this.$store.state.pullrequests.pull_requests_launcher = message;
                             break;
 
                         default:

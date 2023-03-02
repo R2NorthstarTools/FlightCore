@@ -16,6 +16,7 @@ import { ReleaseInfo } from "../../../src-tauri/bindings/ReleaseInfo";
 import { ThunderstoreMod } from "../../../src-tauri/bindings/ThunderstoreMod";
 import { NorthstarMod } from "../../../src-tauri/bindings/NorthstarMod";
 import { searchModule } from './modules/search';
+import { pullRequestModule } from './modules/pull_requests';
 import { PullsApiResponseElement } from "../../../src-tauri/bindings/PullsApiResponseElement";
 
 const persistentStore = new Store('flight-core-settings.json');
@@ -44,9 +45,6 @@ export interface FlightCoreStore {
     player_count: number,
     server_count: number,
 
-    pull_requests_launcher: PullsApiResponseElement[],
-    pull_requests_mods: PullsApiResponseElement[],
-
     // user custom settings
     mods_per_page: number,
 }
@@ -55,7 +53,8 @@ let notification_handle: NotificationHandle;
 
 export const store = createStore<FlightCoreStore>({
     modules: {
-        search: searchModule
+        search: searchModule,
+        pullrequests: pullRequestModule,
     },
     state(): FlightCoreStore {
         return {
@@ -80,9 +79,6 @@ export const store = createStore<FlightCoreStore>({
 
             player_count: -1,
             server_count: -1,
-
-            pull_requests_launcher: [],
-            pull_requests_mods: [],
 
             mods_per_page: 20,
         }
