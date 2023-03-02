@@ -1,3 +1,4 @@
+pub mod pull_requests;
 pub mod release_notes;
 
 use app::constants::{APP_USER_AGENT, SECTION_ORDER};

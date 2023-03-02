@@ -33,3 +33,9 @@ pub const TITANFALL2_ORIGIN_IDS: [&str; 2] = ["Origin.OFR.50.0001452", "Origin.O
 pub const SECTION_ORDER: [&str; 9] = [
     "feat", "fix", "docs", "style", "refactor", "build", "test", "chore", "other",
 ];
+
+// GitHub API endpoints for launcher/mods PRs
+pub const PULLS_API_ENDPOINT_LAUNCHER: &str =
+    "https://api.github.com/repos/R2Northstar/NorthstarLauncher/pulls";
+pub const PULLS_API_ENDPOINT_MODS: &str =
+    "https://api.github.com/repos/R2Northstar/NorthstarMods/pulls";
