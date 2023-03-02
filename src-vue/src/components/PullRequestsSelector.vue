@@ -81,38 +81,7 @@ export default defineComponent({
             this.$store.commit('getPullRequests', pull_request_type);
         },
         async installLauncherPR(pull_request: PullsApiResponseElement) {
-            // Send notification telling the user to wait for the process to finish
-            const notification = ElNotification({
-                title: `Installing launcher PR ${pull_request.number}`,
-                message: 'Please wait',
-                duration: 0,
-                type: 'info',
-                position: 'bottom-right'
-            });
-
-            await invoke("apply_launcher_pr", { pullRequest: pull_request, gameInstallPath: this.$store.state.game_path })
-                .then((message) => {
-                    console.log(message);
-                    // Show user notification if mod install completed.
-                    ElNotification({
-                        title: `Done`,
-                        message: `Installed ${pull_request.number}: "${pull_request.title}"`,
-                        type: 'success',
-                        position: 'bottom-right'
-                    });
-                })
-                .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
-                })
-                .finally(() => {
-                    // Clear old notification
-                    notification.close();
-                });
+            this.$store.commit('installLauncherPR', pull_request);
         },
         async installModsPR(pull_request: PullsApiResponseElement) {
             // Send notification telling the user to wait for the process to finish

@@ -2,6 +2,7 @@ import { ElNotification } from "element-plus";
 import { invoke } from "@tauri-apps/api";
 import { PullsApiResponseElement } from "../../../../src-tauri/bindings/PullsApiResponseElement";
 import { PullRequestType } from '../../../../src-tauri/bindings/PullRequestType';
+import { store } from "../store";
 
 interface PullRequestStoreState {
     searchValue: string,
@@ -39,6 +40,40 @@ export const pullRequestModule = {
                         position: 'bottom-right'
                     });
                 });
-        }
+        },
+        async installLauncherPR(state: PullRequestStoreState, pull_request: PullsApiResponseElement) {
+            // Send notification telling the user to wait for the process to finish
+            const notification = ElNotification({
+                title: `Installing launcher PR ${pull_request.number}`,
+                message: 'Please wait',
+                duration: 0,
+                type: 'info',
+                position: 'bottom-right'
+            });
+
+            await invoke("apply_launcher_pr", { pullRequest: pull_request, gameInstallPath: store.state.game_path })
+                .then((message) => {
+                    console.log(message);
+                    // Show user notification if mod install completed.
+                    ElNotification({
+                        title: `Done`,
+                        message: `Installed ${pull_request.number}: "${pull_request.title}"`,
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+                })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                })
+                .finally(() => {
+                    // Clear old notification
+                    notification.close();
+                });
+        },
     }
 }
