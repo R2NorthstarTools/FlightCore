@@ -19,7 +19,7 @@ jobs:
     name: format-check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
@@ -35,7 +35,7 @@ jobs:
   autogen-ts-bindings-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
@@ -109,9 +109,16 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
-    - name: upload build artifact
+    - name: Upload Linux artifact
       uses: actions/upload-artifact@v2
       with:
+        name: linux-artifacts
         path: |
           src-tauri/target/release/bundle/appimage/*
+    - name: Upload Windows artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: windows-artifacts
+        path: |
           src-tauri/target/release/bundle/msi/*
+          src-tauri/target/release/app.pdb

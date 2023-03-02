@@ -40,6 +40,10 @@
                 Disable all but core mods
             </el-button>
 
+            <el-button type="primary" @click="forceInstallNorthstar">
+                Force reinstall Northstar
+            </el-button>
+
             <el-button type="primary" @click="getInstalledMods">
                 Get installed mods
             </el-button>
@@ -51,7 +55,6 @@
             <el-button type="primary" @click="clearFlightCorePersistentStore">
                 Delete FlightCore persistent store
             </el-button>
-
             <h3>Tech support</h3>
 
             <el-button type="primary" @click="parseGivenLogTextForMods">
@@ -88,6 +91,9 @@
                     </el-table-column>
                 </el-table>
             </div>
+
+            <h3>Testing</h3>
+            <pull-requests-selector />
         </el-scrollbar>
     </div>
 </template>
@@ -98,12 +104,17 @@ import { invoke } from "@tauri-apps/api";
 import { ElNotification } from "element-plus";
 import { GameInstall } from "../utils/GameInstall";
 import { Store } from 'tauri-plugin-store-api';
+import { ReleaseCanal } from "../utils/ReleaseCanal";
+import PullRequestsSelector from "../components/PullRequestsSelector.vue";
 import { ParsedLogResults } from "../../../src-tauri/bindings/ParsedLogResults";
 import { ParsedModFromLog } from "../../../src-tauri/bindings/ParsedModFromLog";
 const persistentStore = new Store('flight-core-settings.json');
 
 export default defineComponent({
     name: "DeveloperView",
+    components: {
+        PullRequestsSelector
+    },
     data() {
         return {
             mod_to_install_field_string : "",
@@ -248,6 +259,47 @@ export default defineComponent({
             await persistentStore.clear();
             // ...and save
             await persistentStore.save();
+        },
+        async forceInstallNorthstar() {
+            let game_install = {
+                game_path: this.$store.state.game_path,
+                install_type: this.$store.state.install_type
+            } as GameInstall;
+
+            // Send notification telling the user to wait for the process to finish
+            const notification = ElNotification({
+                title: 'Force reinstalling Northstar',
+                message: 'Please wait',
+                duration: 0,
+                type: 'info',
+                position: 'bottom-right'
+            });
+
+            let install_northstar_result = invoke("install_northstar_caller", { gamePath: game_install.game_path, northstarPackageName: ReleaseCanal.RELEASE });
+            await install_northstar_result
+                .then((message) => {
+                    // Send notification
+                    ElNotification({
+                        title: `Done`,
+                        message: `Successfully reinstalled Northstar`,
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+                    this.$store.commit('checkNorthstarUpdates');
+                })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                    console.error(error);
+                })
+                .finally(() => {
+                    // Clear old notification
+                    notification.close();
+                });
         },
         async parseGivenLogTextForMods() {
             let current_log_content = this.log_content;

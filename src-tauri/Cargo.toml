@@ -1,15 +1,21 @@
 [package]
 name = "app"
-version = "1.7.0"
+version = "1.9.0"
 description = "A Tauri App"
 authors = ["you"]
 license = ""
 repository = ""
 default-run = "app"
 edition = "2021"
-rust-version = "1.65"
+rust-version = "1.66"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[profile.release]
+# Keeps line tables in built binary
+# c.f.: https://doc.rust-lang.org/cargo/reference/profiles.html#debug
+# This is done to see line numbers in stack trace on sentry.io
+debug = 1
 
 [build-dependencies]
 tauri-build = { version = "1.2", features = [] }
@@ -19,7 +25,7 @@ serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "1.2", features = ["api-all", "updater"] }
 tokio = { version = "1", features = ["full"] }
-sentry = "0.27.0"
+sentry = "0.30"
 # Find steam games
 steamlocate = "1.0.2"
 # Error messages
@@ -35,7 +41,7 @@ sysinfo = "0.26.2"
 # HTTP requests
 reqwest = { version = "0.11", features = ["blocking"] }
 # Persistent store for settings
-tauri-plugin-store = { git = "https://github.com/tauri-apps/tauri-plugin-store", branch = "dev" }
+tauri-plugin-store = { git = "https://github.com/tauri-apps/tauri-plugin-store", rev = "9bd993aa67766596638bbfd91e79a1bf8f632014" }
 # JSON5 parsing support (allows comments in JSON)
 json5 = "0.4.1"
 # Async recursion for recursive mod install
@@ -46,6 +52,8 @@ game-scanner = "1.1.4"
 chrono = "0.4.23"
 # TypeScript bindings
 ts-rs = "6.1"
+# const formatting
+const_format = "0.2.30"
 
 [features]
 # by default Tauri runs in production mode

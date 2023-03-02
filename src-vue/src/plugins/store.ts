@@ -13,9 +13,11 @@ import { open } from '@tauri-apps/api/dialog';
 import { Store } from 'tauri-plugin-store-api';
 import { router } from "../main";
 import { ReleaseInfo } from "../../../src-tauri/bindings/ReleaseInfo";
-import { ThunderstoreMod } from '../utils/thunderstore/ThunderstoreMod';
+import { ThunderstoreMod } from "../../../src-tauri/bindings/ThunderstoreMod";
 import { NorthstarMod } from "../../../src-tauri/bindings/NorthstarMod";
 import { searchModule } from './modules/search';
+import { pullRequestModule } from './modules/pull_requests';
+import { PullsApiResponseElement } from "../../../src-tauri/bindings/PullsApiResponseElement";
 
 const persistentStore = new Store('flight-core-settings.json');
 
@@ -51,7 +53,8 @@ let notification_handle: NotificationHandle;
 
 export const store = createStore<FlightCoreStore>({
     modules: {
-        search: searchModule
+        search: searchModule,
+        pullrequests: pullRequestModule,
     },
     state(): FlightCoreStore {
         return {
@@ -242,14 +245,22 @@ export const store = createStore<FlightCoreStore>({
             await store.commit('loadInstalledMods');
             if (state.thunderstoreMods.length !== 0) return;
 
-            const response = await fetch('https://northstar.thunderstore.io/api/v1/package/');
-            let mods = JSON.parse(await (await response.blob()).text());
+            let mods: ThunderstoreMod[] = [];
+            await invoke<ThunderstoreMod[]>("query_thunderstore_packages_api")
+                .then((message) => {
+                    mods = message;
+                })
+                .catch((error) => {
+                    console.error(error);
+                    return;
+                });
+
+            if (mods == undefined) {
+                return;
+            }
 
             // Remove some mods from listing
-            const removedMods = ['Northstar', 'NorthstarReleaseCandidate', 'r2modman'];
-            state.thunderstoreMods = mods.filter((mod: ThunderstoreMod) => {
-                return !removedMods.includes(mod.name) && !mod.is_deprecated;
-            });
+            state.thunderstoreMods = mods;
 
             // Retrieve categories from mods
             state.thunderstoreModsCategories = mods

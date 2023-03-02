@@ -15,6 +15,7 @@ use app::{
 };
 
 mod github;
+use github::pull_requests::{apply_launcher_pr, apply_mods_pr, get_pull_requests_wrapper};
 use github::release_notes::{
     check_is_flightcore_outdated, get_newest_flightcore_version, get_northstar_release_notes,
 };
@@ -33,6 +34,9 @@ use mod_management::{
 mod northstar;
 use northstar::get_northstar_version_number;
 
+mod thunderstore;
+use thunderstore::query_thunderstore_packages_api;
+
 use tauri::Manager;
 use tauri_plugin_store::PluginBuilder;
 use tokio::time::sleep;
@@ -49,6 +53,7 @@ fn main() {
         "https://f833732deb2240b0b2dc4abce97d0f1d@o1374052.ingest.sentry.io/6692177",
         sentry::ClientOptions {
             release: sentry::release_name!(),
+            attach_stacktrace: true,
             ..Default::default()
         },
     ));
@@ -113,6 +118,10 @@ fn main() {
             get_server_player_count,
             delete_thunderstore_mod,
             parse_given_log_text,
+            query_thunderstore_packages_api,
+            get_pull_requests_wrapper,
+            apply_launcher_pr,
+            apply_mods_pr,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -140,12 +149,18 @@ async fn is_debug_mode() -> bool {
 #[tauri::command]
 /// Returns true if linux compatible
 async fn linux_checks() -> Result<(), String> {
-    // Early return if Windows
-    if get_host_os() == "windows" {
-        return Err("Not available on Windows".to_string());
+    // Different behaviour depending on OS
+    // MacOS is missing as it is not a target
+    // in turn this means this application will not build on MacOS.
+    #[cfg(target_os = "windows")]
+    {
+        Err("Not available on Windows".to_string())
     }
 
-    linux_checks_librs()
+    #[cfg(target_os = "linux")]
+    {
+        linux_checks_librs()
+    }
 }
 
 #[tauri::command]
