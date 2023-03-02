@@ -19,7 +19,7 @@ pub struct FlightCoreVersion {
 }
 
 // Fetches repo release API and returns response as string
-async fn fetch_github_releases_api(url: &str) -> Result<String, String> {
+pub async fn fetch_github_releases_api(url: &str) -> Result<String, String> {
     println!("Fetching releases notes from GitHub API");
 
     let client = reqwest::Client::new();
