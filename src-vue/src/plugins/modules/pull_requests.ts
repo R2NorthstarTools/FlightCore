@@ -75,5 +75,38 @@ export const pullRequestModule = {
                     notification.close();
                 });
         },
+        async installModsPR(state: PullRequestStoreState, pull_request: PullsApiResponseElement) {
+            // Send notification telling the user to wait for the process to finish
+            const notification = ElNotification({
+                title: `Installing mods PR ${pull_request.number}`,
+                message: 'Please wait',
+                duration: 0,
+                type: 'info',
+                position: 'bottom-right'
+            });
+
+            await invoke("apply_mods_pr", { pullRequest: pull_request, gameInstallPath: store.state.game_path })
+                .then((message) => {
+                    // Show user notification if mod install completed.
+                    ElNotification({
+                        title: `Done`,
+                        message: `Installed ${pull_request.number}: "${pull_request.title}"\nMake sure to launch via batch file or by specifying correct profile!`,
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+                })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                })
+                .finally(() => {
+                    // Clear old notification
+                    notification.close();
+                });
+        },
     }
 }
