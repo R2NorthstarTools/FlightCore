@@ -55,6 +55,9 @@
             <el-button type="primary" @click="clearFlightCorePersistentStore">
                 Delete FlightCore persistent store
             </el-button>
+
+            <h3>Testing</h3>
+            <pull-requests-selector />
         </el-scrollbar>
     </div>
 </template>
@@ -66,10 +69,14 @@ import { ElNotification } from "element-plus";
 import { GameInstall } from "../utils/GameInstall";
 import { Store } from 'tauri-plugin-store-api';
 import { ReleaseCanal } from "../utils/ReleaseCanal";
+import PullRequestsSelector from "../components/PullRequestsSelector.vue";
 const persistentStore = new Store('flight-core-settings.json');
 
 export default defineComponent({
     name: "DeveloperView",
+    components: {
+        PullRequestsSelector
+    },
     data() {
         return {
             mod_to_install_field_string : "",

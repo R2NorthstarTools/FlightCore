@@ -28,3 +28,9 @@ pub const BLACKLISTED_MODS: [&str; 3] = [
 
 // Titanfall2 game IDs on Origin/EA-App
 pub const TITANFALL2_ORIGIN_IDS: [&str; 2] = ["Origin.OFR.50.0001452", "Origin.OFR.50.0001456"];
+
+// GitHub API endpoints for launcher/mods PRs
+pub const PULLS_API_ENDPOINT_LAUNCHER: &str =
+    "https://api.github.com/repos/R2Northstar/NorthstarLauncher/pulls";
+pub const PULLS_API_ENDPOINT_MODS: &str =
+    "https://api.github.com/repos/R2Northstar/NorthstarMods/pulls";
