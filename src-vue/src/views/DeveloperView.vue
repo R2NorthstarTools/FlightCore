@@ -55,6 +55,42 @@
             <el-button type="primary" @click="clearFlightCorePersistentStore">
                 Delete FlightCore persistent store
             </el-button>
+            <h3>Tech support</h3>
+
+            <el-button type="primary" @click="parseGivenLogTextForMods">
+                Parse logs
+            </el-button>
+            <el-input
+                v-model="log_content"
+                type="textarea"
+                :rows="5"
+                placeholder="Paste log content here"
+
+            />
+            <div>
+                <el-table :data="logResults">
+                    <el-table-column prop="northstar_launcher_version"
+                        label="Northstar Launcher Version"></el-table-column>
+                    <el-table-column prop="installed_mods" label="Installed and enabled/disabled Mods">
+                        <template v-slot="{ row }">
+                            <ul>
+                                <li v-for="mod in row.installed_mods">
+                                    <el-icon class="no-inherit">
+                                        <Select v-if="mod.enabled" />
+                                        <Close v-else />
+                                    </el-icon>
+                                    {{ mod.mod_name }}
+                                </li>
+                            </ul>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="has_northstar_crashed" label="Northstar Crashed">
+                        <template v-slot="{ row }">
+                            {{ row.has_northstar_crashed }}
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </div>
 
             <h3>Testing</h3>
             <pull-requests-selector />
@@ -70,6 +106,8 @@ import { GameInstall } from "../utils/GameInstall";
 import { Store } from 'tauri-plugin-store-api';
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import PullRequestsSelector from "../components/PullRequestsSelector.vue";
+import { ParsedLogResults } from "../../../src-tauri/bindings/ParsedLogResults";
+import { ParsedModFromLog } from "../../../src-tauri/bindings/ParsedModFromLog";
 const persistentStore = new Store('flight-core-settings.json');
 
 export default defineComponent({
@@ -80,6 +118,8 @@ export default defineComponent({
     data() {
         return {
             mod_to_install_field_string : "",
+            log_content : "",
+            logResults: [] as ParsedLogResults[]
         }
     },
     methods: {
@@ -259,6 +299,29 @@ export default defineComponent({
                 .finally(() => {
                     // Clear old notification
                     notification.close();
+                });
+        },
+        async parseGivenLogTextForMods() {
+            let current_log_content = this.log_content;
+            await invoke<[ParsedLogResults]>("parse_given_log_text", { logText: current_log_content })
+                .then((message) => {
+                    console.log(message); // TODO present better here
+                    this.logResults.push(message);
+                    // Show user notification if task completed.
+                    ElNotification({
+                        title: `Done`,
+                        message: `${message}`,
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+                })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
                 });
         },
     }

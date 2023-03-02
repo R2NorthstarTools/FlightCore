@@ -1,3 +1,5 @@
+pub mod log_handling;
+
 use crate::mod_management::{rebuild_enabled_mods_json, set_mod_enabled_status};
 use anyhow::anyhow;
 /// Contains various functions to repair common issues and verifying installation
