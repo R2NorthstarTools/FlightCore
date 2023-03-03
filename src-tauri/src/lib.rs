@@ -181,11 +181,20 @@ fn extract(zip_file: std::fs::File, target: &std::path::Path) -> Result<()> {
     Ok(())
 }
 
+#[derive(Clone, serde::Serialize)]
+struct Payload {
+    message: String,
+}
+
 /// Copied from `papa` source code and modified
 ///Install N* from the provided mod
 ///
 ///Checks cache, else downloads the latest version
-async fn do_install(nmod: &thermite::model::ModVersion, game_path: &std::path::Path) -> Result<()> {
+async fn do_install(
+    window: tauri::Window,
+    nmod: &thermite::model::ModVersion,
+    game_path: &std::path::Path,
+) -> Result<()> {
     let filename = format!("northstar-{}.zip", nmod.version);
     let download_directory = format!("{}/___flightcore-temp-download-dir/", game_path.display());
 
@@ -194,7 +203,30 @@ async fn do_install(nmod: &thermite::model::ModVersion, game_path: &std::path::P
     let download_path = format!("{}/{}", download_directory.clone(), filename);
     println!("{}", download_path);
 
-    let nfile = thermite::core::manage::download_file(&nmod.url, download_path).unwrap();
+    let nfile = thermite::core::manage::download_file_with_progress(
+        &nmod.url,
+        download_path,
+        |delta, current, total| {
+            if delta != 0 && current / delta % 100 == 0 {
+                window
+                    .emit(
+                        "northstar-install-download-progress",
+                        Payload {
+                            message: format!(
+                                "Download progress: {:.2}%",
+                                (current * 100) as f64 / total as f64
+                            )
+                            .into(),
+                        },
+                    )
+                    .unwrap();
+            }
+            // dbg!(delta);
+            // dbg!(current);
+            // dbg!(total);
+        },
+    )
+    .unwrap();
 
     println!("Extracting Northstar...");
     extract(nfile, game_path)?;
@@ -209,6 +241,7 @@ async fn do_install(nmod: &thermite::model::ModVersion, game_path: &std::path::P
 }
 
 pub async fn install_northstar(
+    window: tauri::Window,
     game_path: &str,
     northstar_package_name: Option<String>,
 ) -> Result<String, String> {
@@ -231,6 +264,7 @@ pub async fn install_northstar(
         .unwrap();
 
     do_install(
+        window,
         nmod.versions.get(&nmod.latest).unwrap(),
         std::path::Path::new(game_path),
     )

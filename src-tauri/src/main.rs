@@ -257,11 +257,12 @@ async fn get_host_os_caller() -> String {
 #[tauri::command]
 /// Installs Northstar to the given path
 async fn install_northstar_caller(
+    window: tauri::Window,
     game_path: String,
     northstar_package_name: Option<String>,
 ) -> Result<bool, String> {
     println!("Running");
-    match install_northstar(&game_path, northstar_package_name).await {
+    match install_northstar(window, &game_path, northstar_package_name).await {
         Ok(_) => Ok(true),
         Err(err) => {
             println!("{}", err);
@@ -273,13 +274,14 @@ async fn install_northstar_caller(
 #[tauri::command]
 /// Update Northstar install in the given path
 async fn update_northstar_caller(
+    window: tauri::Window,
     game_path: String,
     northstar_package_name: Option<String>,
 ) -> Result<bool, String> {
     println!("Updating");
 
     // Simply re-run install with up-to-date version for upate
-    match install_northstar(&game_path, northstar_package_name).await {
+    match install_northstar(window, &game_path, northstar_package_name).await {
         Ok(_) => Ok(true),
         Err(err) => {
             println!("{}", err);
