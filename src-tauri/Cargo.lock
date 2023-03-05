@@ -1864,9 +1864,9 @@ dependencies = [
 
 [[package]]
 name = "libthermite"
-version = "0.5.2"
+version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "80ab0312cd1bab244b8b1abd8a0f48b771d4591d4521344468e91a26d6d9fad0"
+checksum = "0d8ef144beaf1e683b0ccb2e6e3e14d1e6a8f29e28be3c4fc93376539b28fe97"
 dependencies = [
  "json5",
  "serde",
