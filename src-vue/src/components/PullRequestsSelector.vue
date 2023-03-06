@@ -41,6 +41,9 @@
                 </p>
                 <el-card v-else shadow="hover" v-for="pull_request in pull_requests_mods" v-bind:key="pull_request.url">
                     <el-button type="primary" @click="installModsPR(pull_request)">Install</el-button>
+                    <a target="_blank" :href="`https://github.com/${pull_request.head.repo.full_name}/archive/refs/heads/${pull_request.head.ref}.zip`">
+                        <el-button type="primary">Download</el-button>
+                    </a>
                     <a target="_blank" :href="pull_request.html_url">
                         {{ pull_request.number }}: {{ pull_request.title }}
                     </a>
