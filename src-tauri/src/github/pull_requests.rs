@@ -277,7 +277,8 @@ fn get_mods_download_link(pull_request: PullsApiResponseElement) -> Result<Strin
 }
 
 /// Gets `nightly.link` artifact download link of a launcher PR
-async fn get_launcher_download_link(
+#[tauri::command]
+pub async fn get_launcher_download_link(
     pull_request: PullsApiResponseElement,
 ) -> Result<String, String> {
     // Iterate over the first 10 pages of

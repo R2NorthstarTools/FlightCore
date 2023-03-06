@@ -1,5 +1,5 @@
 import { ElNotification } from "element-plus";
-import { invoke } from "@tauri-apps/api";
+import { invoke, shell } from "@tauri-apps/api";
 import { PullsApiResponseElement } from "../../../../src-tauri/bindings/PullsApiResponseElement";
 import { PullRequestType } from '../../../../src-tauri/bindings/PullRequestType';
 import { store } from "../store";
@@ -31,6 +31,21 @@ export const pullRequestModule = {
                         default:
                             console.error("We should never end up here");
                     }
+                })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                });
+        },
+        async downloadLauncherPR(state: PullRequestStoreState, pull_request: PullsApiResponseElement) {
+            await invoke<string>("get_launcher_download_link", { pullRequest: pull_request })
+                .then((url) => {
+                    // Open URL in default HTTPS handler (i.e. default browser)
+                    shell.open(url);
                 })
                 .catch((error) => {
                     ElNotification({
