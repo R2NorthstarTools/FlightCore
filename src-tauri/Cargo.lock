@@ -87,7 +87,7 @@ checksum = "224afbd727c3d6e4b90103ece64b8d1b67fbb1973b1046c2281eed3f3803f800"
 
 [[package]]
 name = "app"
-version = "1.9.0"
+version = "1.9.1"
 dependencies = [
  "anyhow",
  "async-recursion",
@@ -1864,9 +1864,9 @@ dependencies = [
 
 [[package]]
 name = "libthermite"
-version = "0.5.2"
+version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "80ab0312cd1bab244b8b1abd8a0f48b771d4591d4521344468e91a26d6d9fad0"
+checksum = "0d8ef144beaf1e683b0ccb2e6e3e14d1e6a8f29e28be3c4fc93376539b28fe97"
 dependencies = [
  "json5",
  "serde",

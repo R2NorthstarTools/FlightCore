@@ -1,6 +1,6 @@
 [package]
 name = "app"
-version = "1.9.0"
+version = "1.9.1"
 description = "A Tauri App"
 authors = ["you"]
 license = ""
@@ -31,7 +31,7 @@ steamlocate = "1.0.2"
 # Error messages
 anyhow = "1.0"
 # libthermite for Northstar/mod install handling
-libthermite = "0.5.2"
+libthermite = "0.5.3"
 # zip stuff
 zip = "0.6.2"
 # Regex
