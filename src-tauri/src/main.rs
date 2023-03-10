@@ -37,7 +37,7 @@ use northstar::get_northstar_version_number;
 mod thunderstore;
 use thunderstore::query_thunderstore_packages_api;
 
-use tauri::Manager;
+use tauri::{Manager, Runtime};
 use tauri_plugin_store::PluginBuilder;
 use tokio::time::sleep;
 
@@ -120,6 +120,7 @@ fn main() {
             get_pull_requests_wrapper,
             apply_launcher_pr,
             apply_mods_pr,
+            close_application,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -377,5 +378,12 @@ async fn open_repair_window(handle: tauri::AppHandle) -> Result<(), String> {
         Ok(()) => (),
         Err(err) => return Err(err.to_string()),
     };
+    Ok(())
+}
+
+/// Closes all windows and exits application
+#[tauri::command]
+async fn close_application<R: Runtime>(app: tauri::AppHandle<R>) -> Result<(), String> {
+    app.exit(0); // Close application
     Ok(())
 }

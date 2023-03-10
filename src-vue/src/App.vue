@@ -6,7 +6,7 @@ import ModsView from './views/ModsView.vue';
 import SettingsView from './views/SettingsView.vue';
 import { appWindow } from '@tauri-apps/api/window';
 import { store } from './plugins/store';
-import { window as tauriWindow } from "@tauri-apps/api";
+import { invoke, window as tauriWindow } from "@tauri-apps/api";
 
 export default {
   components: {
@@ -30,7 +30,7 @@ export default {
       appWindow.minimize()
     },
     close() {
-      appWindow.close()
+      invoke("close_application");
     }
   },
     computed: {
