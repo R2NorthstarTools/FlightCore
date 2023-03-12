@@ -3,5 +3,6 @@ export enum Tabs {
     CHANGELOG = '/changelog',
     SETTINGS = '/settings',
     DEV = '/dev',
-    MODS = '/mods'
+    MODS = '/mods',
+    REPAIR = '/repair',
 }

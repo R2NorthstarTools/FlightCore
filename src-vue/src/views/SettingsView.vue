@@ -32,6 +32,11 @@
                     </el-input>
                 </div>
 
+                <h3>Repair</h3>
+                <el-button type="primary" @click="openRepairWindow">
+                    Open Repair window
+                </el-button>
+
                 <h3>About:</h3>
                 <div class="fc_northstar__version" @click="activateDeveloperMode">
                     FlightCore Version: {{ flightcoreVersion === '' ? 'Unknown version' : `${flightcoreVersion}` }}
@@ -53,6 +58,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { ElNotification } from 'element-plus';
+import { invoke } from "@tauri-apps/api";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { Store } from 'tauri-plugin-store-api';
 const persistentStore = new Store('flight-core-settings.json');
@@ -109,7 +115,19 @@ export default defineComponent({
         },
         async updateGamePath() {
             this.$store.commit('updateGamePath');
-        }
+        },
+        async openRepairWindow() {
+            await invoke("open_repair_window")
+                .then((message) => { })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                });
+        },
     },
     mounted() {
         document.querySelector('input')!.disabled = true;
