@@ -37,9 +37,6 @@
 
             <h3>Repair:</h3>
 
-            <el-button type="primary" @click="createNewWindow">
-                Open Repair window
-            </el-button>
 
             <el-button type="primary" @click="getInstalledMods">
                 Get installed mods
@@ -146,19 +143,6 @@ export default defineComponent({
                     position: 'bottom-right'
                 });
             })
-                .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
-                });
-        },
-
-        async createNewWindow() {
-            await invoke("open_repair_window")
-                .then((message) => { })
                 .catch((error) => {
                     ElNotification({
                         title: 'Error',
