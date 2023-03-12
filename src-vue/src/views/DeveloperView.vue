@@ -41,20 +41,8 @@
                 Open Repair window
             </el-button>
 
-            <el-button type="primary" @click="forceInstallNorthstar">
-                Force reinstall Northstar
-            </el-button>
-
             <el-button type="primary" @click="getInstalledMods">
                 Get installed mods
-            </el-button>
-
-            <el-button type="primary" @click="cleanUpDownloadFolder">
-                Force delete temp download folder
-            </el-button>
-
-            <el-button type="primary" @click="clearFlightCorePersistentStore">
-                Delete FlightCore persistent store
             </el-button>
 
             <h3>Testing</h3>
@@ -68,10 +56,7 @@ import { defineComponent } from "vue";
 import { invoke } from "@tauri-apps/api";
 import { ElNotification } from "element-plus";
 import { GameInstall } from "../utils/GameInstall";
-import { Store } from 'tauri-plugin-store-api';
-import { ReleaseCanal } from "../utils/ReleaseCanal";
 import PullRequestsSelector from "../components/PullRequestsSelector.vue";
-const persistentStore = new Store('flight-core-settings.json');
 
 export default defineComponent({
     name: "DeveloperView",
@@ -170,76 +155,7 @@ export default defineComponent({
                     });
                 });
         },
-        async cleanUpDownloadFolder() {
-            let game_install = {
-                game_path: this.$store.state.game_path,
-                install_type: this.$store.state.install_type
-            } as GameInstall;
-            await invoke("clean_up_download_folder_caller", { gameInstall: game_install, force: true }).then((message) => {
-                // Show user notification if task completed.
-                ElNotification({
-                    title: `Done`,
-                    message: `Done`,
-                    type: 'success',
-                    position: 'bottom-right'
-                });
-            })
-                .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
-                });
-        },
-        async clearFlightCorePersistentStore() {
-            // Clear store...
-            await persistentStore.clear();
-            // ...and save
-            await persistentStore.save();
-        },
-        async forceInstallNorthstar() {
-            let game_install = {
-                game_path: this.$store.state.game_path,
-                install_type: this.$store.state.install_type
-            } as GameInstall;
 
-            // Send notification telling the user to wait for the process to finish
-            const notification = ElNotification({
-                title: 'Force reinstalling Northstar',
-                message: 'Please wait',
-                duration: 0,
-                type: 'info',
-                position: 'bottom-right'
-            });
-
-            let install_northstar_result = invoke("install_northstar_caller", { gamePath: game_install.game_path, northstarPackageName: ReleaseCanal.RELEASE });
-            await install_northstar_result
-                .then((message) => {
-                    // Send notification
-                    ElNotification({
-                        title: `Done`,
-                        message: `Successfully reinstalled Northstar`,
-                        type: 'success',
-                        position: 'bottom-right'
-                    });
-                    this.$store.commit('checkNorthstarUpdates');
-                })
-                .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
-                    console.error(error);
-                })
-                .finally(() => {
-                    // Clear old notification
-                    notification.close();
-                });
-        },
         async createNewWindow() {
             await invoke("open_repair_window")
                 .then((message) => { })
