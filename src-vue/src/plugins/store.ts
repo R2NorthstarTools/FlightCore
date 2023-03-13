@@ -17,6 +17,7 @@ import { ThunderstoreMod } from "../../../src-tauri/bindings/ThunderstoreMod";
 import { NorthstarMod } from "../../../src-tauri/bindings/NorthstarMod";
 import { searchModule } from './modules/search';
 import { i18n } from '../main';
+import { pullRequestModule } from './modules/pull_requests';
 
 const persistentStore = new Store('flight-core-settings.json');
 
@@ -52,7 +53,8 @@ let notification_handle: NotificationHandle;
 
 export const store = createStore<FlightCoreStore>({
     modules: {
-        search: searchModule
+        search: searchModule,
+        pullrequests: pullRequestModule,
     },
     state(): FlightCoreStore {
         return {

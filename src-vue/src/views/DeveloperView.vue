@@ -4,6 +4,7 @@
             <el-alert title="Warning" type="warning" :closable="false" show-icon>
                 This page is designed for developers. Some of the buttons here can break your Northstar install if you do not know what you're doing!
             </el-alert>
+
             <h3>Basic:</h3>
 
             <el-button type="primary" @click="disableDevMode">
@@ -36,25 +37,13 @@
 
             <h3>Repair:</h3>
 
-            <el-button type="primary" @click="disableAllModsButCore">
-                Disable all but core mods
-            </el-button>
-
-            <el-button type="primary" @click="forceInstallNorthstar">
-                Force reinstall Northstar
-            </el-button>
 
             <el-button type="primary" @click="getInstalledMods">
                 Get installed mods
             </el-button>
 
-            <el-button type="primary" @click="cleanUpDownloadFolder">
-                Force delete temp download folder
-            </el-button>
-
-            <el-button type="primary" @click="clearFlightCorePersistentStore">
-                Delete FlightCore persistent store
-            </el-button>
+            <h3>Testing</h3>
+            <pull-requests-selector />
         </el-scrollbar>
     </div>
 </template>
@@ -64,12 +53,13 @@ import { defineComponent } from "vue";
 import { invoke } from "@tauri-apps/api";
 import { ElNotification } from "element-plus";
 import { GameInstall } from "../utils/GameInstall";
-import { Store } from 'tauri-plugin-store-api';
-import { ReleaseCanal } from "../utils/ReleaseCanal";
-const persistentStore = new Store('flight-core-settings.json');
+import PullRequestsSelector from "../components/PullRequestsSelector.vue";
 
 export default defineComponent({
     name: "DeveloperView",
+    components: {
+        PullRequestsSelector
+    },
     data() {
         return {
             mod_to_install_field_string : "",
@@ -110,28 +100,6 @@ export default defineComponent({
         },
         async launchGameWithoutChecks() {
             this.$store.commit('launchGame', true);
-        },
-        async disableAllModsButCore() {
-            let game_install = {
-                game_path: this.$store.state.game_path,
-                install_type: this.$store.state.install_type
-            } as GameInstall;
-            await invoke("disable_all_but_core", { gameInstall: game_install }).then((message) => {
-                ElNotification({
-                    title: 'Success',
-                    message: "Disabled all mods but core",
-                    type: 'success',
-                    position: 'bottom-right'
-                });
-            })
-                .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
-                });
         },
         async getInstalledMods() {
             let game_install = {
@@ -182,76 +150,6 @@ export default defineComponent({
                         type: 'error',
                         position: 'bottom-right'
                     });
-                });
-        },
-        async cleanUpDownloadFolder() {
-            let game_install = {
-                game_path: this.$store.state.game_path,
-                install_type: this.$store.state.install_type
-            } as GameInstall;
-            await invoke("clean_up_download_folder_caller", { gameInstall: game_install, force: true }).then((message) => {
-                // Show user notification if task completed.
-                ElNotification({
-                    title: `Done`,
-                    message: `Done`,
-                    type: 'success',
-                    position: 'bottom-right'
-                });
-            })
-                .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
-                });
-        },
-        async clearFlightCorePersistentStore() {
-            // Clear store...
-            await persistentStore.clear();
-            // ...and save
-            await persistentStore.save();
-        },
-        async forceInstallNorthstar() {
-            let game_install = {
-                game_path: this.$store.state.game_path,
-                install_type: this.$store.state.install_type
-            } as GameInstall;
-
-            // Send notification telling the user to wait for the process to finish
-            const notification = ElNotification({
-                title: 'Force reinstalling Northstar',
-                message: 'Please wait',
-                duration: 0,
-                type: 'info',
-                position: 'bottom-right'
-            });
-
-            let install_northstar_result = invoke("install_northstar_caller", { gamePath: game_install.game_path, northstarPackageName: ReleaseCanal.RELEASE });
-            await install_northstar_result
-                .then((message) => {
-                    // Send notification
-                    ElNotification({
-                        title: `Done`,
-                        message: `Successfully reinstalled Northstar`,
-                        type: 'success',
-                        position: 'bottom-right'
-                    });
-                    this.$store.commit('checkNorthstarUpdates');
-                })
-                .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
-                    console.error(error);
-                })
-                .finally(() => {
-                    // Clear old notification
-                    notification.close();
                 });
         },
     }
