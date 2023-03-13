@@ -22,8 +22,8 @@
                         {{ $t('settings.nb_ts_mods_per_page_desc1') }}<br>
                         {{ $t('settings.nb_ts_mods_per_page_desc2') }}
                     </h6>
-                    <el-input 
-                        v-model="modsPerPage" 
+                    <el-input
+                        v-model="modsPerPage"
                         type="number"
                     >
                         <template #append>
@@ -40,7 +40,13 @@
                     <language-selector/>
                 </div>
 
+                <h3>Repair</h3>
+                <el-button type="primary" @click="openRepairWindow">
+                    Open Repair window
+                </el-button>
+
                 <h3>{{ $t('settings.about') }}</h3>
+
                 <div class="fc_northstar__version" @click="activateDeveloperMode">
                     {{ $t('settings.flightcore_version') }} {{ flightcoreVersion === '' ? 'Unknown version' : `${flightcoreVersion}` }}
                 </div>
@@ -61,6 +67,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { ElNotification } from 'element-plus';
+import { invoke } from "@tauri-apps/api";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { Store } from 'tauri-plugin-store-api';
 import LanguageSelector from "../components/LanguageSelector.vue";
@@ -121,7 +128,19 @@ export default defineComponent({
         },
         async updateGamePath() {
             this.$store.commit('updateGamePath');
-        }
+        },
+        async openRepairWindow() {
+            await invoke("open_repair_window")
+                .then((message) => { })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                });
+        },
     },
     mounted() {
         document.querySelector('input')!.disabled = true;

@@ -15,6 +15,7 @@ use app::{
 };
 
 mod github;
+use github::pull_requests::{apply_launcher_pr, apply_mods_pr, get_pull_requests_wrapper};
 use github::release_notes::{
     check_is_flightcore_outdated, get_newest_flightcore_version, get_northstar_release_notes,
 };
@@ -36,7 +37,7 @@ use northstar::get_northstar_version_number;
 mod thunderstore;
 use thunderstore::query_thunderstore_packages_api;
 
-use tauri::Manager;
+use tauri::{Manager, Runtime};
 use tauri_plugin_store::PluginBuilder;
 use tokio::time::sleep;
 
@@ -114,7 +115,12 @@ fn main() {
             delete_northstar_mod,
             get_server_player_count,
             delete_thunderstore_mod,
+            open_repair_window,
             query_thunderstore_packages_api,
+            get_pull_requests_wrapper,
+            apply_launcher_pr,
+            apply_mods_pr,
+            close_application,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -350,4 +356,34 @@ async fn get_server_player_count() -> Result<(i32, usize), String> {
     dbg!((total_player_count, server_count));
 
     Ok((total_player_count, server_count))
+}
+
+#[tauri::command]
+/// Spawns repair window
+async fn open_repair_window(handle: tauri::AppHandle) -> Result<(), String> {
+    // Spawn new window
+    let repair_window = match tauri::WindowBuilder::new(
+        &handle,
+        "RepairWindow",
+        tauri::WindowUrl::App("/#/repair".into()),
+    )
+    .build()
+    {
+        Ok(res) => res,
+        Err(err) => return Err(err.to_string()),
+    };
+
+    // Set window title
+    match repair_window.set_title("FlightCore Repair Window") {
+        Ok(()) => (),
+        Err(err) => return Err(err.to_string()),
+    };
+    Ok(())
+}
+
+/// Closes all windows and exits application
+#[tauri::command]
+async fn close_application<R: Runtime>(app: tauri::AppHandle<R>) -> Result<(), String> {
+    app.exit(0); // Close application
+    Ok(())
 }
