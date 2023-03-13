@@ -1,6 +1,7 @@
 use std::env;
 
 use anyhow::{anyhow, Context, Result};
+use sentry::{add_breadcrumb, Breadcrumb, Level};
 
 mod northstar;
 
@@ -229,6 +230,14 @@ pub async fn install_northstar(
         .find(|f| f.name.to_lowercase() == northstar_package_name.to_lowercase())
         .ok_or_else(|| panic!("Couldn't find Northstar on thunderstore???"))
         .unwrap();
+
+    // Breadcrumb for sentry to debug crash
+    add_breadcrumb(Breadcrumb {
+        // category: Some("auth".into()),
+        message: Some(format!("Install path \"{}\"", game_path)),
+        level: Level::Info,
+        ..Default::default()
+    });
 
     do_install(
         nmod.versions.get(&nmod.latest).unwrap(),
