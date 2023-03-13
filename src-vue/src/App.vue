@@ -6,7 +6,7 @@ import ModsView from './views/ModsView.vue';
 import SettingsView from './views/SettingsView.vue';
 import { appWindow } from '@tauri-apps/api/window';
 import { store } from './plugins/store';
-import { window as tauriWindow } from "@tauri-apps/api";
+import { invoke, window as tauriWindow } from "@tauri-apps/api";
 
 export default {
   components: {
@@ -30,7 +30,7 @@ export default {
       appWindow.minimize()
     },
     close() {
-      appWindow.close()
+      invoke("close_application");
     }
   },
     computed: {
@@ -47,7 +47,7 @@ export default {
   <div class="app-inner">
     <div id="fc_bg__container" :style="bgStyle"/>
 
-    <nav id="fc_menu-bar">
+    <nav id="fc_menu-bar" v-if="$route.path !== '/repair'"><!-- Hide menu bar in repair view -->
       <!-- Navigation items -->
       <el-menu
         :default-active="$route.path"
