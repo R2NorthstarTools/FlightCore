@@ -21,7 +21,7 @@
             <br/>
 
             <div class="name hide-text-overflow">{{ mod.name }}</div>
-            <div class="author hide-text-overflow">by {{ mod.owner }}</div>
+            <div class="author hide-text-overflow">{{ $t('mods.card.by') }} {{ mod.owner }}</div>
             <div class="desc">
                 {{ latestVersion.description }}
             </div>

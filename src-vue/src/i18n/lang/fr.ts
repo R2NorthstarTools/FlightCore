@@ -73,6 +73,7 @@ export default {
                 outdated: "Mettre à jour"
             },
 
+            by: "par",
             more_info: "Plus d'informations",
             remove: "Supprimer le mod",
             remove_dialog_title: "Attention !",
