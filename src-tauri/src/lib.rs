@@ -239,12 +239,26 @@ pub async fn install_northstar(
         ..Default::default()
     });
 
-    do_install(
+    match do_install(
         nmod.versions.get(&nmod.latest).unwrap(),
         std::path::Path::new(game_path),
     )
     .await
-    .unwrap();
+    {
+        Ok(_) => (),
+        Err(err) => {
+            if game_path
+                .to_lowercase()
+                .contains(&r#"C:\Program Files\EA Games\Titanfall2"#.to_lowercase())
+            {
+                return Err(
+                    "Cannot install to default EA App install path, please move Titanfall2 to a different install location.".to_string(),
+                );
+            } else {
+                return Err(err.to_string());
+            }
+        }
+    }
 
     Ok(nmod.latest.clone())
 }
