@@ -40,9 +40,9 @@
                     <language-selector/>
                 </div>
 
-                <h3>Repair</h3>
+                <h3>{{ $t('settings.repair.title') }}</h3>
                 <el-button type="primary" @click="openRepairWindow">
-                    Open Repair window
+                    {{ $t('settings.repair.open_window') }}
                 </el-button>
 
                 <h3>{{ $t('settings.about') }}</h3>

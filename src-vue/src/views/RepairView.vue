@@ -1,30 +1,30 @@
 <template>
     <div class="fc-container">
         <el-scrollbar>
-            <el-alert title="Info" type="info" :closable="false" show-icon>
-                This window contains various functionality to repair common issues with Northstar and FlightCore.
+            <el-alert title="Information" type="info" :closable="false" show-icon>
+                {{ $t('settings.repair.window.warning') }}
             </el-alert>
 
-            <h1>Repair</h1>
+            <h1>{{ $t('settings.repair.title') }}</h1>
 
             <h2>Northstar</h2>
 
             <el-button type="primary" @click="disableAllModsButCore">
-                Disable all but core mods
+                {{ $t('settings.repair.window.disable_all_but_core') }}
             </el-button>
 
             <el-button type="primary" @click="forceInstallNorthstar">
-                Force reinstall Northstar
+                {{ $t('settings.repair.window.force_reinstall_ns') }}
             </el-button>
 
             <h2>FlightCore</h2>
 
             <el-button type="primary" @click="cleanUpDownloadFolder">
-                Force delete temp download folder
+                {{ $t('settings.repair.window.force_delete_temp_dl') }}
             </el-button>
 
             <el-button type="primary" @click="clearFlightCorePersistentStore">
-                Delete FlightCore persistent store
+                {{ $t('settings.repair.window.delete_persistent_store') }}
             </el-button>
         </el-scrollbar>
     </div>

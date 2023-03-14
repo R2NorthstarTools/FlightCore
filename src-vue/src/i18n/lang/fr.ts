@@ -97,7 +97,20 @@ export default {
         testing: "Tests :",
         enable_test_channels: "Activer le test de versions de pré-production",
         dev_mode_enabled_title: "Attention !",
-        dev_mod_enabled_text: "Mode développeur activé."
+        dev_mod_enabled_text: "Mode développeur activé.",
+
+        repair: {
+            title: "Dépannage",
+            open_window: "Ouvrir la fenêtre de dépannage",
+
+            window: {
+                warning: "Cette fenêtre contient plusieurs fonctionnalité de résolution de problèmes courants avec Northstar et FlightCore.",
+                disable_all_but_core: "Désactiver tous les mods (sauf ceux de Northstar)",
+                force_reinstall_ns: "Forcer la réinstallation de Northstar",
+                force_delete_temp_dl: "Supprimer le dossier de téléchargement temporaire",
+                delete_persistent_store: "Supprimer l'espace de stockage local de FlightCore"
+            }
+        }
     },
 
     notification: {

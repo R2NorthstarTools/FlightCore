@@ -97,7 +97,20 @@ export default {
         testing: "Testing:",
         enable_test_channels: "Enable testing release channels",
         dev_mode_enabled_title: "Watch out!",
-        dev_mod_enabled_text: "Developer mode enabled."
+        dev_mod_enabled_text: "Developer mode enabled.",
+
+        repair: {
+            title: "Repair",
+            open_window: "Open repair window",
+
+            window: {
+                warning: "This window contains various functionality to repair common issues with Northstar and FlightCore.",
+                disable_all_but_core: "Disable all but core mods",
+                force_reinstall_ns: "Force reinstall Northstar",
+                force_delete_temp_dl: "Force delete temp download folder",
+                delete_persistent_store: "Delete FlightCore persistent store"
+            }
+        }
     },
 
     notification: {
