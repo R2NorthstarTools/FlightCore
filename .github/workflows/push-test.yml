@@ -24,10 +24,8 @@ jobs:
         with:
           toolchain: stable
           components: rustfmt
-      - uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --manifest-path src-tauri/Cargo.toml --all -- --check
+      - name: Format check
+        run: cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check
 
   # Ensure committed bindings correct
   autogen-ts-bindings-check:
