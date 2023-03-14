@@ -37,10 +37,16 @@ import { GameInstall } from "../utils/GameInstall";
 import { invoke } from "@tauri-apps/api";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { Store } from 'tauri-plugin-store-api';
+import { appWindow } from "@tauri-apps/api/window";
 const persistentStore = new Store('flight-core-settings.json');
 
 export default defineComponent({
     name: "RepairView",
+    computed: {
+        lang(): string {
+            return this.$root!.$i18n.locale;
+        }
+    },
     methods: {
         async disableAllModsButCore() {
             let game_install = {
@@ -135,6 +141,13 @@ export default defineComponent({
             // ...and save
             await persistentStore.save();
         },
+    },
+    watch: {
+        // Lang value is propagated to repair view after it's mounted, so we need to watch
+        // its value, and update window title accordingly.
+        lang(newv: string) {
+            appWindow.setTitle( this.$t('settings.repair.window.title') );
+        }
     }
 });
 </script>

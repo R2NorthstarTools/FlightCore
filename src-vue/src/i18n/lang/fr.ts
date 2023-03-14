@@ -104,6 +104,7 @@ export default {
             open_window: "Ouvrir la fenêtre de dépannage",
 
             window: {
+                title: "Fenêtre de dépannage FlightCore",
                 warning: "Cette fenêtre contient plusieurs fonctionnalité de résolution de problèmes courants avec Northstar et FlightCore.",
                 disable_all_but_core: "Désactiver tous les mods (sauf ceux de Northstar)",
                 force_reinstall_ns: "Forcer la réinstallation de Northstar",

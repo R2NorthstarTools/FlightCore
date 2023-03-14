@@ -104,6 +104,7 @@ export default {
             open_window: "Open repair window",
 
             window: {
+                title: "FlightCore repair window",
                 warning: "This window contains various functionality to repair common issues with Northstar and FlightCore.",
                 disable_all_but_core: "Disable all but core mods",
                 force_reinstall_ns: "Force reinstall Northstar",
