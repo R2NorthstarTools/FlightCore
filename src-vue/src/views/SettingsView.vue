@@ -110,8 +110,8 @@ export default defineComponent({
     methods: {
         activateDeveloperMode() {
             this.developerModeClicks += 1;
-            if (this.developerModeClicks >= 6) {
-                this.$store.state.developer_mode = true;
+            if (this.developerModeClicks >= 6 && !this.$store.state.developer_mode) {
+                this.$store.commit('toggleDeveloperMode');
                 ElNotification({
                     title: 'Watch out!',
                     message: 'Developer mode enabled.',
