@@ -23,8 +23,8 @@
                         This has an impact on display performances when browsing Thunderstore mods.<br>
                         Set this value to 0 to disable pagination.
                     </h6>
-                    <el-input 
-                        v-model="modsPerPage" 
+                    <el-input
+                        v-model="modsPerPage"
                         type="number"
                     >
                         <template #append>
@@ -47,9 +47,8 @@
                     <div class="fc_northstar__version" @click="activateDeveloperMode">
                         FlightCore Version: {{ flightcoreVersion === '' ? 'Unknown version' : `${flightcoreVersion}` }}
                     </div>
-                    UI design inspired by <el-link :underline="false" target="_blank" href="https://github.com/TFORevive/tforevive_launcher/" type="primary">TFORevive Launcher</el-link> (not yet public)
                 </div>
-                
+
                 <!-- Testing section -->
                 <div class="fc_parameter__panel">
                     <h3>Testing:</h3>
