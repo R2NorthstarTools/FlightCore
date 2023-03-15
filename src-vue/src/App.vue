@@ -82,8 +82,6 @@ export default {
   top: 0;
   width: 100%;
   height: var(--fc-menu_height);
-  background-image: radial-gradient(transparent 1px);
-  backdrop-filter: saturate(50%) blur(4px);
 }
 
 /* Borders reset */
