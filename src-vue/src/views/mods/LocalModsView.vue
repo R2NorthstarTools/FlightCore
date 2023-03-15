@@ -1,29 +1,31 @@
 <template>
-    <el-scrollbar>
-        <div>
-            <p v-if="mods.length === 0">No mods were found.</p>
-            <el-card v-else shadow="hover" v-for="mod in mods" v-bind:key="mod.name">
-                <el-switch style="--el-switch-on-color: #13ce66; --el-switch-off-color: #8957e5" v-model="mod.enabled"
-                            :before-change="() => updateWhichModsEnabled(mod)" :loading="global_load_indicator" />
-                <el-popconfirm
-                    title="Are you sure to delete this mod?"
-                    @confirm="deleteMod(mod)"
-                >
-                    <template #reference>
-                        <el-button type="danger">Delete</el-button>
-                    </template>
-                </el-popconfirm>
-                {{ mod.name }}
-                <span v-if="mod.version != null">(v{{ mod.version }})</span>
-                <img
-                    v-if="mod.thunderstore_mod_string != null"
-                    title="This Northstar mod is part of a Thunderstore mod"
-                    src="/src/assets/thunderstore-icon.png"
-                    class="image"
-                    height="16"
-                />
-            </el-card>
-        </div>
+    <!-- Message displayed if no mod matched searched words -->
+    <div v-if="mods.length === 0" class="noModMessage">
+        No mods were found.
+    </div>
+
+    <el-scrollbar v-else>
+        <el-card shadow="hover" v-for="mod in mods" v-bind:key="mod.name">
+            <el-switch style="--el-switch-on-color: #13ce66; --el-switch-off-color: #8957e5" v-model="mod.enabled"
+                       :before-change="() => updateWhichModsEnabled(mod)" :loading="global_load_indicator" />
+            <el-popconfirm
+                title="Are you sure to delete this mod?"
+                @confirm="deleteMod(mod)"
+            >
+                <template #reference>
+                    <el-button type="danger">Delete</el-button>
+                </template>
+            </el-popconfirm>
+            {{ mod.name }}
+            <span v-if="mod.version != null">(v{{ mod.version }})</span>
+            <img
+                v-if="mod.thunderstore_mod_string != null"
+                title="This Northstar mod is part of a Thunderstore mod"
+                src="/src/assets/thunderstore-icon.png"
+                class="image"
+                height="16"
+            />
+        </el-card>
     </el-scrollbar>
 </template>
 

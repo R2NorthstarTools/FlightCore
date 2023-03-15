@@ -84,6 +84,20 @@ export default {
   height: var(--fc-menu_height);
 }
 
+#fc__menu_bar::before {
+    position: absolute;
+    content: "";
+    inset: 0; /* same as { top: 0; right: 0; bottom: 0; left: 0; } */
+    background-image: linear-gradient(to bottom, red, orange);
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 1s linear;
+}
+
+#fc__menu_bar:hover::before {
+    opacity: 1;
+}
+
 /* Borders reset */
 #fc__menu_bar, #fc__menu_items {
     border: none !important;

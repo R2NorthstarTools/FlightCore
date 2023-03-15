@@ -3,23 +3,23 @@
         <div v-if="mods.length === 0" class="fc__changelog__container">
             <el-progress :show-text="false" :percentage="50" :indeterminate="true" />
         </div>
+
+        <!-- Message displayed if no mod matched searched words -->
+        <div v-else-if="filteredMods.length === 0" class="noModMessage">
+            No matching mod has been found.<br/>
+            Try another search!
+        </div>
+
         <el-scrollbar v-else class="container" ref="scrollbar">
             <div class="card-container">
-                <div class="pagination_container">
+                <div class="pagination_container" v-if="shouldDisplayPagination">
                     <el-pagination
-                        v-if="shouldDisplayPagination"
                         :currentPage="currentPageIndex + 1"
                         layout="prev, pager, next"
                         :page-size="modsPerPage"
                         :total="modsList.length"
                         @current-change="(e: number) => currentPageIndex = e - 1"
                     />
-                </div>
-
-                <!-- Message displayed if no mod matched searched words -->
-                <div v-if="filteredMods.length === 0" class="modMessage">
-                    No matching mod has been found.<br/>
-                    Try another search!
                 </div>
 
                 <!-- Mod cards -->
@@ -197,11 +197,6 @@ export default defineComponent({
 .search {
     display: inline-block;
     margin: 0 0 0 10px !important;
-}
-
-.modMessage {
-    color: white;
-    margin: 20px 5px;
 }
 
 .card-container {
