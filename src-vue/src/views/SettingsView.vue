@@ -3,17 +3,18 @@
         <el-scrollbar>
             <div class="fc_settings__container">
                 <!-- Game folder location -->
-                <h3>Manage installation</h3>
-                <el-input
-                    v-model="$store.state.game_path"
-                    class="w-50 m-2"
-                    placeholder="Choose installation folder"
-                    @click="updateGamePath"
-                >
-                    <template #prepend>
-                        <el-button icon="Folder" @click="updateGamePath"/>
-                    </template>
-                </el-input>
+                <div class="fc_parameter__panel">
+                    <h3>Manage installation</h3>
+                    <el-input
+                        v-model="$store.state.game_path"
+                        placeholder="Choose installation folder"
+                        @click="updateGamePath"
+                    >
+                        <template #prepend>
+                            <el-button icon="Folder" @click="updateGamePath"/>
+                        </template>
+                    </el-input>
+                </div>
 
                 <!-- Thunderstore mods per page configuration -->
                 <div class="fc_parameter__panel">
@@ -32,24 +33,31 @@
                     </el-input>
                 </div>
 
-                <h3>Repair</h3>
-                <el-button type="primary" @click="openRepairWindow">
-                    Open Repair window
-                </el-button>
-
-                <h3>About:</h3>
-                <div class="fc_northstar__version" @click="activateDeveloperMode">
-                    FlightCore Version: {{ flightcoreVersion === '' ? 'Unknown version' : `${flightcoreVersion}` }}
+                <!-- Repair window -->
+                <div class="fc_parameter__panel">
+                    <h3>Repair</h3>
+                    <el-button type="primary" @click="openRepairWindow">
+                        Open Repair window
+                    </el-button>
                 </div>
-                <br />
-                <br />
-                UI design inspired by <el-link :underline="false" target="_blank" href="https://github.com/TFORevive/tforevive_launcher/" type="primary">TFORevive Launcher</el-link> (not yet public)
 
-                <h3>Testing:</h3>
-                <span>
-                    Enable testing release channels
-                    <el-switch v-model="enableReleasesSwitch"></el-switch>
-                </span>
+                <!-- About section -->
+                <div class="fc_parameter__panel">
+                    <h3>About:</h3>
+                    <div class="fc_northstar__version" @click="activateDeveloperMode">
+                        FlightCore Version: {{ flightcoreVersion === '' ? 'Unknown version' : `${flightcoreVersion}` }}
+                    </div>
+                    UI design inspired by <el-link :underline="false" target="_blank" href="https://github.com/TFORevive/tforevive_launcher/" type="primary">TFORevive Launcher</el-link> (not yet public)
+                </div>
+                
+                <!-- Testing section -->
+                <div class="fc_parameter__panel">
+                    <h3>Testing:</h3>
+                    <span>
+                        Enable testing release channels
+                        <el-switch v-model="enableReleasesSwitch"></el-switch>
+                    </span>
+                </div>
             </div>
         </el-scrollbar>
     </div>
@@ -165,7 +173,7 @@ h3:first-of-type {
 
 /* Parameter panel styles */
 .fc_parameter__panel {
-    margin: 30px 0;
+    margin-bottom: 30px;
 }
 
 .fc_parameter__panel h3 {
