@@ -191,9 +191,9 @@ async fn download_zip(download_url: String, location: String) -> Result<(), anyh
     Ok(())
 }
 
-fn unzip_launcher_zip(zip_file_name: &str) -> String {
+fn unzip_launcher_zip(zip_file_name: String) -> String {
     let outfolder_name = "ns-dev-test-helper-temp-pr-files";
-    let fname = std::path::Path::new(zip_file_name);
+    let fname = std::path::Path::new(&zip_file_name);
     let file = fs::File::open(fname).unwrap();
 
     let mut archive = zip::ZipArchive::new(file).unwrap();
@@ -355,18 +355,39 @@ pub async fn apply_launcher_pr(
     // Exit early if wrong game path
     check_is_valid_game_path(game_install_path)?;
 
+    // let path = std::env::current_dir().unwrap();
+    // return Err(format!("The current directory is {}", path.display()));
+
     // get download link
     let download_url = get_launcher_download_link(pull_request).await?;
 
     // download
-    match download_zip(download_url, ".".to_string()).await {
+    let download_directory = format!("{}/___flightcore-temp-download-dir/", game_install_path);
+    match std::fs::create_dir_all(download_directory.clone()) {
+        Ok(_) => (),
+        Err(err) => {
+            return Err(format!(
+                "Failed creating temporary download directory: {}",
+                err
+            ))
+        }
+    };
+
+    match download_zip(download_url, download_directory.clone()).await {
         Ok(_) => (),
         Err(err) => return Err(err.to_string()),
     };
 
     // extract
-    let zip_extract_folder_name = unzip_launcher_zip("ns-dev-test-helper-temp-pr-files.zip");
-    fs::remove_file("ns-dev-test-helper-temp-pr-files.zip").unwrap();
+    let zip_extract_folder_name = unzip_launcher_zip(format!(
+        "{}/ns-dev-test-helper-temp-pr-files.zip",
+        download_directory.clone()
+    ));
+    fs::remove_file(format!(
+        "{}/ns-dev-test-helper-temp-pr-files.zip",
+        download_directory.clone()
+    ))
+    .unwrap();
 
     // Copy downloaded folder to game install folder
     match copy_dir_all(zip_extract_folder_name.clone(), game_install_path) {
@@ -378,6 +399,7 @@ pub async fn apply_launcher_pr(
 
     // Delete old unzipped
     fs::remove_dir_all(zip_extract_folder_name).unwrap();
+    std::fs::remove_dir_all(download_directory).unwrap();
 
     println!("All done with installing launcher PR");
     Ok(())
