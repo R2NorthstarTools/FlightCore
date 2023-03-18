@@ -93,7 +93,7 @@ pub async fn get_pull_requests_wrapper(
     get_pull_requests(api_pr_url.to_string()).await
 }
 
-fn unzip(zip_file_name: &str) -> String {
+fn unzip(zip_file_name: &String) -> String {
     let fname = std::path::Path::new(zip_file_name);
     let file = fs::File::open(fname).unwrap();
 
@@ -419,14 +419,32 @@ pub async fn apply_mods_pr(
         Err(err) => return Err(err.to_string()),
     };
 
-    match download_zip(download_url, ".".to_string()).await {
-        Ok(()) => (),
+    let download_directory = format!("{}/___flightcore-temp-download-dir/", game_install_path);
+    match std::fs::create_dir_all(download_directory.clone()) {
+        Ok(_) => (),
+        Err(err) => {
+            return Err(format!(
+                "Failed creating temporary download directory: {}",
+                err
+            ))
+        }
+    };
+
+    match download_zip(download_url, download_directory.clone()).await {
+        Ok(_) => (),
         Err(err) => return Err(err.to_string()),
     };
 
     // Extract folder and delete zip
-    let zip_extract_folder_name = unzip("ns-dev-test-helper-temp-pr-files.zip");
-    fs::remove_file("ns-dev-test-helper-temp-pr-files.zip").unwrap();
+    let zip_extract_folder_name = unzip(&format!(
+        "{}/ns-dev-test-helper-temp-pr-files.zip",
+        download_directory.clone()
+    ));
+    fs::remove_file(format!(
+        "{}/ns-dev-test-helper-temp-pr-files.zip",
+        download_directory.clone()
+    ))
+    .unwrap();
 
     // Delete previously managed folder
     if std::fs::remove_dir_all(format!(
@@ -458,7 +476,8 @@ pub async fn apply_mods_pr(
     .unwrap();
 
     // Delete old copy
-    std::fs::remove_dir_all(zip_extract_folder_name).unwrap();
+    fs::remove_dir_all(zip_extract_folder_name).unwrap();
+    std::fs::remove_dir_all(download_directory).unwrap();
 
     // Add batch file to launch right profile
     add_batch_file(game_install_path);
