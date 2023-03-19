@@ -220,9 +220,6 @@ pub async fn apply_launcher_pr(
     // Exit early if wrong game path
     check_is_valid_game_path(game_install_path)?;
 
-    // let path = std::env::current_dir().unwrap();
-    // return Err(format!("The current directory is {}", path.display()));
-
     // get download link
     let download_url = get_launcher_download_link(pull_request.clone()).await?;
 
