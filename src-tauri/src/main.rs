@@ -45,6 +45,14 @@ use tokio::time::sleep;
 struct Counter(Arc<Mutex<i32>>);
 
 fn main() {
+    // Setup logger
+    let mut log_builder = pretty_env_logger::formatted_builder();
+    log_builder.parse_filters("info");
+    let logger = sentry_log::SentryLogger::with_dest(log_builder.build());
+
+    log::set_boxed_logger(Box::new(logger)).unwrap();
+    log::set_max_level(log::LevelFilter::Info);
+
     // Only enable Sentry crash logs on release
     #[cfg(not(debug_assertions))]
     let _guard = sentry::init((
