@@ -303,19 +303,11 @@ pub async fn apply_mods_pr(
         Err(err) => return Err(err.to_string()),
     };
 
+    let profile_folder = format!("{}/R2Northstar-PR-test-managed-folder", game_install_path);
+
     // Delete previously managed folder
-    if std::fs::remove_dir_all(format!(
-        "{}/R2Northstar-PR-test-managed-folder",
-        game_install_path
-    ))
-    .is_err()
-    {
-        if std::path::Path::new(&format!(
-            "{}/R2Northstar-PR-test-managed-folder",
-            game_install_path
-        ))
-        .exists()
-        {
+    if std::fs::remove_dir_all(profile_folder.clone()).is_err() {
+        if std::path::Path::new(&profile_folder).exists() {
             println!("Failed removing previous dir");
         } else {
             println!("Failed removing folder that doesn't exist. Probably cause first run");
@@ -323,18 +315,12 @@ pub async fn apply_mods_pr(
     };
 
     // Create profile folder
-    match std::fs::create_dir_all(format!(
-        "{}/R2Northstar-PR-test-managed-folder",
-        game_install_path
-    )) {
+    match std::fs::create_dir_all(profile_folder.clone()) {
         Ok(()) => (),
         Err(err) => return Err(err.to_string()),
     }
 
-    let target_dir = std::path::PathBuf::from(format!(
-        "{}/R2Northstar-PR-test-managed-folder/mods",
-        game_install_path
-    )); // Doesn't need to exist
+    let target_dir = std::path::PathBuf::from(format!("{}/mods", profile_folder)); // Doesn't need to exist
     match zip_extract::extract(io::Cursor::new(archive), &target_dir, true) {
         Ok(()) => (),
         Err(err) => {
