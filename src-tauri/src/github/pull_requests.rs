@@ -136,6 +136,7 @@ async fn download_zip(download_url: String, location: String) -> Result<(), anyh
     Ok(())
 }
 
+/// Downloads a file from given URL into an array in memory
 async fn download_zip_into_memory(download_url: String) -> Result<Vec<u8>, reqwest::Error> {
     let client = reqwest::Client::builder()
         .user_agent(APP_USER_AGENT)
