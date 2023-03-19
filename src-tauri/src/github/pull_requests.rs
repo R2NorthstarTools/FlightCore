@@ -322,8 +322,17 @@ pub async fn apply_mods_pr(
         }
     };
 
-    let target_dir = std::path::PathBuf::from(format!(
+    // Create profile folder
+    match std::fs::create_dir_all(format!(
         "{}/R2Northstar-PR-test-managed-folder",
+        game_install_path
+    )) {
+        Ok(()) => (),
+        Err(err) => return Err(err.to_string()),
+    }
+
+    let target_dir = std::path::PathBuf::from(format!(
+        "{}/R2Northstar-PR-test-managed-folder/mods",
         game_install_path
     )); // Doesn't need to exist
     match zip_extract::extract(io::Cursor::new(archive), &target_dir, true) {
