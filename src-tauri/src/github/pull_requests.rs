@@ -93,61 +93,6 @@ pub async fn get_pull_requests_wrapper(
     get_pull_requests(api_pr_url.to_string()).await
 }
 
-fn unzip(zip_file_name: &String) -> String {
-    let fname = std::path::Path::new(zip_file_name);
-    let file = fs::File::open(fname).unwrap();
-
-    let mut archive = zip::ZipArchive::new(file).unwrap();
-
-    let mut folder_name = "".to_string();
-
-    for i in 0..archive.len() {
-        let mut file = archive.by_index(i).unwrap();
-        let outpath = match file.enclosed_name() {
-            Some(path) => path.to_owned(),
-            None => continue,
-        };
-
-        {
-            let comment = file.comment();
-            if !comment.is_empty() {
-                println!("File {} comment: {}", i, comment);
-            }
-        }
-
-        if i == 0 {
-            // Sanity check that it's a folder
-            assert!((*file.name()).ends_with('/'));
-
-            folder_name = format!("{}", outpath.display());
-            println!("{}", folder_name);
-        }
-
-        if (*file.name()).ends_with('/') {
-            fs::create_dir_all(&outpath).unwrap();
-        } else {
-            if let Some(p) = outpath.parent() {
-                if !p.exists() {
-                    fs::create_dir_all(p).unwrap();
-                }
-            }
-            let mut outfile = fs::File::create(&outpath).unwrap();
-            io::copy(&mut file, &mut outfile).unwrap();
-        }
-
-        // Get and Set permissions
-        #[cfg(unix)]
-        {
-            use std::os::unix::fs::PermissionsExt;
-
-            if let Some(mode) = file.unix_mode() {
-                fs::set_permissions(&outpath, fs::Permissions::from_mode(mode)).unwrap();
-            }
-        }
-    }
-    folder_name
-}
-
 pub async fn check_github_api(url: &str) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
     let client = reqwest::Client::new();
     let res = client
@@ -189,6 +134,16 @@ async fn download_zip(download_url: String, location: String) -> Result<(), anyh
     let mut cursor = std::io::Cursor::new(bytes);
     std::io::copy(&mut cursor, &mut out)?;
     Ok(())
+}
+
+async fn download_zip_into_memory(download_url: String) -> Result<Vec<u8>, reqwest::Error> {
+    let client = reqwest::Client::builder()
+        .user_agent(APP_USER_AGENT)
+        .build()?;
+
+    let response = client.get(download_url).send().await?;
+    let bytes = response.bytes().await?;
+    Ok(bytes.to_vec())
 }
 
 fn unzip_launcher_zip(zip_file_name: String) -> String {
@@ -430,21 +385,10 @@ pub async fn apply_mods_pr(
         }
     };
 
-    match download_zip(download_url, download_directory.clone()).await {
-        Ok(_) => (),
+    let archive = match download_zip_into_memory(download_url).await {
+        Ok(archive) => archive,
         Err(err) => return Err(err.to_string()),
     };
-
-    // Extract folder and delete zip
-    let zip_extract_folder_name = unzip(&format!(
-        "{}/ns-dev-test-helper-temp-pr-files.zip",
-        download_directory.clone()
-    ));
-    fs::remove_file(format!(
-        "{}/ns-dev-test-helper-temp-pr-files.zip",
-        download_directory.clone()
-    ))
-    .unwrap();
 
     // Delete previously managed folder
     if std::fs::remove_dir_all(format!(
@@ -465,19 +409,11 @@ pub async fn apply_mods_pr(
         }
     };
 
-    // Copy downloaded folder to game install folder
-    copy_dir_all(
-        zip_extract_folder_name.clone(),
-        format!(
-            "{}/R2Northstar-PR-test-managed-folder/mods",
-            game_install_path
-        ),
-    )
-    .unwrap();
-
-    // Delete old copy
-    fs::remove_dir_all(zip_extract_folder_name).unwrap();
-    std::fs::remove_dir_all(download_directory).unwrap();
+    let target_dir = std::path::PathBuf::from(format!(
+        "{}/R2Northstar-PR-test-managed-folder",
+        game_install_path
+    )); // Doesn't need to exist
+    zip_extract::extract(io::Cursor::new(archive), &target_dir, true).unwrap();
 
     // Add batch file to launch right profile
     add_batch_file(game_install_path);
