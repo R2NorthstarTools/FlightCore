@@ -1,5 +1,6 @@
 use crate::github::release_notes::fetch_github_releases_api;
 
+use anyhow::anyhow;
 use app::check_is_valid_game_path;
 use app::constants::{APP_USER_AGENT, PULLS_API_ENDPOINT_LAUNCHER, PULLS_API_ENDPOINT_MODS};
 use serde::{Deserialize, Serialize};
@@ -109,12 +110,17 @@ pub async fn check_github_api(url: &str) -> Result<serde_json::Value, Box<dyn st
 }
 
 /// Downloads a file from given URL into an array in memory
-async fn download_zip_into_memory(download_url: String) -> Result<Vec<u8>, reqwest::Error> {
+async fn download_zip_into_memory(download_url: String) -> Result<Vec<u8>, anyhow::Error> {
     let client = reqwest::Client::builder()
         .user_agent(APP_USER_AGENT)
         .build()?;
 
     let response = client.get(download_url).send().await?;
+
+    if !response.status().is_success() {
+        return Err(anyhow!("Request unsuccessful: {}", response.status()));
+    }
+
     let bytes = response.bytes().await?;
     Ok(bytes.to_vec())
 }
