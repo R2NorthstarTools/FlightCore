@@ -230,10 +230,10 @@ async fn check_is_northstar_outdated(
     let version_number = convert_release_candidate_number(version_number);
 
     if version_number != nmod.latest {
-        println!("Installed Northstar version outdated");
+        log::info!("Installed Northstar version outdated");
         Ok(true)
     } else {
-        println!("Installed Northstar version up-to-date");
+        log::info!("Installed Northstar version up-to-date");
         Ok(false)
     }
 }
@@ -361,7 +361,8 @@ async fn get_server_player_count() -> Result<(i32, usize), String> {
     // Sum up player count
     let total_player_count: i32 = ns_servers.iter().map(|server| server.player_count).sum();
 
-    dbg!((total_player_count, server_count));
+    log::info!("total_player_count: {}", total_player_count);
+    log::info!("server_count:       {}", server_count);
 
     Ok((total_player_count, server_count))
 }

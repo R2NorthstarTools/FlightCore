@@ -1,7 +1,6 @@
 use std::env;
 
 use anyhow::{anyhow, Context, Result};
-use sentry::{add_breadcrumb, Breadcrumb, Level};
 
 mod northstar;
 
@@ -61,7 +60,7 @@ pub fn check_mod_version_number(path_to_mod_folder: String) -> Result<String, an
         None => return Err(anyhow!("No version number found")),
     };
 
-    println!("{}", mod_version_number);
+    log::info!("{}", mod_version_number);
 
     Ok(mod_version_number.to_string())
 }
@@ -132,7 +131,7 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
 pub fn check_is_valid_game_path(game_install_path: &str) -> Result<(), String> {
     let path_to_titanfall2_exe = format!("{}/Titanfall2.exe", game_install_path);
     let is_correct_game_path = std::path::Path::new(&path_to_titanfall2_exe).exists();
-    println!("Titanfall2.exe exists in path? {}", is_correct_game_path);
+    log::info!("Titanfall2.exe exists in path? {}", is_correct_game_path);
 
     // Exit early if wrong game path
     if !is_correct_game_path {
