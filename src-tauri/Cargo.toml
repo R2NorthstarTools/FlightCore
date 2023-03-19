@@ -1,6 +1,6 @@
 [package]
 name = "app"
-version = "1.10.1"
+version = "1.10.2"
 description = "A Tauri App"
 authors = ["you"]
 license = ""
@@ -59,6 +59,8 @@ const_format = "0.2.30"
 # Logging libraries
 pretty_env_logger = "0.4.0"
 log = "0.4.17"
+# Extracting zip files easily
+zip-extract = "0.1.2"
 
 [features]
 # by default Tauri runs in production mode
