@@ -249,7 +249,8 @@ pub async fn install_northstar(
         Err(err) => {
             if game_path
                 .to_lowercase()
-                .contains(&r#"C:\Program Files\"#.to_lowercase()) // default is `C:\Program Files\EA Games\Titanfall2`
+                .contains(&r#"C:\Program Files\"#.to_lowercase())
+            // default is `C:\Program Files\EA Games\Titanfall2`
             {
                 return Err(
                     "Cannot install to default EA App install path, please move Titanfall2 to a different install location.".to_string(),
