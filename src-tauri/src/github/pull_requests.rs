@@ -1,10 +1,8 @@
 use crate::github::release_notes::fetch_github_releases_api;
 
-use anyhow::anyhow;
 use app::check_is_valid_game_path;
 use app::constants::{APP_USER_AGENT, PULLS_API_ENDPOINT_LAUNCHER, PULLS_API_ENDPOINT_MODS};
 use serde::{Deserialize, Serialize};
-use std::fs;
 use std::fs::File;
 use std::io;
 use std::io::prelude::*;
@@ -110,32 +108,6 @@ pub async fn check_github_api(url: &str) -> Result<serde_json::Value, Box<dyn st
     Ok(json)
 }
 
-/// Downloads a file from given URL
-async fn download_zip(download_url: String, location: String) -> Result<(), anyhow::Error> {
-    let client = reqwest::Client::new();
-    let resp = client
-        .get(download_url)
-        .header(reqwest::header::USER_AGENT, APP_USER_AGENT)
-        .send()
-        .await?;
-
-    // Error out earlier if non-successful response
-    if !resp.status().is_success() {
-        // Return error cause wrong game path
-        return Err(anyhow!(
-            "Couldn't download zip. Received error code \"{}\"",
-            resp.status()
-        ));
-    }
-
-    let mut out = fs::File::create(format!("{}/ns-dev-test-helper-temp-pr-files.zip", location))
-        .expect("failed to create file");
-    let bytes = resp.bytes().await?;
-    let mut cursor = std::io::Cursor::new(bytes);
-    std::io::copy(&mut cursor, &mut out)?;
-    Ok(())
-}
-
 /// Downloads a file from given URL into an array in memory
 async fn download_zip_into_memory(download_url: String) -> Result<Vec<u8>, reqwest::Error> {
     let client = reqwest::Client::builder()
@@ -145,75 +117,6 @@ async fn download_zip_into_memory(download_url: String) -> Result<Vec<u8>, reqwe
     let response = client.get(download_url).send().await?;
     let bytes = response.bytes().await?;
     Ok(bytes.to_vec())
-}
-
-fn unzip_launcher_zip(zip_file_name: String) -> String {
-    let outfolder_name = "ns-dev-test-helper-temp-pr-files";
-    let fname = std::path::Path::new(&zip_file_name);
-    let file = fs::File::open(fname).unwrap();
-
-    let mut archive = zip::ZipArchive::new(file).unwrap();
-
-    fs::create_dir_all(outfolder_name).unwrap();
-
-    for i in 0..archive.len() {
-        let mut file = archive.by_index(i).unwrap();
-        let outpath = match file.enclosed_name() {
-            Some(path) => path.to_owned(),
-            None => continue,
-        };
-
-        {
-            let comment = file.comment();
-            if !comment.is_empty() {
-                println!("File {} comment: {}", i, comment);
-            }
-        }
-
-        // Only extract two hardcoded files
-        if *file.name() == *"NorthstarLauncher.exe" || *file.name() == *"Northstar.dll" {
-            println!(
-                "File {} extracted to \"{}\" ({} bytes)",
-                i,
-                outpath.display(),
-                file.size()
-            );
-            if let Some(p) = outpath.parent() {
-                if !p.exists() {
-                    fs::create_dir_all(p).unwrap();
-                }
-            }
-            let mut outfile =
-                fs::File::create(format!("{}/{}", outfolder_name, outpath.display())).unwrap();
-            std::io::copy(&mut file, &mut outfile).unwrap();
-        }
-
-        // Get and Set permissions
-        #[cfg(unix)]
-        {
-            use std::os::unix::fs::PermissionsExt;
-
-            if let Some(mode) = file.unix_mode() {
-                fs::set_permissions(&outpath, fs::Permissions::from_mode(mode)).unwrap();
-            }
-        }
-    }
-    outfolder_name.to_string()
-}
-
-/// Recursively copies files from one directory to another
-fn copy_dir_all(src: impl AsRef<Path>, dst: impl AsRef<Path>) -> io::Result<()> {
-    fs::create_dir_all(&dst)?;
-    for entry in fs::read_dir(src)? {
-        let entry = entry?;
-        let ty = entry.file_type()?;
-        if ty.is_dir() {
-            copy_dir_all(entry.path(), dst.as_ref().join(entry.file_name()))?;
-        } else {
-            fs::copy(entry.path(), dst.as_ref().join(entry.file_name()))?;
-        }
-    }
-    Ok(())
 }
 
 /// Gets GitHub download link of a mods PR
