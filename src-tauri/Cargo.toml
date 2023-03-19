@@ -54,6 +54,8 @@ chrono = "0.4.23"
 ts-rs = "6.1"
 # const formatting
 const_format = "0.2.30"
+# Extracting zip files easily
+zip-extract = "0.1.2"
 
 [features]
 # by default Tauri runs in production mode
