@@ -240,7 +240,12 @@ pub async fn apply_launcher_pr(
     };
 
     let target_dir = std::path::PathBuf::from(extract_directory.clone()); // Doesn't need to exist
-    zip_extract::extract(io::Cursor::new(archive), &target_dir, true).unwrap();
+    match zip_extract::extract(io::Cursor::new(archive), &target_dir, true) {
+        Ok(()) => (),
+        Err(err) => {
+            return Err(format!("Failed unzip: {}", err));
+        }
+    };
 
     // Copy only necessary files from temp dir
     // Copy:
@@ -318,8 +323,12 @@ pub async fn apply_mods_pr(
         "{}/R2Northstar-PR-test-managed-folder",
         game_install_path
     )); // Doesn't need to exist
-    zip_extract::extract(io::Cursor::new(archive), &target_dir, true).unwrap();
-
+    match zip_extract::extract(io::Cursor::new(archive), &target_dir, true) {
+        Ok(()) => (),
+        Err(err) => {
+            return Err(format!("Failed unzip: {}", err));
+        }
+    };
     // Add batch file to launch right profile
     add_batch_file(game_install_path);
 
