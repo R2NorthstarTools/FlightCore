@@ -178,6 +178,26 @@ struct User {
 
 then simply run `cargo test`. The generated bindings are placed in `src-tauri/bindings/`. Make sure to add and commit them as well!
 
+### Internationalization
+
+For FlightCore to be used by the largest number, its interface is translated in several languages; users can choose used language through FlightCore settings.
+
+Localization files are located in `src-vue/src/i18n/lang`.
+
+There are different ways to use translations in views; in HTML template, invoke the `$t` method with translation key:
+
+```html
+<div>
+    {{ $t('menu.play') }}
+</div>
+```
+
+For use in Typescript code, invoke the `this.$t` method:
+
+```javascript
+return this.$t("play.button.select_game_dir");
+```
+
 ## Other
 
 This repo uses [EditorConfig](https://editorconfig.org/) to define some basic formatting rules. Find a plugin for your IDE [here](https://editorconfig.org/#download).
