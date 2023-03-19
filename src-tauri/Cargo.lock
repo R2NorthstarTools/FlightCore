@@ -87,7 +87,7 @@ checksum = "224afbd727c3d6e4b90103ece64b8d1b67fbb1973b1046c2281eed3f3803f800"
 
 [[package]]
 name = "app"
-version = "1.10.1"
+version = "1.10.2"
 dependencies = [
  "anyhow",
  "async-recursion",
@@ -109,6 +109,7 @@ dependencies = [
  "tokio",
  "ts-rs",
  "zip",
+ "zip-extract",
 ]
 
 [[package]]
@@ -5034,6 +5035,17 @@ dependencies = [
  "sha1",
  "time 0.3.20",
  "zstd",
+]
+
+[[package]]
+name = "zip-extract"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bb654964c003959ed64cbd0d7b329bcdcbd9690facd50c8617748d3622543972"
+dependencies = [
+ "log",
+ "thiserror",
+ "zip",
 ]
 
 [[package]]
