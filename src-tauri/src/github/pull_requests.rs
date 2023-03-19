@@ -374,17 +374,6 @@ pub async fn apply_mods_pr(
         Err(err) => return Err(err.to_string()),
     };
 
-    let download_directory = format!("{}/___flightcore-temp-download-dir/", game_install_path);
-    match std::fs::create_dir_all(download_directory.clone()) {
-        Ok(_) => (),
-        Err(err) => {
-            return Err(format!(
-                "Failed creating temporary download directory: {}",
-                err
-            ))
-        }
-    };
-
     let archive = match download_zip_into_memory(download_url).await {
         Ok(archive) => archive,
         Err(err) => return Err(err.to_string()),
