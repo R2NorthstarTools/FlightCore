@@ -1,4 +1,6 @@
+use std::cell::RefCell;
 use std::env;
+use std::time::{Duration, Instant};
 
 use anyhow::{anyhow, Context, Result};
 use sentry::{add_breadcrumb, Breadcrumb, Level};
@@ -204,27 +206,30 @@ async fn do_install(
     let download_path = format!("{}/{}", download_directory.clone(), filename);
     println!("{}", download_path);
 
+    let last_emit = RefCell::new(Instant::now()); // Keep track of the last time a signal was emitted
     let nfile = thermite::core::manage::download_file_with_progress(
         &nmod.url,
         download_path,
         |delta, current, total| {
-            if delta != 0 && current / delta % 100 == 0 {
-                window
-                    .emit(
-                        "northstar-install-download-progress",
-                        Payload {
-                            message: format!(
-                                "Download progress: {:.2}%",
-                                (current * 100) as f64 / total as f64
-                            )
-                            .into(),
-                        },
-                    )
-                    .unwrap();
+            if delta != 0 {
+                // Only emit a signal once every 250ms
+                let time_since_last_emit = Instant::now().duration_since(*last_emit.borrow());
+                if time_since_last_emit >= Duration::from_millis(250) {
+                    window
+                        .emit(
+                            "northstar-install-download-progress",
+                            Payload {
+                                message: format!(
+                                    "Download progress: {:.2}%",
+                                    (current * 100) as f64 / total as f64
+                                )
+                                .into(),
+                            },
+                        )
+                        .unwrap();
+                    *last_emit.borrow_mut() = Instant::now();
+                }
             }
-            // dbg!(delta);
-            // dbg!(current);
-            // dbg!(total);
         },
     )
     .unwrap();
