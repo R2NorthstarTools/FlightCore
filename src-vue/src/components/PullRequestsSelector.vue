@@ -29,10 +29,7 @@
                 </p>
                 <el-card v-else shadow="hover" v-for="pull_request in pull_requests_mods" v-bind:key="pull_request.url">
                     <el-button type="primary" @click="installModsPR(pull_request)">Install</el-button>
-                    <a target="_blank"
-                        :href="`https://github.com/${pull_request.head.repo.full_name}/archive/refs/heads/${pull_request.head.ref}.zip`">
-                        <el-button type="primary">Download</el-button>
-                    </a>
+                    <el-button type="primary" @click="downloadModsPR(pull_request)">Download</el-button>
                     <a target="_blank" :href="pull_request.html_url">
                         {{ pull_request.number }}: {{ pull_request.title }}
                     </a>
@@ -74,6 +71,9 @@ export default defineComponent({
         },
         async downloadLauncherPR(pull_request: PullsApiResponseElement) {
             this.$store.commit('downloadLauncherPR', pull_request);
+        },
+        async downloadModsPR(pull_request: PullsApiResponseElement) {
+            this.$store.commit('downloadModsPR', pull_request);
         },
         async installLauncherPR(pull_request: PullsApiResponseElement) {
             this.$store.commit('installLauncherPR', pull_request);

@@ -56,6 +56,10 @@ export const pullRequestModule = {
                     });
                 });
         },
+        async downloadModsPR(state: PullRequestStoreState, pull_request: PullsApiResponseElement) {
+            let url = `https://github.com/${pull_request.head.repo.full_name}/archive/refs/heads/${pull_request.head.ref}.zip`
+            shell.open(url);
+        },
         async installLauncherPR(state: PullRequestStoreState, pull_request: PullsApiResponseElement) {
             // Send notification telling the user to wait for the process to finish
             const notification = ElNotification({
