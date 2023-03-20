@@ -313,8 +313,7 @@ export const store = createStore<FlightCoreStore>({
 
             // Display notification to highlight change
             ElNotification({
-                // TODO translate
-                title: `${state.northstar_release_canal}`,
+                title: i18n.global.tc(`channels.names.${state.northstar_release_canal}`),
                 message: i18n.global.tc('channels.release.switch.text', {canal: state.northstar_release_canal}),
                 type: 'success',
                 position: 'bottom-right'

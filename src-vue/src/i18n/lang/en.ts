@@ -141,8 +141,13 @@ export default {
     channels: {
         release: {
             switch: {
-                text: "Switched release channel to {canal}."
+                text: 'Switched release channel to "{canal}".'
             }
+        },
+
+        names: {
+            Northstar: 'Northstar',
+            NorthstarReleaseCandidate: 'Northstar release candidate'
         }
     }
 };

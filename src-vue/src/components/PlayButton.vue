@@ -57,7 +57,7 @@ export default defineComponent({
                     options: [
                         {
                             value: ReleaseCanal.RELEASE_CANDIDATE,
-                            label: 'Northstar release candidate',
+                            label: this.$t('channels.names.NorthstarReleaseCandidate'),
                         },
                     ]
                 },

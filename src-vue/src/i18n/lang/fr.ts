@@ -141,8 +141,13 @@ export default {
     channels: {
         release: {
             switch: {
-                text: "Le canal de téléchargement a été réglé sur {canal}."
+                text: 'Le canal de téléchargement a été réglé sur "{canal}".'
             }
+        },
+
+        names: {
+            Northstar: 'Northstar',
+            NorthstarReleaseCandidate: 'Version de pré-release'
         }
     }
 };
