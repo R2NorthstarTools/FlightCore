@@ -52,6 +52,21 @@ pub struct NorthstarServer {
     pub player_count: i32,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
+pub enum InstallState {
+    DOWNLOADING,
+    EXTRACTING,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
+struct InstallProgress {
+    current_downloaded: u64,
+    total_size: u64,
+    state: InstallState,
+}
+
 /// Check version number of a mod
 pub fn check_mod_version_number(path_to_mod_folder: String) -> Result<String, anyhow::Error> {
     // println!("{}", format!("{}/mod.json", path_to_mod_folder));
@@ -182,21 +197,6 @@ fn extract(zip_file: std::fs::File, target: &std::path::Path) -> Result<()> {
     }
 
     Ok(())
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, TS)]
-#[ts(export)]
-pub enum InstallState {
-    DOWNLOADING,
-    EXTRACTING,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, TS)]
-#[ts(export)]
-struct InstallProgress {
-    current_downloaded: u64,
-    total_size: u64,
-    state: InstallState,
 }
 
 /// Copied from `papa` source code and modified
