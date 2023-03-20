@@ -205,11 +205,38 @@ There are different ways to use translations in views; in HTML template, invoke 
 </div>
 ```
 
-For use in Typescript code, invoke the `this.$t` method:
+For use in Typescript code (inside components), invoke the `this.$t` method:
 
 ```javascript
 return this.$t("play.button.select_game_dir");
 ```
+
+For Typescript code outside components, translations are still accessible:
+
+```javascript
+import { i18n } from '../main';
+i18n.global.tc('notification.game_folder.new.text');
+```
+
+---
+
+It is possible to inject variables into translations:
+
+```javascript
+channels: {
+    release: {
+        component: {
+            text: "Switched release channel to {canal}."
+        }
+    }
+}
+```
+
+```javascript
+return this.$t("channels.release.component.text", {canal: "MyCanalName"});
+```
+
+
 
 ## Other
 
