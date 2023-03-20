@@ -184,9 +184,18 @@ fn extract(zip_file: std::fs::File, target: &std::path::Path) -> Result<()> {
     Ok(())
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
+pub enum InstallState {
+    DOWNLOADING,
+    EXTRACTING,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
 struct Payload {
     message: String,
+    state: InstallState,
 }
 
 /// Copied from `papa` source code and modified
@@ -224,6 +233,7 @@ async fn do_install(
                                     (current * 100) as f64 / total as f64
                                 )
                                 .into(),
+                                state: InstallState::DOWNLOADING,
                             },
                         )
                         .unwrap();
@@ -238,6 +248,7 @@ async fn do_install(
             "northstar-install-download-progress",
             Payload {
                 message: format!("Finished downloading").into(),
+                state: InstallState::DOWNLOADING,
             },
         )
         .unwrap();
@@ -246,6 +257,7 @@ async fn do_install(
             "northstar-install-download-progress",
             Payload {
                 message: format!("Start extracting").into(),
+                state: InstallState::EXTRACTING,
             },
         )
         .unwrap();
@@ -258,6 +270,7 @@ async fn do_install(
             "northstar-install-download-progress",
             Payload {
                 message: format!("Finished extracting").into(),
+                state: InstallState::EXTRACTING,
             },
         )
         .unwrap();
