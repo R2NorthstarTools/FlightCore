@@ -184,6 +184,19 @@ For FlightCore to be used by the largest number, its interface is translated in 
 
 Localization files are located in `src-vue/src/i18n/lang`.
 
+To add a new language, you have to create associated file, *e.g. `src-vue/src/i18n/lang/de.ts`*, and import it in the i18n application object in `main.ts`:
+```javascript
+import de from "./i18n/lang/de";
+
+export const i18n = createI18n({
+    locale: 'en',
+    fallbackLocale: 'en',
+    messages: {
+        en, fr, de
+    }
+});
+```
+
 There are different ways to use translations in views; in HTML template, invoke the `$t` method with translation key:
 
 ```html
