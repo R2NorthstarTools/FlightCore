@@ -56,8 +56,6 @@
 import { defineComponent } from 'vue'
 import { PullRequestType } from '../../../src-tauri/bindings/PullRequestType';
 import { PullsApiResponseElement } from '../../../src-tauri/bindings/PullsApiResponseElement';
-import { invoke } from "@tauri-apps/api";
-import { ElNotification } from "element-plus";
 
 export default defineComponent({
     name: 'PullRequestsSelector',
