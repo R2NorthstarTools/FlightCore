@@ -1,4 +1,4 @@
-use std::env;
+use std::{env, fs, path::Path, time::Duration};
 
 use anyhow::{anyhow, Context, Result};
 use sentry::{add_breadcrumb, Breadcrumb, Level};
@@ -13,12 +13,17 @@ use platform_specific::windows;
 #[cfg(target_os = "linux")]
 use platform_specific::linux;
 
+use keyvalues_parser::Vdf;
 use serde::{Deserialize, Serialize};
+use steamlocate::SteamDir;
 use sysinfo::SystemExt;
+use tokio::time::sleep;
 use ts_rs::TS;
 use zip::ZipArchive;
 
 use northstar::get_northstar_version_number;
+
+use crate::constants::TITANFALL2_STEAM_ID;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum InstallType {
@@ -94,7 +99,7 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
     // Attempt parsing Steam library directly
     match steamlocate::SteamDir::locate() {
         Some(mut steamdir) => {
-            let titanfall2_steamid = 1237970;
+            let titanfall2_steamid = TITANFALL2_STEAM_ID.parse().unwrap();
             match steamdir.app(&titanfall2_steamid) {
                 Some(app) => {
                     // println!("{:#?}", app);
@@ -131,7 +136,7 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
 /// Checks whether the provided path is a valid Titanfall2 gamepath by checking against a certain set of criteria
 pub fn check_is_valid_game_path(game_install_path: &str) -> Result<(), String> {
     let path_to_titanfall2_exe = format!("{}/Titanfall2.exe", game_install_path);
-    let is_correct_game_path = std::path::Path::new(&path_to_titanfall2_exe).exists();
+    let is_correct_game_path = Path::new(&path_to_titanfall2_exe).exists();
     println!("Titanfall2.exe exists in path? {}", is_correct_game_path);
 
     // Exit early if wrong game path
@@ -324,6 +329,97 @@ pub fn launch_northstar(
     ))
 }
 
+// can be removed when https://github.com/WilliamVenner/steamlocate-rs/pull/18 is merged
+pub fn get_titanfall_proton() -> Option<String> {
+    let steampath = SteamDir::locate().unwrap();
+    let configpath = steampath.path.join("config").join("config.vdf");
+
+    let vdf_text = fs::read_to_string(configpath).unwrap();
+    let config = Vdf::parse(&vdf_text).unwrap().value;
+    let obj = config.unwrap_obj();
+
+    let software = obj.get("Software")?.get(0)?.get_obj()?;
+    let valve = software.get("Valve")?.get(0)?.get_obj()?;
+    let steam = valve.get("Steam")?.get(0)?.get_obj()?;
+    let compat_tool_mapping = steam.get("CompatToolMapping")?.get(0)?.get_obj()?;
+    let tfapp = compat_tool_mapping
+        .get(TITANFALL2_STEAM_ID)?
+        .get(0)?
+        .get_obj()?;
+    let name = tfapp.get("name")?.get(0)?.get_str()?.to_string();
+
+    return Some(name);
+}
+
+/// Prepare Northstar and Launch through Steam using the Browser Protocol
+pub fn launch_northstar_steam(
+    game_install: GameInstall,
+    _bypass_checks: Option<bool>,
+) -> Result<String, String> {
+    if !matches!(game_install.install_type, InstallType::STEAM) {
+        return Err("Titanfall2 was not installed via Steam".to_string());
+    }
+
+    if get_host_os() != "windows" {
+        match get_titanfall_proton() {
+            Some(proton) => {
+                if !proton.to_ascii_lowercase().contains("northstarproton") {
+                    return Err("Titanfall2 was not configured to use NorthstarProton".to_string());
+                }
+            }
+            None => {
+                return Err("Titanfall2 was not configured to use a compatibility tool".to_string());
+            }
+        }
+    }
+
+    // Switch to Titanfall2 directory to set everything up
+    if std::env::set_current_dir(game_install.game_path.clone()).is_err() {
+        // We failed to get to Titanfall2 directory
+        return Err("Couldn't access Titanfall2 directory".to_string());
+    }
+
+    let run_northstar = "run_northstar.txt";
+    let run_northstar_bak = "run_northstar.txt.bak";
+
+    if Path::new(run_northstar).exists() {
+        // rename should ovewrite existing files
+        fs::rename(run_northstar, run_northstar_bak).unwrap();
+    }
+
+    // Passing arguments gives users a prompt, so we use run_northstar.txt
+    fs::write(run_northstar, b"1").unwrap();
+
+    let retval = match open::that(format!("steam://run/{}/", TITANFALL2_STEAM_ID)) {
+        Ok(()) => Ok("Started game".to_string()),
+        Err(_err) => Err("Failed to launch Titanfall 2 via Steam".to_string()),
+    };
+
+    let is_err = retval.is_err();
+
+    // Handle the rest in the backround
+    tauri::async_runtime::spawn(async move {
+        // Starting the EA app and Titanfall might take a good minute or three
+        let mut wait_countdown = 60 * 3;
+        while wait_countdown > 0 && !check_northstar_running() && !is_err {
+            sleep(Duration::from_millis(1000)).await;
+            wait_countdown -= 1;
+        }
+
+        // Northstar may be running, but it may not have loaded the file yet
+        sleep(Duration::from_millis(2000)).await;
+
+        // intentionally ignore Result
+        let _ = fs::remove_file(run_northstar);
+
+        if Path::new(run_northstar_bak).exists() {
+            fs::rename(run_northstar_bak, run_northstar).unwrap();
+        }
+    });
+
+    return retval;
+}
+
 pub fn check_origin_running() -> bool {
     let s = sysinfo::System::new_all();
     for _process in s.processes_by_name("Origin.exe") {
@@ -348,6 +444,12 @@ pub fn check_northstar_running() -> bool {
         // dbg!(process);
         return true;
     }
+    // Alternatively, check for Titanfall
+    for _process in s.processes_by_name("Titanfall2.exe") {
+        // check here if this is your process
+        // dbg!(process);
+        return true;
+    }
     false
 }
 
@@ -365,7 +467,7 @@ pub fn get_enabled_mods(game_install: GameInstall) -> Result<serde_json::value::
     let enabledmods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
 
     // Check for JSON file
-    if !std::path::Path::new(&enabledmods_json_path).exists() {
+    if !Path::new(&enabledmods_json_path).exists() {
         return Err("enabledmods.json not found".to_string());
     }
 

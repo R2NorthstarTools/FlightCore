@@ -236,6 +236,32 @@ export const store = createStore<FlightCoreStore>({
                     break;
             }
         },
+        async launchGameSteam(state: any, no_checks = false) {
+            let game_install = {
+                game_path: state.game_path,
+                install_type: state.install_type
+            } as GameInstall;
+
+            await invoke("launch_northstar_steam_caller", { gameInstall: game_install, bypassChecks: no_checks })
+                .then((message) => {
+                    ElNotification({
+                        title: 'Success',
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+                })
+                .catch((error) => {
+                    console.error(error);
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                });
+
+            return;
+        },
         async fetchReleaseNotes(state: FlightCoreStore) {
             if (state.releaseNotes.length !== 0) return;
             state.releaseNotes = await invoke("get_northstar_release_notes");
