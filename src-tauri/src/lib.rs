@@ -256,17 +256,6 @@ async fn do_install(
     println!("Extracting Northstar...");
     extract(nfile, game_path)?;
 
-    window
-        .emit(
-            "northstar-install-download-progress",
-            Payload {
-                current_downloaded: 0,
-                total_size: 0,
-                state: InstallState::EXTRACTING,
-            },
-        )
-        .unwrap();
-
     // Delete old copy
     println!("Delete temp folder again");
     std::fs::remove_dir_all(download_directory).unwrap();
