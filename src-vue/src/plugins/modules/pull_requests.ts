@@ -92,6 +92,7 @@ export const pullRequestModule = {
                         title: `Done`,
                         message: `Installed ${pull_request.number}: "${pull_request.title}"\nMake sure to launch via batch file or by specifying correct profile!`,
                         type: 'success',
+                        duration: 7_000, // in ms
                         position: 'bottom-right'
                     });
                 })

@@ -20,27 +20,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          profile: minimal
           toolchain: stable
-          override: true
-      - run: rustup component add rustfmt
-      - uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --manifest-path src-tauri/Cargo.toml --all -- --check
+          components: rustfmt
+      - name: Format check
+        run: cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check
 
   # Ensure committed bindings correct
   autogen-ts-bindings-check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          profile: minimal
           toolchain: stable
-          override: true
       - name: install dependencies (ubuntu only)
         run: |
           sudo apt-get update
@@ -79,8 +73,7 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 16
-    - name: install Rust stable
-      uses: actions-rs/toolchain@v1
+    - uses: dtolnay/rust-toolchain@stable
       with:
         toolchain: stable
     - name: install dependencies (ubuntu only)
@@ -110,13 +103,13 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
     - name: Upload Linux artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: linux-artifacts
         path: |
           src-tauri/target/release/bundle/appimage/*
     - name: Upload Windows artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: windows-artifacts
         path: |
