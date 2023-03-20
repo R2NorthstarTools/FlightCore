@@ -1,3 +1,4 @@
+import { appWindow } from '@tauri-apps/api/window';
 import { createStore } from 'vuex';
 import { listen, Event as TauriEvent } from "@tauri-apps/api/event";
 import { Tabs } from "../utils/Tabs";
@@ -18,6 +19,7 @@ import { NorthstarMod } from "../../../src-tauri/bindings/NorthstarMod";
 import { searchModule } from './modules/search';
 import { pullRequestModule } from './modules/pull_requests';
 import { PullsApiResponseElement } from "../../../src-tauri/bindings/PullsApiResponseElement";
+import { InstallProgress } from "../../../src-tauri/bindings/InstallProgress";
 
 const persistentStore = new Store('flight-core-settings.json');
 
@@ -182,6 +184,15 @@ export const store = createStore<FlightCoreStore>({
             switch (state.northstar_state) {
                 // Install northstar if it wasn't detected.
                 case NorthstarState.INSTALL:
+                    let unlistenProgress = await appWindow.listen(
+                        'northstar-install-download-progress',
+                        ({ event, payload }) => {
+                            let typed_payload = payload as InstallProgress; // This is bad but don't know how to do it
+                            console.log("current_downloaded:", typed_payload.current_downloaded);
+                            console.log("total_size:        ", typed_payload.total_size);
+                            console.log("state:             ", typed_payload.state);
+                        }
+                    );
                     let install_northstar_result = invoke("install_northstar_caller", { gamePath: state.game_path, northstarPackageName: state.northstar_release_canal });
                     state.northstar_state = NorthstarState.INSTALLING;
 
@@ -199,6 +210,15 @@ export const store = createStore<FlightCoreStore>({
                 // Update northstar if it is outdated.
                 case NorthstarState.MUST_UPDATE:
                     // Updating is the same as installing, simply overwrites the existing files
+                    let unlistenProgress2 = await appWindow.listen( // TODO rename var
+                    'northstar-install-download-progress',
+                        ({ event, payload }) => {
+                            let typed_payload = payload as InstallProgress; // This is bad but don't know how to do it
+                            console.log("current_downloaded:", typed_payload.current_downloaded);
+                            console.log("total_size:        ", typed_payload.total_size);
+                            console.log("state:             ", typed_payload.state);
+                        }
+                    );
                     let reinstall_northstar_result = invoke("install_northstar_caller", { gamePath: state.game_path, northstarPackageName: state.northstar_release_canal });
                     state.northstar_state = NorthstarState.UPDATING;
 

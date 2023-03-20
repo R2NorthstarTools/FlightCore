@@ -35,6 +35,7 @@ import { appWindow } from '@tauri-apps/api/window';
 import { defineComponent } from "vue";
 import { ElNotification } from "element-plus";
 import { GameInstall } from "../utils/GameInstall";
+import { InstallProgress } from "../../../src-tauri/bindings/InstallProgress";
 import { invoke } from "@tauri-apps/api";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { Store } from 'tauri-plugin-store-api';
@@ -85,7 +86,12 @@ export default defineComponent({
 
             const unlistenProgress = await appWindow.listen(
                 'northstar-install-download-progress',
-                ({ event, payload }) => console.log(payload)
+                ({ event, payload }) => {
+                    let typed_payload = payload as InstallProgress; // This is bad but don't know how to do it
+                    console.log("current_downloaded:", typed_payload.current_downloaded);
+                    console.log("total_size:        ", typed_payload.total_size);
+                    console.log("state:             ", typed_payload.state);
+                }
             );
             await install_northstar_result
                 .then((message) => {
