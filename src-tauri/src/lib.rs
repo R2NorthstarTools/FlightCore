@@ -241,16 +241,7 @@ async fn do_install(
         },
     )
     .unwrap();
-    window
-        .emit(
-            "northstar-install-download-progress",
-            Payload {
-                current_downloaded: 0,
-                total_size: 0,
-                state: InstallState::DOWNLOADING,
-            },
-        )
-        .unwrap();
+
     window
         .emit(
             "northstar-install-download-progress",
