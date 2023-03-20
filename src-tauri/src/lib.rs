@@ -194,7 +194,8 @@ pub enum InstallState {
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
 #[ts(export)]
 struct Payload {
-    message: String,
+    current_downloaded: u64,
+    total_size: u64,
     state: InstallState,
 }
 
@@ -228,11 +229,8 @@ async fn do_install(
                         .emit(
                             "northstar-install-download-progress",
                             Payload {
-                                message: format!(
-                                    "Download progress: {:.2}%",
-                                    (current * 100) as f64 / total as f64
-                                )
-                                .into(),
+                                current_downloaded: current,
+                                total_size: total,
                                 state: InstallState::DOWNLOADING,
                             },
                         )
@@ -247,7 +245,8 @@ async fn do_install(
         .emit(
             "northstar-install-download-progress",
             Payload {
-                message: format!("Finished downloading").into(),
+                current_downloaded: 0,
+                total_size: 0,
                 state: InstallState::DOWNLOADING,
             },
         )
@@ -256,7 +255,8 @@ async fn do_install(
         .emit(
             "northstar-install-download-progress",
             Payload {
-                message: format!("Start extracting").into(),
+                current_downloaded: 0,
+                total_size: 0,
                 state: InstallState::EXTRACTING,
             },
         )
@@ -269,7 +269,8 @@ async fn do_install(
         .emit(
             "northstar-install-download-progress",
             Payload {
-                message: format!("Finished extracting").into(),
+                current_downloaded: 0,
+                total_size: 0,
                 state: InstallState::EXTRACTING,
             },
         )
