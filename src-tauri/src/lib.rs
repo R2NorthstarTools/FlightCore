@@ -233,9 +233,34 @@ async fn do_install(
         },
     )
     .unwrap();
+    window
+        .emit(
+            "northstar-install-download-progress",
+            Payload {
+                message: format!("Finished downloading").into(),
+            },
+        )
+        .unwrap();
+    window
+        .emit(
+            "northstar-install-download-progress",
+            Payload {
+                message: format!("Start extracting").into(),
+            },
+        )
+        .unwrap();
 
     println!("Extracting Northstar...");
     extract(nfile, game_path)?;
+
+    window
+        .emit(
+            "northstar-install-download-progress",
+            Payload {
+                message: format!("Finished extracting").into(),
+            },
+        )
+        .unwrap();
 
     // Delete old copy
     println!("Delete temp folder again");
