@@ -329,7 +329,8 @@ pub fn launch_northstar(
     ))
 }
 
-// can be removed when https://github.com/WilliamVenner/steamlocate-rs/pull/18 is merged
+/// Find the Compatibiltiy Tool configured in Steam for Titanfall 2 
+///To be replaced by https://github.com/WilliamVenner/steamlocate-rs/pull/18
 pub fn get_titanfall_proton() -> Option<String> {
     let steampath = SteamDir::locate().unwrap();
     let configpath = steampath.path.join("config").join("config.vdf");
