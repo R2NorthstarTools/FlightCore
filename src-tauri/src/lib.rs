@@ -80,8 +80,7 @@ pub fn linux_checks_librs() -> Result<(), String> {
         return Err(format!(
             "GLIBC is not version {} or greater",
             min_required_ldd_version
-        )
-        .to_string());
+        ));
     };
 
     // All checks passed
