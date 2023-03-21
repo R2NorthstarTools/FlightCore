@@ -468,7 +468,7 @@ pub fn get_enabled_mods(game_install: GameInstall) -> Result<serde_json::value::
     let enabledmods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
 
     // Check for JSON file
-    if !Path::new(&enabledmods_json_path).exists() {
+    if !std::path::Path::new(&enabledmods_json_path).exists() {
         return Err("enabledmods.json not found".to_string());
     }
 
