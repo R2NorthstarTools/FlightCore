@@ -10,6 +10,7 @@ export default {
     generic: {
         error: 'Erreur',
         cancel: 'Annuler',
+        informationShort: 'Info'
     },
 
     play: {

@@ -1,7 +1,7 @@
 <template>
     <div class="fc-container">
         <el-scrollbar>
-            <el-alert title="Information" type="info" :closable="false" show-icon>
+            <el-alert :title="$t('generic.informationShort')" type="info" :closable="false" show-icon>
                 {{ $t('settings.repair.window.warning') }}
             </el-alert>
 
