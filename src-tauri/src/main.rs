@@ -15,7 +15,9 @@ use app::{
 };
 
 mod github;
-use github::pull_requests::{apply_launcher_pr, apply_mods_pr, get_pull_requests_wrapper};
+use github::pull_requests::{
+    apply_launcher_pr, apply_mods_pr, get_launcher_download_link, get_pull_requests_wrapper,
+};
 use github::release_notes::{
     check_is_flightcore_outdated, get_newest_flightcore_version, get_northstar_release_notes,
 };
@@ -45,6 +47,14 @@ use tokio::time::sleep;
 struct Counter(Arc<Mutex<i32>>);
 
 fn main() {
+    // Setup logger
+    let mut log_builder = pretty_env_logger::formatted_builder();
+    log_builder.parse_filters("info");
+    let logger = sentry_log::SentryLogger::with_dest(log_builder.build());
+
+    log::set_boxed_logger(Box::new(logger)).unwrap();
+    log::set_max_level(log::LevelFilter::Info);
+
     // Only enable Sentry crash logs on release
     #[cfg(not(debug_assertions))]
     let _guard = sentry::init((
@@ -120,6 +130,7 @@ fn main() {
             get_pull_requests_wrapper,
             apply_launcher_pr,
             apply_mods_pr,
+            get_launcher_download_link,
             close_application,
         ])
         .run(tauri::generate_context!())
@@ -222,10 +233,10 @@ async fn check_is_northstar_outdated(
     let version_number = convert_release_candidate_number(version_number);
 
     if version_number != nmod.latest {
-        println!("Installed Northstar version outdated");
+        log::info!("Installed Northstar version outdated");
         Ok(true)
     } else {
-        println!("Installed Northstar version up-to-date");
+        log::info!("Installed Northstar version up-to-date");
         Ok(false)
     }
 }
@@ -353,7 +364,8 @@ async fn get_server_player_count() -> Result<(i32, usize), String> {
     // Sum up player count
     let total_player_count: i32 = ns_servers.iter().map(|server| server.player_count).sum();
 
-    dbg!((total_player_count, server_count));
+    log::info!("total_player_count: {}", total_player_count);
+    log::info!("server_count:       {}", server_count);
 
     Ok((total_player_count, server_count))
 }
