@@ -15,7 +15,9 @@ use app::{
 };
 
 mod github;
-use github::pull_requests::{apply_launcher_pr, apply_mods_pr, get_pull_requests_wrapper};
+use github::pull_requests::{
+    apply_launcher_pr, apply_mods_pr, get_launcher_download_link, get_pull_requests_wrapper,
+};
 use github::release_notes::{
     check_is_flightcore_outdated, get_newest_flightcore_version, get_northstar_release_notes,
 };
@@ -128,6 +130,7 @@ fn main() {
             get_pull_requests_wrapper,
             apply_launcher_pr,
             apply_mods_pr,
+            get_launcher_download_link,
             close_application,
         ])
         .run(tauri::generate_context!())
