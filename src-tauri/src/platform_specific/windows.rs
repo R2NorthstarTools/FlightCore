@@ -18,7 +18,7 @@ pub fn origin_install_location_detection() -> Result<String, anyhow::Error> {
                             return Ok(game_path_str.to_string());
                         }
                         Err(err) => {
-                            println!("{}", err.to_string());
+                            println!("{}", err);
                             continue; // Not a valid game path
                         }
                     }
