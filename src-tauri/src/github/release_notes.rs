@@ -20,7 +20,7 @@ pub struct FlightCoreVersion {
 
 // Fetches repo release API and returns response as string
 pub async fn fetch_github_releases_api(url: &str) -> Result<String, String> {
-    println!("Fetching releases notes from GitHub API");
+    log::info!("Fetching releases notes from GitHub API");
 
     let client = reqwest::Client::new();
     let res = client
@@ -40,13 +40,13 @@ pub async fn fetch_github_releases_api(url: &str) -> Result<String, String> {
 #[tauri::command]
 pub async fn get_newest_flightcore_version() -> Result<FlightCoreVersion, String> {
     // Get newest version number from GitHub API
-    println!("Checking GitHub API");
+    log::info!("Checking GitHub API");
     let url = "https://api.github.com/repos/R2NorthstarTools/FlightCore/releases/latest";
     let res = fetch_github_releases_api(url).await?;
 
     let flightcore_version: FlightCoreVersion =
         serde_json::from_str(&res).expect("JSON was not well-formatted");
-    println!("Done checking GitHub API");
+    log::info!("Done checking GitHub API");
 
     Ok(flightcore_version)
 }
