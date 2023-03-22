@@ -52,7 +52,7 @@ pub struct NorthstarServer {
 /// Check version number of a mod
 pub fn check_mod_version_number(path_to_mod_folder: String) -> Result<String, anyhow::Error> {
     // println!("{}", format!("{}/mod.json", path_to_mod_folder));
-    let data = std::fs::read_to_string(format!("{}/mod.json", path_to_mod_folder))?;
+    let data = std::fs::read_to_string(format!("{path_to_mod_folder}/mod.json"))?;
     let parsed_json: serde_json::Value = serde_json::from_str(&data)?;
     // println!("{}", parsed_json);
     let mod_version_number = match parsed_json.get("Version").and_then(|value| value.as_str()) {
@@ -128,13 +128,13 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
 
 /// Checks whether the provided path is a valid Titanfall2 gamepath by checking against a certain set of criteria
 pub fn check_is_valid_game_path(game_install_path: &str) -> Result<(), String> {
-    let path_to_titanfall2_exe = format!("{}/Titanfall2.exe", game_install_path);
+    let path_to_titanfall2_exe = format!("{game_install_path}/Titanfall2.exe");
     let is_correct_game_path = std::path::Path::new(&path_to_titanfall2_exe).exists();
     log::info!("Titanfall2.exe exists in path? {}", is_correct_game_path);
 
     // Exit early if wrong game path
     if !is_correct_game_path {
-        return Err(format!("Incorrect game path \"{}\"", game_install_path)); // Return error cause wrong game path
+        return Err(format!("Incorrect game path \"{game_install_path}\"")); // Return error cause wrong game path
     }
     Ok(())
 }
@@ -191,7 +191,7 @@ async fn do_install(nmod: &thermite::model::ModVersion, game_path: &std::path::P
     std::fs::create_dir_all(download_directory.clone())?;
 
     let download_path = format!("{}/{}", download_directory.clone(), filename);
-    println!("{}", download_path);
+    println!("{download_path}");
 
     let nfile = thermite::core::manage::download_file(&nmod.url, download_path).unwrap();
 
