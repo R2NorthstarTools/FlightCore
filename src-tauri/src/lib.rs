@@ -385,7 +385,7 @@ pub fn get_enabled_mods(game_install: GameInstall) -> Result<serde_json::value::
     // Parse JSON
     let res: serde_json::Value = match serde_json::from_str(&data) {
         Ok(result) => result,
-        Err(err) => return Err(format!("Failed to read JSON due to: {}", err.to_string())),
+        Err(err) => return Err(format!("Failed to read JSON due to: {}", err)),
     };
 
     // Return parsed data
