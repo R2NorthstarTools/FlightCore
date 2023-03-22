@@ -96,6 +96,7 @@ fn main() {
                 }
             });
 
+            // Emit updated player and server count to GUI
             let app_handle = app.app_handle();
             tauri::async_runtime::spawn(async move {
                 loop {
