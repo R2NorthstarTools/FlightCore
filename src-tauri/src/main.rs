@@ -10,7 +10,7 @@ use std::{
 };
 
 use app::{
-    constants::{APP_USER_AGENT, MASTER_SERVER_URL, SERVER_BROWSER_ENDPOINT},
+    constants::{APP_USER_AGENT, MASTER_SERVER_URL, REFRESH_DELAY, SERVER_BROWSER_ENDPOINT},
     *,
 };
 
@@ -92,6 +92,17 @@ fn main() {
                     sleep(Duration::from_millis(2000)).await;
                     app_handle
                         .emit_all("northstar-running-ping", check_northstar_running())
+                        .unwrap();
+                }
+            });
+
+            // Emit updated player and server count to GUI
+            let app_handle = app.app_handle();
+            tauri::async_runtime::spawn(async move {
+                loop {
+                    sleep(REFRESH_DELAY).await;
+                    app_handle
+                        .emit_all("northstar-statistics", get_server_player_count().await)
                         .unwrap();
                 }
             });

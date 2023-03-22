@@ -1,6 +1,6 @@
 // This file stores various global constants values
-
 use const_format::concatcp;
+use std::time::Duration;
 
 // FlightCore user agent for web requests
 pub const APP_USER_AGENT: &str = concatcp!("FlightCore/", env!("CARGO_PKG_VERSION"));
@@ -34,3 +34,6 @@ pub const PULLS_API_ENDPOINT_LAUNCHER: &str =
     "https://api.github.com/repos/R2Northstar/NorthstarLauncher/pulls";
 pub const PULLS_API_ENDPOINT_MODS: &str =
     "https://api.github.com/repos/R2Northstar/NorthstarMods/pulls";
+
+// Statistics (players and servers counts) refresh delay
+pub const REFRESH_DELAY: Duration = Duration::from_secs(5 * 60);
