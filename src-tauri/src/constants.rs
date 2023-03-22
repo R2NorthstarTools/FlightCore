@@ -1,6 +1,6 @@
 // This file stores various global constants values
-use std::time::Duration;
 use const_format::concatcp;
+use std::time::Duration;
 
 // FlightCore user agent for web requests
 pub const APP_USER_AGENT: &str = concatcp!("FlightCore/", env!("CARGO_PKG_VERSION"));
