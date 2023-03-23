@@ -162,7 +162,7 @@ fn extract(zip_file: std::fs::File, target: &std::path::Path) -> Result<()> {
                     .context("Unable to create directory")?;
                 continue;
             } else if let Some(p) = out.parent() {
-                std::fs::create_dir_all(&p).context("Unable to create directory")?;
+                std::fs::create_dir_all(p).context("Unable to create directory")?;
             }
 
             let mut outfile = std::fs::OpenOptions::new()
@@ -318,7 +318,7 @@ pub fn launch_northstar(
     {
         let ns_exe_path = format!("{}/NorthstarLauncher.exe", game_install.game_path);
         let _output = std::process::Command::new("C:\\Windows\\System32\\cmd.exe")
-            .args(&["/C", "start", "", &ns_exe_path])
+            .args(["/C", "start", "", &ns_exe_path])
             .spawn()
             .expect("failed to execute process");
         return Ok("Launched game".to_string());
