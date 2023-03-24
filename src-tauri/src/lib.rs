@@ -333,18 +333,8 @@ pub fn launch_northstar(
 
 pub fn check_origin_running() -> bool {
     let s = sysinfo::System::new_all();
-    if let Some(_process) = s.processes_by_name("Origin.exe").next() {
-        // check here if this is your process
-        // dbg!(process);
-        // There's at least one Origin process, so we can launch
-        return true;
-    }
-    // Alternatively, check for EA Desktop
-    if let Some(_process) = s.processes_by_name("EADesktop.exe").next() {
-        // There's at least one EADesktop process, so we can launch
-        return true;
-    }
-    false
+    s.processes_by_name("Origin.exe").next().is_some()
+        || s.processes_by_name("EADesktop.exe").next().is_some()
 }
 
 /// Checks if Northstar process is running
