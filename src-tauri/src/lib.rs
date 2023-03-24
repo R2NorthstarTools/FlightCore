@@ -191,18 +191,18 @@ async fn do_install(nmod: &thermite::model::ModVersion, game_path: &std::path::P
     std::fs::create_dir_all(download_directory.clone())?;
 
     let download_path = format!("{}/{}", download_directory.clone(), filename);
-    println!("{download_path}");
+    log::info!("Download path: {download_path}");
 
     let nfile = thermite::core::manage::download_file(&nmod.url, download_path).unwrap();
 
-    println!("Extracting Northstar...");
+    log::info!("Extracting Northstar...");
     extract(nfile, game_path)?;
 
     // Delete old copy
-    println!("Delete temp folder again");
+    log::info!("Delete temp folder again");
     std::fs::remove_dir_all(download_directory).unwrap();
 
-    println!("Done!");
+    log::info!("Done installing Northstar!");
 
     Ok(())
 }
