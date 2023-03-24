@@ -18,14 +18,14 @@ pub fn origin_install_location_detection() -> Result<String, anyhow::Error> {
                             return Ok(game_path_str.to_string());
                         }
                         Err(err) => {
-                            println!("{}", err);
+                            log::warn!("{}", err);
                             continue; // Not a valid game path
                         }
                     }
                 }
             }
             Err(err) => {
-                println!("Couldn't find {origin_id}: {err}")
+                log::warn!("Couldn't find {origin_id}: {err}")
             }
         }
     }
