@@ -339,13 +339,10 @@ pub fn check_origin_running() -> bool {
 
 /// Checks if Northstar process is running
 pub fn check_northstar_running() -> bool {
-    let s = sysinfo::System::new_all();
-    if let Some(_process) = s.processes_by_name("NorthstarLauncher.exe").next() {
-        // check here if this is your process
-        // dbg!(process);
-        return true;
-    }
-    false
+    sysinfo::System::new_all()
+        .processes_by_name("NorthstarLauncher.exe")
+        .next()
+        .is_some()
 }
 
 /// Helps with converting release candidate numbers which are different on Thunderstore
