@@ -234,7 +234,7 @@ async fn check_is_northstar_outdated(
     let version_number = match get_northstar_version_number(game_path) {
         Ok(version_number) => version_number,
         Err(err) => {
-            println!("{}", err);
+            log::warn!("{}", err);
             // If we fail to get new version just assume we are up-to-date
             return Err(err.to_string());
         }
