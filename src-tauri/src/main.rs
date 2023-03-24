@@ -331,7 +331,7 @@ async fn install_mod_caller(
     match clean_up_download_folder(game_install, false) {
         Ok(()) => Ok(()),
         Err(err) => {
-            println!("Failed to delete download folder due to {}", err);
+            log::info!("Failed to delete download folder due to {}", err);
             // Failure to delete download folder is not an error in mod install
             // As such ignore. User can still force delete if need be
             Ok(())
