@@ -309,9 +309,9 @@ pub async fn apply_mods_pr(
     // Delete previously managed folder
     if std::fs::remove_dir_all(profile_folder.clone()).is_err() {
         if std::path::Path::new(&profile_folder).exists() {
-            println!("Failed removing previous dir");
+            log::error!("Failed removing previous dir");
         } else {
-            println!("Failed removing folder that doesn't exist. Probably cause first run");
+            log::warn!("Failed removing folder that doesn't exist. Probably cause first run");
         }
     };
 
@@ -331,6 +331,6 @@ pub async fn apply_mods_pr(
     // Add batch file to launch right profile
     add_batch_file(game_install_path);
 
-    println!("All done with installing mods PR");
+    log::info!("All done with installing mods PR");
     Ok(())
 }
