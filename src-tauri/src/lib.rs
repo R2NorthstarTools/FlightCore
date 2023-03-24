@@ -102,10 +102,10 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
                     };
                     return Ok(game_install);
                 }
-                None => println!("Couldn't locate Titanfall2"),
+                None => log::info!("Couldn't locate Titanfall2 Steam instal"),
             }
         }
-        None => println!("Couldn't locate Steam on this computer!"),
+        None => log::info!("Couldn't locate Steam on this computer!"),
     }
 
     // (On Windows only) try parsing Windows registry for Origin install path
@@ -119,7 +119,7 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
             return Ok(game_install);
         }
         Err(err) => {
-            println!("{}", err);
+            log::info!("{}", err);
         }
     };
 
