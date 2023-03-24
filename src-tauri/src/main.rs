@@ -266,7 +266,7 @@ async fn verify_install_location(game_path: String) -> bool {
     match check_is_valid_game_path(&game_path) {
         Ok(()) => true,
         Err(err) => {
-            println!("{}", err);
+            log::warn!("{}", err);
             false
         }
     }
