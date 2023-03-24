@@ -281,7 +281,7 @@ pub async fn apply_launcher_pr(
         }
     }
 
-    println!("All done with installing launcher PR");
+    log::info!("All done with installing launcher PR");
     Ok(())
 }
 
