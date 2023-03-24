@@ -208,7 +208,7 @@ fn add_batch_file(game_install_path: &str) {
 
     match file.write_all(batch_file_content.as_bytes()) {
         Err(why) => panic!("couldn't write to {}: {}", display, why),
-        Ok(_) => println!("successfully wrote to {}", display),
+        Ok(_) => log::info!("successfully wrote to {}", display),
     }
 }
 
