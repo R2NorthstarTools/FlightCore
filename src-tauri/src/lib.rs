@@ -157,7 +157,7 @@ fn extract(zip_file: std::fs::File, target: &std::path::Path) -> Result<()> {
             );
 
             if (*f.name()).ends_with('/') {
-                println!("Create directory {}", f.name());
+                log::info!("Create directory {}", f.name());
                 std::fs::create_dir_all(target.join(f.name()))
                     .context("Unable to create directory")?;
                 continue;
@@ -171,7 +171,7 @@ fn extract(zip_file: std::fs::File, target: &std::path::Path) -> Result<()> {
                 .truncate(true)
                 .open(&out)?;
 
-            println!("Write file {}", out.display());
+            log::info!("Write file {}", out.display());
 
             std::io::copy(&mut f, &mut outfile).context("Unable to write to file")?;
         }
