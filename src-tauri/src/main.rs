@@ -284,11 +284,11 @@ async fn install_northstar_caller(
     game_path: String,
     northstar_package_name: Option<String>,
 ) -> Result<bool, String> {
-    println!("Running");
+    log::info!("Running");
     match install_northstar(&game_path, northstar_package_name).await {
         Ok(_) => Ok(true),
         Err(err) => {
-            println!("{}", err);
+            log::error!("{}", err);
             Err(err.to_string())
         }
     }
