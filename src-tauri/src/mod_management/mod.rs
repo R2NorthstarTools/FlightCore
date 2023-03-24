@@ -189,7 +189,7 @@ fn parse_installed_mods(game_install: GameInstall) -> Result<Vec<NorthstarMod>, 
         let parsed_mod_json: ModJson = match json5::from_str(&data) {
             Ok(parsed_json) => parsed_json,
             Err(err) => {
-                println!("Failed parsing {} with {}", mod_json_path, err.to_string());
+                log::warn!("Failed parsing {} with {}", mod_json_path, err.to_string());
                 continue;
             }
         };
