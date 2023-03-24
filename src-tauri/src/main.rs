@@ -300,13 +300,13 @@ async fn update_northstar_caller(
     game_path: String,
     northstar_package_name: Option<String>,
 ) -> Result<bool, String> {
-    println!("Updating");
+    log::info!("Updating Northstar");
 
     // Simply re-run install with up-to-date version for upate
     match install_northstar(&game_path, northstar_package_name).await {
         Ok(_) => Ok(true),
         Err(err) => {
-            println!("{}", err);
+            log::error!("{}", err);
             Err(err.to_string())
         }
     }
