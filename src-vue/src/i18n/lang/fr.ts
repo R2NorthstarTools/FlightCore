@@ -8,6 +8,8 @@ export default {
     },
 
     generic: {
+        yes: 'Oui',
+        no: 'Non',
         error: 'Erreur',
         cancel: 'Annuler',
         informationShort: 'Info'

@@ -203,7 +203,7 @@ export default defineComponent({
                 this.$t('mods.card.remove_dialog_text'),
                 this.$t('mods.card.remove_dialog_title'),
                 {
-                    confirmButtonText: 'OK',
+                    confirmButtonText: this.$t('generic.yes'),
                     cancelButtonText: this.$t('generic.cancel'),
                     type: 'warning',
                 }

@@ -7,6 +7,8 @@
                             :before-change="() => updateWhichModsEnabled(mod)" :loading="global_load_indicator" />
                 <el-popconfirm
                     :title="$t('mods.local.delete_confirm')"
+                    :confirm-button-text="this.$t('generic.yes')"
+                    :cancel-button-text="this.$t('generic.no')"
                     @confirm="deleteMod(mod)"
                 >
                     <template #reference>
