@@ -206,7 +206,7 @@ fn parse_installed_mods(game_install: GameInstall) -> Result<Vec<NorthstarMod>, 
         let ns_mod = NorthstarMod {
             name: parsed_mod_json.name,
             version: parsed_mod_json.version,
-            thunderstore_mod_string: thunderstore_mod_string,
+            thunderstore_mod_string,
             enabled: false, // Placeholder
             directory: mod_directory,
         };
