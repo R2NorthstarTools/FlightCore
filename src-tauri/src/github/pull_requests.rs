@@ -4,7 +4,6 @@ use anyhow::anyhow;
 use app::check_is_valid_game_path;
 use app::constants::{APP_USER_AGENT, PULLS_API_ENDPOINT_LAUNCHER, PULLS_API_ENDPOINT_MODS};
 use serde::{Deserialize, Serialize};
-use std::fs;
 use std::fs::File;
 use std::io;
 use std::io::prelude::*;
@@ -69,7 +68,7 @@ pub enum PullRequestType {
 pub async fn get_pull_requests(url: String) -> Result<Vec<PullsApiResponseElement>, String> {
     let json_response = match fetch_github_releases_api(&url).await {
         Ok(result) => result,
-        Err(err) => return Err(err.to_string()),
+        Err(err) => return Err(err),
     };
 
     let pulls_response: Vec<PullsApiResponseElement> = match serde_json::from_str(&json_response) {
@@ -93,61 +92,6 @@ pub async fn get_pull_requests_wrapper(
     get_pull_requests(api_pr_url.to_string()).await
 }
 
-fn unzip(zip_file_name: &str) -> String {
-    let fname = std::path::Path::new(zip_file_name);
-    let file = fs::File::open(fname).unwrap();
-
-    let mut archive = zip::ZipArchive::new(file).unwrap();
-
-    let mut folder_name = "".to_string();
-
-    for i in 0..archive.len() {
-        let mut file = archive.by_index(i).unwrap();
-        let outpath = match file.enclosed_name() {
-            Some(path) => path.to_owned(),
-            None => continue,
-        };
-
-        {
-            let comment = file.comment();
-            if !comment.is_empty() {
-                println!("File {} comment: {}", i, comment);
-            }
-        }
-
-        if i == 0 {
-            // Sanity check that it's a folder
-            assert!((*file.name()).ends_with('/'));
-
-            folder_name = format!("{}", outpath.display());
-            println!("{}", folder_name);
-        }
-
-        if (*file.name()).ends_with('/') {
-            fs::create_dir_all(&outpath).unwrap();
-        } else {
-            if let Some(p) = outpath.parent() {
-                if !p.exists() {
-                    fs::create_dir_all(p).unwrap();
-                }
-            }
-            let mut outfile = fs::File::create(&outpath).unwrap();
-            io::copy(&mut file, &mut outfile).unwrap();
-        }
-
-        // Get and Set permissions
-        #[cfg(unix)]
-        {
-            use std::os::unix::fs::PermissionsExt;
-
-            if let Some(mode) = file.unix_mode() {
-                fs::set_permissions(&outpath, fs::Permissions::from_mode(mode)).unwrap();
-            }
-        }
-    }
-    folder_name
-}
-
 pub async fn check_github_api(url: &str) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
     let client = reqwest::Client::new();
     let res = client
@@ -165,99 +109,20 @@ pub async fn check_github_api(url: &str) -> Result<serde_json::Value, Box<dyn st
     Ok(json)
 }
 
-/// Downloads a file from given URL
-async fn download_zip(download_url: String, location: String) -> Result<(), anyhow::Error> {
-    let client = reqwest::Client::new();
-    let resp = client
-        .get(download_url)
-        .header(reqwest::header::USER_AGENT, APP_USER_AGENT)
-        .send()
-        .await?;
+/// Downloads a file from given URL into an array in memory
+async fn download_zip_into_memory(download_url: String) -> Result<Vec<u8>, anyhow::Error> {
+    let client = reqwest::Client::builder()
+        .user_agent(APP_USER_AGENT)
+        .build()?;
 
-    // Error out earlier if non-successful response
-    if !resp.status().is_success() {
-        // Return error cause wrong game path
-        return Err(anyhow!(
-            "Couldn't download zip. Received error code \"{}\"",
-            resp.status()
-        ));
+    let response = client.get(download_url).send().await?;
+
+    if !response.status().is_success() {
+        return Err(anyhow!("Request unsuccessful: {}", response.status()));
     }
 
-    let mut out = fs::File::create(format!("{}/ns-dev-test-helper-temp-pr-files.zip", location))
-        .expect("failed to create file");
-    let bytes = resp.bytes().await?;
-    let mut cursor = std::io::Cursor::new(bytes);
-    std::io::copy(&mut cursor, &mut out)?;
-    Ok(())
-}
-
-fn unzip_launcher_zip(zip_file_name: &str) -> String {
-    let outfolder_name = "ns-dev-test-helper-temp-pr-files";
-    let fname = std::path::Path::new(zip_file_name);
-    let file = fs::File::open(fname).unwrap();
-
-    let mut archive = zip::ZipArchive::new(file).unwrap();
-
-    fs::create_dir_all(outfolder_name).unwrap();
-
-    for i in 0..archive.len() {
-        let mut file = archive.by_index(i).unwrap();
-        let outpath = match file.enclosed_name() {
-            Some(path) => path.to_owned(),
-            None => continue,
-        };
-
-        {
-            let comment = file.comment();
-            if !comment.is_empty() {
-                println!("File {} comment: {}", i, comment);
-            }
-        }
-
-        // Only extract two hardcoded files
-        if *file.name() == *"NorthstarLauncher.exe" || *file.name() == *"Northstar.dll" {
-            println!(
-                "File {} extracted to \"{}\" ({} bytes)",
-                i,
-                outpath.display(),
-                file.size()
-            );
-            if let Some(p) = outpath.parent() {
-                if !p.exists() {
-                    fs::create_dir_all(p).unwrap();
-                }
-            }
-            let mut outfile =
-                fs::File::create(format!("{}/{}", outfolder_name, outpath.display())).unwrap();
-            std::io::copy(&mut file, &mut outfile).unwrap();
-        }
-
-        // Get and Set permissions
-        #[cfg(unix)]
-        {
-            use std::os::unix::fs::PermissionsExt;
-
-            if let Some(mode) = file.unix_mode() {
-                fs::set_permissions(&outpath, fs::Permissions::from_mode(mode)).unwrap();
-            }
-        }
-    }
-    outfolder_name.to_string()
-}
-
-/// Recursively copies files from one directory to another
-fn copy_dir_all(src: impl AsRef<Path>, dst: impl AsRef<Path>) -> io::Result<()> {
-    fs::create_dir_all(&dst)?;
-    for entry in fs::read_dir(src)? {
-        let entry = entry?;
-        let ty = entry.file_type()?;
-        if ty.is_dir() {
-            copy_dir_all(entry.path(), dst.as_ref().join(entry.file_name()))?;
-        } else {
-            fs::copy(entry.path(), dst.as_ref().join(entry.file_name()))?;
-        }
-    }
-    Ok(())
+    let bytes = response.bytes().await?;
+    Ok(bytes.to_vec())
 }
 
 /// Gets GitHub download link of a mods PR
@@ -277,7 +142,8 @@ fn get_mods_download_link(pull_request: PullsApiResponseElement) -> Result<Strin
 }
 
 /// Gets `nightly.link` artifact download link of a launcher PR
-async fn get_launcher_download_link(
+#[tauri::command]
+pub async fn get_launcher_download_link(
     pull_request: PullsApiResponseElement,
 ) -> Result<String, String> {
     // Iterate over the first 10 pages of
@@ -342,7 +208,7 @@ fn add_batch_file(game_install_path: &str) {
 
     match file.write_all(batch_file_content.as_bytes()) {
         Err(why) => panic!("couldn't write to {}: {}", display, why),
-        Ok(_) => println!("successfully wrote to {}", display),
+        Ok(_) => log::info!("successfully wrote to {}", display),
     }
 }
 
@@ -356,30 +222,66 @@ pub async fn apply_launcher_pr(
     check_is_valid_game_path(game_install_path)?;
 
     // get download link
-    let download_url = get_launcher_download_link(pull_request).await?;
+    let download_url = get_launcher_download_link(pull_request.clone()).await?;
 
-    // download
-    match download_zip(download_url, ".".to_string()).await {
-        Ok(_) => (),
+    let archive = match download_zip_into_memory(download_url).await {
+        Ok(archive) => archive,
         Err(err) => return Err(err.to_string()),
     };
 
-    // extract
-    let zip_extract_folder_name = unzip_launcher_zip("ns-dev-test-helper-temp-pr-files.zip");
-    fs::remove_file("ns-dev-test-helper-temp-pr-files.zip").unwrap();
-
-    // Copy downloaded folder to game install folder
-    match copy_dir_all(zip_extract_folder_name.clone(), game_install_path) {
+    let extract_directory = format!(
+        "{}/___flightcore-temp-download-dir/launcher-pr-{}",
+        game_install_path, pull_request.number
+    );
+    match std::fs::create_dir_all(extract_directory.clone()) {
         Ok(_) => (),
         Err(err) => {
-            return Err(format!("Failed copying files: {}", err));
+            return Err(format!(
+                "Failed creating temporary download directory: {}",
+                err
+            ))
+        }
+    };
+
+    let target_dir = std::path::PathBuf::from(extract_directory.clone()); // Doesn't need to exist
+    match zip_extract::extract(io::Cursor::new(archive), &target_dir, true) {
+        Ok(()) => (),
+        Err(err) => {
+            return Err(format!("Failed unzip: {}", err));
+        }
+    };
+
+    // Copy only necessary files from temp dir
+    // Copy:
+    // - NorthstarLauncher.exe
+    // - Northstar.dll
+    let files_to_copy = vec!["NorthstarLauncher.exe", "Northstar.dll"];
+    for file_name in files_to_copy {
+        let source_file_path = format!("{}/{}", extract_directory, file_name);
+        let destination_file_path = format!("{}/{}", game_install_path, file_name);
+        match std::fs::copy(&source_file_path, &destination_file_path) {
+            Ok(_result) => (),
+            Err(err) => {
+                return Err(format!(
+                    "Failed to copy necessary file {} from temp dir: {}",
+                    file_name, err
+                ))
+            }
+        };
+    }
+
+    // delete extract directory
+    match std::fs::remove_dir_all(&extract_directory) {
+        Ok(()) => (),
+        Err(err) => {
+            return Err(format!(
+                "Failed to delete temporary download directory: {}",
+                err
+            ))
         }
     }
 
-    // Delete old unzipped
-    fs::remove_dir_all(zip_extract_folder_name).unwrap();
-
-    println!("All done with installing launcher PR");
+    log::info!("All done with installing launcher PR");
     Ok(())
 }
 
@@ -397,50 +299,38 @@ pub async fn apply_mods_pr(
         Err(err) => return Err(err.to_string()),
     };
 
-    match download_zip(download_url, ".".to_string()).await {
-        Ok(()) => (),
+    let archive = match download_zip_into_memory(download_url).await {
+        Ok(archive) => archive,
         Err(err) => return Err(err.to_string()),
     };
 
-    // Extract folder and delete zip
-    let zip_extract_folder_name = unzip("ns-dev-test-helper-temp-pr-files.zip");
-    fs::remove_file("ns-dev-test-helper-temp-pr-files.zip").unwrap();
+    let profile_folder = format!("{}/R2Northstar-PR-test-managed-folder", game_install_path);
 
     // Delete previously managed folder
-    if std::fs::remove_dir_all(format!(
-        "{}/R2Northstar-PR-test-managed-folder",
-        game_install_path
-    ))
-    .is_err()
-    {
-        if std::path::Path::new(&format!(
-            "{}/R2Northstar-PR-test-managed-folder",
-            game_install_path
-        ))
-        .exists()
-        {
-            println!("Failed removing previous dir");
+    if std::fs::remove_dir_all(profile_folder.clone()).is_err() {
+        if std::path::Path::new(&profile_folder).exists() {
+            log::error!("Failed removing previous dir");
         } else {
-            println!("Failed removing folder that doesn't exist. Probably cause first run");
+            log::warn!("Failed removing folder that doesn't exist. Probably cause first run");
         }
     };
 
-    // Copy downloaded folder to game install folder
-    copy_dir_all(
-        zip_extract_folder_name.clone(),
-        format!(
-            "{}/R2Northstar-PR-test-managed-folder/mods",
-            game_install_path
-        ),
-    )
-    .unwrap();
+    // Create profile folder
+    match std::fs::create_dir_all(profile_folder.clone()) {
+        Ok(()) => (),
+        Err(err) => return Err(err.to_string()),
+    }
 
-    // Delete old copy
-    std::fs::remove_dir_all(zip_extract_folder_name).unwrap();
-
+    let target_dir = std::path::PathBuf::from(format!("{}/mods", profile_folder)); // Doesn't need to exist
+    match zip_extract::extract(io::Cursor::new(archive), &target_dir, true) {
+        Ok(()) => (),
+        Err(err) => {
+            return Err(format!("Failed unzip: {}", err));
+        }
+    };
     // Add batch file to launch right profile
     add_batch_file(game_install_path);
 
-    println!("All done with installing mods PR");
+    log::info!("All done with installing mods PR");
     Ok(())
 }

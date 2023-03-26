@@ -1,5 +1,5 @@
 import { ElNotification } from "element-plus";
-import { invoke } from "@tauri-apps/api";
+import { invoke, shell } from "@tauri-apps/api";
 import { PullsApiResponseElement } from "../../../../src-tauri/bindings/PullsApiResponseElement";
 import { PullRequestType } from '../../../../src-tauri/bindings/PullRequestType';
 import { store } from "../store";
@@ -40,6 +40,25 @@ export const pullRequestModule = {
                         position: 'bottom-right'
                     });
                 });
+        },
+        async downloadLauncherPR(state: PullRequestStoreState, pull_request: PullsApiResponseElement) {
+            await invoke<string>("get_launcher_download_link", { pullRequest: pull_request })
+                .then((url) => {
+                    // Open URL in default HTTPS handler (i.e. default browser)
+                    shell.open(url);
+                })
+                .catch((error) => {
+                    ElNotification({
+                        title: 'Error',
+                        message: error,
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                });
+        },
+        async downloadModsPR(state: PullRequestStoreState, pull_request: PullsApiResponseElement) {
+            let url = `https://github.com/${pull_request.head.repo.full_name}/archive/refs/heads/${pull_request.head.ref}.zip`
+            shell.open(url);
         },
         async installLauncherPR(state: PullRequestStoreState, pull_request: PullsApiResponseElement) {
             // Send notification telling the user to wait for the process to finish
@@ -92,6 +111,7 @@ export const pullRequestModule = {
                         title: `Done`,
                         message: `Installed ${pull_request.number}: "${pull_request.title}"\nMake sure to launch via batch file or by specifying correct profile!`,
                         type: 'success',
+                        duration: 7_000, // in ms
                         position: 'bottom-right'
                     });
                 })

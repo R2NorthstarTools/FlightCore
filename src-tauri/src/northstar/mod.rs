@@ -6,8 +6,7 @@ use anyhow::anyhow;
 
 /// Returns the current Northstar version number as a string
 pub fn get_northstar_version_number(game_path: String) -> Result<String, anyhow::Error> {
-    println!("{}", game_path);
-    // println!("{:?}", install_type);
+    log::info!("{}", game_path);
 
     // TODO:
     // Check if NorthstarLauncher.exe exists and check its version number
@@ -33,7 +32,7 @@ pub fn get_northstar_version_number(game_path: String) -> Result<String, anyhow:
             return Err(anyhow!("Found version number mismatch"));
         }
     }
-    println!("All mods same version");
+    log::info!("All mods same version");
 
     Ok(initial_version_number)
 }
