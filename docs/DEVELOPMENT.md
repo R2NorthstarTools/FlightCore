@@ -14,7 +14,6 @@ As for splitting logic between _frontend_ and _backend_, state and UI related lo
 
 Make sure you have the necessary dependencies for Tauri installed as described in this link: https://tauri.app/v1/guides/getting-started/prerequisites
 
-
 Then, install `npm` dependencies with
 
 ```sh
@@ -34,6 +33,32 @@ npx tauri dev
 ```
 
 Automatic recompiling on save is enabled for both the Rust and the Typescript/Vue code.
+
+If you want to build, do all of the above (except tauri dev) and:
+
+```sh
+cd ../src-tauri
+```
+
+```sh
+npm run tauri build
+```
+
+This will build the executable and bundles, such as AppImage or .deb.
+
+To build just the executable, edit [tauri.conf.json](https://github.com/R2NorthstarTools/FlightCore/blob/c102fdcf8ef00e3c5c46fb9ded37e09b7e92e483/src-tauri/tauri.conf.json#L18) in the same folder.
+
+Change active from `true` to `false`, and bundles won't be included afterward.
+
+To disable the updater change [this value](https://github.com/R2NorthstarTools/FlightCore/blob/c102fdcf8ef00e3c5c46fb9ded37e09b7e92e483/src-tauri/tauri.conf.json#L54) to false.
+
+All of this can be simplified into a one-line command:
+
+```sh
+cd src-tauri; sed -i '18s/.*/      "active": false,/' tauri.conf.json; sed -i '54s/.*/      "active": false,/' tauri.conf.json; cd ..; npm install && cd src-vue; npm install && cd ../src-tauri; npm run tauri build
+```
+
+If you want either of these options, remove the sed commands, 18 is for the former, and 54 is for the latter.
 
 ## Tauri
 
