@@ -102,10 +102,10 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
                     };
                     return Ok(game_install);
                 }
-                None => println!("Couldn't locate Titanfall2"),
+                None => log::info!("Couldn't locate Titanfall2 Steam instal"),
             }
         }
-        None => println!("Couldn't locate Steam on this computer!"),
+        None => log::info!("Couldn't locate Steam on this computer!"),
     }
 
     // (On Windows only) try parsing Windows registry for Origin install path
@@ -119,7 +119,7 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
             return Ok(game_install);
         }
         Err(err) => {
-            println!("{}", err);
+            log::info!("{}", err);
         }
     };
 
@@ -157,7 +157,7 @@ fn extract(zip_file: std::fs::File, target: &std::path::Path) -> Result<()> {
             );
 
             if (*f.name()).ends_with('/') {
-                println!("Create directory {}", f.name());
+                log::info!("Create directory {}", f.name());
                 std::fs::create_dir_all(target.join(f.name()))
                     .context("Unable to create directory")?;
                 continue;
@@ -171,7 +171,7 @@ fn extract(zip_file: std::fs::File, target: &std::path::Path) -> Result<()> {
                 .truncate(true)
                 .open(&out)?;
 
-            println!("Write file {}", out.display());
+            log::info!("Write file {}", out.display());
 
             std::io::copy(&mut f, &mut outfile).context("Unable to write to file")?;
         }
@@ -191,18 +191,18 @@ async fn do_install(nmod: &thermite::model::ModVersion, game_path: &std::path::P
     std::fs::create_dir_all(download_directory.clone())?;
 
     let download_path = format!("{}/{}", download_directory.clone(), filename);
-    println!("{download_path}");
+    log::info!("Download path: {download_path}");
 
     let nfile = thermite::core::manage::download_file(&nmod.url, download_path).unwrap();
 
-    println!("Extracting Northstar...");
+    log::info!("Extracting Northstar...");
     extract(nfile, game_path)?;
 
     // Delete old copy
-    println!("Delete temp folder again");
+    log::info!("Delete temp folder again");
     std::fs::remove_dir_all(download_directory).unwrap();
 
-    println!("Done!");
+    log::info!("Done installing Northstar!");
 
     Ok(())
 }

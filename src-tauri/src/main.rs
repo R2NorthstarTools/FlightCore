@@ -234,7 +234,7 @@ async fn check_is_northstar_outdated(
     let version_number = match get_northstar_version_number(game_path) {
         Ok(version_number) => version_number,
         Err(err) => {
-            println!("{}", err);
+            log::warn!("{}", err);
             // If we fail to get new version just assume we are up-to-date
             return Err(err.to_string());
         }
@@ -266,7 +266,7 @@ async fn verify_install_location(game_path: String) -> bool {
     match check_is_valid_game_path(&game_path) {
         Ok(()) => true,
         Err(err) => {
-            println!("{}", err);
+            log::warn!("{}", err);
             false
         }
     }
@@ -284,11 +284,11 @@ async fn install_northstar_caller(
     game_path: String,
     northstar_package_name: Option<String>,
 ) -> Result<bool, String> {
-    println!("Running");
+    log::info!("Running");
     match install_northstar(&game_path, northstar_package_name).await {
         Ok(_) => Ok(true),
         Err(err) => {
-            println!("{}", err);
+            log::error!("{}", err);
             Err(err.to_string())
         }
     }
@@ -300,13 +300,13 @@ async fn update_northstar_caller(
     game_path: String,
     northstar_package_name: Option<String>,
 ) -> Result<bool, String> {
-    println!("Updating");
+    log::info!("Updating Northstar");
 
     // Simply re-run install with up-to-date version for upate
     match install_northstar(&game_path, northstar_package_name).await {
         Ok(_) => Ok(true),
         Err(err) => {
-            println!("{}", err);
+            log::error!("{}", err);
             Err(err.to_string())
         }
     }
@@ -331,7 +331,7 @@ async fn install_mod_caller(
     match clean_up_download_folder(game_install, false) {
         Ok(()) => Ok(()),
         Err(err) => {
-            println!("Failed to delete download folder due to {}", err);
+            log::info!("Failed to delete download folder due to {}", err);
             // Failure to delete download folder is not an error in mod install
             // As such ignore. User can still force delete if need be
             Ok(())
