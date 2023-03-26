@@ -333,29 +333,16 @@ pub fn launch_northstar(
 
 pub fn check_origin_running() -> bool {
     let s = sysinfo::System::new_all();
-    for _process in s.processes_by_name("Origin.exe") {
-        // check here if this is your process
-        // dbg!(process);
-        // There's at least one Origin process, so we can launch
-        return true;
-    }
-    // Alternatively, check for EA Desktop
-    for _process in s.processes_by_name("EADesktop.exe") {
-        // There's at least one EADesktop process, so we can launch
-        return true;
-    }
-    false
+    s.processes_by_name("Origin.exe").next().is_some()
+        || s.processes_by_name("EADesktop.exe").next().is_some()
 }
 
 /// Checks if Northstar process is running
 pub fn check_northstar_running() -> bool {
-    let s = sysinfo::System::new_all();
-    for _process in s.processes_by_name("NorthstarLauncher.exe") {
-        // check here if this is your process
-        // dbg!(process);
-        return true;
-    }
-    false
+    sysinfo::System::new_all()
+        .processes_by_name("NorthstarLauncher.exe")
+        .next()
+        .is_some()
 }
 
 /// Helps with converting release candidate numbers which are different on Thunderstore
