@@ -48,7 +48,7 @@ This will build the executable and bundles, such as `AppImage`, `.deb` or `.msi`
 
 To build just the executable, edit [tauri.conf.json](https://github.com/R2NorthstarTools/FlightCore/blob/main/src-tauri/tauri.conf.json) in the same folder:
 
-```
+```json
     "bundle": {
       "active": true,
 ```
@@ -57,7 +57,7 @@ Change active from `true` to `false`, and bundles won't be included afterward.
 
 To disable the updater (which requires a private key) change this active value to false:
 
-```
+```json
     "updater": {
       "active": true,
 ```
