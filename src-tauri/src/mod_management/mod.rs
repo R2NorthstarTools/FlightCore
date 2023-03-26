@@ -12,8 +12,6 @@ use std::path::PathBuf;
 use app::get_enabled_mods;
 use app::GameInstall;
 
-use json5;
-
 #[derive(Debug, Clone)]
 struct ParsedThunderstoreModString {
     author_name: String,
