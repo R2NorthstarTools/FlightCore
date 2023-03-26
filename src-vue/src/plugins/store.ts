@@ -458,6 +458,11 @@ function _initializeListeners(state: any) {
     listen("northstar-running-ping", function (evt: TauriEvent<any>) {
         state.northstar_is_running = evt.payload as boolean;
     });
+
+    listen("northstar-statistics", function (evt: TauriEvent<{Ok: [number, number]}>) {
+        state.player_count = evt.payload.Ok[0];
+        state.server_count = evt.payload.Ok[1];
+    });
 }
 
 /**

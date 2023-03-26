@@ -43,7 +43,7 @@ pub struct ThunderstoreModVersion {
 /// Queries Thunderstore packages API
 #[tauri::command]
 pub async fn query_thunderstore_packages_api() -> Result<Vec<ThunderstoreMod>, String> {
-    println!("Fetching Thunderstore API");
+    log::info!("Fetching Thunderstore API");
 
     // Fetches
     let url = "https://northstar.thunderstore.io/api/v1/package/";
