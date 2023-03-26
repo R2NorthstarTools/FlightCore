@@ -376,7 +376,7 @@ pub async fn fc_download_mod_and_install(
     );
 
     // Download the mod
-    let f = match thermite::core::manage::download_file(&download_url, path.clone()) {
+    let f = match thermite::core::manage::download_file(download_url, path.clone()) {
         Ok(f) => f,
         Err(e) => return Err(e.to_string()),
     };
