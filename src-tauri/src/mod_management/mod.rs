@@ -94,8 +94,8 @@ pub fn set_mod_enabled_status(
     let mut res: serde_json::Value = match get_enabled_mods(game_install.clone()) {
         Ok(res) => res,
         Err(err) => {
-            println!("Couldn't parse `enabledmod.json`: {}", err);
-            println!("Rebuilding file.");
+            log::warn!("Couldn't parse `enabledmod.json`: {}", err);
+            log::warn!("Rebuilding file.");
 
             rebuild_enabled_mods_json(game_install.clone())?;
 
@@ -108,7 +108,7 @@ pub fn set_mod_enabled_status(
     // Check if key exists
     if res.get(mod_name.clone()).is_none() {
         // If it doesn't exist, rebuild `enabledmod.json`
-        println!("Value not found in `enabledmod.json`. Rebuilding file");
+        log::info!("Value not found in `enabledmod.json`. Rebuilding file");
         rebuild_enabled_mods_json(game_install.clone())?;
 
         // Then try again
@@ -189,7 +189,7 @@ fn parse_installed_mods(game_install: GameInstall) -> Result<Vec<NorthstarMod>, 
         let parsed_mod_json: ModJson = match json5::from_str(&data) {
             Ok(parsed_json) => parsed_json,
             Err(err) => {
-                println!("Failed parsing {} with {}", mod_json_path, err.to_string());
+                log::warn!("Failed parsing {} with {}", mod_json_path, err.to_string());
                 continue;
             }
         };
