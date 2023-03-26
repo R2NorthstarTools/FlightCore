@@ -23,7 +23,7 @@ impl std::str::FromStr for ParsedThunderstoreModString {
     type Err = ();
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut parts = s.split("-");
+        let mut parts = s.split('-');
 
         let author_name = parts.next().unwrap().to_string();
         let mod_name = parts.next().unwrap().to_string();
