@@ -34,14 +34,10 @@ npx tauri dev
 
 Automatic recompiling on save is enabled for both the Rust and the Typescript/Vue code.
 
-If you want to build FlightCore from source code, do the first two commands and:
+If you want to build FlightCore from source, run
 
 ```sh
-cd ../src-tauri
-```
-
-```sh
-npm run tauri build
+npx tauri build
 ```
 
 This will build the executable and bundles, such as `AppImage`, `.deb` or `.msi`.
