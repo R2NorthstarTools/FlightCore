@@ -68,7 +68,7 @@ pub enum PullRequestType {
 pub async fn get_pull_requests(url: String) -> Result<Vec<PullsApiResponseElement>, String> {
     let json_response = match fetch_github_releases_api(&url).await {
         Ok(result) => result,
-        Err(err) => return Err(err.to_string()),
+        Err(err) => return Err(err),
     };
 
     let pulls_response: Vec<PullsApiResponseElement> = match serde_json::from_str(&json_response) {
