@@ -12,17 +12,17 @@
             <el-select v-model="firstTag" class="m-2" placeholder="First tag">
                 <el-option
                     v-for="item in ns_release_tags"
-                    :key="item.name"
-                    :label="item.name"
-                    :value="item.name"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item"
                 />
             </el-select>
             <el-select v-model="secondTag" class="m-2" placeholder="Second tag">
                 <el-option
                     v-for="item in ns_release_tags"
-                    :key="item.name"
-                    :label="item.name"
-                    :value="item.name"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item"
                 />
             </el-select>
 
@@ -85,7 +85,7 @@ import { defineComponent } from "vue";
 import { invoke } from "@tauri-apps/api";
 import { ElNotification } from "element-plus";
 import { GameInstall } from "../utils/GameInstall";
-import { Tag } from "../../../src-tauri/bindings/Tag";
+import { TagWrapper } from "../../../src-tauri/bindings/TagWrapper";
 import PullRequestsSelector from "../components/PullRequestsSelector.vue";
 
 export default defineComponent({
@@ -97,28 +97,28 @@ export default defineComponent({
         return {
             mod_to_install_field_string : "",
             release_notes_text : "",
-            first_tag:  { name: '' },
-            second_tag:  { name: '' },
-            ns_release_tags: [] as Tag[],
+            first_tag: { label: '', value: {name: ''} },
+            second_tag: { label: '', value: {name: ''} },
+            ns_release_tags: [] as TagWrapper[],
         }
     },
     computed: {
-        ns_release_tags(): Tag[] {
+        ns_release_tags(): TagWrapper[] {
             return this.ns_release_tags;
         },
         firstTag: {
-            get(): Tag {
+            get(): TagWrapper {
                 return this.first_tag;
             },
-            set(value: Tag) {
+            set(value: TagWrapper) {
                 this.first_tag = value;
             }
         },
         secondTag: {
-            get(): Tag {
+            get(): TagWrapper {
                 return this.second_tag;
             },
-            set(value: Tag) {
+            set(value: TagWrapper) {
                 this.second_tag = value;
             }
         },
@@ -211,7 +211,7 @@ export default defineComponent({
                 });
         },
         async getTags() {
-            await invoke<Tag[]>("get_list_of_tags")
+            await invoke<TagWrapper[]>("get_list_of_tags")
                 .then((message) => {
                     this.ns_release_tags = message;
                     ElNotification({
@@ -229,7 +229,7 @@ export default defineComponent({
                 });
         },
         async compareTags() {
-            await invoke<string>("compare_tags", {firstTag: this.firstTag, secondTag: this.secondTag})
+            await invoke<string>("compare_tags", {firstTag: this.firstTag.value, secondTag: this.secondTag.value})
                 .then((message) => {
                     this.release_notes_text = message;
                     ElNotification({

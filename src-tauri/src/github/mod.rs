@@ -12,6 +12,14 @@ pub struct Tag {
     name: String,
 }
 
+/// Wrapper type needed for frontend
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
+pub struct TagWrapper {
+    label: String,
+    value: Tag,
+}
+
 #[derive(Debug, Deserialize)]
 struct CommitInfo {
     sha: String,
@@ -30,7 +38,7 @@ struct Comparison {
 
 /// Get a list of tags on the FlightCore repo
 #[tauri::command]
-pub fn get_list_of_tags() -> Result<Vec<Tag>, String> {
+pub fn get_list_of_tags() -> Result<Vec<TagWrapper>, String> {
     // Set the repository name.
     let repo = "R2NorthstarTools/FlightCore";
 
@@ -40,18 +48,25 @@ pub fn get_list_of_tags() -> Result<Vec<Tag>, String> {
         .build()
         .unwrap();
 
-    // Fetch the list of tags for the repository.
+    // Fetch the list of tags for the repository as a `Vec<Tag>`.
     let tags_url = format!("https://api.github.com/repos/{}/tags", repo);
     let tags: Vec<Tag> = client.get(&tags_url).send().unwrap().json().unwrap();
 
-    Ok(tags)
+    // Map each `Tag` element to a `TagWrapper` element with the desired label and `Tag` value.
+    let tag_wrappers: Vec<TagWrapper> = tags
+        .into_iter()
+        .map(|tag| TagWrapper {
+            label: tag.name.clone(),
+            value: tag,
+        })
+        .collect();
+
+    Ok(tag_wrappers)
 }
 
 /// Use GitHub API to compare two tags of the same repo against each other and get the resulting changes
 #[tauri::command]
-pub fn compare_tags(first_tag: String, second_tag: String) -> Result<String, String> {
-    // pub fn compare_tags(first_tag: Tag, second_tag: Tag) -> Result<(), String> {
-    // TODO args should be `Tag` not `String`
+pub fn compare_tags(first_tag: Tag, second_tag: Tag) -> Result<String, String> {
     // Fetch the list of commits between the two tags.
 
     // Create a `reqwest` client with a user agent.
@@ -69,10 +84,7 @@ pub fn compare_tags(first_tag: String, second_tag: String) -> Result<String, Str
     // let repo = "R2Northstar/NorthstarLauncher";
     let comparison_url = format!(
         "https://api.github.com/repos/{}/compare/{}...{}",
-        // repo, first_tag.name, second_tag.name
-        repo,
-        first_tag,
-        second_tag
+        repo, first_tag.name, second_tag.name
     );
 
     let comparison: Comparison = client.get(&comparison_url).send().unwrap().json().unwrap();
@@ -81,9 +93,7 @@ pub fn compare_tags(first_tag: String, second_tag: String) -> Result<String, Str
     // Display the list of commits.
     println!(
         "Commits between {} and {}:",
-        // first_tag.name, second_tag.name
-        first_tag,
-        second_tag
+        first_tag.name, second_tag.name
     );
 
     // Iterate over all commits in the diff
