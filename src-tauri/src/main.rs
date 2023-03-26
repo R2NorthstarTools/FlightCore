@@ -289,7 +289,7 @@ async fn install_northstar_caller(
         Ok(_) => Ok(true),
         Err(err) => {
             log::error!("{}", err);
-            Err(err.to_string())
+            Err(err)
         }
     }
 }
@@ -307,7 +307,7 @@ async fn update_northstar_caller(
         Ok(_) => Ok(true),
         Err(err) => {
             log::error!("{}", err);
-            Err(err.to_string())
+            Err(err)
         }
     }
 }
