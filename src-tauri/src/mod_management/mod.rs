@@ -295,7 +295,7 @@ async fn get_mod_dependencies(
     let index = thermite::api::get_package_index().unwrap().to_vec();
 
     // String replace works but more care should be taken in the future
-    let ts_mod_string_url = thunderstore_mod_string.replace("-", "/");
+    let ts_mod_string_url = thunderstore_mod_string.replace('-', "/");
 
     // Iterate over index
     for ns_mod in index {
@@ -380,7 +380,7 @@ pub async fn fc_download_mod_and_install(
     };
 
     // Get Thunderstore mod author
-    let author = thunderstore_mod_string.split("-").next().unwrap();
+    let author = thunderstore_mod_string.split('-').next().unwrap();
 
     // Extract the mod to the mods directory
     match thermite::core::manage::install_mod(author, &f, std::path::Path::new(&mods_directory)) {
