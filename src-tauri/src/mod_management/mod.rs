@@ -98,8 +98,7 @@ pub fn set_mod_enabled_status(
             rebuild_enabled_mods_json(game_install.clone())?;
 
             // Then try again
-            let res = get_enabled_mods(game_install.clone())?;
-            res
+            get_enabled_mods(game_install.clone())?
         }
     };
 
