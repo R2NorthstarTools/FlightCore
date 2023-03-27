@@ -328,7 +328,7 @@ pub async fn fc_download_mod_and_install(
     let mods_directory = format!("{}/R2Northstar/mods/", game_install.game_path);
 
     // Early return on empty string
-    if thunderstore_mod_string.len() == 0 {
+    if thunderstore_mod_string.is_empty() {
         return Err("Passed empty string".to_string());
     }
 
@@ -483,7 +483,7 @@ pub fn delete_thunderstore_mod(
         }
     }
 
-    if !(mod_folders_to_remove.len() > 0) {
+    if !mod_folders_to_remove.is_empty() {
         return Err(format!(
             "No mods removed as no Northstar mods matching {thunderstore_mod_string} were found to be installed."
         ));
