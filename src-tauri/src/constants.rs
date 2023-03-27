@@ -42,3 +42,6 @@ pub const PULLS_API_ENDPOINT_MODS: &str =
 
 // Statistics (players and servers counts) refresh delay
 pub const REFRESH_DELAY: Duration = Duration::from_secs(5 * 60);
+
+// Flightcore repo name and org name on GitHub
+pub const FLIGHTCORE_REPO_NAME: &str = "R2NorthstarTools/FlightCore";

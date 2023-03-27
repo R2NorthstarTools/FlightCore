@@ -1,7 +1,7 @@
 pub mod pull_requests;
 pub mod release_notes;
 
-use app::constants::{APP_USER_AGENT, SECTION_ORDER};
+use app::constants::{APP_USER_AGENT, SECTION_ORDER, FLIGHTCORE_REPO_NAME};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use ts_rs::TS;
@@ -40,7 +40,6 @@ struct Comparison {
 #[tauri::command]
 pub fn get_list_of_tags() -> Result<Vec<TagWrapper>, String> {
     // Set the repository name.
-    let repo = "R2NorthstarTools/FlightCore";
 
     // Create a `reqwest` client with a user agent.
     let client = reqwest::blocking::Client::builder()
@@ -49,7 +48,7 @@ pub fn get_list_of_tags() -> Result<Vec<TagWrapper>, String> {
         .unwrap();
 
     // Fetch the list of tags for the repository as a `Vec<Tag>`.
-    let tags_url = format!("https://api.github.com/repos/{}/tags", repo);
+    let tags_url = format!("https://api.github.com/repos/{}/tags", FLIGHTCORE_REPO_NAME);
     let tags: Vec<Tag> = client.get(&tags_url).send().unwrap().json().unwrap();
 
     // Map each `Tag` element to a `TagWrapper` element with the desired label and `Tag` value.
