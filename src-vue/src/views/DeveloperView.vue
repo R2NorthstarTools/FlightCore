@@ -215,6 +215,8 @@ export default defineComponent({
                 .then((message) => {
                     this.ns_release_tags = message;
                     ElNotification({
+                        title: "Done",
+                        message: "Fetched tags",
                         type: 'success',
                         position: 'bottom-right'
                     });
@@ -233,6 +235,8 @@ export default defineComponent({
                 .then((message) => {
                     this.release_notes_text = message;
                     ElNotification({
+                        title: "Done",
+                        message: "Generated release notes",
                         type: 'success',
                         position: 'bottom-right'
                     });
