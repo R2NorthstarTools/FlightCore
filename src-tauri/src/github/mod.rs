@@ -155,7 +155,7 @@ fn group_commits_by_type(commits: Vec<String>) -> HashMap<String, Vec<String>> {
     let mut other_commits: Vec<String> = vec![];
 
     for commit in commits {
-        let commit_parts: Vec<&str> = commit.splitn(2, ":").collect();
+        let commit_parts: Vec<&str> = commit.splitn(2, ':').collect();
         if commit_parts.len() == 2 {
             let commit_type = commit_parts[0].to_lowercase();
             let commit_description = commit_parts[1].trim().to_string();
