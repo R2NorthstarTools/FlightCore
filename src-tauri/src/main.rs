@@ -21,6 +21,7 @@ use github::pull_requests::{
 use github::release_notes::{
     check_is_flightcore_outdated, get_newest_flightcore_version, get_northstar_release_notes,
 };
+use github::{compare_tags, get_list_of_tags};
 
 mod repair_and_verify;
 use repair_and_verify::{
@@ -137,6 +138,8 @@ fn main() {
             delete_thunderstore_mod,
             open_repair_window,
             query_thunderstore_packages_api,
+            get_list_of_tags,
+            compare_tags,
             get_pull_requests_wrapper,
             apply_launcher_pr,
             apply_mods_pr,
