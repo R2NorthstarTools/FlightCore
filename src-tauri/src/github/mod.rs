@@ -102,10 +102,7 @@ pub fn compare_tags(first_tag: Tag, second_tag: Tag) -> Result<String, String> {
             commit.sha,
             commit.commit.message.split('\n').next().unwrap()
         );
-        patch_notes.push(format!(
-            "{}",
-            commit.commit.message.split('\n').next().unwrap()
-        ));
+        patch_notes.push(commit.commit.message.split('\n').next().unwrap().to_string());
     }
 
     full_patch_notes += &generate_flightcore_release_notes(patch_notes);
