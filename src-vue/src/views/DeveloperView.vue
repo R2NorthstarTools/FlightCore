@@ -103,9 +103,6 @@ export default defineComponent({
         }
     },
     computed: {
-        ns_release_tags(): TagWrapper[] {
-            return this.ns_release_tags;
-        },
         firstTag: {
             get(): TagWrapper {
                 return this.first_tag;
