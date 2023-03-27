@@ -140,7 +140,7 @@ fn generate_flightcore_release_notes(commits: Vec<String>) -> String {
                     release_notes.push_str(&format!("- {}\n", commit_message));
                 }
 
-                release_notes.push_str("\n");
+                release_notes.push('\n');
             }
         }
     }
