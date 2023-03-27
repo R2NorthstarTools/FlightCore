@@ -190,7 +190,7 @@ async fn do_install(nmod: &thermite::model::ModVersion, game_path: &std::path::P
 
     std::fs::create_dir_all(download_directory.clone())?;
 
-    let download_path = format!("{}/{}", download_directory.clone(), filename);
+    let download_path = format!("{}/{}", download_directory, filename);
     log::info!("Download path: {download_path}");
 
     let nfile = thermite::core::manage::download_file(&nmod.url, download_path).unwrap();
