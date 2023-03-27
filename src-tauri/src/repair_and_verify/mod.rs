@@ -51,7 +51,7 @@ pub fn clean_up_download_folder(
     // dbg!(download_dir_contents);
 
     let mut count = 0;
-    download_dir_contents.inspect(|_| count += 1).for_each(drop);
+    download_dir_contents.for_each(|_| count += 1);
 
     if count > 0 && !force {
         return Err(anyhow!("Folder not empty, not deleting"));
