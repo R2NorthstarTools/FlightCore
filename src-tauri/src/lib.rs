@@ -113,7 +113,7 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
     match windows::origin_install_location_detection() {
         Ok(game_path) => {
             let game_install = GameInstall {
-                game_path: game_path,
+                game_path,
                 install_type: InstallType::ORIGIN,
             };
             return Ok(game_install);
