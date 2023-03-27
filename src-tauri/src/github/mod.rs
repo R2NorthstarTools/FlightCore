@@ -49,7 +49,7 @@ pub fn get_list_of_tags() -> Result<Vec<TagWrapper>, String> {
 
     // Fetch the list of tags for the repository as a `Vec<Tag>`.
     let tags_url = format!("https://api.github.com/repos/{}/tags", FLIGHTCORE_REPO_NAME);
-    let tags: Vec<Tag> = client.get(&tags_url).send().unwrap().json().unwrap();
+    let tags: Vec<Tag> = client.get(tags_url).send().unwrap().json().unwrap();
 
     // Map each `Tag` element to a `TagWrapper` element with the desired label and `Tag` value.
     let tag_wrappers: Vec<TagWrapper> = tags
