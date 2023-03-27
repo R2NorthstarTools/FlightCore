@@ -12,8 +12,6 @@ use std::path::PathBuf;
 use app::get_enabled_mods;
 use app::GameInstall;
 
-use json5;
-
 #[derive(Debug, Clone)]
 struct ParsedThunderstoreModString {
     author_name: String,
@@ -25,7 +23,7 @@ impl std::str::FromStr for ParsedThunderstoreModString {
     type Err = ();
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut parts = s.split("-");
+        let mut parts = s.split('-');
 
         let author_name = parts.next().unwrap().to_string();
         let mod_name = parts.next().unwrap().to_string();
@@ -100,8 +98,7 @@ pub fn set_mod_enabled_status(
             rebuild_enabled_mods_json(game_install.clone())?;
 
             // Then try again
-            let res = get_enabled_mods(game_install.clone())?;
-            res
+            get_enabled_mods(game_install.clone())?
         }
     };
 
@@ -209,7 +206,7 @@ fn parse_installed_mods(game_install: GameInstall) -> Result<Vec<NorthstarMod>, 
         let ns_mod = NorthstarMod {
             name: parsed_mod_json.name,
             version: parsed_mod_json.version,
-            thunderstore_mod_string: thunderstore_mod_string,
+            thunderstore_mod_string,
             enabled: false, // Placeholder
             directory: mod_directory,
         };
@@ -276,7 +273,7 @@ async fn get_ns_mod_download_url(thunderstore_mod_string: String) -> Result<Stri
 
     for ns_mod in index {
         // Iterate over all versions of a given mod
-        for (_key, ns_mod) in &ns_mod.versions {
+        for ns_mod in ns_mod.versions.values() {
             if ns_mod.url.contains(&ts_mod_string_url) {
                 dbg!(ns_mod.clone());
                 return Ok(ns_mod.url.clone());
@@ -297,12 +294,12 @@ async fn get_mod_dependencies(
     let index = thermite::api::get_package_index().unwrap().to_vec();
 
     // String replace works but more care should be taken in the future
-    let ts_mod_string_url = thunderstore_mod_string.replace("-", "/");
+    let ts_mod_string_url = thunderstore_mod_string.replace('-', "/");
 
     // Iterate over index
     for ns_mod in index {
         // Iterate over all versions of a given mod
-        for (_key, ns_mod) in &ns_mod.versions {
+        for ns_mod in ns_mod.versions.values() {
             if ns_mod.url.contains(&ts_mod_string_url) {
                 dbg!(ns_mod.clone());
                 return Ok(ns_mod.deps.clone());
@@ -328,7 +325,7 @@ pub async fn fc_download_mod_and_install(
     let mods_directory = format!("{}/R2Northstar/mods/", game_install.game_path);
 
     // Early return on empty string
-    if thunderstore_mod_string.len() == 0 {
+    if thunderstore_mod_string.is_empty() {
         return Err("Passed empty string".to_string());
     }
 
@@ -376,13 +373,13 @@ pub async fn fc_download_mod_and_install(
     );
 
     // Download the mod
-    let f = match thermite::core::manage::download_file(&download_url, path.clone()) {
+    let f = match thermite::core::manage::download_file(download_url, path.clone()) {
         Ok(f) => f,
         Err(e) => return Err(e.to_string()),
     };
 
     // Get Thunderstore mod author
-    let author = thunderstore_mod_string.split("-").next().unwrap();
+    let author = thunderstore_mod_string.split('-').next().unwrap();
 
     // Extract the mod to the mods directory
     match thermite::core::manage::install_mod(author, &f, std::path::Path::new(&mods_directory)) {
@@ -483,7 +480,7 @@ pub fn delete_thunderstore_mod(
         }
     }
 
-    if !(mod_folders_to_remove.len() > 0) {
+    if !mod_folders_to_remove.is_empty() {
         return Err(format!(
             "No mods removed as no Northstar mods matching {thunderstore_mod_string} were found to be installed."
         ));
