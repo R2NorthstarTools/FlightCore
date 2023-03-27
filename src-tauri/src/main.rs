@@ -166,7 +166,7 @@ fn force_panic() {
 #[tauri::command]
 /// Returns true if built in debug mode
 async fn is_debug_mode() -> bool {
-    return cfg!(debug_assertions);
+    cfg!(debug_assertions)
 }
 
 #[tauri::command]
