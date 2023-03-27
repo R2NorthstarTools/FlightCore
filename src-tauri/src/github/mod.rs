@@ -1,7 +1,7 @@
 pub mod pull_requests;
 pub mod release_notes;
 
-use app::constants::{APP_USER_AGENT, SECTION_ORDER, FLIGHTCORE_REPO_NAME};
+use app::constants::{APP_USER_AGENT, FLIGHTCORE_REPO_NAME, SECTION_ORDER};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use ts_rs::TS;
