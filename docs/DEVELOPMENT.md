@@ -23,7 +23,7 @@ npm install
 Install UI dependencies too
 
 ```sh
-cd src-vue && npm install
+cd src-vue && npm install && cd ..
 ```
 
 Then for developing
