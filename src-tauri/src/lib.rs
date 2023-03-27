@@ -282,10 +282,7 @@ pub fn launch_northstar(
         ));
     }
 
-    let bypass_checks = match bypass_checks {
-        Some(bypass_checks) => bypass_checks,
-        None => false,
-    };
+    let bypass_checks = bypass_checks.unwrap_or(false);
 
     // Only check guards if bypassing checks is not enabled
     if !bypass_checks {
