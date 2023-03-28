@@ -6,11 +6,12 @@ import { ElNotification, NotificationHandle } from "element-plus";
 function showNotification(
     title: string,
     message: string = '',
-    type: 'success' | 'warning' | 'error' | 'info' = 'success'
+    type: 'success' | 'warning' | 'error' | 'info' = 'success',
+    duration: number = 4500
 ): NotificationHandle {
     return ElNotification({
-        title, message, type,
-        position: 'bottom-right'
+        title, message, type, duration,
+        position: 'bottom-right',
     });
 }
 
