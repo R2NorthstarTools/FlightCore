@@ -32,11 +32,12 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { ElNotification } from "element-plus";
 import { GameInstall } from "../utils/GameInstall";
 import { invoke } from "@tauri-apps/api";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { Store } from 'tauri-plugin-store-api';
+import { ElNotification } from "element-plus";
+import { showNotification } from "../utils/ui";
 const persistentStore = new Store('flight-core-settings.json');
 
 export default defineComponent({
@@ -49,20 +50,10 @@ export default defineComponent({
             } as GameInstall;
             await invoke("disable_all_but_core", { gameInstall: game_install })
                 .then((message) => {
-                    ElNotification({
-                        title: 'Success',
-                        message: "Disabled all mods but core",
-                        type: 'success',
-                        position: 'bottom-right'
-                    });
+                    showNotification('Success', "Disabled all mods but core");
                 })
                 .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
+                    showNotification('Error', error, 'error');
                 });
         },
         async forceInstallNorthstar() {
@@ -84,21 +75,11 @@ export default defineComponent({
             await install_northstar_result
                 .then((message) => {
                     // Send notification
-                    ElNotification({
-                        title: `Done`,
-                        message: `Successfully reinstalled Northstar`,
-                        type: 'success',
-                        position: 'bottom-right'
-                    });
+                    showNotification('Done', `Successfully reinstalled Northstar`);
                     this.$store.commit('checkNorthstarUpdates');
                 })
                 .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
+                    showNotification('Error', error, 'error');
                     console.error(error);
                 })
                 .finally(() => {
@@ -113,20 +94,10 @@ export default defineComponent({
             } as GameInstall;
             await invoke("clean_up_download_folder_caller", { gameInstall: game_install, force: true }).then((message) => {
                 // Show user notification if task completed.
-                ElNotification({
-                    title: `Done`,
-                    message: `Done`,
-                    type: 'success',
-                    position: 'bottom-right'
-                });
+                showNotification('Done', 'Done');
             })
                 .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
+                    showNotification('Error', error, 'error');
                 });
         },
         async clearFlightCorePersistentStore() {
