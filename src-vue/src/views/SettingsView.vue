@@ -91,9 +91,10 @@ export default defineComponent({
             get(): boolean {
                 return this.$store.state.enableReleasesSwitch;
             },
-            set(value: boolean): void {
+            async set(value: boolean): Promise<void> {
                 this.$store.state.enableReleasesSwitch = value;
                 persistentStore.set('northstar-releases-switching', { value });
+                await persistentStore.save(); // explicit save to disk
 
                 // When disabling switch, we switch release canal to stable release, to avoid users being
                 // stuck with release candidate after disabling release switching.
@@ -106,9 +107,10 @@ export default defineComponent({
             get(): number {
                 return this.$store.state.mods_per_page;
             },
-            set(value: number) {
+            async set(value: number) {
                 this.$store.state.mods_per_page = value;
                 persistentStore.set('thunderstore-mods-per-page', { value });
+                await persistentStore.save(); // explicit save to disk
             }
         }
     },

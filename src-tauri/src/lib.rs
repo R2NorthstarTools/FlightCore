@@ -52,7 +52,7 @@ pub struct NorthstarServer {
 /// Check version number of a mod
 pub fn check_mod_version_number(path_to_mod_folder: String) -> Result<String, anyhow::Error> {
     // println!("{}", format!("{}/mod.json", path_to_mod_folder));
-    let data = std::fs::read_to_string(format!("{}/mod.json", path_to_mod_folder))?;
+    let data = std::fs::read_to_string(format!("{path_to_mod_folder}/mod.json"))?;
     let parsed_json: serde_json::Value = serde_json::from_str(&data)?;
     // println!("{}", parsed_json);
     let mod_version_number = match parsed_json.get("Version").and_then(|value| value.as_str()) {
@@ -102,10 +102,10 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
                     };
                     return Ok(game_install);
                 }
-                None => println!("Couldn't locate Titanfall2"),
+                None => log::info!("Couldn't locate Titanfall2 Steam instal"),
             }
         }
-        None => println!("Couldn't locate Steam on this computer!"),
+        None => log::info!("Couldn't locate Steam on this computer!"),
     }
 
     // (On Windows only) try parsing Windows registry for Origin install path
@@ -119,7 +119,7 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
             return Ok(game_install);
         }
         Err(err) => {
-            println!("{}", err);
+            log::info!("{}", err);
         }
     };
 
@@ -128,13 +128,13 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
 
 /// Checks whether the provided path is a valid Titanfall2 gamepath by checking against a certain set of criteria
 pub fn check_is_valid_game_path(game_install_path: &str) -> Result<(), String> {
-    let path_to_titanfall2_exe = format!("{}/Titanfall2.exe", game_install_path);
+    let path_to_titanfall2_exe = format!("{game_install_path}/Titanfall2.exe");
     let is_correct_game_path = std::path::Path::new(&path_to_titanfall2_exe).exists();
     log::info!("Titanfall2.exe exists in path? {}", is_correct_game_path);
 
     // Exit early if wrong game path
     if !is_correct_game_path {
-        return Err(format!("Incorrect game path \"{}\"", game_install_path)); // Return error cause wrong game path
+        return Err(format!("Incorrect game path \"{game_install_path}\"")); // Return error cause wrong game path
     }
     Ok(())
 }
@@ -157,12 +157,12 @@ fn extract(zip_file: std::fs::File, target: &std::path::Path) -> Result<()> {
             );
 
             if (*f.name()).ends_with('/') {
-                println!("Create directory {}", f.name());
+                log::info!("Create directory {}", f.name());
                 std::fs::create_dir_all(target.join(f.name()))
                     .context("Unable to create directory")?;
                 continue;
             } else if let Some(p) = out.parent() {
-                std::fs::create_dir_all(&p).context("Unable to create directory")?;
+                std::fs::create_dir_all(p).context("Unable to create directory")?;
             }
 
             let mut outfile = std::fs::OpenOptions::new()
@@ -171,7 +171,7 @@ fn extract(zip_file: std::fs::File, target: &std::path::Path) -> Result<()> {
                 .truncate(true)
                 .open(&out)?;
 
-            println!("Write file {}", out.display());
+            log::info!("Write file {}", out.display());
 
             std::io::copy(&mut f, &mut outfile).context("Unable to write to file")?;
         }
@@ -191,18 +191,18 @@ async fn do_install(nmod: &thermite::model::ModVersion, game_path: &std::path::P
     std::fs::create_dir_all(download_directory.clone())?;
 
     let download_path = format!("{}/{}", download_directory.clone(), filename);
-    println!("{}", download_path);
+    log::info!("Download path: {download_path}");
 
     let nfile = thermite::core::manage::download_file(&nmod.url, download_path).unwrap();
 
-    println!("Extracting Northstar...");
+    log::info!("Extracting Northstar...");
     extract(nfile, game_path)?;
 
     // Delete old copy
-    println!("Delete temp folder again");
+    log::info!("Delete temp folder again");
     std::fs::remove_dir_all(download_directory).unwrap();
 
-    println!("Done!");
+    log::info!("Done installing Northstar!");
 
     Ok(())
 }
@@ -318,7 +318,7 @@ pub fn launch_northstar(
     {
         let ns_exe_path = format!("{}/NorthstarLauncher.exe", game_install.game_path);
         let _output = std::process::Command::new("C:\\Windows\\System32\\cmd.exe")
-            .args(&["/C", "start", "", &ns_exe_path])
+            .args(["/C", "start", "", &ns_exe_path])
             .spawn()
             .expect("failed to execute process");
         return Ok("Launched game".to_string());
@@ -333,29 +333,16 @@ pub fn launch_northstar(
 
 pub fn check_origin_running() -> bool {
     let s = sysinfo::System::new_all();
-    for _process in s.processes_by_name("Origin.exe") {
-        // check here if this is your process
-        // dbg!(process);
-        // There's at least one Origin process, so we can launch
-        return true;
-    }
-    // Alternatively, check for EA Desktop
-    for _process in s.processes_by_name("EADesktop.exe") {
-        // There's at least one EADesktop process, so we can launch
-        return true;
-    }
-    false
+    s.processes_by_name("Origin.exe").next().is_some()
+        || s.processes_by_name("EADesktop.exe").next().is_some()
 }
 
 /// Checks if Northstar process is running
 pub fn check_northstar_running() -> bool {
-    let s = sysinfo::System::new_all();
-    for _process in s.processes_by_name("NorthstarLauncher.exe") {
-        // check here if this is your process
-        // dbg!(process);
-        return true;
-    }
-    false
+    sysinfo::System::new_all()
+        .processes_by_name("NorthstarLauncher.exe")
+        .next()
+        .is_some()
 }
 
 /// Helps with converting release candidate numbers which are different on Thunderstore
@@ -385,7 +372,7 @@ pub fn get_enabled_mods(game_install: GameInstall) -> Result<serde_json::value::
     // Parse JSON
     let res: serde_json::Value = match serde_json::from_str(&data) {
         Ok(result) => result,
-        Err(err) => return Err(format!("Failed to read JSON due to: {}", err.to_string())),
+        Err(err) => return Err(format!("Failed to read JSON due to: {}", err)),
     };
 
     // Return parsed data

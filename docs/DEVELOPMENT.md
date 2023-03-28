@@ -145,6 +145,7 @@ const persistentStore = new Store('flight-core-settings.json');
 
 // Save change in persistent store
 await persistentStore.set('northstar-release-canal', { value: "NorthstarReleasecandidate" });
+await persistentStore.save(); // explicit save to disk
 
 // Grab Northstar release canal value from store if exists
 var persistent_northstar_release_canal = (await persistentStore.get('northstar-release-canal')) as any;
