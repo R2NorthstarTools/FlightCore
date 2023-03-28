@@ -6,7 +6,7 @@ import { invoke } from "@tauri-apps/api";
 import { GameInstall } from "../utils/GameInstall";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { FlightCoreVersion } from "../../../src-tauri/bindings/FlightCoreVersion";
-import { ElNotification, NotificationHandle } from 'element-plus';
+import { NotificationHandle } from 'element-plus';
 import { NorthstarState } from '../utils/NorthstarState';
 import { appDir } from '@tauri-apps/api/path';
 import { open } from '@tauri-apps/api/dialog';
@@ -18,6 +18,7 @@ import { NorthstarMod } from "../../../src-tauri/bindings/NorthstarMod";
 import { searchModule } from './modules/search';
 import { pullRequestModule } from './modules/pull_requests';
 import { PullsApiResponseElement } from "../../../src-tauri/bindings/PullsApiResponseElement";
+import { showNotification } from '../utils/ui';
 
 const persistentStore = new Store('flight-core-settings.json');
 
@@ -122,12 +123,7 @@ export const store = createStore<FlightCoreStore>({
                 let is_valid_titanfall2_install = await invoke("verify_install_location", { gamePath: selected }) as boolean;
                 if (is_valid_titanfall2_install) {
                     state.game_path = selected;
-                    ElNotification({
-                        title: 'New game folder',
-                        message: "Game folder was successfully updated.",
-                        type: 'success',
-                        position: 'bottom-right'
-                    });
+                    showNotification('New game folder', "Game folder was successfully updated.");
                     try {
                         notification_handle.close();
                     }
@@ -150,12 +146,7 @@ export const store = createStore<FlightCoreStore>({
                 }
                 else {
                     // Not valid Titanfall2 install
-                    ElNotification({
-                        title: 'Wrong folder',
-                        message: "Selected folder is not a valid Titanfall2 install.",
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
+                    showNotification('Wrong folder', "Selected folder is not a valid Titanfall2 install.", 'error');
                 }
             }
         },
@@ -223,12 +214,7 @@ export const store = createStore<FlightCoreStore>({
                         })
                         .catch((error) => {
                             console.error(error);
-                            ElNotification({
-                                title: 'Error',
-                                message: error,
-                                type: 'error',
-                                position: 'bottom-right'
-                            });
+                            showNotification('Error', error, 'error');
                         });
                     break;
 
@@ -292,12 +278,7 @@ export const store = createStore<FlightCoreStore>({
                 })
                 .catch((error) => {
                     console.error(error);
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
+                    showNotification('Error', error, 'error');
                 });
         },
         async toggleReleaseCandidate(state: FlightCoreStore) {
@@ -314,12 +295,10 @@ export const store = createStore<FlightCoreStore>({
             store.commit("checkNorthstarUpdates");
 
             // Display notification to highlight change
-            ElNotification({
-                title: `${state.northstar_release_canal}`,
-                message: `Switched release channel to: "${state.northstar_release_canal}"`,
-                type: 'success',
-                position: 'bottom-right'
-            });
+            showNotification(
+                `${state.northstar_release_canal}`,
+                `Switched release channel to: "${state.northstar_release_canal}"`
+            );
         }
     }
 });
@@ -393,13 +372,12 @@ async function _initializeApp(state: any) {
             .catch((err) => {
                 // Gamepath not found or other error
                 console.error(err);
-                notification_handle = ElNotification({
-                    title: 'Titanfall2 not found!',
-                    message: "Please manually select install location",
-                    type: 'error',
-                    position: 'bottom-right',
-                    duration: 0 // Duration `0` means the notification will not auto-vanish
-                });
+                notification_handle = showNotification(
+                    'Titanfall2 not found!',
+                    "Please manually select install location",
+                    'error',
+                    0   // Duration `0` means the notification will not auto-vanish
+                );
             });
     }
 
@@ -436,13 +414,12 @@ async function _checkForFlightCoreUpdates(state: FlightCoreStore) {
 
     if (flightcore_is_outdated) {
         let newest_flightcore_version = await invoke("get_newest_flightcore_version") as FlightCoreVersion;
-        ElNotification({
-            title: 'FlightCore outdated!',
-            message: `Please update FlightCore.\nRunning outdated version ${state.flightcore_version}.\nNewest is ${newest_flightcore_version.tag_name}!`,
-            type: 'warning',
-            position: 'bottom-right',
-            duration: 0 // Duration `0` means the notification will not auto-vanish
-        });
+        showNotification(
+            'FlightCore outdated!',
+            `Please update FlightCore.\nRunning outdated version ${state.flightcore_version}.\nNewest is ${newest_flightcore_version.tag_name}!`,
+            'warning',
+            0
+        );
     }
 }
 
