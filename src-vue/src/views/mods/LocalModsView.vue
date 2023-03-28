@@ -29,10 +29,10 @@
 
 <script lang="ts">
 import { invoke } from '@tauri-apps/api';
-import { ElNotification } from 'element-plus';
 import { defineComponent } from 'vue';
 import { GameInstall } from '../../utils/GameInstall';
 import { NorthstarMod } from "../../../../src-tauri/bindings/NorthstarMod";
+import { showNotification } from '../../utils/ui';
 
 export default defineComponent({
     name: 'LocalModsView',
@@ -79,12 +79,7 @@ export default defineComponent({
                 })
             }
             catch (error) {
-                ElNotification({
-                    title: 'Error',
-                    message: `${error}`,
-                    type: 'error',
-                    position: 'bottom-right'
-                });
+                showNotification('Error', error as string, 'error');
                 this.global_load_indicator = false;
                 return false;
             }
@@ -100,19 +95,10 @@ export default defineComponent({
             await invoke("delete_northstar_mod", { gameInstall: game_install, nsmodName: mod.name })
                 .then((message) => {
                     // Just a visual indicator that it worked
-                    ElNotification({
-                        title: `Success deleting ${mod.name}`,
-                        type: 'success',
-                        position: 'bottom-right'
-                    });
+                    showNotification(`Success deleting ${mod.name}`);
                 })
                 .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
+                    showNotification('Error', error, 'error');
                 })
                 .finally(() => {
                     this.$store.commit('loadInstalledMods');
