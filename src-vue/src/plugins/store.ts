@@ -149,6 +149,7 @@ export const store = createStore<FlightCoreStore>({
 
                     // Save change in persistent store
                     await persistentStore.set('game-install', { value: game_install });
+                    await persistentStore.save(); // explicit save to disk
 
                     // Check for Northstar install
                     store.commit('checkNorthstarUpdates');
@@ -313,6 +314,7 @@ export const store = createStore<FlightCoreStore>({
 
             // Save change in persistent store
             await persistentStore.set('northstar-release-canal', { value: state.northstar_release_canal });
+            await persistentStore.save(); // explicit save to disk
 
             // Update current state so that update check etc can be performed
             store.commit("checkNorthstarUpdates");
@@ -406,6 +408,7 @@ async function _initializeApp(state: any) {
 
         // Save change in persistent store
         await persistentStore.set('game-install', { value: typedResult });
+        await persistentStore.save(); // explicit save to disk
 
         // Update UI store
         state.game_path = typedResult.game_path;
@@ -453,6 +456,11 @@ function _initializeListeners(state: any) {
 
     listen("northstar-running-ping", function (evt: TauriEvent<any>) {
         state.northstar_is_running = evt.payload as boolean;
+    });
+
+    listen("northstar-statistics", function (evt: TauriEvent<{Ok: [number, number]}>) {
+        state.player_count = evt.payload.Ok[0];
+        state.server_count = evt.payload.Ok[1];
     });
 }
 
