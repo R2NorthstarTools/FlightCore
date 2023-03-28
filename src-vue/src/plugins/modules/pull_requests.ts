@@ -1,8 +1,8 @@
-import { ElNotification } from "element-plus";
 import { invoke, shell } from "@tauri-apps/api";
 import { PullsApiResponseElement } from "../../../../src-tauri/bindings/PullsApiResponseElement";
 import { PullRequestType } from '../../../../src-tauri/bindings/PullRequestType';
 import { store } from "../store";
+import { showNotification } from "../../utils/ui";
 
 interface PullRequestStoreState {
     searchValue: string,
@@ -33,12 +33,7 @@ export const pullRequestModule = {
                     }
                 })
                 .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
+                    showNotification('Error', error, 'error');
                 });
         },
         async downloadLauncherPR(state: PullRequestStoreState, pull_request: PullsApiResponseElement) {
@@ -48,12 +43,7 @@ export const pullRequestModule = {
                     shell.open(url);
                 })
                 .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
+                    showNotification('Error', error, 'error');
                 });
         },
         async downloadModsPR(state: PullRequestStoreState, pull_request: PullsApiResponseElement) {
@@ -62,32 +52,16 @@ export const pullRequestModule = {
         },
         async installLauncherPR(state: PullRequestStoreState, pull_request: PullsApiResponseElement) {
             // Send notification telling the user to wait for the process to finish
-            const notification = ElNotification({
-                title: `Installing launcher PR ${pull_request.number}`,
-                message: 'Please wait',
-                duration: 0,
-                type: 'info',
-                position: 'bottom-right'
-            });
+            const notification = showNotification(`Installing launcher PR ${pull_request.number}`, 'Please wait', 'info', 0);
 
             await invoke("apply_launcher_pr", { pullRequest: pull_request, gameInstallPath: store.state.game_path })
                 .then((message) => {
                     console.log(message);
                     // Show user notification if mod install completed.
-                    ElNotification({
-                        title: `Done`,
-                        message: `Installed ${pull_request.number}: "${pull_request.title}"`,
-                        type: 'success',
-                        position: 'bottom-right'
-                    });
+                    showNotification(`Done`, `Installed ${pull_request.number}: "${pull_request.title}"`);
                 })
                 .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
+                    showNotification('Error', error, 'error');
                 })
                 .finally(() => {
                     // Clear old notification
@@ -96,32 +70,20 @@ export const pullRequestModule = {
         },
         async installModsPR(state: PullRequestStoreState, pull_request: PullsApiResponseElement) {
             // Send notification telling the user to wait for the process to finish
-            const notification = ElNotification({
-                title: `Installing mods PR ${pull_request.number}`,
-                message: 'Please wait',
-                duration: 0,
-                type: 'info',
-                position: 'bottom-right'
-            });
+            const notification = showNotification(`Installing mods PR ${pull_request.number}`, 'Please wait', 'info', 0);
 
             await invoke("apply_mods_pr", { pullRequest: pull_request, gameInstallPath: store.state.game_path })
                 .then((message) => {
                     // Show user notification if mod install completed.
-                    ElNotification({
-                        title: `Done`,
-                        message: `Installed ${pull_request.number}: "${pull_request.title}"\nMake sure to launch via batch file or by specifying correct profile!`,
-                        type: 'success',
-                        duration: 7_000, // in ms
-                        position: 'bottom-right'
-                    });
+                    showNotification(
+                        `Done`,
+                        `Installed ${pull_request.number}: "${pull_request.title}"\nMake sure to launch via batch file or by specifying correct profile!`,
+                        'success',
+                        7000
+                    );
                 })
                 .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
+                    showNotification('Error', error, 'error');
                 })
                 .finally(() => {
                     // Clear old notification
