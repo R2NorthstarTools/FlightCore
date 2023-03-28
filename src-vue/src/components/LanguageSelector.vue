@@ -37,9 +37,10 @@ export default defineComponent({
         this.value = lang;
     },
     methods: {
-        onChange(value: string) {
+        async onChange(value: string) {
             this.$root!.$i18n.locale = value;
             persistentStore.set('lang', value);
+            await persistentStore.save();
         }
     }
 })

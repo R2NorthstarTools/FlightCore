@@ -29,6 +29,7 @@ export default {
     if (lang === null) {
       lang = navigator.language.substring(0, 2);
       persistentStore.set('lang', lang);
+      await persistentStore.save();
     }
     this.$root!.$i18n.locale = lang;
   },
