@@ -179,6 +179,66 @@ struct User {
 
 then simply run `cargo test`. The generated bindings are placed in `src-tauri/bindings/`. Make sure to add and commit them as well!
 
+### Internationalization
+
+For FlightCore to be used by the largest number, its interface is translated in several languages; users can choose used language through FlightCore settings.
+
+Localization files are located in `src-vue/src/i18n/lang`.
+
+To add a new language, you have to create associated file, *e.g. `src-vue/src/i18n/lang/de.ts`*, and import it in the i18n application object in `main.ts`:
+```javascript
+import de from "./i18n/lang/de";
+
+export const i18n = createI18n({
+    locale: 'en',
+    fallbackLocale: 'en',
+    messages: {
+        en, fr, de
+    }
+});
+```
+
+There are different ways to use translations in views; in HTML template, invoke the `$t` method with translation key:
+
+```html
+<div>
+    {{ $t('menu.play') }}
+</div>
+```
+
+For use in Typescript code (inside components), invoke the `this.$t` method:
+
+```javascript
+return this.$t("play.button.select_game_dir");
+```
+
+For Typescript code outside components, translations are still accessible:
+
+```javascript
+import { i18n } from '../main';
+i18n.global.tc('notification.game_folder.new.text');
+```
+
+---
+
+It is possible to inject variables into translations:
+
+```javascript
+channels: {
+    release: {
+        component: {
+            text: "Switched release channel to {canal}."
+        }
+    }
+}
+```
+
+```javascript
+return this.$t("channels.release.component.text", {canal: "MyCanalName"});
+```
+
+
+
 ## Other
 
 This repo uses [EditorConfig](https://editorconfig.org/) to define some basic formatting rules. Find a plugin for your IDE [here](https://editorconfig.org/#download).
