@@ -57,10 +57,10 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { ElNotification } from 'element-plus';
 import { invoke } from "@tauri-apps/api";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { Store } from 'tauri-plugin-store-api';
+import { showNotification } from "../utils/ui";
 const persistentStore = new Store('flight-core-settings.json');
 
 export default defineComponent({
@@ -106,12 +106,7 @@ export default defineComponent({
             this.developerModeClicks += 1;
             if (this.developerModeClicks >= 6) {
                 this.$store.state.developer_mode = true;
-                ElNotification({
-                    title: 'Watch out!',
-                    message: 'Developer mode enabled.',
-                    type: 'info',
-                    position: 'bottom-right'
-                });
+                showNotification('Watch out!', 'Developer mode enabled.', 'info');
                 this.developerModeClicks = 0;
             }
         },
@@ -122,12 +117,7 @@ export default defineComponent({
             await invoke("open_repair_window")
                 .then((message) => { })
                 .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
+                    showNotification('Error', error, 'error');
                 });
         },
     },
