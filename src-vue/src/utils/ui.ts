@@ -6,7 +6,7 @@ import { ElNotification } from "element-plus";
 function showNotification(
     title: string,
     message: string = '',
-    type: 'success' | 'warning' | 'error' = 'success'
+    type: 'success' | 'warning' | 'error' | 'info' = 'success'
 ) {
     ElNotification({
         title, message, type,
