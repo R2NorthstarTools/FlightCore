@@ -83,10 +83,10 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { invoke } from "@tauri-apps/api";
-import { ElNotification } from "element-plus";
 import { GameInstall } from "../utils/GameInstall";
 import { TagWrapper } from "../../../src-tauri/bindings/TagWrapper";
 import PullRequestsSelector from "../components/PullRequestsSelector.vue";
+import { showNotification } from "../utils/ui";
 
 export default defineComponent({
     name: "DeveloperView",
@@ -126,30 +126,15 @@ export default defineComponent({
         },
         async crashApplication() {
             await invoke("force_panic");
-            ElNotification({
-                title: 'Error',
-                message: "Never should have been able to get here!",
-                type: 'error',
-                position: 'bottom-right'
-            });
+            showNotification('Error', "Never should have been able to get here!", 'error');
         },
         async checkLinuxCompatibility() {
             await invoke("linux_checks")
                 .then(() => {
-                    ElNotification({
-                        title: 'Linux compatible',
-                        message: 'All checks passed',
-                        type: 'success',
-                        position: 'bottom-right'
-                    });
+                    showNotification('Linux compatible', 'All checks passed');
                 })
                 .catch((error) => {
-                    ElNotification({
-                        title: 'Not linux compatible',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
+                    showNotification('Not Linux compatible', error, 'error');
                     console.error(error);
                 });
         },
@@ -167,20 +152,10 @@ export default defineComponent({
                 console.log(message);
 
                 // Just a visual indicator that it worked
-                ElNotification({
-                    title: 'Success',
-                    message: "Success",
-                    type: 'success',
-                    position: 'bottom-right'
-                });
+                showNotification('Success');
             })
                 .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
+                    showNotification('Error', error, 'error');
                 });
         },
         async installMod() {
@@ -189,62 +164,32 @@ export default defineComponent({
                 install_type: this.$store.state.install_type
             } as GameInstall;
             let mod_to_install = this.mod_to_install_field_string;
-            await invoke("install_mod_caller", { gameInstall: game_install, thunderstoreModString: mod_to_install }).then((message) => {
+            await invoke<string>("install_mod_caller", { gameInstall: game_install, thunderstoreModString: mod_to_install }).then((message) => {
                 // Show user notification if mod install completed.
-                ElNotification({
-                    title: `Installed ${mod_to_install}`,
-                    message: message as string,
-                    type: 'success',
-                    position: 'bottom-right'
-                });
+                showNotification(`Installed ${mod_to_install}`, message);
             })
                 .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
+                    showNotification('Error', error, 'error');
                 });
         },
         async getTags() {
             await invoke<TagWrapper[]>("get_list_of_tags")
                 .then((message) => {
                     this.ns_release_tags = message;
-                    ElNotification({
-                        title: "Done",
-                        message: "Fetched tags",
-                        type: 'success',
-                        position: 'bottom-right'
-                    });
+                    showNotification("Done", "Fetched tags");
                 })
                 .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
+                    showNotification('Error', error, 'error');
                 });
         },
         async compareTags() {
             await invoke<string>("compare_tags", {firstTag: this.firstTag.value, secondTag: this.secondTag.value})
                 .then((message) => {
                     this.release_notes_text = message;
-                    ElNotification({
-                        title: "Done",
-                        message: "Generated release notes",
-                        type: 'success',
-                        position: 'bottom-right'
-                    });
+                    showNotification("Done", "Generated release notes");
                 })
                 .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
+                    showNotification('Error', error, 'error');
                 });
         },
     }
