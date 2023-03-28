@@ -36,7 +36,6 @@ import { GameInstall } from "../utils/GameInstall";
 import { invoke } from "@tauri-apps/api";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { Store } from 'tauri-plugin-store-api';
-import { ElNotification } from "element-plus";
 import { showNotification } from "../utils/ui";
 const persistentStore = new Store('flight-core-settings.json');
 
@@ -63,13 +62,12 @@ export default defineComponent({
             } as GameInstall;
 
             // Send notification telling the user to wait for the process to finish
-            const notification = ElNotification({
-                title: 'Force reinstalling Northstar',
-                message: 'Please wait',
-                duration: 0,
-                type: 'info',
-                position: 'bottom-right'
-            });
+            const notification = showNotification(
+                'Force reinstalling Northstar',
+                'Please wait',
+                'info',
+                0
+            );
 
             let install_northstar_result = invoke("install_northstar_caller", { gamePath: game_install.game_path, northstarPackageName: ReleaseCanal.RELEASE });
             await install_northstar_result
