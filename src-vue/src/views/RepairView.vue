@@ -31,7 +31,6 @@
 </template>
 
 <script lang="ts">
-import { appWindow } from '@tauri-apps/api/window';
 import { defineComponent } from "vue";
 import { ElNotification } from "element-plus";
 import { GameInstall } from "../utils/GameInstall";
