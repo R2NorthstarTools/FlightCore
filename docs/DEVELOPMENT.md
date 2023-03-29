@@ -221,6 +221,29 @@ export const i18n = createI18n({
 });
 ```
 
+In order to be able to select it, make sure to that it to the `LanguageSelector` componenent in `LanguageSelector.vue`.
+
+```vue
+export default defineComponent({
+    name: 'LanguageSelector',
+    data: () => ({
+        value: '',
+        options: [
+            {
+                value: 'en',
+                label: 'English'
+            },
+            <!-- ... -->
+            {
+                value: 'de',
+                label: 'Deutsch'
+            },
+        ]
+    }),
+    <!-- ... -->
+})
+```
+
 There are different ways to use translations in views; in HTML template, invoke the `$t` method with translation key:
 
 ```html
