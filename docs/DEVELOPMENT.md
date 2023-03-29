@@ -221,7 +221,7 @@ export const i18n = createI18n({
 });
 ```
 
-In order to be able to select it, make sure to that it to the `LanguageSelector` componenent in `LanguageSelector.vue`.
+In order to be able to select it, make sure to that it to the `LanguageSelector` componenent in `src-vue/src/components/LanguageSelector.vue`.
 
 ```vue
 export default defineComponent({
