@@ -88,7 +88,7 @@ export const store = createStore<FlightCoreStore>({
         checkNorthstarUpdates(state) {
             _get_northstar_version_number(state);
         },
-        toggleDeveloperMode(state) {
+        toggleDeveloperMode(state, affectMenuStyle = false) {
             state.developer_mode = !state.developer_mode;
 
             // Reset tab when closing dev mode.
@@ -97,7 +97,7 @@ export const store = createStore<FlightCoreStore>({
             }
 
             let menu_bar_handle = document.querySelector('#fc_menu-bar');
-            if (menu_bar_handle !== null) {
+            if (affectMenuStyle && menu_bar_handle !== null) {
                 menu_bar_handle.classList.toggle('developer_build');
             }
         },
@@ -337,7 +337,7 @@ export const store = createStore<FlightCoreStore>({
 async function _initializeApp(state: any) {
     // Enable dev mode directly if application is in debug mode
     if (await invoke("is_debug_mode")) {
-        store.commit('toggleDeveloperMode');
+        store.commit('toggleDeveloperMode', true);
     } else {
         // Disable context menu in release build.
         document.addEventListener('contextmenu', event => event.preventDefault());
