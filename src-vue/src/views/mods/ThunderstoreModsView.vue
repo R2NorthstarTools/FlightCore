@@ -6,8 +6,8 @@
 
         <!-- Message displayed if no mod matched searched words -->
         <div v-else-if="filteredMods.length === 0" class="noModMessage">
-            No matching mod has been found.<br/>
-            Try another search!
+            {{ $t('mods.online.no_match') }}<br/>
+            {{ $t('mods.online.try_another_search') }}
         </div>
 
         <el-scrollbar v-else class="container" ref="scrollbar">

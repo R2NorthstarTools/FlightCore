@@ -7,20 +7,20 @@
             <h5>Mods</h5>
             <el-menu-item index="1" @click="$emit('showLocalMods', true)">
                 <el-icon><Folder /></el-icon>
-                <span>Local</span>
+                <span>{{ $t('mods.menu.local') }}</span>
             </el-menu-item>
             <el-menu-item index="2" @click="$emit('showLocalMods', false)">
                 <el-icon><Connection /></el-icon>
-                <span>Online</span>
+                <span>{{ $t('mods.menu.online') }}</span>
             </el-menu-item>
 
             <!-- Search inputs -->
-            <h5>Filter</h5>
-            <el-input v-model="$store.state.search.searchValue" placeholder="Search" clearable />
+            <h5>{{ $t('mods.menu.filter') }}</h5>
+            <el-input v-model="$store.state.search.searchValue" :placeholder="$t('mods.menu.search')" clearable />
             <el-select
                 v-if="!showingLocalMods"
                 v-model="$store.state.search.sortValue" 
-                placeholder="Sort mods"
+                :placeholder="$t('mods.menu.sort_mods')"
             >
                 <el-option
                     v-for="item of sortValues"
@@ -33,7 +33,7 @@
                 v-if="!showingLocalMods"
                 v-model="$store.state.search.selectedCategories"
                 multiple
-                placeholder="Select categories"
+                :placeholder="$t('mods.menu.select_categories')"
             >
                 <el-option
                     v-for="item in $store.state.thunderstoreModsCategories"
@@ -66,7 +66,7 @@ export default defineComponent({
         sortValues(): {label: string, value: string}[] {
             return Object.keys(SortOptions).map((key: string) => ({
                 value: key,
-                label: Object.values(SortOptions)[Object.keys(SortOptions).indexOf(key)]
+                label: this.$t('mods.menu.sort.' + Object.values(SortOptions)[Object.keys(SortOptions).indexOf(key)])
             }));
         }
     }

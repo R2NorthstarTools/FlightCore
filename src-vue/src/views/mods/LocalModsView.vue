@@ -1,7 +1,7 @@
 <template>
     <!-- Message displayed if no mod matched searched words -->
     <div v-if="mods.length === 0" class="noModMessage">
-        No mods were found.
+        {{ $t('mods.local.no_mods') }}
     </div>
 
     <el-scrollbar v-else>
@@ -9,11 +9,15 @@
             <el-switch style="--el-switch-on-color: #13ce66; --el-switch-off-color: #8957e5" v-model="mod.enabled"
                        :before-change="() => updateWhichModsEnabled(mod)" :loading="global_load_indicator" />
             <el-popconfirm
-                title="Are you sure to delete this mod?"
+                :title="$t('mods.local.delete_confirm')"
+                :confirm-button-text="$t('generic.yes')"
+                :cancel-button-text="$t('generic.no')"
                 @confirm="deleteMod(mod)"
             >
                 <template #reference>
-                    <el-button type="danger">Delete</el-button>
+                    <el-button type="danger">
+                        {{ $t('mods.local.delete') }}
+                    </el-button>
                 </template>
             </el-popconfirm>
             {{ mod.name }}
@@ -82,7 +86,7 @@ export default defineComponent({
             }
             catch (error) {
                 ElNotification({
-                    title: 'Error',
+                    title: this.$t('generic.error'),
                     message: `${error}`,
                     type: 'error',
                     position: 'bottom-right'
@@ -103,14 +107,14 @@ export default defineComponent({
                 .then((message) => {
                     // Just a visual indicator that it worked
                     ElNotification({
-                        title: `Success deleting ${mod.name}`,
+                        title: this.$t('mods.local.success_deleting', {modName: mod.name}),
                         type: 'success',
                         position: 'bottom-right'
                     });
                 })
                 .catch((error) => {
                     ElNotification({
-                        title: 'Error',
+                        title: this.$t('generic.error'),
                         message: error,
                         type: 'error',
                         position: 'bottom-right'
