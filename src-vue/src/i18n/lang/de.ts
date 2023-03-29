@@ -126,7 +126,7 @@ export default {
 
             wrong: {
                 title: "Falscher Ordner",
-                text: "Der gewählte Ordner enthält eine valide Titanfall2 Installation."
+                text: "Der gewählte Ordner enthält keine valide Titanfall2 Installation."
             },
 
             not_found: {
