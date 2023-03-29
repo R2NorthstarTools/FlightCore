@@ -3,17 +3,18 @@
         <el-scrollbar>
             <div class="fc_settings__container">
                 <!-- Game folder location -->
-                <h3>{{ $t('settings.manage_install') }}</h3>
-                <el-input
-                    v-model="$store.state.game_path"
-                    class="w-50 m-2"
-                    :placeholder="$t('settings.choose_folder')"
-                    @click="updateGamePath"
-                >
-                    <template #prepend>
-                        <el-button icon="Folder" @click="updateGamePath"/>
-                    </template>
-                </el-input>
+                <div class="fc_parameter__panel">
+                    <h3>{{ $t('settings.manage_install') }}</h3>
+                    <el-input
+                        v-model="$store.state.game_path"
+                        :placeholder="$t('settings.choose_folder')"
+                        @click="updateGamePath"
+                    >
+                        <template #prepend>
+                            <el-button icon="Folder" @click="updateGamePath"/>
+                        </template>
+                    </el-input>
+                </div>
 
                 <!-- Thunderstore mods per page configuration -->
                 <div class="fc_parameter__panel">
@@ -40,25 +41,30 @@
                     <language-selector/>
                 </div>
 
-                <h3>{{ $t('settings.repair.title') }}</h3>
-                <el-button type="primary" @click="openRepairWindow">
-                    {{ $t('settings.repair.open_window') }}
-                </el-button>
-
-                <h3>{{ $t('settings.about') }}</h3>
-
-                <div class="fc_northstar__version" @click="activateDeveloperMode">
-                    {{ $t('settings.flightcore_version') }} {{ flightcoreVersion === '' ? 'Unknown version' : `${flightcoreVersion}` }}
+                <!-- Repair window -->
+                <div class="fc_parameter__panel">
+                    <h3>{{ $t('settings.repair.title') }}</h3>
+                    <el-button type="primary" @click="openRepairWindow">
+                        {{ $t('settings.repair.open_window') }}
+                    </el-button>
                 </div>
-                <br />
-                <br />
-                UI design inspired by <el-link :underline="false" target="_blank" href="https://github.com/TFORevive/tforevive_launcher/" type="primary">TFORevive Launcher</el-link> (not yet public)
 
-                <h3>{{ $t('settings.testing') }}</h3>
-                <span>
-                    {{ $t('settings.enable_test_channels') }}
-                    <el-switch v-model="enableReleasesSwitch"></el-switch>
-                </span>
+                <!-- About section -->
+                <div class="fc_parameter__panel">
+                    <h3>{{ $t('settings.about') }}</h3>
+                    <div class="fc_northstar__version" @click="activateDeveloperMode">
+                        {{ $t('settings.flightcore_version') }} {{ flightcoreVersion === '' ? 'Unknown version' : `${flightcoreVersion}` }}
+                    </div>
+                </div>
+
+                <!-- Testing section -->
+                <div class="fc_parameter__panel">
+                    <h3>{{ $t('settings.testing') }}</h3>
+                    <span>
+                        {{ $t('settings.enable_test_channels') }}
+                        <el-switch v-model="enableReleasesSwitch"></el-switch>
+                    </span>
+                </div>
             </div>
         </el-scrollbar>
     </div>
@@ -117,8 +123,8 @@ export default defineComponent({
     methods: {
         activateDeveloperMode() {
             this.developerModeClicks += 1;
-            if (this.developerModeClicks >= 6) {
-                this.$store.state.developer_mode = true;
+            if (this.developerModeClicks >= 6 && !this.$store.state.developer_mode) {
+                this.$store.commit('toggleDeveloperMode');
                 ElNotification({
                     title: this.$t('settings.dev_mode_enabled_title'),
                     message: this.$t('settings.dev_mode_enabled_text'),
@@ -180,7 +186,7 @@ h3:first-of-type {
 
 /* Parameter panel styles */
 .fc_parameter__panel {
-    margin: 30px 0;
+    margin-bottom: 30px;
 }
 
 .fc_parameter__panel h3 {

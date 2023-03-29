@@ -1,33 +1,35 @@
 <template>
-    <el-scrollbar>
-        <div>
-            <p v-if="mods.length === 0">{{ $t('mods.local.no_mods') }}</p>
-            <el-card v-else shadow="hover" v-for="mod in mods" v-bind:key="mod.name">
-                <el-switch style="--el-switch-on-color: #13ce66; --el-switch-off-color: #8957e5" v-model="mod.enabled"
-                            :before-change="() => updateWhichModsEnabled(mod)" :loading="global_load_indicator" />
-                <el-popconfirm
-                    :title="$t('mods.local.delete_confirm')"
-                    :confirm-button-text="$t('generic.yes')"
-                    :cancel-button-text="$t('generic.no')"
-                    @confirm="deleteMod(mod)"
-                >
-                    <template #reference>
-                        <el-button type="danger">
-                            {{ $t('mods.local.delete') }}
-                        </el-button>
-                    </template>
-                </el-popconfirm>
-                {{ mod.name }}
-                <span v-if="mod.version != null">(v{{ mod.version }})</span>
-                <img
-                    v-if="mod.thunderstore_mod_string != null"
-                    :title="$t('mods.local.part_of_ts_mod')"
-                    src="/src/assets/thunderstore-icon.png"
-                    class="image"
-                    height="16"
-                />
-            </el-card>
-        </div>
+    <!-- Message displayed if no mod matched searched words -->
+    <div v-if="mods.length === 0" class="noModMessage">
+        {{ $t('mods.local.no_mods') }}
+    </div>
+
+    <el-scrollbar v-else>
+        <el-card shadow="hover" v-for="mod in mods" v-bind:key="mod.name">
+            <el-switch style="--el-switch-on-color: #13ce66; --el-switch-off-color: #8957e5" v-model="mod.enabled"
+                       :before-change="() => updateWhichModsEnabled(mod)" :loading="global_load_indicator" />
+            <el-popconfirm
+                :title="$t('mods.local.delete_confirm')"
+                :confirm-button-text="$t('generic.yes')"
+                :cancel-button-text="$t('generic.no')"
+                @confirm="deleteMod(mod)"
+            >
+                <template #reference>
+                    <el-button type="danger">
+                        {{ $t('mods.local.delete') }}
+                    </el-button>
+                </template>
+            </el-popconfirm>
+            {{ mod.name }}
+            <span v-if="mod.version != null">(v{{ mod.version }})</span>
+            <img
+                v-if="mod.thunderstore_mod_string != null"
+                :title="$t('mods.local.part_of_ts_mod')"
+                src="/src/assets/thunderstore-icon.png"
+                class="image"
+                height="16"
+            />
+        </el-card>
     </el-scrollbar>
 </template>
 
