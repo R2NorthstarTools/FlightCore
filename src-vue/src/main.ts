@@ -13,6 +13,7 @@ import RepairView from "./views/RepairView.vue";
 import {createRouter, createWebHashHistory} from "vue-router";
 import en from "./i18n/lang/en";
 import fr from "./i18n/lang/fr";
+import de from "./i18n/lang/de";
 
 
 const app = createApp(App);
@@ -22,7 +23,7 @@ export const i18n = createI18n({
     locale: 'en',
     fallbackLocale: 'en',
     messages: {
-        en, fr
+        en, fr, de
     }
 });
 app.use(i18n);
