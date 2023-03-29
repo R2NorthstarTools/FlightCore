@@ -49,7 +49,7 @@ To build just the executable, edit [tauri.conf.json](https://github.com/R2Norths
       "active": true,
 ```
 
-Change active from `true` to `false`, and bundles won't be included afterward.
+Change `active` from `true` to `false`, and bundles won't be included afterwards.
 
 To disable the updater (which requires a private key) change this active value to `false`:
 
