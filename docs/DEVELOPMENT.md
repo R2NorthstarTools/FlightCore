@@ -14,7 +14,6 @@ As for splitting logic between _frontend_ and _backend_, state and UI related lo
 
 Make sure you have the necessary dependencies for Tauri installed as described in this link: https://tauri.app/v1/guides/getting-started/prerequisites
 
-
 Then, install `npm` dependencies with
 
 ```sh
@@ -24,7 +23,7 @@ npm install
 Install UI dependencies too
 
 ```sh
-cd src-vue && npm install
+cd src-vue && npm install && cd ..
 ```
 
 Then for developing
@@ -34,6 +33,30 @@ npx tauri dev
 ```
 
 Automatic recompiling on save is enabled for both the Rust and the Typescript/Vue code.
+
+If you want to build FlightCore from source, run
+
+```sh
+npx tauri build
+```
+
+This will build the executable and bundles, such as `AppImage`, `.deb` or `.msi`.
+
+To build just the executable, edit [tauri.conf.json](https://github.com/R2NorthstarTools/FlightCore/blob/main/src-tauri/tauri.conf.json) in the same folder:
+
+```json
+    "bundle": {
+      "active": true,
+```
+
+Change `active` from `true` to `false`, and bundles won't be included afterwards.
+
+To disable the updater (which requires a private key) change `active` value to `false`:
+
+```json
+    "updater": {
+      "active": true,
+```
 
 ## Tauri
 
