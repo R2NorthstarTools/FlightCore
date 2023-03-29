@@ -17,8 +17,8 @@ import { ReleaseInfo } from "../../../src-tauri/bindings/ReleaseInfo";
 import { ThunderstoreMod } from "../../../src-tauri/bindings/ThunderstoreMod";
 import { NorthstarMod } from "../../../src-tauri/bindings/NorthstarMod";
 import { searchModule } from './modules/search';
+import { i18n } from '../main';
 import { pullRequestModule } from './modules/pull_requests';
-import { PullsApiResponseElement } from "../../../src-tauri/bindings/PullsApiResponseElement";
 import { InstallProgress } from "../../../src-tauri/bindings/InstallProgress";
 
 const persistentStore = new Store('flight-core-settings.json');
@@ -52,6 +52,7 @@ export interface FlightCoreStore {
 }
 
 let notification_handle: NotificationHandle;
+
 
 export const store = createStore<FlightCoreStore>({
     modules: {
@@ -89,12 +90,17 @@ export const store = createStore<FlightCoreStore>({
         checkNorthstarUpdates(state) {
             _get_northstar_version_number(state);
         },
-        toggleDeveloperMode(state) {
+        toggleDeveloperMode(state, affectMenuStyle = false) {
             state.developer_mode = !state.developer_mode;
 
             // Reset tab when closing dev mode.
             if (!state.developer_mode) {
                 store.commit('updateCurrentTab', Tabs.PLAY);
+            }
+
+            let menu_bar_handle = document.querySelector('#fc_menu-bar');
+            if (affectMenuStyle && menu_bar_handle !== null) {
+                menu_bar_handle.classList.toggle('developer_build');
             }
         },
         initialize(state) {
@@ -125,8 +131,8 @@ export const store = createStore<FlightCoreStore>({
                 if (is_valid_titanfall2_install) {
                     state.game_path = selected;
                     ElNotification({
-                        title: 'New game folder',
-                        message: "Game folder was successfully updated.",
+                        title: i18n.global.tc('notification.game_folder.new.title'),
+                        message: i18n.global.tc('notification.game_folder.new.text'),
                         type: 'success',
                         position: 'bottom-right'
                     });
@@ -153,8 +159,8 @@ export const store = createStore<FlightCoreStore>({
                 else {
                     // Not valid Titanfall2 install
                     ElNotification({
-                        title: 'Wrong folder',
-                        message: "Selected folder is not a valid Titanfall2 install.",
+                        title: i18n.global.tc('notification.game_folder.wrong.title'),
+                        message: i18n.global.tc('notification.game_folder.wrong.text'),
                         type: 'error',
                         position: 'bottom-right'
                     });
@@ -244,7 +250,7 @@ export const store = createStore<FlightCoreStore>({
                         .catch((error) => {
                             console.error(error);
                             ElNotification({
-                                title: 'Error',
+                                title: i18n.global.tc('generic.error'),
                                 message: error,
                                 type: 'error',
                                 position: 'bottom-right'
@@ -313,7 +319,7 @@ export const store = createStore<FlightCoreStore>({
                 .catch((error) => {
                     console.error(error);
                     ElNotification({
-                        title: 'Error',
+                        title: i18n.global.tc('generic.error'),
                         message: error,
                         type: 'error',
                         position: 'bottom-right'
@@ -335,8 +341,8 @@ export const store = createStore<FlightCoreStore>({
 
             // Display notification to highlight change
             ElNotification({
-                title: `${state.northstar_release_canal}`,
-                message: `Switched release channel to: "${state.northstar_release_canal}"`,
+                title: i18n.global.tc(`channels.names.${state.northstar_release_canal}`),
+                message: i18n.global.tc('channels.release.switch.text', {canal: state.northstar_release_canal}),
                 type: 'success',
                 position: 'bottom-right'
             });
@@ -351,14 +357,7 @@ export const store = createStore<FlightCoreStore>({
 async function _initializeApp(state: any) {
     // Enable dev mode directly if application is in debug mode
     if (await invoke("is_debug_mode")) {
-        state.developer_mode = true;
-
-        // Make menubar striped if debug build
-        let menu_bar_handle = document.querySelector('#fc_menu-bar');
-        console.log(menu_bar_handle);
-        if (menu_bar_handle !== null) {
-            menu_bar_handle.classList.toggle('developer_build');
-        }
+        store.commit('toggleDeveloperMode', true);
     } else {
         // Disable context menu in release build.
         document.addEventListener('contextmenu', event => event.preventDefault());
@@ -414,8 +413,8 @@ async function _initializeApp(state: any) {
                 // Gamepath not found or other error
                 console.error(err);
                 notification_handle = ElNotification({
-                    title: 'Titanfall2 not found!',
-                    message: "Please manually select install location",
+                    title: i18n.global.tc('notification.game_folder.not_found.title'),
+                    message: i18n.global.tc('notification.game_folder.not_found.text'),
                     type: 'error',
                     position: 'bottom-right',
                     duration: 0 // Duration `0` means the notification will not auto-vanish
@@ -457,8 +456,8 @@ async function _checkForFlightCoreUpdates(state: FlightCoreStore) {
     if (flightcore_is_outdated) {
         let newest_flightcore_version = await invoke("get_newest_flightcore_version") as FlightCoreVersion;
         ElNotification({
-            title: 'FlightCore outdated!',
-            message: `Please update FlightCore.\nRunning outdated version ${state.flightcore_version}.\nNewest is ${newest_flightcore_version.tag_name}!`,
+            title: i18n.global.tc('notification.flightcore_outdated.title'),
+            message: i18n.global.tc('notification.flightcore_outdated.text', {oldVersion: state.flightcore_version, newVersion: newest_flightcore_version.tag_name}),
             type: 'warning',
             position: 'bottom-right',
             duration: 0 // Duration `0` means the notification will not auto-vanish
