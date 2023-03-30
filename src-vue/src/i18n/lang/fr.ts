@@ -100,7 +100,7 @@ export default {
         testing: "Tests :",
         enable_test_channels: "Activer le test de versions de pré-production",
         dev_mode_enabled_title: "Attention !",
-        dev_mod_enabled_text: "Mode développeur activé.",
+        dev_mode_enabled_text: "Mode développeur activé.",
 
         repair: {
             title: "Dépannage",

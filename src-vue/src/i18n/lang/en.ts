@@ -100,7 +100,7 @@ export default {
         testing: "Testing:",
         enable_test_channels: "Enable testing release channels",
         dev_mode_enabled_title: "Watch out!",
-        dev_mod_enabled_text: "Developer mode enabled.",
+        dev_mode_enabled_text: "Developer mode enabled.",
 
         repair: {
             title: "Repair",
