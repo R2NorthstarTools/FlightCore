@@ -11,8 +11,8 @@ import SettingsView from "./views/SettingsView.vue";
 import DeveloperView from "./views/DeveloperView.vue";
 import RepairView from "./views/RepairView.vue";
 import {createRouter, createWebHashHistory} from "vue-router";
-import en from "./i18n/lang/en";
-import fr from "./i18n/lang/fr";
+import en from "./i18n/lang/en.json";
+import fr from "./i18n/lang/fr.json";
 
 
 const app = createApp(App);
