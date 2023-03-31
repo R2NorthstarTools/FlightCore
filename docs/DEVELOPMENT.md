@@ -208,9 +208,9 @@ For FlightCore to be used by the largest number, its interface is translated in 
 
 Localization files are located in `src-vue/src/i18n/lang`.
 
-To add a new language, you have to create associated file, *e.g. `src-vue/src/i18n/lang/de.ts`*, and import it in the i18n application object in `main.ts`:
+To add a new language, you have to create associated file, *e.g. `src-vue/src/i18n/lang/de.json`*, and import it in the i18n application object in `main.ts`:
 ```javascript
-import de from "./i18n/lang/de";
+import de from "./i18n/lang/de.json";
 
 export const i18n = createI18n({
     locale: 'en',
@@ -269,11 +269,11 @@ i18n.global.tc('notification.game_folder.new.text');
 
 It is possible to inject variables into translations:
 
-```javascript
-channels: {
-    release: {
-        component: {
-            text: "Switched release channel to {canal}."
+```json
+"channels": {
+    "release": {
+        "component": {
+            "text": "Switched release channel to {canal}."
         }
     }
 }
