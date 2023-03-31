@@ -93,8 +93,20 @@ export default {
   top: 0;
   width: 100%;
   height: var(--fc-menu_height);
-  background-image: radial-gradient(transparent 1px);
-  backdrop-filter: saturate(50%) blur(4px);
+}
+
+#fc__menu_bar::before {
+    position: absolute;
+    content: "";
+    inset: 0; /* same as { top: 0; right: 0; bottom: 0; left: 0; } */
+    background-image: linear-gradient(to bottom, red, orange);
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 1s linear;
+}
+
+#fc__menu_bar:hover::before {
+    opacity: 1;
 }
 
 /* Borders reset */

@@ -208,9 +208,9 @@ For FlightCore to be used by the largest number, its interface is translated in 
 
 Localization files are located in `src-vue/src/i18n/lang`.
 
-To add a new language, you have to create associated file, *e.g. `src-vue/src/i18n/lang/de.ts`*, and import it in the i18n application object in `main.ts`:
+To add a new language, you have to create associated file, *e.g. `src-vue/src/i18n/lang/de.json`*, and import it in the i18n application object in `main.ts`:
 ```javascript
-import de from "./i18n/lang/de";
+import de from "./i18n/lang/de.json";
 
 export const i18n = createI18n({
     locale: 'en',
@@ -219,6 +219,29 @@ export const i18n = createI18n({
         en, fr, de
     }
 });
+```
+
+In order to be able to select it, make sure to that it to the `LanguageSelector` componenent in `src-vue/src/components/LanguageSelector.vue`.
+
+```vue
+export default defineComponent({
+    name: 'LanguageSelector',
+    data: () => ({
+        value: '',
+        options: [
+            {
+                value: 'en',
+                label: 'English'
+            },
+            <!-- ... -->
+            {
+                value: 'de',
+                label: 'Deutsch'
+            },
+        ]
+    }),
+    <!-- ... -->
+})
 ```
 
 There are different ways to use translations in views; in HTML template, invoke the `$t` method with translation key:
@@ -246,11 +269,11 @@ i18n.global.tc('notification.game_folder.new.text');
 
 It is possible to inject variables into translations:
 
-```javascript
-channels: {
-    release: {
-        component: {
-            text: "Switched release channel to {canal}."
+```json
+"channels": {
+    "release": {
+        "component": {
+            "text": "Switched release channel to {canal}."
         }
     }
 }
