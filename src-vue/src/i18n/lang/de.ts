@@ -1,29 +1,29 @@
 export default {
     menu: {
-        play: 'Spielen',
-        changelog: 'Versionhistorie',
-        mods: 'Mods',
-        settings: 'Einstellungen',
-        dev: 'Dev'
+        play: "Spielen",
+        changelog: "Versionhistorie",
+        mods: "Mods",
+        settings: "Einstellungen",
+        dev: "Dev"
     },
 
     generic: {
-        yes: 'Ja',
-        no: 'Nein',
-        error: 'Fehler',
-        cancel: 'Abbrechen',
-        informationShort: 'Info'
+        yes: "Ja",
+        no: "Nein",
+        error: "Fehler",
+        cancel: "Abbrechen",
+        informationShort: "Info"
     },
 
     play: {
         button: {
-            northstar_is_running: 'Spiel läuft',
-            select_game_dir: 'Titanfall2 ordner wählen',
-            install: 'Installieren',
-            installing: 'Installiert...',
-            update: 'Aktualisieren',
-            updating: 'Aktualisiert...',
-            ready_to_play: 'Spiel starten'
+            northstar_is_running: "Spiel läuft",
+            select_game_dir: "Titanfall2 ordner wählen",
+            install: "Installieren",
+            installing: "Installiert...",
+            update: "Aktualisieren",
+            updating: "Aktualisiert...",
+            ready_to_play: "Spiel starten"
         },
 
         unknown_version: "Unbekannte Version",
@@ -50,18 +50,18 @@ export default {
         },
 
         menu: {
-            local: 'Lokal',
-            online: 'Online',
-            filter: 'Filter',
-            search: 'Suche',
-            sort_mods: 'Mods sortieren',
-            select_categories: 'Kategorien wählen',
+            local: "Lokal",
+            online: "Online",
+            filter: "Filter",
+            search: "Suche",
+            sort_mods: "Mods sortieren",
+            select_categories: "Kategorien wählen",
 
             sort: {
-                name_asc: 'Nach Name (A to Z)',
-                name_desc: 'Nach Name (Z to A)',
-                date_asc: 'Nach Datum (älteste zuerst)',
-                date_desc: 'Nach Datum (neuste zuerst)',
+                name_asc: "Nach Name (A to Z)",
+                name_desc: "Nach Name (Z to A)",
+                date_asc: "Nach Datum (älteste zuerst)",
+                date_desc: "Nach Datum (neuste zuerst)",
                 most_downloaded: "Am meisten heruntergeladen",
                 top_rated: "Am besten bewerted"
             }
@@ -93,7 +93,7 @@ export default {
         nb_ts_mods_per_page_desc1: "Ändern dieser Einstellung kann die Leistung beim Suchen von Thunderstore Mods beeinflussen.",
         nb_ts_mods_per_page_desc2: "Setze diesen Wert auf 0 um Paginierung zu deaktivieren",
         nb_ts_mods_reset: "Standard wiederherstellen",
-        language: 'Sprache',
+        language: "Sprache",
         language_select: "Bevorzugte Sprache wählen",
         about: "Über:",
         flightcore_version: "FlightCore Version:",
@@ -144,13 +144,13 @@ export default {
     channels: {
         release: {
             switch: {
-                text: 'Releasekanal zu "{canal} gewechselt".'
+                text: "Releasekanal zu \"{canal}\" gewechselt."
             }
         },
 
         names: {
-            Northstar: 'Northstar',
-            NorthstarReleaseCandidate: 'Northstar Release Candidate'
+            Northstar: "Northstar",
+            NorthstarReleaseCandidate: "Northstar Release Candidate"
         }
     }
 };
