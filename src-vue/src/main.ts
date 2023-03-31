@@ -13,7 +13,7 @@ import RepairView from "./views/RepairView.vue";
 import {createRouter, createWebHashHistory} from "vue-router";
 import en from "./i18n/lang/en.json";
 import fr from "./i18n/lang/fr.json";
-import de from "./i18n/lang/de";
+import de from "./i18n/lang/de.json";
 
 
 const app = createApp(App);
