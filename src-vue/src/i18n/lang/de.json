@@ -91,7 +91,7 @@
         "choose_folder": "Installationsordner wählen",
         "nb_ts_mods_per_page": "Anzahl an Thunderstore Mods pro Seite",
         "nb_ts_mods_per_page_desc1": "Ändern dieser Einstellung kann die Leistung beim Suchen von Thunderstore Mods beeinflussen.",
-        "nb_ts_mods_per_page_desc2": "Setze diesen Wert auf 0 um Paginierung zu deaktivieren",
+        "nb_ts_mods_per_page_desc2": "Setze diesen Wert auf 0 um alle Mods auf einer einzelnen Seite anzuzeigen",
         "nb_ts_mods_reset": "Standard wiederherstellen",
         "language": "Sprache",
         "language_select": "Bevorzugte Sprache wählen",
