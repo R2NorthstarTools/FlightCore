@@ -113,7 +113,7 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
     match windows::origin_install_location_detection() {
         Ok(game_path) => {
             let game_install = GameInstall {
-                game_path: game_path,
+                game_path,
                 install_type: InstallType::ORIGIN,
             };
             return Ok(game_install);
@@ -190,7 +190,7 @@ async fn do_install(nmod: &thermite::model::ModVersion, game_path: &std::path::P
 
     std::fs::create_dir_all(download_directory.clone())?;
 
-    let download_path = format!("{}/{}", download_directory.clone(), filename);
+    let download_path = format!("{}/{}", download_directory, filename);
     log::info!("Download path: {download_path}");
 
     let nfile = thermite::core::manage::download_file(&nmod.url, download_path).unwrap();
@@ -282,10 +282,7 @@ pub fn launch_northstar(
         ));
     }
 
-    let bypass_checks = match bypass_checks {
-        Some(bypass_checks) => bypass_checks,
-        None => false,
-    };
+    let bypass_checks = bypass_checks.unwrap_or(false);
 
     // Only check guards if bypassing checks is not enabled
     if !bypass_checks {
