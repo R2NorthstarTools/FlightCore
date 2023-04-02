@@ -56,6 +56,7 @@ pub struct NorthstarServer {
 pub enum InstallState {
     DOWNLOADING,
     EXTRACTING,
+    DONE,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
@@ -259,6 +260,16 @@ async fn do_install(
     std::fs::remove_dir_all(download_directory).unwrap();
 
     log::info!("Done installing Northstar!");
+    window
+        .emit(
+            "northstar-install-download-progress",
+            InstallProgress {
+                current_downloaded: 0,
+                total_size: 0,
+                state: InstallState::DONE,
+            },
+        )
+        .unwrap();
 
     Ok(())
 }

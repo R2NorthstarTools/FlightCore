@@ -2,6 +2,8 @@
 import { defineComponent } from 'vue';
 import { NorthstarState } from '../utils/NorthstarState';
 import { ReleaseCanal } from '../utils/ReleaseCanal';
+import { appWindow } from '@tauri-apps/api/window';
+import { InstallProgress } from '../../../src-tauri/bindings/InstallProgress';
 
 export default defineComponent({
     name: 'PlayButton',
@@ -85,9 +87,43 @@ export default defineComponent({
                 : 'border-radius: 2px';
         }
     },
+    data() {
+        return {
+        percentage: 0,
+        color: '#409EFF',
+        install_or_update: false,
+        status: "unknown",
+        };
+    },
     methods: {
-        launchGame() {
+        formatText() {
+            return this.status;
+        },
+        async launchGame() {
+            let unlistenProgress = await appWindow.listen(
+                'northstar-install-download-progress',
+                ({ event, payload }) => {
+                    this.install_or_update = true;
+                    let progress = payload as InstallProgress; // This is bad but don't know how to do it
+                    if (progress.state == "DOWNLOADING") {
+                        this.percentage = ((Number(progress.current_downloaded) / Number(progress.total_size)) * 100);
+                        this.color = '#409EFF';
+                        this.status = progress.state;
+                    }
+                    if (progress.state == "EXTRACTING") {
+                        this.percentage = 100;
+                        this.color = '#67C23A';
+                        this.status = progress.state;
+                    }
+                    if (progress.state == "DONE") {
+                        // Clear state again
+                        this.install_or_update = false
+                        this.status = progress.state;
+                    }
+                }
+            );
             this.$store.commit('launchGame');
+            this.install_or_update = false;
         }
     }
 });
@@ -114,6 +150,13 @@ export default defineComponent({
             />
         </el-option-group>
     </el-select>
+    <el-progress
+        v-if="install_or_update"
+        :format="formatText"
+        :percentage="percentage"
+        :color="color"
+    >
+    </el-progress>
 </template>
 
 <style scoped>
