@@ -93,11 +93,24 @@ export default defineComponent({
         color: '#409EFF',
         install_or_update: false,
         status: "unknown",
+        current_downloaded: -1,
+        total_size: -1,
         };
     },
     methods: {
+        formatBytes(bytes: number, decimals = 2) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1000;
+            const dm = decimals < 0 ? 0 : decimals;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        },
         formatText() {
-            return this.status;
+            const current_downloaded_string = this.formatBytes(this.current_downloaded);
+            const total_size_string = this.formatBytes(this.total_size);
+            const status = this.status;
+            return `${status}: ${current_downloaded_string}/${total_size_string}`;
         },
         async launchGame() {
             let unlistenProgress = await appWindow.listen(
@@ -109,6 +122,8 @@ export default defineComponent({
                         this.percentage = ((Number(progress.current_downloaded) / Number(progress.total_size)) * 100);
                         this.color = '#409EFF';
                         this.status = progress.state;
+                        this.current_downloaded = Number(progress.current_downloaded);
+                        this.total_size = Number(progress.total_size); 
                     }
                     if (progress.state == "EXTRACTING") {
                         this.percentage = 100;
