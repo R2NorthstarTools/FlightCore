@@ -117,7 +117,7 @@ export default defineComponent({
                 'northstar-install-download-progress',
                 ({ event, payload }) => {
                     this.install_or_update = true;
-                    let progress = payload as InstallProgress; // This is bad but don't know how to do it
+                    let progress = payload as InstallProgress; // This is bad but don't know how to do it properly
                     if (progress.state == "DOWNLOADING") {
                         this.percentage = ((Number(progress.current_downloaded) / Number(progress.total_size)) * 100);
                         this.color = '#409EFF';
