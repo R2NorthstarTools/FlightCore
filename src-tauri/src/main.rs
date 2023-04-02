@@ -41,7 +41,6 @@ mod thunderstore;
 use thunderstore::query_thunderstore_packages_api;
 
 use tauri::{Manager, Runtime};
-use tauri_plugin_store::PluginBuilder;
 use tokio::time::sleep;
 
 #[derive(Default)]
@@ -68,7 +67,7 @@ fn main() {
     ));
 
     tauri::Builder::default()
-        .plugin(PluginBuilder::default().build())
+        .plugin(tauri_plugin_store::Builder::default().build())
         .setup(|app| {
             let app_handle = app.app_handle();
             tauri::async_runtime::spawn(async move {
