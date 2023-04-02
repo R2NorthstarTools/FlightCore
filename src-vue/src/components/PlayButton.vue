@@ -170,6 +170,8 @@ export default defineComponent({
         :format="formatText"
         :percentage="percentage"
         :color="color"
+        :indeterminate="status === 'EXTRACTING'"
+        :duration="1"
     >
     </el-progress>
 </template>
