@@ -109,7 +109,13 @@ export default defineComponent({
         formatText() {
             const current_downloaded_string = this.formatBytes(this.current_downloaded);
             const total_size_string = this.formatBytes(this.total_size);
-            const status = this.status;
+            let status = this.status;
+            if (this.status == "DOWNLOADING") {
+                status = this.$t("generic.downloading");
+            }
+            if (this.status == "EXTRACTING") {
+                status = this.$t("generic.extracting");
+            }
             return `${status}: ${current_downloaded_string}/${total_size_string}`;
         },
         async launchGame() {
