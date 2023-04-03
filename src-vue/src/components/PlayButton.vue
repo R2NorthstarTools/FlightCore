@@ -107,16 +107,16 @@ export default defineComponent({
             return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
         },
         formatText() {
-            const current_downloaded_string = this.formatBytes(this.current_downloaded);
-            const total_size_string = this.formatBytes(this.total_size);
-            let status = this.status;
             if (this.status == "DOWNLOADING") {
-                status = this.$t("generic.downloading");
+                const current_downloaded_string = this.formatBytes(this.current_downloaded);
+                const total_size_string = this.formatBytes(this.total_size);
+                const status = this.$t("generic.downloading");
+                return `${status}: ${current_downloaded_string}/${total_size_string}`;
             }
             if (this.status == "EXTRACTING") {
-                status = this.$t("generic.extracting");
+                return this.$t("generic.extracting");
             }
-            return `${status}: ${current_downloaded_string}/${total_size_string}`;
+            return "";
         },
         async launchGame() {
             let unlistenProgress = await appWindow.listen(
