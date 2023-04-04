@@ -13,9 +13,7 @@ use platform_specific::windows;
 #[cfg(target_os = "linux")]
 use platform_specific::linux;
 
-use keyvalues_parser::Vdf;
 use serde::{Deserialize, Serialize};
-use steamlocate::SteamDir;
 use sysinfo::SystemExt;
 use tokio::time::sleep;
 use ts_rs::TS;
@@ -329,29 +327,6 @@ pub fn launch_northstar(
     ))
 }
 
-/// Find the Compatibiltiy Tool configured in Steam for Titanfall 2
-///To be replaced by https://github.com/WilliamVenner/steamlocate-rs/pull/18
-pub fn get_titanfall_proton() -> Option<String> {
-    let steampath = SteamDir::locate().unwrap();
-    let configpath = steampath.path.join("config").join("config.vdf");
-
-    let vdf_text = fs::read_to_string(configpath).unwrap();
-    let config = Vdf::parse(&vdf_text).unwrap().value;
-    let obj = config.unwrap_obj();
-
-    let software = obj.get("Software")?.get(0)?.get_obj()?;
-    let valve = software.get("Valve")?.get(0)?.get_obj()?;
-    let steam = valve.get("Steam")?.get(0)?.get_obj()?;
-    let compat_tool_mapping = steam.get("CompatToolMapping")?.get(0)?.get_obj()?;
-    let tfapp = compat_tool_mapping
-        .get(TITANFALL2_STEAM_ID)?
-        .get(0)?
-        .get_obj()?;
-    let name = tfapp.get("name")?.get(0)?.get_str()?.to_string();
-
-    return Some(name);
-}
-
 /// Prepare Northstar and Launch through Steam using the Browser Protocol
 pub fn launch_northstar_steam(
     game_install: GameInstall,
@@ -361,16 +336,34 @@ pub fn launch_northstar_steam(
         return Err("Titanfall2 was not installed via Steam".to_string());
     }
 
-    if get_host_os() != "windows" {
-        match get_titanfall_proton() {
-            Some(proton) => {
-                if !proton.to_ascii_lowercase().contains("northstarproton") {
-                    return Err("Titanfall2 was not configured to use NorthstarProton".to_string());
+    match steamlocate::SteamDir::locate() {
+        Some(mut steamdir) => {
+            if get_host_os() != "windows" {
+                let titanfall2_steamid: u32 = TITANFALL2_STEAM_ID.parse().unwrap();
+                match steamdir.compat_tool(&titanfall2_steamid) {
+                    Some(compat) => {
+                        if !compat
+                            .name
+                            .clone()
+                            .unwrap()
+                            .to_ascii_lowercase()
+                            .contains("northstarproton")
+                        {
+                            return Err(
+                                "Titanfall2 was not configured to use NorthstarProton".to_string()
+                            );
+                        }
+                    }
+                    None => {
+                        return Err(
+                            "Titanfall2 was not configured to use a compatibility tool".to_string()
+                        );
+                    }
                 }
             }
-            None => {
-                return Err("Titanfall2 was not configured to use a compatibility tool".to_string());
-            }
+        }
+        None => {
+            return Err("Couldn't access Titanfall2 directory".to_string());
         }
     }
 
