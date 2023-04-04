@@ -427,7 +427,9 @@ pub fn check_origin_running() -> bool {
 /// Checks if Northstar process is running
 pub fn check_northstar_running() -> bool {
     let s = sysinfo::System::new_all();
-    s.processes_by_name("NorthstarLauncher.exe").next().is_some()
+    s.processes_by_name("NorthstarLauncher.exe")
+        .next()
+        .is_some()
         || s.processes_by_name("Titanfall2.exe").next().is_some()
 }
 
