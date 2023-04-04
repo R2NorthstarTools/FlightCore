@@ -41,3 +41,8 @@ body {
     height: 100%;
     color: white;
 }
+
+.noModMessage {
+    color: white;
+    margin: 30px 15px;
+}

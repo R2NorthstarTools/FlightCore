@@ -68,7 +68,7 @@ pub enum PullRequestType {
 pub async fn get_pull_requests(url: String) -> Result<Vec<PullsApiResponseElement>, String> {
     let json_response = match fetch_github_releases_api(&url).await {
         Ok(result) => result,
-        Err(err) => return Err(err.to_string()),
+        Err(err) => return Err(err),
     };
 
     let pulls_response: Vec<PullsApiResponseElement> = match serde_json::from_str(&json_response) {
@@ -142,7 +142,8 @@ fn get_mods_download_link(pull_request: PullsApiResponseElement) -> Result<Strin
 }
 
 /// Gets `nightly.link` artifact download link of a launcher PR
-async fn get_launcher_download_link(
+#[tauri::command]
+pub async fn get_launcher_download_link(
     pull_request: PullsApiResponseElement,
 ) -> Result<String, String> {
     // Iterate over the first 10 pages of
@@ -207,7 +208,7 @@ fn add_batch_file(game_install_path: &str) {
 
     match file.write_all(batch_file_content.as_bytes()) {
         Err(why) => panic!("couldn't write to {}: {}", display, why),
-        Ok(_) => println!("successfully wrote to {}", display),
+        Ok(_) => log::info!("successfully wrote to {}", display),
     }
 }
 
@@ -280,7 +281,7 @@ pub async fn apply_launcher_pr(
         }
     }
 
-    println!("All done with installing launcher PR");
+    log::info!("All done with installing launcher PR");
     Ok(())
 }
 
@@ -308,9 +309,9 @@ pub async fn apply_mods_pr(
     // Delete previously managed folder
     if std::fs::remove_dir_all(profile_folder.clone()).is_err() {
         if std::path::Path::new(&profile_folder).exists() {
-            println!("Failed removing previous dir");
+            log::error!("Failed removing previous dir");
         } else {
-            println!("Failed removing folder that doesn't exist. Probably cause first run");
+            log::warn!("Failed removing folder that doesn't exist. Probably cause first run");
         }
     };
 
@@ -330,6 +331,6 @@ pub async fn apply_mods_pr(
     // Add batch file to launch right profile
     add_batch_file(game_install_path);
 
-    println!("All done with installing mods PR");
+    log::info!("All done with installing mods PR");
     Ok(())
 }

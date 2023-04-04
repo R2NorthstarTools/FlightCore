@@ -6,7 +6,8 @@ import ModsView from './views/ModsView.vue';
 import SettingsView from './views/SettingsView.vue';
 import { appWindow } from '@tauri-apps/api/window';
 import { store } from './plugins/store';
-import { invoke, window as tauriWindow } from "@tauri-apps/api";
+import { Store } from 'tauri-plugin-store-api';
+import { invoke } from "@tauri-apps/api";
 
 export default {
   components: {
@@ -19,8 +20,18 @@ export default {
   data() {
     return {}
   },
-  mounted: () => {
+  mounted: async function() {
     store.commit('initialize');
+
+    // Initialize interface language
+    const persistentStore = new Store('flight-core-settings.json');
+    let lang: string | null = await persistentStore.get('lang');
+    if (lang === null) {
+      lang = navigator.language.substring(0, 2);
+      persistentStore.set('lang', lang);
+      await persistentStore.save();
+    }
+    this.$root!.$i18n.locale = lang;
   },
   methods: {
     async toggleMaximize() {
@@ -56,11 +67,11 @@ export default {
         id="fc__menu_items"
         data-tauri-drag-region
       >
-        <el-menu-item index="/">Play</el-menu-item>
-        <el-menu-item index="/changelog">Changelog</el-menu-item>
-        <el-menu-item index="/mods">Mods</el-menu-item>
-        <el-menu-item index="/settings">Settings</el-menu-item>
-        <el-menu-item index="/dev" v-if="$store.state.developer_mode">Dev</el-menu-item>
+        <el-menu-item index="/">{{ $t('menu.play') }}</el-menu-item>
+        <el-menu-item index="/changelog">{{ $t('menu.changelog') }}</el-menu-item>
+        <el-menu-item index="/mods">{{ $t('menu.mods') }}</el-menu-item>
+        <el-menu-item index="/settings">{{ $t('menu.settings') }}</el-menu-item>
+        <el-menu-item index="/dev" v-if="$store.state.developer_mode">{{ $t('menu.dev') }}</el-menu-item>
       </el-menu>
 
       <!-- Window controls -->
@@ -82,8 +93,20 @@ export default {
   top: 0;
   width: 100%;
   height: var(--fc-menu_height);
-  background-image: radial-gradient(transparent 1px);
-  backdrop-filter: saturate(50%) blur(4px);
+}
+
+#fc__menu_bar::before {
+    position: absolute;
+    content: "";
+    inset: 0; /* same as { top: 0; right: 0; bottom: 0; left: 0; } */
+    background-image: linear-gradient(to bottom, red, orange);
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 1s linear;
+}
+
+#fc__menu_bar:hover::before {
+    opacity: 1;
 }
 
 /* Borders reset */

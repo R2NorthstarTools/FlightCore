@@ -15,6 +15,7 @@
                 <el-card v-else shadow="hover" v-for="pull_request in pull_requests_launcher"
                     v-bind:key="pull_request.url">
                     <el-button type="primary" @click="installLauncherPR(pull_request)">Install</el-button>
+                    <el-button type="primary" @click="downloadLauncherPR(pull_request)">Download</el-button>
                     <a target="_blank" :href="pull_request.html_url">
                         {{ pull_request.number }}: {{ pull_request.title }}
                     </a>
@@ -41,6 +42,7 @@
                 </p>
                 <el-card v-else shadow="hover" v-for="pull_request in pull_requests_mods" v-bind:key="pull_request.url">
                     <el-button type="primary" @click="installModsPR(pull_request)">Install</el-button>
+                    <el-button type="primary" @click="downloadModsPR(pull_request)">Download</el-button>
                     <a target="_blank" :href="pull_request.html_url">
                         {{ pull_request.number }}: {{ pull_request.title }}
                     </a>
@@ -54,8 +56,6 @@
 import { defineComponent } from 'vue'
 import { PullRequestType } from '../../../src-tauri/bindings/PullRequestType';
 import { PullsApiResponseElement } from '../../../src-tauri/bindings/PullsApiResponseElement';
-import { invoke } from "@tauri-apps/api";
-import { ElNotification } from "element-plus";
 
 export default defineComponent({
     name: 'PullRequestsSelector',
@@ -79,6 +79,12 @@ export default defineComponent({
         },
         async getPullRequests(pull_request_type: PullRequestType) {
             this.$store.commit('getPullRequests', pull_request_type);
+        },
+        async downloadLauncherPR(pull_request: PullsApiResponseElement) {
+            this.$store.commit('downloadLauncherPR', pull_request);
+        },
+        async downloadModsPR(pull_request: PullsApiResponseElement) {
+            this.$store.commit('downloadModsPR', pull_request);
         },
         async installLauncherPR(pull_request: PullsApiResponseElement) {
             this.$store.commit('installLauncherPR', pull_request);

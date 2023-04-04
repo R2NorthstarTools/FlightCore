@@ -10,15 +10,18 @@ use std::{
 };
 
 use app::{
-    constants::{APP_USER_AGENT, MASTER_SERVER_URL, SERVER_BROWSER_ENDPOINT},
+    constants::{APP_USER_AGENT, MASTER_SERVER_URL, REFRESH_DELAY, SERVER_BROWSER_ENDPOINT},
     *,
 };
 
 mod github;
-use github::pull_requests::{apply_launcher_pr, apply_mods_pr, get_pull_requests_wrapper};
+use github::pull_requests::{
+    apply_launcher_pr, apply_mods_pr, get_launcher_download_link, get_pull_requests_wrapper,
+};
 use github::release_notes::{
     check_is_flightcore_outdated, get_newest_flightcore_version, get_northstar_release_notes,
 };
+use github::{compare_tags, get_list_of_tags};
 
 mod repair_and_verify;
 use repair_and_verify::{
@@ -38,13 +41,20 @@ mod thunderstore;
 use thunderstore::query_thunderstore_packages_api;
 
 use tauri::{Manager, Runtime};
-use tauri_plugin_store::PluginBuilder;
 use tokio::time::sleep;
 
 #[derive(Default)]
 struct Counter(Arc<Mutex<i32>>);
 
 fn main() {
+    // Setup logger
+    let mut log_builder = pretty_env_logger::formatted_builder();
+    log_builder.parse_filters("info");
+    let logger = sentry_log::SentryLogger::with_dest(log_builder.build());
+
+    log::set_boxed_logger(Box::new(logger)).unwrap();
+    log::set_max_level(log::LevelFilter::Info);
+
     // Only enable Sentry crash logs on release
     #[cfg(not(debug_assertions))]
     let _guard = sentry::init((
@@ -57,7 +67,7 @@ fn main() {
     ));
 
     tauri::Builder::default()
-        .plugin(PluginBuilder::default().build())
+        .plugin(tauri_plugin_store::Builder::default().build())
         .setup(|app| {
             let app_handle = app.app_handle();
             tauri::async_runtime::spawn(async move {
@@ -82,6 +92,17 @@ fn main() {
                     sleep(Duration::from_millis(2000)).await;
                     app_handle
                         .emit_all("northstar-running-ping", check_northstar_running())
+                        .unwrap();
+                }
+            });
+
+            // Emit updated player and server count to GUI
+            let app_handle = app.app_handle();
+            tauri::async_runtime::spawn(async move {
+                loop {
+                    sleep(REFRESH_DELAY).await;
+                    app_handle
+                        .emit_all("northstar-statistics", get_server_player_count().await)
                         .unwrap();
                 }
             });
@@ -118,9 +139,12 @@ fn main() {
             delete_thunderstore_mod,
             open_repair_window,
             query_thunderstore_packages_api,
+            get_list_of_tags,
+            compare_tags,
             get_pull_requests_wrapper,
             apply_launcher_pr,
             apply_mods_pr,
+            get_launcher_download_link,
             close_application,
         ])
         .run(tauri::generate_context!())
@@ -143,7 +167,7 @@ fn force_panic() {
 #[tauri::command]
 /// Returns true if built in debug mode
 async fn is_debug_mode() -> bool {
-    return cfg!(debug_assertions);
+    cfg!(debug_assertions)
 }
 
 #[tauri::command]
@@ -213,7 +237,7 @@ async fn check_is_northstar_outdated(
     let version_number = match get_northstar_version_number(game_path) {
         Ok(version_number) => version_number,
         Err(err) => {
-            println!("{}", err);
+            log::warn!("{}", err);
             // If we fail to get new version just assume we are up-to-date
             return Err(err.to_string());
         }
@@ -223,10 +247,10 @@ async fn check_is_northstar_outdated(
     let version_number = convert_release_candidate_number(version_number);
 
     if version_number != nmod.latest {
-        println!("Installed Northstar version outdated");
+        log::info!("Installed Northstar version outdated");
         Ok(true)
     } else {
-        println!("Installed Northstar version up-to-date");
+        log::info!("Installed Northstar version up-to-date");
         Ok(false)
     }
 }
@@ -245,7 +269,7 @@ async fn verify_install_location(game_path: String) -> bool {
     match check_is_valid_game_path(&game_path) {
         Ok(()) => true,
         Err(err) => {
-            println!("{}", err);
+            log::warn!("{}", err);
             false
         }
     }
@@ -263,12 +287,12 @@ async fn install_northstar_caller(
     game_path: String,
     northstar_package_name: Option<String>,
 ) -> Result<bool, String> {
-    println!("Running");
+    log::info!("Running");
     match install_northstar(&game_path, northstar_package_name).await {
         Ok(_) => Ok(true),
         Err(err) => {
-            println!("{}", err);
-            Err(err.to_string())
+            log::error!("{}", err);
+            Err(err)
         }
     }
 }
@@ -279,14 +303,14 @@ async fn update_northstar_caller(
     game_path: String,
     northstar_package_name: Option<String>,
 ) -> Result<bool, String> {
-    println!("Updating");
+    log::info!("Updating Northstar");
 
     // Simply re-run install with up-to-date version for upate
     match install_northstar(&game_path, northstar_package_name).await {
         Ok(_) => Ok(true),
         Err(err) => {
-            println!("{}", err);
-            Err(err.to_string())
+            log::error!("{}", err);
+            Err(err)
         }
     }
 }
@@ -319,7 +343,7 @@ async fn install_mod_caller(
     match clean_up_download_folder(game_install, false) {
         Ok(()) => Ok(()),
         Err(err) => {
-            println!("Failed to delete download folder due to {}", err);
+            log::info!("Failed to delete download folder due to {}", err);
             // Failure to delete download folder is not an error in mod install
             // As such ignore. User can still force delete if need be
             Ok(())
@@ -363,7 +387,8 @@ async fn get_server_player_count() -> Result<(i32, usize), String> {
     // Sum up player count
     let total_player_count: i32 = ns_servers.iter().map(|server| server.player_count).sum();
 
-    dbg!((total_player_count, server_count));
+    log::info!("total_player_count: {}", total_player_count);
+    log::info!("server_count:       {}", server_count);
 
     Ok((total_player_count, server_count))
 }

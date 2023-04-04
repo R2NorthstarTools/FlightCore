@@ -51,7 +51,7 @@ pub fn clean_up_download_folder(
     // dbg!(download_dir_contents);
 
     let mut count = 0;
-    download_dir_contents.inspect(|_| count += 1).for_each(drop);
+    download_dir_contents.for_each(|_| count += 1);
 
     if count > 0 && !force {
         return Err(anyhow!("Folder not empty, not deleting"));
@@ -84,7 +84,7 @@ pub fn get_log_list(game_install: GameInstall) -> Result<Vec<std::path::PathBuf>
         }
     }
 
-    if log_files.len() > 0 {
+    if !log_files.is_empty() {
         Ok(log_files)
     } else {
         Err("No logs found".to_string())
