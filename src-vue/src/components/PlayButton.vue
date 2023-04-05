@@ -184,6 +184,11 @@ export default defineComponent({
 
 <style scoped>
 
+/* Set progress bar width */
+.el-progress {
+  width: 40vw;
+}
+
 button {
     text-transform: uppercase;
     padding: 30px;
