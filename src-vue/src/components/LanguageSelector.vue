@@ -29,7 +29,11 @@ export default defineComponent({
             {
                 value: 'fr',
                 label: 'Français'
-            }
+            },
+            {
+                value: 'de',
+                label: 'Deutsch'
+            },
         ]
     }),
     mounted: async function() {
