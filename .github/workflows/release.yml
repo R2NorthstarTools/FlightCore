@@ -18,7 +18,7 @@ jobs:
           pip install toml
       - name: Run check
         run: |
-          python3 scripts/check_version_numbers.py --release ${{github.event.release.tag_name}}
+          python3 scripts/check_version_numbers.py --release ${{github.ref_name}}
 
   build:
     needs: ensure-same-version
