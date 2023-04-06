@@ -372,7 +372,7 @@ pub fn launch_northstar_steam(
     }
 
     // Switch to Titanfall2 directory to set everything up
-    if std::env::set_current_dir(game_install.game_path.clone()).is_err() {
+    if std::env::set_current_dir(game_install.game_path).is_err() {
         // We failed to get to Titanfall2 directory
         return Err("Couldn't access Titanfall2 directory".to_string());
     }
@@ -415,7 +415,7 @@ pub fn launch_northstar_steam(
         }
     });
 
-    return retval;
+    retval
 }
 
 pub fn check_origin_running() -> bool {
