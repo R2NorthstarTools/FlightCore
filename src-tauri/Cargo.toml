@@ -29,7 +29,7 @@ tokio = { version = "1", features = ["full"] }
 sentry = "0.30"
 sentry-log = "0.30.0"
 # Find steam games
-steamlocate = "1.2.*"
+steamlocate = "1.2"
 # Error messages
 anyhow = "1.0"
 # libthermite for Northstar/mod install handling
