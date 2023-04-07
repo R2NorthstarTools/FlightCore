@@ -221,9 +221,10 @@ async fn do_install(
         download_path,
         |delta, current, total| {
             if delta != 0 {
-                // Only emit a signal once every 250ms
+                // Only emit a signal once every 100ms
+                // This way we don't bombard the frontend with events on fast download speeds
                 let time_since_last_emit = Instant::now().duration_since(*last_emit.borrow());
-                if time_since_last_emit >= Duration::from_millis(250) {
+                if time_since_last_emit >= Duration::from_millis(100) {
                     window
                         .emit(
                             "northstar-install-download-progress",
