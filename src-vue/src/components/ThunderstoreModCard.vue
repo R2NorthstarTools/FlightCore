@@ -74,7 +74,7 @@ import {NorthstarMod} from "../../../src-tauri/bindings/NorthstarMod";
 import {GameInstall} from "../utils/GameInstall";
 import { NorthstarState } from "../utils/NorthstarState";
 import { ElMessageBox } from "element-plus";
-import {showErrorNotification, showNotification} from "../utils/ui";
+import { showErrorNotification, showNotification } from "../utils/ui";
 
 export default defineComponent({
     name: "ThunderstoreModCard",
