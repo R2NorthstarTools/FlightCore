@@ -36,7 +36,7 @@ import { GameInstall } from "../utils/GameInstall";
 import { invoke } from "@tauri-apps/api";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { Store } from 'tauri-plugin-store-api';
-import {showErrorNotification, showNotification} from "../utils/ui";
+import { showErrorNotification, showNotification } from "../utils/ui";
 import { appWindow } from "@tauri-apps/api/window";
 const persistentStore = new Store('flight-core-settings.json');
 
