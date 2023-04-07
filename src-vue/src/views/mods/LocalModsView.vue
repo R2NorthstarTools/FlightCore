@@ -85,11 +85,7 @@ export default defineComponent({
                 })
             }
             catch (error) {
-                showNotification(
-                    this.$t('generic.error'),
-                    `${error}`,
-                    'error'
-                );
+                showErrorNotification(`${error}`);
                 this.global_load_indicator = false;
                 return false;
             }
