@@ -18,7 +18,6 @@ import { NorthstarMod } from "../../../src-tauri/bindings/NorthstarMod";
 import { searchModule } from './modules/search';
 import { i18n } from '../main';
 import { pullRequestModule } from './modules/pull_requests';
-import { PullsApiResponseElement } from "../../../src-tauri/bindings/PullsApiResponseElement";
 import { showErrorNotification, showNotification } from '../utils/ui';
 
 const persistentStore = new Store('flight-core-settings.json');
