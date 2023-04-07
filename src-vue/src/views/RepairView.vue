@@ -36,7 +36,7 @@ import { GameInstall } from "../utils/GameInstall";
 import { invoke } from "@tauri-apps/api";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { Store } from 'tauri-plugin-store-api';
-import { showNotification } from "../utils/ui";
+import {showErrorNotification, showNotification} from "../utils/ui";
 import { appWindow } from "@tauri-apps/api/window";
 const persistentStore = new Store('flight-core-settings.json');
 
@@ -58,7 +58,7 @@ export default defineComponent({
                     showNotification('Success', "Disabled all mods but core");
                 })
                 .catch((error) => {
-                    showNotification('Error', error, 'error');
+                    showErrorNotification(error);
                 });
         },
         async forceInstallNorthstar() {
@@ -83,7 +83,7 @@ export default defineComponent({
                     this.$store.commit('checkNorthstarUpdates');
                 })
                 .catch((error) => {
-                    showNotification('Error', error, 'error');
+                    showErrorNotification(error);
                     console.error(error);
                 })
                 .finally(() => {
@@ -101,7 +101,7 @@ export default defineComponent({
                 showNotification('Done', 'Done');
             })
                 .catch((error) => {
-                    showNotification('Error', error, 'error');
+                    showErrorNotification(error);
                 });
         },
         async clearFlightCorePersistentStore() {

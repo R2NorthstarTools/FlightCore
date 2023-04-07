@@ -162,7 +162,7 @@ export default defineComponent({
                 showNotification('Success');
             })
                 .catch((error) => {
-                    showNotification('Error', error, 'error');
+                    showErrorNotification(error);
                 });
         },
         async installMod() {
@@ -176,7 +176,7 @@ export default defineComponent({
                 showNotification(`Installed ${mod_to_install}`, message);
             })
                 .catch((error) => {
-                    showNotification('Error', error, 'error');
+                    showErrorNotification(error);
                 });
         },
         async getTags() {
@@ -186,7 +186,7 @@ export default defineComponent({
                     showNotification("Done", "Fetched tags");
                 })
                 .catch((error) => {
-                    showNotification('Error', error, 'error');
+                    showErrorNotification(error);
                 });
         },
         async compareTags() {
@@ -196,7 +196,7 @@ export default defineComponent({
                     showNotification("Done", "Generated release notes");
                 })
                 .catch((error) => {
-                    showNotification('Error', error, 'error');
+                    showErrorNotification(error);
                 });
         },
     }

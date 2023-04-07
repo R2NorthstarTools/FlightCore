@@ -74,7 +74,7 @@ import {NorthstarMod} from "../../../src-tauri/bindings/NorthstarMod";
 import {GameInstall} from "../utils/GameInstall";
 import { NorthstarState } from "../utils/NorthstarState";
 import { ElMessageBox } from "element-plus";
-import { showNotification } from "../utils/ui";
+import {showErrorNotification, showNotification} from "../utils/ui";
 
 export default defineComponent({
     name: "ThunderstoreModCard",
@@ -219,7 +219,7 @@ export default defineComponent({
                             showNotification(this.$t('mods.card.remove_success', {modName: mod.name}), message);
                         })
                         .catch((error) => {
-                            showNotification(this.$t('generic.error'), error, 'error');
+                            showErrorNotification(error);
                         })
                         .finally(() => {
                             this.$store.commit('loadInstalledMods');
@@ -247,7 +247,7 @@ export default defineComponent({
                 showNotification(this.$t('mods.card.install_success', {modName: mod.name}), message);
             })
                 .catch((error) => {
-                    showNotification(this.$t('generic.error'), error, 'error');
+                    showErrorNotification(error);
                 })
                 .finally(() => {
                     this.isBeingInstalled = false;

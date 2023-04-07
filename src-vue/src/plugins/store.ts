@@ -19,7 +19,7 @@ import { searchModule } from './modules/search';
 import { i18n } from '../main';
 import { pullRequestModule } from './modules/pull_requests';
 import { PullsApiResponseElement } from "../../../src-tauri/bindings/PullsApiResponseElement";
-import { showNotification } from '../utils/ui';
+import {showErrorNotification, showNotification} from '../utils/ui';
 
 const persistentStore = new Store('flight-core-settings.json');
 
@@ -228,7 +228,7 @@ export const store = createStore<FlightCoreStore>({
                         })
                         .catch((error) => {
                             console.error(error);
-                            showNotification(i18n.global.tc('generic.error'), error, 'error');
+                            showErrorNotification(error);
                         });
                     break;
 
@@ -249,7 +249,7 @@ export const store = createStore<FlightCoreStore>({
                 })
                 .catch((error) => {
                     console.error(error);
-                    showNotification('Error', error, 'error');
+                    showErrorNotification(error);
                 });
 
             return;
@@ -309,7 +309,7 @@ export const store = createStore<FlightCoreStore>({
                 })
                 .catch((error) => {
                     console.error(error);
-                    showNotification(i18n.global.tc('generic.error'), error, 'error');
+                    showErrorNotification(error);
                 });
         },
         async toggleReleaseCandidate(state: FlightCoreStore) {

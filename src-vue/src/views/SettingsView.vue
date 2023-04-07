@@ -140,7 +140,7 @@ export default defineComponent({
             await invoke("open_repair_window")
                 .then((message) => { })
                 .catch((error) => {
-                    showNotification('Error', error, 'error');
+                    showErrorNotification(error);
                 });
         },
     },

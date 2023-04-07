@@ -1,4 +1,5 @@
 import { ElNotification, NotificationHandle } from "element-plus";
+import { i18n } from "../main";
 
 /**
  * Displays content to the user in the form of a notification appearing on screen bottom right.
@@ -15,4 +16,11 @@ function showNotification(
     });
 }
 
-export {showNotification};
+/**
+ * Helper method displaying an error message to the user.
+ **/
+function showErrorNotification(error: string): NotificationHandle {
+    return showNotification(i18n.global.tc('generic.error'), error, 'error');
+}
+
+export {showNotification, showErrorNotification};

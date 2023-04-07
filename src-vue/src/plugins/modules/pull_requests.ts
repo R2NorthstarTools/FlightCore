@@ -2,7 +2,7 @@ import { invoke, shell } from "@tauri-apps/api";
 import { PullsApiResponseElement } from "../../../../src-tauri/bindings/PullsApiResponseElement";
 import { PullRequestType } from '../../../../src-tauri/bindings/PullRequestType';
 import { store } from "../store";
-import { showNotification } from "../../utils/ui";
+import {showErrorNotification, showNotification} from "../../utils/ui";
 
 interface PullRequestStoreState {
     searchValue: string,
@@ -33,7 +33,7 @@ export const pullRequestModule = {
                     }
                 })
                 .catch((error) => {
-                    showNotification('Error', error, 'error');
+                    showErrorNotification(error);
                 });
         },
         async downloadLauncherPR(state: PullRequestStoreState, pull_request: PullsApiResponseElement) {
@@ -43,7 +43,7 @@ export const pullRequestModule = {
                     shell.open(url);
                 })
                 .catch((error) => {
-                    showNotification('Error', error, 'error');
+                    showErrorNotification(error);
                 });
         },
         async downloadModsPR(state: PullRequestStoreState, pull_request: PullsApiResponseElement) {
@@ -61,7 +61,7 @@ export const pullRequestModule = {
                     showNotification(`Done`, `Installed ${pull_request.number}: "${pull_request.title}"`);
                 })
                 .catch((error) => {
-                    showNotification('Error', error, 'error');
+                    showErrorNotification(error);
                 })
                 .finally(() => {
                     // Clear old notification
@@ -83,7 +83,7 @@ export const pullRequestModule = {
                     );
                 })
                 .catch((error) => {
-                    showNotification('Error', error, 'error');
+                    showErrorNotification(error);
                 })
                 .finally(() => {
                     // Clear old notification
