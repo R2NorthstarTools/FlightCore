@@ -2,7 +2,7 @@ import { invoke, shell } from "@tauri-apps/api";
 import { PullsApiResponseElement } from "../../../../src-tauri/bindings/PullsApiResponseElement";
 import { PullRequestType } from '../../../../src-tauri/bindings/PullRequestType';
 import { store } from "../store";
-import {showErrorNotification, showNotification} from "../../utils/ui";
+import { showErrorNotification, showNotification } from "../../utils/ui";
 
 interface PullRequestStoreState {
     searchValue: string,
