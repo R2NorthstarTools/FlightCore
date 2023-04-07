@@ -20,11 +20,11 @@ export const pullRequestModule = {
             await invoke<PullsApiResponseElement[]>("get_pull_requests_wrapper", { installType: pull_request_type })
                 .then((message) => {
                     switch (pull_request_type) {
-                        case "MODS":
+                        case "Mods":
                             state.pull_requests_mods = message;
                             break;
 
-                        case "LAUNCHER":
+                        case "Launcher":
                             state.pull_requests_launcher = message;
                             break;
 

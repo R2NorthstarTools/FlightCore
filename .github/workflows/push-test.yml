@@ -95,8 +95,8 @@ jobs:
       env:
         TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
       run: |
-        npm install
-        cd src-vue && npm install && cd ..
+        npm clean-install
+        cd src-vue && npm clean-install && cd ..
         npm run tauri build
     - uses: tauri-apps/tauri-action@v0
       env:

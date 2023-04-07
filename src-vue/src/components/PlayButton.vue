@@ -18,22 +18,22 @@ export default defineComponent({
         },
         playButtonLabel(): string {
             if (this.$store.state.northstar_is_running) {
-                return "Game is running";
+                return this.$t("play.button.northstar_is_running");
             }
 
             switch(this.$store.state.northstar_state) {
                 case NorthstarState.GAME_NOT_FOUND:
-                    return "Select Titanfall2 game folder";
+                    return this.$t("play.button.select_game_dir");
                 case NorthstarState.INSTALL:
-                    return "Install";
+                    return this.$t("play.button.install");
                 case NorthstarState.INSTALLING:
-                    return "Installing..."
+                    return this.$t("play.button.installing");
                 case NorthstarState.MUST_UPDATE:
-                    return "Update";
+                    return this.$t("play.button.update");
                 case NorthstarState.UPDATING:
-                    return "Updating...";
+                    return this.$t("play.button.updating");
                 case NorthstarState.READY_TO_PLAY:
-                    return "Launch game";
+                    return this.$t("play.button.ready_to_play");
 
                 default:
                     return "";
@@ -57,7 +57,7 @@ export default defineComponent({
                     options: [
                         {
                             value: ReleaseCanal.RELEASE_CANDIDATE,
-                            label: 'Northstar release candidate',
+                            label: this.$t('channels.names.NorthstarReleaseCandidate'),
                         },
                     ]
                 },

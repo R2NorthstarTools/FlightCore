@@ -59,6 +59,10 @@
                 Launch Northstar (bypass all checks)
             </el-button>
 
+            <el-button type="primary" @click="launchGameViaSteam">
+                Launch Northstar via Steam
+            </el-button>
+
             <h3>Mod install:</h3>
 
             <el-input v-model="mod_to_install_field_string" placeholder="Please input Thunderstore dependency string (example: AuthorName-ModName-1.2.3)" clearable />
@@ -140,6 +144,9 @@ export default defineComponent({
         },
         async launchGameWithoutChecks() {
             this.$store.commit('launchGame', true);
+        },
+        async launchGameViaSteam() {
+            this.$store.commit('launchGameSteam', true);
         },
         async getInstalledMods() {
             let game_install = {

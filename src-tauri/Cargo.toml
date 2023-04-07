@@ -1,6 +1,6 @@
 [package]
 name = "app"
-version = "1.11.1"
+version = "1.12.1"
 description = "A Tauri App"
 authors = ["you"]
 license = ""
@@ -29,7 +29,7 @@ tokio = { version = "1", features = ["full"] }
 sentry = "0.30"
 sentry-log = "0.30.0"
 # Find steam games
-steamlocate = "1.0.2"
+steamlocate = "1.2"
 # Error messages
 anyhow = "1.0"
 # libthermite for Northstar/mod install handling
@@ -61,6 +61,8 @@ pretty_env_logger = "0.4.0"
 log = "0.4.17"
 # Extracting zip files easily
 zip-extract = "0.1.2"
+# open urls
+open = "3.2.0"
 
 [features]
 # by default Tauri runs in production mode

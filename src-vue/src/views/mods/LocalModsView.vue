@@ -1,29 +1,35 @@
 <template>
-    <el-scrollbar>
-        <div>
-            <p v-if="mods.length === 0">No mods were found.</p>
-            <el-card v-else shadow="hover" v-for="mod in mods" v-bind:key="mod.name">
-                <el-switch style="--el-switch-on-color: #13ce66; --el-switch-off-color: #8957e5" v-model="mod.enabled"
-                            :before-change="() => updateWhichModsEnabled(mod)" :loading="global_load_indicator" />
-                <el-popconfirm
-                    title="Are you sure to delete this mod?"
-                    @confirm="deleteMod(mod)"
-                >
-                    <template #reference>
-                        <el-button type="danger">Delete</el-button>
-                    </template>
-                </el-popconfirm>
-                {{ mod.name }}
-                <span v-if="mod.version != null">(v{{ mod.version }})</span>
-                <img
-                    v-if="mod.thunderstore_mod_string != null"
-                    title="This Northstar mod is part of a Thunderstore mod"
-                    src="/src/assets/thunderstore-icon.png"
-                    class="image"
-                    height="16"
-                />
-            </el-card>
-        </div>
+    <!-- Message displayed if no mod matched searched words -->
+    <div v-if="mods.length === 0" class="noModMessage">
+        {{ $t('mods.local.no_mods') }}
+    </div>
+
+    <el-scrollbar v-else>
+        <el-card shadow="hover" v-for="mod in mods" v-bind:key="mod.name">
+            <el-switch style="--el-switch-on-color: #13ce66; --el-switch-off-color: #8957e5" v-model="mod.enabled"
+                       :before-change="() => updateWhichModsEnabled(mod)" :loading="global_load_indicator" />
+            <el-popconfirm
+                :title="$t('mods.local.delete_confirm')"
+                :confirm-button-text="$t('generic.yes')"
+                :cancel-button-text="$t('generic.no')"
+                @confirm="deleteMod(mod)"
+            >
+                <template #reference>
+                    <el-button type="danger">
+                        {{ $t('mods.local.delete') }}
+                    </el-button>
+                </template>
+            </el-popconfirm>
+            {{ mod.name }}
+            <span v-if="mod.version != null">(v{{ mod.version }})</span>
+            <img
+                v-if="mod.thunderstore_mod_string != null"
+                :title="$t('mods.local.part_of_ts_mod')"
+                src="/src/assets/thunderstore-icon.png"
+                class="image"
+                height="16"
+            />
+        </el-card>
     </el-scrollbar>
 </template>
 
@@ -79,7 +85,11 @@ export default defineComponent({
                 })
             }
             catch (error) {
-                showNotification('Error', error as string, 'error');
+                showNotification(
+                    this.$t('generic.error'),
+                    `${error}`,
+                    'error'
+                );
                 this.global_load_indicator = false;
                 return false;
             }
@@ -95,10 +105,10 @@ export default defineComponent({
             await invoke("delete_northstar_mod", { gameInstall: game_install, nsmodName: mod.name })
                 .then((message) => {
                     // Just a visual indicator that it worked
-                    showNotification(`Success deleting ${mod.name}`);
+                    showNotification(this.$t('mods.local.success_deleting', {modName: mod.name}));
                 })
                 .catch((error) => {
-                    showNotification('Error', error, 'error');
+                    showNotification(this.$t('generic.error'), error, 'error');
                 })
                 .finally(() => {
                     this.$store.commit('loadInstalledMods');

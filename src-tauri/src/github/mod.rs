@@ -49,7 +49,7 @@ pub fn get_list_of_tags() -> Result<Vec<TagWrapper>, String> {
 
     // Fetch the list of tags for the repository as a `Vec<Tag>`.
     let tags_url = format!("https://api.github.com/repos/{}/tags", FLIGHTCORE_REPO_NAME);
-    let tags: Vec<Tag> = client.get(&tags_url).send().unwrap().json().unwrap();
+    let tags: Vec<Tag> = client.get(tags_url).send().unwrap().json().unwrap();
 
     // Map each `Tag` element to a `TagWrapper` element with the desired label and `Tag` value.
     let tag_wrappers: Vec<TagWrapper> = tags
@@ -102,10 +102,15 @@ pub fn compare_tags(first_tag: Tag, second_tag: Tag) -> Result<String, String> {
             commit.sha,
             commit.commit.message.split('\n').next().unwrap()
         );
-        patch_notes.push(format!(
-            "{}",
-            commit.commit.message.split('\n').next().unwrap()
-        ));
+        patch_notes.push(
+            commit
+                .commit
+                .message
+                .split('\n')
+                .next()
+                .unwrap()
+                .to_string(),
+        );
     }
 
     full_patch_notes += &generate_flightcore_release_notes(patch_notes);
@@ -140,7 +145,7 @@ fn generate_flightcore_release_notes(commits: Vec<String>) -> String {
                     release_notes.push_str(&format!("- {}\n", commit_message));
                 }
 
-                release_notes.push_str("\n");
+                release_notes.push('\n');
             }
         }
     }
@@ -155,7 +160,7 @@ fn group_commits_by_type(commits: Vec<String>) -> HashMap<String, Vec<String>> {
     let mut other_commits: Vec<String> = vec![];
 
     for commit in commits {
-        let commit_parts: Vec<&str> = commit.splitn(2, ":").collect();
+        let commit_parts: Vec<&str> = commit.splitn(2, ':').collect();
         if commit_parts.len() == 2 {
             let commit_type = commit_parts[0].to_lowercase();
             let commit_description = commit_parts[1].trim().to_string();

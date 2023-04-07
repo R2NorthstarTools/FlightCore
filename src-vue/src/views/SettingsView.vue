@@ -3,53 +3,68 @@
         <el-scrollbar>
             <div class="fc_settings__container">
                 <!-- Game folder location -->
-                <h3>Manage installation</h3>
-                <el-input
-                    v-model="$store.state.game_path"
-                    class="w-50 m-2"
-                    placeholder="Choose installation folder"
-                    @click="updateGamePath"
-                >
-                    <template #prepend>
-                        <el-button icon="Folder" @click="updateGamePath"/>
-                    </template>
-                </el-input>
-
-                <!-- Thunderstore mods per page configuration -->
                 <div class="fc_parameter__panel">
-                    <h3>Number of Thunderstore mods per page</h3>
-                    <h6>
-                        This has an impact on display performances when browsing Thunderstore mods.<br>
-                        Set this value to 0 to disable pagination.
-                    </h6>
-                    <el-input 
-                        v-model="modsPerPage" 
-                        type="number"
+                    <h3>{{ $t('settings.manage_install') }}</h3>
+                    <el-input
+                        v-model="$store.state.game_path"
+                        :placeholder="$t('settings.choose_folder')"
+                        @click="updateGamePath"
                     >
-                        <template #append>
-                            <el-button @click="modsPerPage = 20">Reset to default</el-button>
+                        <template #prepend>
+                            <el-button icon="Folder" @click="updateGamePath"/>
                         </template>
                     </el-input>
                 </div>
 
-                <h3>Repair</h3>
-                <el-button type="primary" @click="openRepairWindow">
-                    Open Repair window
-                </el-button>
-
-                <h3>About:</h3>
-                <div class="fc_northstar__version" @click="activateDeveloperMode">
-                    FlightCore Version: {{ flightcoreVersion === '' ? 'Unknown version' : `${flightcoreVersion}` }}
+                <!-- Thunderstore mods per page configuration -->
+                <div class="fc_parameter__panel">
+                    <h3>{{ $t('settings.nb_ts_mods_per_page') }}</h3>
+                    <h6>
+                        {{ $t('settings.nb_ts_mods_per_page_desc1') }}<br>
+                        {{ $t('settings.nb_ts_mods_per_page_desc2') }}
+                    </h6>
+                    <el-input
+                        v-model="modsPerPage"
+                        type="number"
+                    >
+                        <template #append>
+                            <el-button @click="modsPerPage = 20">
+                                {{ $t('settings.nb_ts_mods_reset') }}
+                            </el-button>
+                        </template>
+                    </el-input>
                 </div>
-                <br />
-                <br />
-                UI design inspired by <el-link :underline="false" target="_blank" href="https://github.com/TFORevive/tforevive_launcher/" type="primary">TFORevive Launcher</el-link> (not yet public)
 
-                <h3>Testing:</h3>
-                <span>
-                    Enable testing release channels
-                    <el-switch v-model="enableReleasesSwitch"></el-switch>
-                </span>
+                <!-- Interface localization -->
+                <div class="fc_parameter__panel">
+                    <h3>{{ $t('settings.language') }}</h3>
+                    <language-selector/>
+                </div>
+
+                <!-- Repair window -->
+                <div class="fc_parameter__panel">
+                    <h3>{{ $t('settings.repair.title') }}</h3>
+                    <el-button type="primary" @click="openRepairWindow">
+                        {{ $t('settings.repair.open_window') }}
+                    </el-button>
+                </div>
+
+                <!-- About section -->
+                <div class="fc_parameter__panel">
+                    <h3>{{ $t('settings.about') }}</h3>
+                    <div class="fc_northstar__version" @click="activateDeveloperMode">
+                        {{ $t('settings.flightcore_version') }} {{ flightcoreVersion === '' ? 'Unknown version' : `${flightcoreVersion}` }}
+                    </div>
+                </div>
+
+                <!-- Testing section -->
+                <div class="fc_parameter__panel">
+                    <h3>{{ $t('settings.testing') }}</h3>
+                    <span>
+                        {{ $t('settings.enable_test_channels') }}
+                        <el-switch v-model="enableReleasesSwitch"></el-switch>
+                    </span>
+                </div>
             </div>
         </el-scrollbar>
     </div>
@@ -61,10 +76,14 @@ import { invoke } from "@tauri-apps/api";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { Store } from 'tauri-plugin-store-api';
 import { showNotification } from "../utils/ui";
+import LanguageSelector from "../components/LanguageSelector.vue";
 const persistentStore = new Store('flight-core-settings.json');
 
 export default defineComponent({
     name: "SettingsView",
+    components: {
+        LanguageSelector
+    },
     data() {
         return {
             developerModeClicks: 0
@@ -104,9 +123,13 @@ export default defineComponent({
     methods: {
         activateDeveloperMode() {
             this.developerModeClicks += 1;
-            if (this.developerModeClicks >= 6) {
-                this.$store.state.developer_mode = true;
-                showNotification('Watch out!', 'Developer mode enabled.', 'info');
+            if (this.developerModeClicks >= 6 && !this.$store.state.developer_mode) {
+                this.$store.commit('toggleDeveloperMode');
+                showNotification(
+                    this.$t('settings.dev_mode_enabled_title'),
+                    this.$t('settings.dev_mode_enabled_text'),
+                    'info'
+                );
                 this.developerModeClicks = 0;
             }
         },
@@ -146,7 +169,7 @@ h3:first-of-type {
     font-weight: unset;
 }
 
-.el-input {
+.el-input, .el-select {
     width: 50%;
 }
 
@@ -157,7 +180,7 @@ h3:first-of-type {
 
 /* Parameter panel styles */
 .fc_parameter__panel {
-    margin: 30px 0;
+    margin-bottom: 30px;
 }
 
 .fc_parameter__panel h3 {

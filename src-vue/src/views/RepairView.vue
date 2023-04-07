@@ -1,30 +1,30 @@
 <template>
     <div class="fc-container">
         <el-scrollbar>
-            <el-alert title="Info" type="info" :closable="false" show-icon>
-                This window contains various functionality to repair common issues with Northstar and FlightCore.
+            <el-alert :title="$t('generic.informationShort')" type="info" :closable="false" show-icon>
+                {{ $t('settings.repair.window.warning') }}
             </el-alert>
 
-            <h1>Repair</h1>
+            <h1>{{ $t('settings.repair.title') }}</h1>
 
             <h2>Northstar</h2>
 
             <el-button type="primary" @click="disableAllModsButCore">
-                Disable all but core mods
+                {{ $t('settings.repair.window.disable_all_but_core') }}
             </el-button>
 
             <el-button type="primary" @click="forceInstallNorthstar">
-                Force reinstall Northstar
+                {{ $t('settings.repair.window.force_reinstall_ns') }}
             </el-button>
 
             <h2>FlightCore</h2>
 
             <el-button type="primary" @click="cleanUpDownloadFolder">
-                Force delete temp download folder
+                {{ $t('settings.repair.window.force_delete_temp_dl') }}
             </el-button>
 
             <el-button type="primary" @click="clearFlightCorePersistentStore">
-                Delete FlightCore persistent store
+                {{ $t('settings.repair.window.delete_persistent_store') }}
             </el-button>
         </el-scrollbar>
     </div>
@@ -37,10 +37,16 @@ import { invoke } from "@tauri-apps/api";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { Store } from 'tauri-plugin-store-api';
 import { showNotification } from "../utils/ui";
+import { appWindow } from "@tauri-apps/api/window";
 const persistentStore = new Store('flight-core-settings.json');
 
 export default defineComponent({
     name: "RepairView",
+    computed: {
+        lang(): string {
+            return this.$root!.$i18n.locale;
+        }
+    },
     methods: {
         async disableAllModsButCore() {
             let game_install = {
@@ -104,6 +110,13 @@ export default defineComponent({
             // ...and save
             await persistentStore.save();
         },
+    },
+    watch: {
+        // Lang value is propagated to repair view after it's mounted, so we need to watch
+        // its value, and update window title accordingly.
+        lang(newv: string) {
+            appWindow.setTitle( this.$t('settings.repair.window.title') );
+        }
     }
 });
 </script>

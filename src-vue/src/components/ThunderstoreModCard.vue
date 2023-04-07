@@ -21,7 +21,7 @@
             <br/>
 
             <div class="name hide-text-overflow">{{ mod.name }}</div>
-            <div class="author hide-text-overflow">by {{ mod.owner }}</div>
+            <div class="author hide-text-overflow">{{ $t('mods.card.by') }} {{ mod.owner }}</div>
             <div class="desc">
                 {{ latestVersion.description }}
             </div>
@@ -33,7 +33,7 @@
                     :loading="isBeingInstalled || isBeingUpdated"
                     @click.stop="installMod(mod)"
                 >
-                    {{ modButtonText }}
+                    {{ $t(modButtonText) }}
                 </el-button>
 
                 <!-- Information dropdown menu -->
@@ -51,10 +51,10 @@
                     <template #dropdown>
                         <el-dropdown-menu>
                             <el-dropdown-item @click="openURL(mod.package_url)">
-                                More info
+                                {{ $t('mods.card.more_info') }}
                             </el-dropdown-item>
                             <el-dropdown-item  @click="deleteMod(mod)">
-                                Remove mod
+                                {{ $t('mods.card.remove') }}
                             </el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
@@ -129,15 +129,15 @@ export default defineComponent({
         modButtonText(): string {
             switch (this.modStatus) {
                 case ThunderstoreModStatus.BEING_INSTALLED:
-                    return "Installing...";
+                    return "mods.card.button.being_installed";
                 case ThunderstoreModStatus.BEING_UPDATED:
-                    return "Updating...";
+                    return "mods.card.button.being_updated";
                 case ThunderstoreModStatus.INSTALLED:
-                    return "Installed";
+                    return "mods.card.button.installed";
                 case ThunderstoreModStatus.NOT_INSTALLED:
-                    return "Install";
+                    return "mods.card.button.install";
                 case ThunderstoreModStatus.OUTDATED:
-                    return "Update";
+                    return "mods.card.button.outdated";
             }
         },
 
@@ -200,11 +200,11 @@ export default defineComponent({
 
             // Show pop-up to confirm delete
             ElMessageBox.confirm(
-                'Delete Thunderstore mod?',
-                'Warning',
+                this.$t('mods.card.remove_dialog_text'),
+                this.$t('mods.card.remove_dialog_title'),
                 {
-                    confirmButtonText: 'OK',
-                    cancelButtonText: 'Cancel',
+                    confirmButtonText: this.$t('generic.yes'),
+                    cancelButtonText: this.$t('generic.cancel'),
                     type: 'warning',
                 }
             )
@@ -216,10 +216,10 @@ export default defineComponent({
 
                     await invoke<string>("delete_thunderstore_mod", { gameInstall: game_install, thunderstoreModString: this.latestVersion.full_name })
                         .then((message) => {
-                            showNotification(`Removed ${mod.name}`, message);
+                            showNotification(this.$t('mods.card.remove_success', {modName: mod.name}), message);
                         })
                         .catch((error) => {
-                            showNotification('Error', error, 'error');
+                            showNotification(this.$t('generic.error'), error, 'error');
                         })
                         .finally(() => {
                             this.$store.commit('loadInstalledMods');
@@ -244,10 +244,10 @@ export default defineComponent({
             }
 
             await invoke<string>("install_mod_caller", { gameInstall: game_install, thunderstoreModString: this.latestVersion.full_name }).then((message) => {
-                showNotification(`Installed ${mod.name}`, message);
+                showNotification(this.$t('mods.card.install_success', {modName: mod.name}), message);
             })
                 .catch((error) => {
-                    showNotification('Error', error, 'error');
+                    showNotification(this.$t('generic.error'), error, 'error');
                 })
                 .finally(() => {
                     this.isBeingInstalled = false;
