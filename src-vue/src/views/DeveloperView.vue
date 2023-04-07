@@ -90,7 +90,7 @@ import { invoke } from "@tauri-apps/api";
 import { GameInstall } from "../utils/GameInstall";
 import { TagWrapper } from "../../../src-tauri/bindings/TagWrapper";
 import PullRequestsSelector from "../components/PullRequestsSelector.vue";
-import { showNotification } from "../utils/ui";
+import {showErrorNotification, showNotification } from "../utils/ui";
 
 export default defineComponent({
     name: "DeveloperView",

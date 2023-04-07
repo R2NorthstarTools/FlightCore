@@ -75,7 +75,7 @@ import { defineComponent } from "vue";
 import { invoke } from "@tauri-apps/api";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { Store } from 'tauri-plugin-store-api';
-import { showNotification } from "../utils/ui";
+import {showErrorNotification, showNotification } from "../utils/ui";
 import LanguageSelector from "../components/LanguageSelector.vue";
 const persistentStore = new Store('flight-core-settings.json');
 
