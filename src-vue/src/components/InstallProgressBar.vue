@@ -48,22 +48,20 @@ export default defineComponent({
             ({ event, payload }) => {
                 this.install_or_update = true;
                 let progress = payload as InstallProgress; // This is bad but don't know how to do it properly
+                this.status = progress.state;
                 if (progress.state == "DOWNLOADING") {
                     this.percentage = ((Number(progress.current_downloaded) / Number(progress.total_size)) * 100);
                     this.color = '#409EFF';
-                    this.status = progress.state;
                     this.current_downloaded = Number(progress.current_downloaded);
                     this.total_size = Number(progress.total_size);
                 }
                 if (progress.state == "EXTRACTING") {
                     this.percentage = 100;
                     this.color = '#67C23A';
-                    this.status = progress.state;
                 }
                 if (progress.state == "DONE") {
                     // Clear state again
                     this.install_or_update = false
-                    this.status = progress.state;
                 }
             }
         );
