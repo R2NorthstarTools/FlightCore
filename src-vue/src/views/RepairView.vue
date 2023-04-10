@@ -32,11 +32,11 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { ElNotification } from "element-plus";
 import { GameInstall } from "../utils/GameInstall";
 import { invoke } from "@tauri-apps/api";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { Store } from 'tauri-plugin-store-api';
+import { showErrorNotification, showNotification } from "../utils/ui";
 import { appWindow } from "@tauri-apps/api/window";
 const persistentStore = new Store('flight-core-settings.json');
 
@@ -55,20 +55,10 @@ export default defineComponent({
             } as GameInstall;
             await invoke("disable_all_but_core", { gameInstall: game_install })
                 .then((message) => {
-                    ElNotification({
-                        title: 'Success',
-                        message: "Disabled all mods but core",
-                        type: 'success',
-                        position: 'bottom-right'
-                    });
+                    showNotification('Success', "Disabled all mods but core");
                 })
                 .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
+                    showErrorNotification(error);
                 });
         },
         async forceInstallNorthstar() {
@@ -78,33 +68,22 @@ export default defineComponent({
             } as GameInstall;
 
             // Send notification telling the user to wait for the process to finish
-            const notification = ElNotification({
-                title: 'Force reinstalling Northstar',
-                message: 'Please wait',
-                duration: 0,
-                type: 'info',
-                position: 'bottom-right'
-            });
+            const notification = showNotification(
+                'Force reinstalling Northstar',
+                'Please wait',
+                'info',
+                0
+            );
 
             let install_northstar_result = invoke("install_northstar_caller", { gamePath: game_install.game_path, northstarPackageName: ReleaseCanal.RELEASE });
             await install_northstar_result
                 .then((message) => {
                     // Send notification
-                    ElNotification({
-                        title: `Done`,
-                        message: `Successfully reinstalled Northstar`,
-                        type: 'success',
-                        position: 'bottom-right'
-                    });
+                    showNotification('Done', `Successfully reinstalled Northstar`);
                     this.$store.commit('checkNorthstarUpdates');
                 })
                 .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
+                    showErrorNotification(error);
                     console.error(error);
                 })
                 .finally(() => {
@@ -119,20 +98,10 @@ export default defineComponent({
             } as GameInstall;
             await invoke("clean_up_download_folder_caller", { gameInstall: game_install, force: true }).then((message) => {
                 // Show user notification if task completed.
-                ElNotification({
-                    title: `Done`,
-                    message: `Done`,
-                    type: 'success',
-                    position: 'bottom-right'
-                });
+                showNotification('Done', 'Done');
             })
                 .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
+                    showErrorNotification(error);
                 });
         },
         async clearFlightCorePersistentStore() {

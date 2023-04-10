@@ -6,7 +6,7 @@ import { invoke } from "@tauri-apps/api";
 import { GameInstall } from "../utils/GameInstall";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { FlightCoreVersion } from "../../../src-tauri/bindings/FlightCoreVersion";
-import { ElNotification, NotificationHandle } from 'element-plus';
+import { NotificationHandle } from 'element-plus';
 import { NorthstarState } from '../utils/NorthstarState';
 import { appDir } from '@tauri-apps/api/path';
 import { open } from '@tauri-apps/api/dialog';
@@ -18,6 +18,7 @@ import { NorthstarMod } from "../../../src-tauri/bindings/NorthstarMod";
 import { searchModule } from './modules/search';
 import { i18n } from '../main';
 import { pullRequestModule } from './modules/pull_requests';
+import { showErrorNotification, showNotification } from '../utils/ui';
 
 const persistentStore = new Store('flight-core-settings.json');
 
@@ -128,12 +129,10 @@ export const store = createStore<FlightCoreStore>({
                 let is_valid_titanfall2_install = await invoke("verify_install_location", { gamePath: selected }) as boolean;
                 if (is_valid_titanfall2_install) {
                     state.game_path = selected;
-                    ElNotification({
-                        title: i18n.global.tc('notification.game_folder.new.title'),
-                        message: i18n.global.tc('notification.game_folder.new.text'),
-                        type: 'success',
-                        position: 'bottom-right'
-                    });
+                    showNotification(
+                        i18n.global.tc('notification.game_folder.new.title'),
+                        i18n.global.tc('notification.game_folder.new.text')
+                    );
                     try {
                         notification_handle.close();
                     }
@@ -156,12 +155,10 @@ export const store = createStore<FlightCoreStore>({
                 }
                 else {
                     // Not valid Titanfall2 install
-                    ElNotification({
-                        title: i18n.global.tc('notification.game_folder.wrong.title'),
-                        message: i18n.global.tc('notification.game_folder.wrong.text'),
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
+                    showErrorNotification(
+                        i18n.global.tc('notification.game_folder.wrong.text'),
+                        i18n.global.tc('notification.game_folder.wrong.title')
+                    );
                 }
             }
         },
@@ -229,12 +226,7 @@ export const store = createStore<FlightCoreStore>({
                         })
                         .catch((error) => {
                             console.error(error);
-                            ElNotification({
-                                title: i18n.global.tc('generic.error'),
-                                message: error,
-                                type: 'error',
-                                position: 'bottom-right'
-                            });
+                            showErrorNotification(error);
                         });
                     break;
 
@@ -251,20 +243,11 @@ export const store = createStore<FlightCoreStore>({
 
             await invoke("launch_northstar_steam_caller", { gameInstall: game_install, bypassChecks: no_checks })
                 .then((message) => {
-                    ElNotification({
-                        title: 'Success',
-                        type: 'success',
-                        position: 'bottom-right'
-                    });
+                    showNotification('Success');
                 })
                 .catch((error) => {
                     console.error(error);
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
+                    showErrorNotification(error);
                 });
 
             return;
@@ -324,12 +307,7 @@ export const store = createStore<FlightCoreStore>({
                 })
                 .catch((error) => {
                     console.error(error);
-                    ElNotification({
-                        title: i18n.global.tc('generic.error'),
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
+                    showErrorNotification(error);
                 });
         },
         async toggleReleaseCandidate(state: FlightCoreStore) {
@@ -346,12 +324,10 @@ export const store = createStore<FlightCoreStore>({
             store.commit("checkNorthstarUpdates");
 
             // Display notification to highlight change
-            ElNotification({
-                title: i18n.global.tc(`channels.names.${state.northstar_release_canal}`),
-                message: i18n.global.tc('channels.release.switch.text', {canal: state.northstar_release_canal}),
-                type: 'success',
-                position: 'bottom-right'
-            });
+            showNotification(
+                i18n.global.tc(`channels.names.${state.northstar_release_canal}`),
+                i18n.global.tc('channels.release.switch.text', {canal: state.northstar_release_canal}),
+            );
         }
     }
 });
@@ -418,13 +394,12 @@ async function _initializeApp(state: any) {
             .catch((err) => {
                 // Gamepath not found or other error
                 console.error(err);
-                notification_handle = ElNotification({
-                    title: i18n.global.tc('notification.game_folder.not_found.title'),
-                    message: i18n.global.tc('notification.game_folder.not_found.text'),
-                    type: 'error',
-                    position: 'bottom-right',
-                    duration: 0 // Duration `0` means the notification will not auto-vanish
-                });
+                notification_handle = showNotification(
+                    i18n.global.tc('notification.game_folder.not_found.title'),
+                    i18n.global.tc('notification.game_folder.not_found.text'),
+                    'error',
+                    0   // Duration `0` means the notification will not auto-vanish
+                );
             });
     }
 
@@ -461,13 +436,12 @@ async function _checkForFlightCoreUpdates(state: FlightCoreStore) {
 
     if (flightcore_is_outdated) {
         let newest_flightcore_version = await invoke("get_newest_flightcore_version") as FlightCoreVersion;
-        ElNotification({
-            title: i18n.global.tc('notification.flightcore_outdated.title'),
-            message: i18n.global.tc('notification.flightcore_outdated.text', {oldVersion: state.flightcore_version, newVersion: newest_flightcore_version.tag_name}),
-            type: 'warning',
-            position: 'bottom-right',
-            duration: 0 // Duration `0` means the notification will not auto-vanish
-        });
+        showNotification(
+            i18n.global.tc('notification.flightcore_outdated.title'),
+            i18n.global.tc('notification.flightcore_outdated.text', {oldVersion: state.flightcore_version, newVersion: newest_flightcore_version.tag_name}),
+            'warning',
+            0 // Duration `0` means the notification will not auto-vanish
+        );
     }
 }
 

@@ -72,10 +72,10 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { ElNotification } from 'element-plus';
 import { invoke } from "@tauri-apps/api";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { Store } from 'tauri-plugin-store-api';
+import { showErrorNotification, showNotification } from "../utils/ui";
 import LanguageSelector from "../components/LanguageSelector.vue";
 const persistentStore = new Store('flight-core-settings.json');
 
@@ -125,12 +125,11 @@ export default defineComponent({
             this.developerModeClicks += 1;
             if (this.developerModeClicks >= 6 && !this.$store.state.developer_mode) {
                 this.$store.commit('toggleDeveloperMode');
-                ElNotification({
-                    title: this.$t('settings.dev_mode_enabled_title'),
-                    message: this.$t('settings.dev_mode_enabled_text'),
-                    type: 'info',
-                    position: 'bottom-right'
-                });
+                showNotification(
+                    this.$t('settings.dev_mode_enabled_title'),
+                    this.$t('settings.dev_mode_enabled_text'),
+                    'info'
+                );
                 this.developerModeClicks = 0;
             }
         },
@@ -141,12 +140,7 @@ export default defineComponent({
             await invoke("open_repair_window")
                 .then((message) => { })
                 .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
+                    showErrorNotification(error);
                 });
         },
     },

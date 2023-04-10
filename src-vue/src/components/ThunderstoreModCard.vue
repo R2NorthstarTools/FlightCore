@@ -72,9 +72,9 @@ import {invoke, shell} from "@tauri-apps/api";
 import {ThunderstoreModStatus} from "../utils/thunderstore/ThunderstoreModStatus";
 import {NorthstarMod} from "../../../src-tauri/bindings/NorthstarMod";
 import {GameInstall} from "../utils/GameInstall";
-import {ElNotification} from "element-plus";
 import { NorthstarState } from "../utils/NorthstarState";
 import { ElMessageBox } from "element-plus";
+import { showErrorNotification, showNotification } from "../utils/ui";
 
 export default defineComponent({
     name: "ThunderstoreModCard",
@@ -214,22 +214,12 @@ export default defineComponent({
                         install_type: this.$store.state.install_type
                     } as GameInstall;
 
-                    await invoke("delete_thunderstore_mod", { gameInstall: game_install, thunderstoreModString: this.latestVersion.full_name })
+                    await invoke<string>("delete_thunderstore_mod", { gameInstall: game_install, thunderstoreModString: this.latestVersion.full_name })
                         .then((message) => {
-                            ElNotification({
-                                title: this.$t('mods.card.remove_success', {modName: mod.name}),
-                                message: message as string,
-                                type: 'success',
-                                position: 'bottom-right'
-                            });
+                            showNotification(this.$t('mods.card.remove_success', {modName: mod.name}), message);
                         })
                         .catch((error) => {
-                            ElNotification({
-                                title: this.$t('generic.error'),
-                                message: error,
-                                type: 'error',
-                                position: 'bottom-right'
-                            });
+                            showErrorNotification(error);
                         })
                         .finally(() => {
                             this.$store.commit('loadInstalledMods');
@@ -253,21 +243,11 @@ export default defineComponent({
                 this.isBeingInstalled = true;
             }
 
-            await invoke("install_mod_caller", { gameInstall: game_install, thunderstoreModString: this.latestVersion.full_name }).then((message) => {
-                ElNotification({
-                    title: this.$t('mods.card.install_success', {modName: mod.name}),
-                    message: message as string,
-                    type: 'success',
-                    position: 'bottom-right'
-                });
+            await invoke<string>("install_mod_caller", { gameInstall: game_install, thunderstoreModString: this.latestVersion.full_name }).then((message) => {
+                showNotification(this.$t('mods.card.install_success', {modName: mod.name}), message);
             })
                 .catch((error) => {
-                    ElNotification({
-                        title: this.$t('generic.error'),
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
+                    showErrorNotification(error);
                 })
                 .finally(() => {
                     this.isBeingInstalled = false;
