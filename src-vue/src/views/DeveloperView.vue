@@ -130,7 +130,7 @@ export default defineComponent({
         },
         async crashApplication() {
             await invoke("force_panic");
-            showNotification('Error', "Never should have been able to get here!", 'error');
+            showErrorNotification("Never should have been able to get here!");
         },
         async checkLinuxCompatibility() {
             await invoke("linux_checks")

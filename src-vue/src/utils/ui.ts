@@ -19,8 +19,11 @@ function showNotification(
 /**
  * Helper method displaying an error message to the user.
  **/
-function showErrorNotification(error: string): NotificationHandle {
-    return showNotification(i18n.global.tc('generic.error'), error, 'error');
+function showErrorNotification(
+    error: string,
+    title: string = i18n.global.tc('generic.error')
+): NotificationHandle {
+    return showNotification(title, error, 'error');
 }
 
 export {showNotification, showErrorNotification};

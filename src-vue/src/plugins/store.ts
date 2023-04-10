@@ -155,10 +155,9 @@ export const store = createStore<FlightCoreStore>({
                 }
                 else {
                     // Not valid Titanfall2 install
-                    showNotification(
-                        i18n.global.tc('notification.game_folder.wrong.title'),
+                    showErrorNotification(
                         i18n.global.tc('notification.game_folder.wrong.text'),
-                        'error'
+                        i18n.global.tc('notification.game_folder.wrong.title')
                     );
                 }
             }
