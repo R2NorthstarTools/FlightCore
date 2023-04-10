@@ -66,7 +66,7 @@ pub async fn query_thunderstore_packages_api() -> Result<Vec<ThunderstoreMod>, S
     };
 
     // Remove some mods from listing
-    let to_remove_set: HashSet<&str> = BLACKLISTED_MODS.iter().map(|s| s.as_ref()).collect();
+    let to_remove_set: HashSet<&str> = BLACKLISTED_MODS.iter().copied().collect();
     let filtered_packages = parsed_json
         .into_iter()
         .filter(|package| !to_remove_set.contains(&package.full_name.as_ref()))
