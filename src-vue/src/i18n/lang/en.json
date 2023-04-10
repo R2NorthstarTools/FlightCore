@@ -12,7 +12,9 @@
         "no": "No",
         "error": "Error",
         "cancel": "Cancel",
-        "informationShort": "Info"
+        "informationShort": "Info",
+        "downloading": "Downloading",
+        "extracting": "Extracting"
     },
 
     "play": {

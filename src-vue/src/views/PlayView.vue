@@ -2,10 +2,12 @@
 import { Tabs } from "../utils/Tabs";
 import PlayButton from '../components/PlayButton.vue';
 import { defineComponent } from "vue";
+import InstallProgressBar from "../components/InstallProgressBar.vue";
 
 export default defineComponent({
     components: {
-        PlayButton
+        PlayButton,
+        InstallProgressBar
     },
     computed: {
         northstarIsRunning(): boolean {
@@ -45,7 +47,9 @@ export default defineComponent({
                 {{ $t('play.unable_to_load_playercount') }}
             </div>
         </div>
-        <div>
+
+        <!-- Align play button and services state container -->
+        <div style="display: flex">
             <PlayButton />
             <div v-if="$store.state.developer_mode" id="fc_services__status">
                 <div>
@@ -58,12 +62,13 @@ export default defineComponent({
                 </div>
             </div>
         </div>
+        <InstallProgressBar />
     </div>
 </template>
 
 <style scoped>
 .fc_launch__container {
-    margin: 50px;
+    margin: 50px 50px 30px 50px;
     position: fixed;
     bottom: 0;
 }
@@ -101,13 +106,9 @@ export default defineComponent({
     border-color: var(--el-color-primary);
 }
 
-
 #fc_services__status {
-    display: inline-block;
-    position: fixed;
-    padding: 10px 20px;
     color: #e8edef;
-    bottom: 43px;
+    align-self: end;
 }
 
 .fc_version__line {

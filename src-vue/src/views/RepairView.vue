@@ -33,6 +33,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { GameInstall } from "../utils/GameInstall";
+import { InstallProgress } from "../../../src-tauri/bindings/InstallProgress";
 import { invoke } from "@tauri-apps/api";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { Store } from 'tauri-plugin-store-api';
@@ -76,6 +77,16 @@ export default defineComponent({
             );
 
             let install_northstar_result = invoke("install_northstar_caller", { gamePath: game_install.game_path, northstarPackageName: ReleaseCanal.RELEASE });
+
+            appWindow.listen<InstallProgress>(
+                'northstar-install-download-progress',
+                ({ event, payload }) => {
+                    let typed_payload = payload;
+                    console.log("current_downloaded:", typed_payload.current_downloaded);
+                    console.log("total_size:        ", typed_payload.total_size);
+                    console.log("state:             ", typed_payload.state);
+                }
+            );
             await install_northstar_result
                 .then((message) => {
                     // Send notification
