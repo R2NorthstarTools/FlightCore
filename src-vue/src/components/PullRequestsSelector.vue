@@ -89,7 +89,7 @@ export default defineComponent({
                 // Check PR id
                 pr.number.toString().indexOf(this.launcherSearch) !== -1
                 // Check PR title
-                || pr.title.indexOf(this.launcherSearch) !== -1);
+                || pr.title.toLowerCase().indexOf(this.launcherSearch.toLowerCase()) !== -1);
         },
         filtered_mods_pull_requests(): PullsApiResponseElement[] {
             if (this.modsSearch.length === 0) {
@@ -100,7 +100,7 @@ export default defineComponent({
                 // Check PR id
                 pr.number.toString().indexOf(this.modsSearch) !== -1
                 // Check PR title
-                || pr.title.indexOf(this.modsSearch) !== -1);
+                || pr.title.toLowerCase().indexOf(this.modsSearch.toLowerCase()) !== -1);
         },
     },
     methods: {
