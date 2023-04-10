@@ -43,11 +43,11 @@ export default defineComponent({
         }
     },
     mounted() {
-        appWindow.listen(
+        appWindow.listen<InstallProgress>(
             'northstar-install-download-progress',
             ({ event, payload }) => {
                 this.install_or_update = true;
-                let progress = payload as InstallProgress; // This is bad but don't know how to do it properly
+                let progress = payload;
                 this.status = progress.state;
                 if (progress.state == "DOWNLOADING") {
                     this.percentage = ((Number(progress.current_downloaded) / Number(progress.total_size)) * 100);
