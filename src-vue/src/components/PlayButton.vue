@@ -85,6 +85,9 @@ export default defineComponent({
             return this.showReleaseSwitch
                 ? 'border-radius: 2px 0 0 2px;'
                 : 'border-radius: 2px';
+        },
+        progressBarStyle(): string {
+            return !this.install_or_update ? 'hide-progress' : '';
         }
     },
     data() {
@@ -116,7 +119,7 @@ export default defineComponent({
             if (this.status == "EXTRACTING") {
                 return this.$t("generic.extracting");
             }
-            return "";
+            return "Inactive";  // Needed to keep same size format when progress bar is hidden
         },
         async launchGame() {
             let unlistenProgress = await appWindow.listen(
@@ -129,7 +132,7 @@ export default defineComponent({
                         this.color = '#409EFF';
                         this.status = progress.state;
                         this.current_downloaded = Number(progress.current_downloaded);
-                        this.total_size = Number(progress.total_size); 
+                        this.total_size = Number(progress.total_size);
                     }
                     if (progress.state == "EXTRACTING") {
                         this.percentage = 100;
@@ -172,7 +175,7 @@ export default defineComponent({
         </el-option-group>
     </el-select>
     <el-progress
-        v-if="install_or_update"
+        :class="progressBarStyle"
         :format="formatText"
         :percentage="percentage"
         :color="color"
@@ -186,7 +189,12 @@ export default defineComponent({
 
 /* Set progress bar width */
 .el-progress {
-  width: 40vw;
+    width: 40vw;
+    margin-top: 10px;
+}
+
+.hide-progress {
+    opacity: 0;
 }
 
 button {

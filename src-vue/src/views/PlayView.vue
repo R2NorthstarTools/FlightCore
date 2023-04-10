@@ -64,7 +64,7 @@ export default defineComponent({
 
 <style scoped>
 .fc_launch__container {
-    margin: 50px;
+    margin: 50px 50px 30px 50px;
     position: fixed;
     bottom: 0;
 }
