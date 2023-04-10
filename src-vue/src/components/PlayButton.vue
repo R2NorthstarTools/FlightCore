@@ -2,8 +2,6 @@
 import { defineComponent } from 'vue';
 import { NorthstarState } from '../utils/NorthstarState';
 import { ReleaseCanal } from '../utils/ReleaseCanal';
-import { appWindow } from '@tauri-apps/api/window';
-import { InstallProgress } from '../../../src-tauri/bindings/InstallProgress';
 
 export default defineComponent({
     name: 'PlayButton',
@@ -86,119 +84,41 @@ export default defineComponent({
                 ? 'border-radius: 2px 0 0 2px;'
                 : 'border-radius: 2px';
         },
-        progressBarStyle(): string {
-            return !this.install_or_update ? 'hide-progress' : '';
-        }
-    },
-    data() {
-        return {
-        percentage: 0,
-        color: '#409EFF',
-        install_or_update: false,
-        status: "unknown",
-        current_downloaded: -1,
-        total_size: -1,
-        };
     },
     methods: {
-        formatBytes(bytes: number, decimals = 2) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1000;
-            const dm = decimals < 0 ? 0 : decimals;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-        },
-        formatText() {
-            if (this.status == "DOWNLOADING") {
-                const current_downloaded_string = this.formatBytes(this.current_downloaded);
-                const total_size_string = this.formatBytes(this.total_size);
-                const status = this.$t("generic.downloading");
-                return `${status}: ${current_downloaded_string}/${total_size_string}`;
-            }
-            if (this.status == "EXTRACTING") {
-                return this.$t("generic.extracting");
-            }
-            return "Inactive";  // Needed to keep same size format when progress bar is hidden
-        },
         async launchGame() {
-            let unlistenProgress = await appWindow.listen(
-                'northstar-install-download-progress',
-                ({ event, payload }) => {
-                    this.install_or_update = true;
-                    let progress = payload as InstallProgress; // This is bad but don't know how to do it properly
-                    if (progress.state == "DOWNLOADING") {
-                        this.percentage = ((Number(progress.current_downloaded) / Number(progress.total_size)) * 100);
-                        this.color = '#409EFF';
-                        this.status = progress.state;
-                        this.current_downloaded = Number(progress.current_downloaded);
-                        this.total_size = Number(progress.total_size);
-                    }
-                    if (progress.state == "EXTRACTING") {
-                        this.percentage = 100;
-                        this.color = '#67C23A';
-                        this.status = progress.state;
-                    }
-                    if (progress.state == "DONE") {
-                        // Clear state again
-                        this.install_or_update = false
-                        this.status = progress.state;
-                    }
-                }
-            );
             this.$store.commit('launchGame');
-            this.install_or_update = false;
         }
     }
 });
 </script>
 
 <template>
-    <el-button :disabled="northstarIsRunning"
-               type="primary" size="large" @click="launchGame"
-               class="fc_launch__button" :style="buttonRadiusStyle">
-        {{ playButtonLabel }}
-    </el-button>
-    <el-select v-if="showReleaseSwitch" :disabled="northstarIsRunning"
-               v-model="currentCanal" placeholder="Select">
-        <el-option-group
-            v-for="group in selectOptions"
-            :key="group.label"
-            :label="group.label"
-        >
-            <el-option
-                v-for="item in group.options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-            />
-        </el-option-group>
-    </el-select>
-    <el-progress
-        :class="progressBarStyle"
-        :format="formatText"
-        :percentage="percentage"
-        :color="color"
-        :indeterminate="status === 'EXTRACTING'"
-        :duration="1"
-    >
-    </el-progress>
+    <nav>
+        <el-button :disabled="northstarIsRunning"
+                   type="primary" size="large" @click="launchGame"
+                   class="fc_launch__button" :style="buttonRadiusStyle">
+            {{ playButtonLabel }}
+        </el-button>
+        <el-select v-if="showReleaseSwitch" :disabled="northstarIsRunning"
+                   v-model="currentCanal" placeholder="Select">
+            <el-option-group
+                v-for="group in selectOptions"
+                :key="group.label"
+                :label="group.label"
+            >
+                <el-option
+                    v-for="item in group.options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                />
+            </el-option-group>
+        </el-select>
+    </nav>
 </template>
 
 <style scoped>
-.el-progress {
-    margin-top: 10px;
-}
-
-/* Set progress bar width */
-.el-progress:deep(.el-progress-bar) {
-    width: 200px;
-}
-
-.hide-progress {
-    opacity: 0;
-}
-
 button {
     text-transform: uppercase;
     padding: 30px;
@@ -211,7 +131,6 @@ button {
 }
 
 /* Release canal selector */
-
 .el-select {
     width: 0;
     margin-right: 50px;

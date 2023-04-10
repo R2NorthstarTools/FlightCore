@@ -3,10 +3,12 @@ import { ElNotification } from 'element-plus';
 import { Tabs } from "../utils/Tabs";
 import PlayButton from '../components/PlayButton.vue';
 import { defineComponent } from "vue";
+import InstallProgressBar from "../components/InstallProgressBar.vue";
 
 export default defineComponent({
     components: {
-        PlayButton
+        PlayButton,
+        InstallProgressBar
     },
     computed: {
         northstarIsRunning(): boolean {
@@ -31,46 +33,45 @@ export default defineComponent({
 </script>
 
 <template>
-    <div class="fc_global__container">
-        <div class="fc_launch__container">
-            <div class="fc_title">Northstar</div>
-            <div class="fc_northstar__version__container">
-                {{ northstarVersion === '' ? $t('play.unknown_version') : `v${northstarVersion}` }}
-                <div v-if="northstarVersion !== ''" class="fc_changelog__link" @click="showChangelogPage">
-                    ({{ $t('play.see_patch_notes') }})
-                </div>
-                <div v-if="playerCount >= 0" class="fc-stats__container">
-                    {{ playerCount }} {{ $t('play.players') }},
-                    {{ serverCount }} {{ $t('play.servers') }}
-                </div>
-                <div v-else="playerCount >= 0" class="fc-stats__container">
-                    {{ $t('play.unable_to_load_playercount') }}
-                </div>
+    <div class="fc_launch__container">
+        <div class="fc_title">Northstar</div>
+        <div class="fc_northstar__version__container">
+            {{ northstarVersion === '' ? $t('play.unknown_version') : `v${northstarVersion}` }}
+            <div v-if="northstarVersion !== ''" class="fc_changelog__link" @click="showChangelogPage">
+                ({{ $t('play.see_patch_notes') }})
             </div>
-            <div>
-                <PlayButton />
+            <div v-if="playerCount >= 0" class="fc-stats__container">
+                {{ playerCount }} {{ $t('play.players') }},
+                {{ serverCount }} {{ $t('play.servers') }}
+            </div>
+            <div v-else="playerCount >= 0" class="fc-stats__container">
+                {{ $t('play.unable_to_load_playercount') }}
             </div>
         </div>
 
-        <div v-if="$store.state.developer_mode" id="fc_services__status">
-            <div>
-                <div class="fc_version__line">{{ $t('play.northstar_running') }}</div>
-                <div class="fc_version__line fc_version__line__boolean"> {{ northstarIsRunning }}</div>
-            </div>
-            <div>
-                <div class="fc_version__line">{{ $t('play.origin_running') }}</div>
-                <div class="fc_version__line fc_version__line__boolean">{{ $store.state.origin_is_running }}</div>
+        <!-- Align play button and services state container -->
+        <div style="display: flex">
+            <PlayButton />
+            <div v-if="$store.state.developer_mode" id="fc_services__status">
+                <div>
+                    <div class="fc_version__line">{{ $t('play.northstar_running') }}</div>
+                    <div class="fc_version__line fc_version__line__boolean"> {{ northstarIsRunning }}</div>
+                </div>
+                <div>
+                    <div class="fc_version__line">{{ $t('play.origin_running') }}</div>
+                    <div class="fc_version__line fc_version__line__boolean">{{ $store.state.origin_is_running }}</div>
+                </div>
             </div>
         </div>
+        <InstallProgressBar />
     </div>
 </template>
 
 <style scoped>
-.fc_global__container {
+.fc_launch__container {
     margin: 50px 50px 30px 50px;
     position: fixed;
     bottom: 0;
-    display: flex;
 }
 
 /* Titles */
@@ -109,8 +110,6 @@ export default defineComponent({
 #fc_services__status {
     color: #e8edef;
     align-self: end;
-    margin-bottom: 18px;
-    margin-left: 18px;
 }
 
 .fc_version__line {
