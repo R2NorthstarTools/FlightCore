@@ -1,7 +1,12 @@
 <template>
     <div>
         <el-collapse @change="onChange">
-            <el-collapse-item title="Launcher PRs" name="1">
+            <el-collapse-item name="1">
+                <template #title>
+                    Launcher PRs
+                    <el-input class="pr_search_input" v-model="launcherSearch" placeholder="Filter pull requests" @click.stop="() =>  false"></el-input>
+                </template>
+
                 <p v-if="pull_requests_launcher.length === 0">
                     <el-progress
                         :show-text="false"
@@ -22,7 +27,11 @@
                 </el-card>
             </el-collapse-item>
 
-            <el-collapse-item title="Mods PRs" name="2">
+            <el-collapse-item name="2">
+                <template #title>
+                    Mods PRs
+                    <el-input class="pr_search_input" v-model="modsSearch" placeholder="Filter pull requests" @click.stop="() =>  false"></el-input>
+                </template>
                 <div style="margin: 15px">
                     <el-alert title="Warning" type="warning" :closable="false" show-icon>
                         Mod PRs are installed into a separate profile. Make sure to launch via
@@ -59,6 +68,10 @@ import { PullsApiResponseElement } from '../../../src-tauri/bindings/PullsApiRes
 
 export default defineComponent({
     name: 'PullRequestsSelector',
+    data: () => ({
+        launcherSearch: '',
+        modsSearch: ''
+    }),
     computed: {
         pull_requests_launcher(): PullsApiResponseElement[] {
             return this.$store.state.pullrequests.pull_requests_launcher;
@@ -105,5 +118,14 @@ export default defineComponent({
 :deep(.el-collapse-item__header) {
     padding-left: 10px;
     font-size: 14px;
+}
+
+.el-collapse:deep(.el-collapse-item__arrow) {
+    margin: 0 8px;
+}
+
+.pr_search_input {
+    width: 200px;
+    margin: 0 0 0 auto;
 }
 </style>
