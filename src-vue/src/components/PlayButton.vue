@@ -186,11 +186,13 @@ export default defineComponent({
 </template>
 
 <style scoped>
+.el-progress {
+    margin-top: 10px;
+}
 
 /* Set progress bar width */
-.el-progress {
-    width: 40vw;
-    margin-top: 10px;
+.el-progress:deep(.el-progress-bar) {
+    width: 200px;
 }
 
 .hide-progress {
