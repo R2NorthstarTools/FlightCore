@@ -17,7 +17,7 @@
                         style="margin: 15px"
                     />
                 </p>
-                <el-card v-else shadow="hover" v-for="pull_request in pull_requests_launcher"
+                <el-card v-else shadow="hover" v-for="pull_request in filtered_launcher_pull_requests"
                     v-bind:key="pull_request.url">
                     <el-button type="primary" @click="installLauncherPR(pull_request)">Install</el-button>
                     <el-button type="primary" @click="downloadLauncherPR(pull_request)">Download</el-button>
@@ -49,7 +49,7 @@
                         style="margin: 15px"
                     />
                 </p>
-                <el-card v-else shadow="hover" v-for="pull_request in pull_requests_mods" v-bind:key="pull_request.url">
+                <el-card v-else shadow="hover" v-for="pull_request in filtered_mods_pull_requests" v-bind:key="pull_request.url">
                     <el-button type="primary" @click="installModsPR(pull_request)">Install</el-button>
                     <el-button type="primary" @click="downloadModsPR(pull_request)">Download</el-button>
                     <a target="_blank" :href="pull_request.html_url">
@@ -78,6 +78,29 @@ export default defineComponent({
         },
         pull_requests_mods(): PullsApiResponseElement[] {
             return this.$store.state.pullrequests.pull_requests_mods;
+        },
+
+        filtered_launcher_pull_requests(): PullsApiResponseElement[] {
+            if (this.launcherSearch.length === 0) {
+                return this.pull_requests_launcher;
+            }
+
+            return this.pull_requests_launcher.filter(pr =>
+                // Check PR id
+                pr.number.toString().indexOf(this.launcherSearch) !== -1
+                // Check PR title
+                || pr.title.indexOf(this.launcherSearch) !== -1);
+        },
+        filtered_mods_pull_requests(): PullsApiResponseElement[] {
+            if (this.modsSearch.length === 0) {
+                return this.pull_requests_mods;
+            }
+
+            return this.pull_requests_mods.filter(pr =>
+                // Check PR id
+                pr.number.toString().indexOf(this.modsSearch) !== -1
+                // Check PR title
+                || pr.title.indexOf(this.modsSearch) !== -1);
         },
     },
     methods: {
