@@ -38,7 +38,7 @@ import { invoke } from '@tauri-apps/api';
 import { defineComponent } from 'vue';
 import { GameInstall } from '../../utils/GameInstall';
 import { NorthstarMod } from "../../../../src-tauri/bindings/NorthstarMod";
-import {showErrorNotification, showNotification} from '../../utils/ui';
+import { showErrorNotification, showNotification } from '../../utils/ui';
 
 export default defineComponent({
     name: 'LocalModsView',
