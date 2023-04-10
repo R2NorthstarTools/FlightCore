@@ -60,8 +60,8 @@ struct ArtifactsResponse {
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
 #[ts(export)]
 pub enum PullRequestType {
-    MODS,
-    LAUNCHER,
+    Mods,
+    Launcher,
 }
 
 /// Parse pull requests from specified URL
@@ -85,8 +85,8 @@ pub async fn get_pull_requests_wrapper(
     install_type: PullRequestType,
 ) -> Result<Vec<PullsApiResponseElement>, String> {
     let api_pr_url = match install_type {
-        PullRequestType::MODS => PULLS_API_ENDPOINT_MODS,
-        PullRequestType::LAUNCHER => PULLS_API_ENDPOINT_LAUNCHER,
+        PullRequestType::Mods => PULLS_API_ENDPOINT_MODS,
+        PullRequestType::Launcher => PULLS_API_ENDPOINT_LAUNCHER,
     };
 
     get_pull_requests(api_pr_url.to_string()).await

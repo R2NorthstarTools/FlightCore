@@ -1,6 +1,4 @@
-use std::cell::RefCell;
-use std::env;
-use std::time::{Duration, Instant};
+use std::{cell::RefCell, env, fs, path::Path, time::Duration, time::Instant};
 
 use anyhow::{anyhow, Context, Result};
 
@@ -16,10 +14,13 @@ use platform_specific::linux;
 
 use serde::{Deserialize, Serialize};
 use sysinfo::SystemExt;
+use tokio::time::sleep;
 use ts_rs::TS;
 use zip::ZipArchive;
 
 use northstar::get_northstar_version_number;
+
+use crate::constants::TITANFALL2_STEAM_ID;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum InstallType {
@@ -110,7 +111,7 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
     // Attempt parsing Steam library directly
     match steamlocate::SteamDir::locate() {
         Some(mut steamdir) => {
-            let titanfall2_steamid = 1237970;
+            let titanfall2_steamid = TITANFALL2_STEAM_ID.parse().unwrap();
             match steamdir.app(&titanfall2_steamid) {
                 Some(app) => {
                     // println!("{:#?}", app);
@@ -398,6 +399,93 @@ pub fn launch_northstar(
     ))
 }
 
+/// Prepare Northstar and Launch through Steam using the Browser Protocol
+pub fn launch_northstar_steam(
+    game_install: GameInstall,
+    _bypass_checks: Option<bool>,
+) -> Result<String, String> {
+    if !matches!(game_install.install_type, InstallType::STEAM) {
+        return Err("Titanfall2 was not installed via Steam".to_string());
+    }
+
+    match steamlocate::SteamDir::locate() {
+        Some(mut steamdir) => {
+            if get_host_os() != "windows" {
+                let titanfall2_steamid: u32 = TITANFALL2_STEAM_ID.parse().unwrap();
+                match steamdir.compat_tool(&titanfall2_steamid) {
+                    Some(compat) => {
+                        if !compat
+                            .name
+                            .clone()
+                            .unwrap()
+                            .to_ascii_lowercase()
+                            .contains("northstarproton")
+                        {
+                            return Err(
+                                "Titanfall2 was not configured to use NorthstarProton".to_string()
+                            );
+                        }
+                    }
+                    None => {
+                        return Err(
+                            "Titanfall2 was not configured to use a compatibility tool".to_string()
+                        );
+                    }
+                }
+            }
+        }
+        None => {
+            return Err("Couldn't access Titanfall2 directory".to_string());
+        }
+    }
+
+    // Switch to Titanfall2 directory to set everything up
+    if std::env::set_current_dir(game_install.game_path).is_err() {
+        // We failed to get to Titanfall2 directory
+        return Err("Couldn't access Titanfall2 directory".to_string());
+    }
+
+    let run_northstar = "run_northstar.txt";
+    let run_northstar_bak = "run_northstar.txt.bak";
+
+    if Path::new(run_northstar).exists() {
+        // rename should ovewrite existing files
+        fs::rename(run_northstar, run_northstar_bak).unwrap();
+    }
+
+    // Passing arguments gives users a prompt, so we use run_northstar.txt
+    fs::write(run_northstar, b"1").unwrap();
+
+    let retval = match open::that(format!("steam://run/{}/", TITANFALL2_STEAM_ID)) {
+        Ok(()) => Ok("Started game".to_string()),
+        Err(_err) => Err("Failed to launch Titanfall 2 via Steam".to_string()),
+    };
+
+    let is_err = retval.is_err();
+
+    // Handle the rest in the backround
+    tauri::async_runtime::spawn(async move {
+        // Starting the EA app and Titanfall might take a good minute or three
+        let mut wait_countdown = 60 * 3;
+        while wait_countdown > 0 && !check_northstar_running() && !is_err {
+            sleep(Duration::from_millis(1000)).await;
+            wait_countdown -= 1;
+        }
+
+        // Northstar may be running, but it may not have loaded the file yet
+        sleep(Duration::from_millis(2000)).await;
+
+        // intentionally ignore Result
+        let _ = fs::remove_file(run_northstar);
+
+        if Path::new(run_northstar_bak).exists() {
+            fs::rename(run_northstar_bak, run_northstar).unwrap();
+        }
+    });
+
+    retval
+}
+
 pub fn check_origin_running() -> bool {
     let s = sysinfo::System::new_all();
     s.processes_by_name("Origin.exe").next().is_some()
@@ -406,10 +494,11 @@ pub fn check_origin_running() -> bool {
 
 /// Checks if Northstar process is running
 pub fn check_northstar_running() -> bool {
-    sysinfo::System::new_all()
-        .processes_by_name("NorthstarLauncher.exe")
+    let s = sysinfo::System::new_all();
+    s.processes_by_name("NorthstarLauncher.exe")
         .next()
         .is_some()
+        || s.processes_by_name("Titanfall2.exe").next().is_some()
 }
 
 /// Helps with converting release candidate numbers which are different on Thunderstore

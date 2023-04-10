@@ -71,10 +71,10 @@ export default defineComponent({
         onChange(e: Object) {
             const openedCollapseNames = Object.values(e);
             if (openedCollapseNames.includes('1') && this.pull_requests_launcher.length === 0) {
-                this.getPullRequests('LAUNCHER');
+                this.getPullRequests('Launcher');
             }
             if (openedCollapseNames.includes('2') && this.pull_requests_mods.length === 0) {
-                this.getPullRequests('MODS');
+                this.getPullRequests('Mods');
             }
         },
         async getPullRequests(pull_request_type: PullRequestType) {

@@ -121,6 +121,7 @@ fn main() {
             install_northstar_caller,
             update_northstar_caller,
             launch_northstar_caller,
+            launch_northstar_steam_caller,
             check_is_flightcore_outdated_caller,
             get_log_list,
             verify_game_files,
@@ -323,6 +324,15 @@ async fn launch_northstar_caller(
     bypass_checks: Option<bool>,
 ) -> Result<String, String> {
     launch_northstar(game_install, bypass_checks)
+}
+
+#[tauri::command]
+/// Launches Northstar
+async fn launch_northstar_steam_caller(
+    game_install: GameInstall,
+    bypass_checks: Option<bool>,
+) -> Result<String, String> {
+    launch_northstar_steam(game_install, bypass_checks)
 }
 
 #[tauri::command]
