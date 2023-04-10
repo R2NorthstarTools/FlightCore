@@ -89,7 +89,7 @@ export default defineComponent({
 
             let install_northstar_result = invoke("install_northstar_caller", { gamePath: game_install.game_path, northstarPackageName: ReleaseCanal.RELEASE });
 
-            const unlistenProgress = await appWindow.listen<InstallProgress>(
+            appWindow.listen<InstallProgress>(
                 'northstar-install-download-progress',
                 ({ event, payload }) => {
                     let typed_payload = payload;
