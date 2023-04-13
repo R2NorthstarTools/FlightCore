@@ -17,14 +17,21 @@
                         style="margin: 15px"
                     />
                 </p>
-                <el-card v-else shadow="hover" v-for="pull_request in filtered_launcher_pull_requests"
-                    v-bind:key="pull_request.url">
+                <el-card
+                    v-else-if="filtered_launcher_pull_requests.length !== 0"
+                    shadow="hover"
+                    v-for="pull_request in filtered_launcher_pull_requests"
+                    v-bind:key="pull_request.url"
+                >
                     <el-button type="primary" @click="installLauncherPR(pull_request)">Install</el-button>
                     <el-button type="primary" @click="downloadLauncherPR(pull_request)">Download</el-button>
                     <a target="_blank" :href="pull_request.html_url">
                         {{ pull_request.number }}: {{ pull_request.title }}
                     </a>
                 </el-card>
+                <div v-else class="no_matching_pr">
+                    No matching PR found.
+                </div>
             </el-collapse-item>
 
             <el-collapse-item name="2">
@@ -49,13 +56,21 @@
                         style="margin: 15px"
                     />
                 </p>
-                <el-card v-else shadow="hover" v-for="pull_request in filtered_mods_pull_requests" v-bind:key="pull_request.url">
+                <el-card
+                    v-else-if="filtered_mods_pull_requests.length !== 0"
+                    shadow="hover"
+                    v-for="pull_request in filtered_mods_pull_requests"
+                    v-bind:key="pull_request.url"
+                >
                     <el-button type="primary" @click="installModsPR(pull_request)">Install</el-button>
                     <el-button type="primary" @click="downloadModsPR(pull_request)">Download</el-button>
                     <a target="_blank" :href="pull_request.html_url">
                         {{ pull_request.number }}: {{ pull_request.title }}
                     </a>
                 </el-card>
+                <div v-else class="no_matching_pr">
+                    No matching PR found.
+                </div>
             </el-collapse-item>
         </el-collapse>
     </div>
@@ -150,5 +165,10 @@ export default defineComponent({
 .pr_search_input {
     width: 200px;
     margin: 0 0 0 auto;
+}
+
+.no_matching_pr {
+    margin: 0 auto;
+    width: max-content;
 }
 </style>
