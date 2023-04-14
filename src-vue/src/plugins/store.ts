@@ -365,13 +365,16 @@ export const store = createStore<FlightCoreStore>({
  * It invokes all Rust methods that are needed to initialize UI.
  */
 async function _initializeApp(state: any) {
-    console.log("Dev mode:", await persistentStore.get('dev_mode'));
+    // Display dev view if dev mode was previously enabled or if debug mode is active.
+    // Menu style is only modified on debug mode.
+    const devModeEnabled: boolean = await persistentStore.get('dev_mode') ?? false;
+    const debugModeEnabled: boolean = await invoke("is_debug_mode");
+    if (devModeEnabled || debugModeEnabled) {
+        store.commit('toggleDeveloperMode', debugModeEnabled);
+    }
 
-    // Enable dev mode directly if application is in debug mode
-    if (await invoke("is_debug_mode")) {
-        store.commit('toggleDeveloperMode', true);
-    } else {
-        // Disable context menu in release build.
+    // Disable context menu in release build.
+    if (!debugModeEnabled) {
         document.addEventListener('contextmenu', event => event.preventDefault());
     }
 
