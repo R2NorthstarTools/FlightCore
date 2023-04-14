@@ -88,7 +88,7 @@ export const store = createStore<FlightCoreStore>({
         checkNorthstarUpdates(state) {
             _get_northstar_version_number(state);
         },
-        toggleDeveloperMode(state, affectMenuStyle = false) {
+        async toggleDeveloperMode(state, affectMenuStyle = false) {
             state.developer_mode = !state.developer_mode;
 
             // Reset tab when closing dev mode.
@@ -100,6 +100,10 @@ export const store = createStore<FlightCoreStore>({
             if (affectMenuStyle && menu_bar_handle !== null) {
                 menu_bar_handle.classList.toggle('developer_build');
             }
+
+            // Save dev mode state in persistent store
+            await persistentStore.set('dev_mode', state.developer_mode);
+            await persistentStore.save();
         },
         initialize(state) {
             _initializeApp(state);
@@ -361,6 +365,8 @@ export const store = createStore<FlightCoreStore>({
  * It invokes all Rust methods that are needed to initialize UI.
  */
 async function _initializeApp(state: any) {
+    console.log("Dev mode:", await persistentStore.get('dev_mode'));
+
     // Enable dev mode directly if application is in debug mode
     if (await invoke("is_debug_mode")) {
         store.commit('toggleDeveloperMode', true);
