@@ -54,9 +54,9 @@ pub struct ModJson {
 }
 
 /// Gets all currently installed and enabled/disabled mods to rebuild `enabledmods.json`
-pub fn rebuild_enabled_mods_json(game_install: GameInstall) -> Result<(), String> {
+pub fn rebuild_enabled_mods_json(game_install: &GameInstall) -> Result<(), String> {
     let enabledmods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
-    let mods_and_properties = get_installed_mods_and_properties(game_install)?;
+    let mods_and_properties = get_installed_mods_and_properties(game_install.clone())?;
 
     // Create new mapping
     let mut my_map = serde_json::Map::new();
@@ -89,16 +89,16 @@ pub fn set_mod_enabled_status(
     let enabledmods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
 
     // Parse JSON
-    let mut res: serde_json::Value = match get_enabled_mods(game_install.clone()) {
+    let mut res: serde_json::Value = match get_enabled_mods(&game_install) {
         Ok(res) => res,
         Err(err) => {
             log::warn!("Couldn't parse `enabledmod.json`: {}", err);
             log::warn!("Rebuilding file.");
 
-            rebuild_enabled_mods_json(game_install.clone())?;
+            rebuild_enabled_mods_json(&game_install)?;
 
             // Then try again
-            get_enabled_mods(game_install.clone())?
+            get_enabled_mods(&game_install)?
         }
     };
 
@@ -106,10 +106,10 @@ pub fn set_mod_enabled_status(
     if res.get(mod_name.clone()).is_none() {
         // If it doesn't exist, rebuild `enabledmod.json`
         log::info!("Value not found in `enabledmod.json`. Rebuilding file");
-        rebuild_enabled_mods_json(game_install.clone())?;
+        rebuild_enabled_mods_json(&game_install)?;
 
         // Then try again
-        res = get_enabled_mods(game_install)?;
+        res = get_enabled_mods(&game_install)?;
     }
 
     // Update value
@@ -126,7 +126,7 @@ pub fn set_mod_enabled_status(
 }
 
 /// Parses `manifest.json` for Thunderstore mod string
-fn parse_for_thunderstore_mod_string(nsmod_path: String) -> Result<String, anyhow::Error> {
+fn parse_for_thunderstore_mod_string(nsmod_path: &str) -> Result<String, anyhow::Error> {
     let manifest_json_path = format!("{}/manifest.json", nsmod_path);
     let ts_author_txt_path = format!("{}/thunderstore_author.txt", nsmod_path);
 
@@ -149,7 +149,7 @@ fn parse_for_thunderstore_mod_string(nsmod_path: String) -> Result<String, anyho
 }
 
 /// Parse `mods` folder for installed mods.
-fn parse_installed_mods(game_install: GameInstall) -> Result<Vec<NorthstarMod>, anyhow::Error> {
+fn parse_installed_mods(game_install: &GameInstall) -> Result<Vec<NorthstarMod>, anyhow::Error> {
     let ns_mods_folder = format!("{}/R2Northstar/mods/", game_install.game_path);
 
     let paths = match std::fs::read_dir(ns_mods_folder) {
@@ -195,7 +195,7 @@ fn parse_installed_mods(game_install: GameInstall) -> Result<Vec<NorthstarMod>, 
             // Attempt legacy method for getting Thunderstore string first
             Some(ts_mod_string) => Some(ts_mod_string),
             // Legacy method failed
-            None => match parse_for_thunderstore_mod_string(directory_str) {
+            None => match parse_for_thunderstore_mod_string(&directory_str) {
                 Ok(thunderstore_mod_string) => Some(thunderstore_mod_string),
                 Err(_err) => None,
             },
@@ -226,13 +226,13 @@ pub fn get_installed_mods_and_properties(
     game_install: GameInstall,
 ) -> Result<Vec<NorthstarMod>, String> {
     // Get actually installed mods
-    let found_installed_mods = match parse_installed_mods(game_install.clone()) {
+    let found_installed_mods = match parse_installed_mods(&game_install) {
         Ok(res) => res,
         Err(err) => return Err(err.to_string()),
     };
 
     // Get enabled mods as JSON
-    let enabled_mods: serde_json::Value = match get_enabled_mods(game_install) {
+    let enabled_mods: serde_json::Value = match get_enabled_mods(&game_install) {
         Ok(enabled_mods) => enabled_mods,
         Err(_) => serde_json::from_str("{}").unwrap(), // `enabledmods.json` not found, create empty object
     };
@@ -253,7 +253,7 @@ pub fn get_installed_mods_and_properties(
     Ok(installed_mods)
 }
 
-async fn get_ns_mod_download_url(thunderstore_mod_string: String) -> Result<String, String> {
+async fn get_ns_mod_download_url(thunderstore_mod_string: &str) -> Result<String, String> {
     // TODO: This will crash the thread if not internet connection exist. `match` should be used instead
     let index = thermite::api::get_package_index().unwrap().to_vec();
 
@@ -285,10 +285,8 @@ async fn get_ns_mod_download_url(thunderstore_mod_string: String) -> Result<Stri
 }
 
 /// Returns a vector of modstrings containing the dependencies of a given mod
-async fn get_mod_dependencies(
-    thunderstore_mod_string: String,
-) -> Result<Vec<String>, anyhow::Error> {
-    dbg!(thunderstore_mod_string.clone());
+async fn get_mod_dependencies(thunderstore_mod_string: &str) -> Result<Vec<String>, anyhow::Error> {
+    dbg!(thunderstore_mod_string);
 
     // TODO: This will crash the thread if not internet connection exist. `match` should be used instead
     let index = thermite::api::get_package_index().unwrap().to_vec();
@@ -314,8 +312,8 @@ async fn get_mod_dependencies(
 /// Download and install mod to the specified target.
 #[async_recursion]
 pub async fn fc_download_mod_and_install(
-    game_install: GameInstall,
-    thunderstore_mod_string: String,
+    game_install: &GameInstall,
+    thunderstore_mod_string: &str,
 ) -> Result<(), String> {
     // Get mods and download directories
     let download_directory = format!(
@@ -329,7 +327,7 @@ pub async fn fc_download_mod_and_install(
         return Err("Passed empty string".to_string());
     }
 
-    let deps = match get_mod_dependencies(thunderstore_mod_string.clone()).await {
+    let deps = match get_mod_dependencies(thunderstore_mod_string).await {
         Ok(deps) => deps,
         Err(err) => return Err(err.to_string()),
     };
@@ -337,7 +335,7 @@ pub async fn fc_download_mod_and_install(
 
     // Recursively install dependencies
     for dep in deps {
-        match fc_download_mod_and_install(game_install.clone(), dep).await {
+        match fc_download_mod_and_install(game_install, &dep).await {
             Ok(()) => (),
             Err(err) => {
                 if err == "Cannot install Northstar as a mod!" {
@@ -358,7 +356,7 @@ pub async fn fc_download_mod_and_install(
     }
 
     // Get download URL for the specified mod
-    let download_url = get_ns_mod_download_url(thunderstore_mod_string.clone()).await?;
+    let download_url = get_ns_mod_download_url(thunderstore_mod_string).await?;
 
     // Create download directory
     match std::fs::create_dir_all(download_directory.clone()) {
@@ -366,10 +364,9 @@ pub async fn fc_download_mod_and_install(
         Err(err) => return Err(err.to_string()),
     };
 
-    let name = thunderstore_mod_string.clone();
     let path = format!(
-        "{}/___flightcore-temp-download-dir/{}.zip",
-        game_install.game_path, name
+        "{}/___flightcore-temp-download-dir/{thunderstore_mod_string}.zip",
+        game_install.game_path
     );
 
     // Download the mod
@@ -394,7 +391,7 @@ pub async fn fc_download_mod_and_install(
 }
 
 /// Deletes a given Northstar mod folder
-fn delete_mod_folder(ns_mod_directory: String) -> Result<(), String> {
+fn delete_mod_folder(ns_mod_directory: &str) -> Result<(), String> {
     let ns_mod_dir_path = std::path::Path::new(&ns_mod_directory);
 
     // Safety check: Check whether `mod.json` exists and exit early if not
@@ -405,7 +402,7 @@ fn delete_mod_folder(ns_mod_directory: String) -> Result<(), String> {
         return Err(format!("mod.json does not exist in {}", ns_mod_directory));
     }
 
-    match std::fs::remove_dir_all(&ns_mod_directory) {
+    match std::fs::remove_dir_all(ns_mod_directory) {
         Ok(()) => Ok(()),
         Err(err) => Err(format!("Failed deleting mod: {err}")),
     }
@@ -429,7 +426,7 @@ pub fn delete_northstar_mod(game_install: GameInstall, nsmod_name: String) -> Re
         // Installed mod matches specified mod
         if installed_ns_mod.name == nsmod_name {
             // Delete folder
-            return delete_mod_folder(installed_ns_mod.directory);
+            return delete_mod_folder(&installed_ns_mod.directory);
         }
     }
 
@@ -488,7 +485,7 @@ pub fn delete_thunderstore_mod(
 
     // Delete given folders
     for mod_folder in mod_folders_to_remove {
-        delete_mod_folder(mod_folder)?;
+        delete_mod_folder(&mod_folder)?;
     }
 
     Ok(())

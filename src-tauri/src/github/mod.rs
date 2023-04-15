@@ -86,7 +86,7 @@ pub fn compare_tags(first_tag: Tag, second_tag: Tag) -> Result<String, String> {
         repo, first_tag.name, second_tag.name
     );
 
-    let comparison: Comparison = client.get(&comparison_url).send().unwrap().json().unwrap();
+    let comparison: Comparison = client.get(comparison_url).send().unwrap().json().unwrap();
     let commits = comparison.commits;
 
     // Display the list of commits.

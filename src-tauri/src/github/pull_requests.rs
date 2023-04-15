@@ -259,7 +259,7 @@ pub async fn apply_launcher_pr(
     for file_name in files_to_copy {
         let source_file_path = format!("{}/{}", extract_directory, file_name);
         let destination_file_path = format!("{}/{}", game_install_path, file_name);
-        match std::fs::copy(&source_file_path, &destination_file_path) {
+        match std::fs::copy(source_file_path, destination_file_path) {
             Ok(_result) => (),
             Err(err) => {
                 return Err(format!(

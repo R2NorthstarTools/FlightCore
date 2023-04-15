@@ -202,7 +202,7 @@ async fn get_flightcore_version_number() -> String {
 
 #[tauri::command]
 async fn get_northstar_version_number_caller(game_path: String) -> Result<String, String> {
-    match get_northstar_version_number(game_path) {
+    match get_northstar_version_number(&game_path) {
         Ok(version_number) => Ok(version_number),
         Err(err) => Err(err.to_string()),
     }
@@ -234,7 +234,7 @@ async fn check_is_northstar_outdated(
         .expect("Couldn't find Northstar on thunderstore???");
     // .ok_or_else(|| anyhow!("Couldn't find Northstar on thunderstore???"))?;
 
-    let version_number = match get_northstar_version_number(game_path) {
+    let version_number = match get_northstar_version_number(&game_path) {
         Ok(version_number) => version_number,
         Err(err) => {
             log::warn!("{}", err);
@@ -323,7 +323,7 @@ async fn launch_northstar_caller(
     game_install: GameInstall,
     bypass_checks: Option<bool>,
 ) -> Result<String, String> {
-    launch_northstar(game_install, bypass_checks)
+    launch_northstar(&game_install, bypass_checks)
 }
 
 #[tauri::command]
@@ -332,7 +332,7 @@ async fn launch_northstar_steam_caller(
     game_install: GameInstall,
     bypass_checks: Option<bool>,
 ) -> Result<String, String> {
-    launch_northstar_steam(game_install, bypass_checks)
+    launch_northstar_steam(&game_install, bypass_checks)
 }
 
 #[tauri::command]
@@ -341,8 +341,8 @@ async fn install_mod_caller(
     game_install: GameInstall,
     thunderstore_mod_string: String,
 ) -> Result<(), String> {
-    fc_download_mod_and_install(game_install.clone(), thunderstore_mod_string).await?;
-    match clean_up_download_folder(game_install, false) {
+    fc_download_mod_and_install(&game_install, &thunderstore_mod_string).await?;
+    match clean_up_download_folder(&game_install, false) {
         Ok(()) => Ok(()),
         Err(err) => {
             log::info!("Failed to delete download folder due to {}", err);
@@ -359,7 +359,7 @@ async fn clean_up_download_folder_caller(
     game_install: GameInstall,
     force: bool,
 ) -> Result<(), String> {
-    match clean_up_download_folder(game_install, force) {
+    match clean_up_download_folder(&game_install, force) {
         Ok(()) => Ok(()),
         Err(err) => Err(err.to_string()),
     }

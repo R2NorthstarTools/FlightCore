@@ -5,24 +5,23 @@ use crate::{check_mod_version_number, constants::CORE_MODS};
 use anyhow::anyhow;
 
 /// Returns the current Northstar version number as a string
-pub fn get_northstar_version_number(game_path: String) -> Result<String, anyhow::Error> {
+pub fn get_northstar_version_number(game_path: &str) -> Result<String, anyhow::Error> {
     log::info!("{}", game_path);
 
     // TODO:
     // Check if NorthstarLauncher.exe exists and check its version number
     let profile_folder = "R2Northstar";
-    let initial_version_number = match check_mod_version_number(format!(
-        "{}/{}/mods/{}",
-        game_path, profile_folder, CORE_MODS[0]
+    let initial_version_number = match check_mod_version_number(&format!(
+        "{game_path}/{profile_folder}/mods/{}",
+        CORE_MODS[0]
     )) {
         Ok(version_number) => version_number,
         Err(err) => return Err(err),
     };
 
     for core_mod in CORE_MODS {
-        let current_version_number = match check_mod_version_number(format!(
-            "{}/{}/mods/{}",
-            game_path, profile_folder, core_mod
+        let current_version_number = match check_mod_version_number(&format!(
+            "{game_path}/{profile_folder}/mods/{core_mod}",
         )) {
             Ok(version_number) => version_number,
             Err(err) => return Err(err),
