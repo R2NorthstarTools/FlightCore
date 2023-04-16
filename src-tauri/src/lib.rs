@@ -69,7 +69,7 @@ struct InstallProgress {
 }
 
 /// Check version number of a mod
-pub fn check_mod_version_number(path_to_mod_folder: String) -> Result<String, anyhow::Error> {
+pub fn check_mod_version_number(path_to_mod_folder: &str) -> Result<String, anyhow::Error> {
     // println!("{}", format!("{}/mod.json", path_to_mod_folder));
     let data = std::fs::read_to_string(format!("{path_to_mod_folder}/mod.json"))?;
     let parsed_json: serde_json::Value = serde_json::from_str(&data)?;
@@ -333,7 +333,7 @@ pub fn get_host_os() -> String {
 }
 
 pub fn launch_northstar(
-    game_install: GameInstall,
+    game_install: &GameInstall,
     bypass_checks: Option<bool>,
 ) -> Result<String, String> {
     dbg!(game_install.clone());
@@ -358,7 +358,7 @@ pub fn launch_northstar(
     // Only check guards if bypassing checks is not enabled
     if !bypass_checks {
         // Some safety checks before, should have more in the future
-        if get_northstar_version_number(game_install.game_path.clone()).is_err() {
+        if get_northstar_version_number(&game_install.game_path).is_err() {
             return Err(anyhow!("Not all checks were met").to_string());
         }
 
@@ -401,7 +401,7 @@ pub fn launch_northstar(
 
 /// Prepare Northstar and Launch through Steam using the Browser Protocol
 pub fn launch_northstar_steam(
-    game_install: GameInstall,
+    game_install: &GameInstall,
     _bypass_checks: Option<bool>,
 ) -> Result<String, String> {
     if !matches!(game_install.install_type, InstallType::STEAM) {
@@ -440,7 +440,7 @@ pub fn launch_northstar_steam(
     }
 
     // Switch to Titanfall2 directory to set everything up
-    if std::env::set_current_dir(game_install.game_path).is_err() {
+    if std::env::set_current_dir(game_install.game_path.clone()).is_err() {
         // We failed to get to Titanfall2 directory
         return Err("Couldn't access Titanfall2 directory".to_string());
     }
@@ -488,17 +488,20 @@ pub fn launch_northstar_steam(
 
 pub fn check_origin_running() -> bool {
     let s = sysinfo::System::new_all();
-    s.processes_by_name("Origin.exe").next().is_some()
-        || s.processes_by_name("EADesktop.exe").next().is_some()
+    let x = s.processes_by_name("Origin.exe").next().is_some()
+        || s.processes_by_name("EADesktop.exe").next().is_some();
+    x
 }
 
 /// Checks if Northstar process is running
 pub fn check_northstar_running() -> bool {
     let s = sysinfo::System::new_all();
-    s.processes_by_name("NorthstarLauncher.exe")
+    let x = s
+        .processes_by_name("NorthstarLauncher.exe")
         .next()
         .is_some()
-        || s.processes_by_name("Titanfall2.exe").next().is_some()
+        || s.processes_by_name("Titanfall2.exe").next().is_some();
+    x
 }
 
 /// Helps with converting release candidate numbers which are different on Thunderstore
@@ -511,7 +514,7 @@ pub fn convert_release_candidate_number(version_number: String) -> String {
 }
 
 /// Returns a serde json object of the parsed `enabledmods.json` file
-pub fn get_enabled_mods(game_install: GameInstall) -> Result<serde_json::value::Value, String> {
+pub fn get_enabled_mods(game_install: &GameInstall) -> Result<serde_json::value::Value, String> {
     let enabledmods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
 
     // Check for JSON file
