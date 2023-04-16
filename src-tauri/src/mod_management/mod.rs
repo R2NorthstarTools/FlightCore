@@ -480,7 +480,7 @@ pub fn delete_thunderstore_mod(
         }
     }
 
-    if !mod_folders_to_remove.is_empty() {
+    if mod_folders_to_remove.is_empty() {
         return Err(format!(
             "No mods removed as no Northstar mods matching {thunderstore_mod_string} were found to be installed."
         ));
