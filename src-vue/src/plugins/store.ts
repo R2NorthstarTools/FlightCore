@@ -366,8 +366,7 @@ export const store = createStore<FlightCoreStore>({
  * It invokes all Rust methods that are needed to initialize UI.
  */
 async function _initializeApp(state: any) {
-    // Display dev view if dev mode was previously enabled or if debug mode is active.
-    // Menu style is only modified on debug mode.
+    // Display dev view if dev mode was previously enabled.
     const devModeEnabled: boolean = await persistentStore.get('dev_mode') ?? false;
     const debugModeEnabled: boolean = await invoke("is_debug_mode");
     if (devModeEnabled) {
