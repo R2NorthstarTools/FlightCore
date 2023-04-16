@@ -97,6 +97,7 @@ dependencies = [
  "json5",
  "libthermite",
  "log",
+ "once_cell",
  "open",
  "pretty_env_logger",
  "regex",

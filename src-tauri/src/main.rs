@@ -34,6 +34,9 @@ use mod_management::{
     get_installed_mods_and_properties, set_mod_enabled_status,
 };
 
+mod plugin_management;
+use plugin_management::toggle_plugin_install;
+
 mod northstar;
 use northstar::get_northstar_version_number;
 
@@ -146,6 +149,7 @@ fn main() {
             apply_mods_pr,
             get_launcher_download_link,
             close_application,
+            toggle_plugin_install,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

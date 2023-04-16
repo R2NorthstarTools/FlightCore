@@ -47,6 +47,14 @@
                 Panic button
             </el-button>
 
+            <h3>Installing Plugins:</h3>
+
+            <el-button type="primary" @click="togglePluginsInstall">
+                Plugin Install Toggle
+            </el-button>
+
+            <span>plugin_install_state</span>
+
             <h3>Linux:</h3>
 
             <el-button type="primary" @click="checkLinuxCompatibility">
@@ -104,6 +112,7 @@ export default defineComponent({
             first_tag: { label: '', value: {name: ''} },
             second_tag: { label: '', value: {name: ''} },
             ns_release_tags: [] as TagWrapper[],
+            plugin_install_state : "Disabled",
         }
     },
     computed: {
@@ -131,6 +140,12 @@ export default defineComponent({
         async crashApplication() {
             await invoke("force_panic");
             showErrorNotification("Never should have been able to get here!");
+        },
+        async togglePluginsInstall() {
+            await invoke("toggle_plugin_install")
+                .then((state) => {
+                    this.plugin_install_state = state ? "Enabled" : "Disabled";
+                })
         },
         async checkLinuxCompatibility() {
             await invoke("linux_checks")

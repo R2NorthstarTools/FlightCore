@@ -8,9 +8,12 @@ use app::NorthstarMod;
 use serde::{Deserialize, Serialize};
 use std::io::Read;
 use std::path::PathBuf;
+use thermite::prelude::ThermiteError;
 
 use app::get_enabled_mods;
 use app::GameInstall;
+
+use crate::plugin_management::install_plugin;
 
 #[derive(Debug, Clone)]
 struct ParsedThunderstoreModString {
@@ -370,24 +373,40 @@ pub async fn fc_download_mod_and_install(
     );
 
     // Download the mod
-    let f = match thermite::core::manage::download_file(download_url, path.clone()) {
-        Ok(f) => f,
-        Err(e) => return Err(e.to_string()),
-    };
+    let f = thermite::core::manage::download_file(download_url, path.clone())
+        .map_err(|err| err.to_string())?;
 
     // Get Thunderstore mod author
     let author = thunderstore_mod_string.split('-').next().unwrap();
 
     // Extract the mod to the mods directory
-    match thermite::core::manage::install_mod(author, &f, std::path::Path::new(&mods_directory)) {
-        Ok(()) => (),
-        Err(err) => return Err(err.to_string()),
+    let result_mod = match thermite::core::manage::install_mod(
+        author,
+        &f,
+        std::path::Path::new(&mods_directory),
+    ) {
+        Ok(()) => Ok(()),
+        err if matches!(err, Err(ThermiteError::PrefixError(_))) => err, // probably happens when there is not mod folder found
+        Err(err) => Err(err.to_string())?,
+    };
+
+    // Injected plugin install
+    let result_plugin = match install_plugin(game_install, &f).await {
+        err if matches!(err, Err(ThermiteError::MissingFile(_))) => err,
+        Err(err) => Err(err.to_string())?,
+        r => r,
     };
 
     // Delete downloaded zip file
     std::fs::remove_file(path).unwrap();
 
-    Ok(())
+    // Because of the match expression only errors that can indicate missing mod/plugins folder
+    // we can check say that it worked if the plugin install worked
+    if result_plugin.is_ok() {
+        Ok(())
+    } else {
+        result_mod.map_err(|e| e.to_string())
+    }
 }
 
 /// Deletes a given Northstar mod folder
