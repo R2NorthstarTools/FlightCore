@@ -14,7 +14,9 @@
         "cancel": "Cancel",
         "informationShort": "Info",
         "downloading": "Downloading",
-        "extracting": "Extracting"
+        "extracting": "Extracting",
+        "done": "Done",
+        "success": "Success"
     },
 
     "play": {
@@ -112,9 +114,13 @@
                 "title": "FlightCore repair window",
                 "warning": "This window contains various functionality to repair common issues with Northstar and FlightCore.",
                 "disable_all_but_core": "Disable all but core mods",
+                "disable_all_but_core_success": "Disabled all mods but core",
                 "force_reinstall_ns": "Force reinstall Northstar",
                 "force_delete_temp_dl": "Force delete temp download folder",
-                "delete_persistent_store": "Delete FlightCore persistent store"
+                "delete_persistent_store": "Delete FlightCore persistent store",
+                "reinstall_title": "Force reinstalling Northstar",
+                "reinstall_text": "Please wait",
+                "reinstall_success": "Successfully reinstalled Northstar"
             }
         }
     },
