@@ -109,6 +109,13 @@ jobs:
         name: linux-artifacts
         path: |
           src-tauri/target/release/bundle/appimage/*
+    - name: Upload Linux AppImage
+      if: matrix.platform == 'ubuntu-22.04'
+      uses: actions/upload-artifact@v3
+      with:
+        name: linux-artifacts
+        path: |
+          src-tauri/target/release/bundle/appimage/*.AppImage
     - name: Upload Windows artifact
       if: matrix.platform == 'windows-latest'
       uses: actions/upload-artifact@v3
