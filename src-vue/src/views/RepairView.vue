@@ -56,7 +56,7 @@ export default defineComponent({
             } as GameInstall;
             await invoke("disable_all_but_core", { gameInstall: game_install })
                 .then((message) => {
-                    showNotification('Success', "Disabled all mods but core");
+                    showNotification(this.$t('generic.success'), this.$t('settings.repair.window.disable_all_but_core_success'));
                 })
                 .catch((error) => {
                     showErrorNotification(error);
@@ -70,8 +70,8 @@ export default defineComponent({
 
             // Send notification telling the user to wait for the process to finish
             const notification = showNotification(
-                'Force reinstalling Northstar',
-                'Please wait',
+                this.$t('settings.repair.window.reinstall_title'),
+                this.$t('settings.repair.window.reinstall_text'),
                 'info',
                 0
             );
@@ -90,7 +90,7 @@ export default defineComponent({
             await install_northstar_result
                 .then((message) => {
                     // Send notification
-                    showNotification('Done', `Successfully reinstalled Northstar`);
+                    showNotification(this.$t('generic.done'), this.$t('settings.repair.window.reinstall_success'));
                     this.$store.commit('checkNorthstarUpdates');
                 })
                 .catch((error) => {
@@ -109,7 +109,7 @@ export default defineComponent({
             } as GameInstall;
             await invoke("clean_up_download_folder_caller", { gameInstall: game_install, force: true }).then((message) => {
                 // Show user notification if task completed.
-                showNotification('Done', 'Done');
+                showNotification(this.$t('generic.done'), this.$t('generic.done'));
             })
                 .catch((error) => {
                     showErrorNotification(error);
