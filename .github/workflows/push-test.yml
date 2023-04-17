@@ -117,3 +117,10 @@ jobs:
         path: |
           src-tauri/target/release/bundle/msi/*
           src-tauri/target/release/app.pdb
+    - name: Additionally upload Windows installer separately
+      if: matrix.platform == 'windows-latest'
+      uses: actions/upload-artifact@v3
+      with:
+        name: windows-artifacts
+        path: |
+          src-tauri/target/release/bundle/msi/*.msi
