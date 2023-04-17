@@ -89,7 +89,13 @@ export const store = createStore<FlightCoreStore>({
         checkNorthstarUpdates(state) {
             _get_northstar_version_number(state);
         },
-        toggleDeveloperMode(state, affectMenuStyle = false) {
+        async toggleDebugMode(_state) {
+            let menu_bar_handle = document.querySelector('#fc_menu-bar');
+            if (menu_bar_handle !== null) {
+                menu_bar_handle.classList.toggle('developer_build');
+            }
+        },
+        async toggleDeveloperMode(state) {
             state.developer_mode = !state.developer_mode;
 
             // Reset tab when closing dev mode.
@@ -97,10 +103,9 @@ export const store = createStore<FlightCoreStore>({
                 store.commit('updateCurrentTab', Tabs.PLAY);
             }
 
-            let menu_bar_handle = document.querySelector('#fc_menu-bar');
-            if (affectMenuStyle && menu_bar_handle !== null) {
-                menu_bar_handle.classList.toggle('developer_build');
-            }
+            // Save dev mode state in persistent store
+            await persistentStore.set('dev_mode', state.developer_mode);
+            await persistentStore.save();
         },
         initialize(state) {
             _initializeApp(state);
@@ -337,11 +342,18 @@ export const store = createStore<FlightCoreStore>({
  * It invokes all Rust methods that are needed to initialize UI.
  */
 async function _initializeApp(state: any) {
-    // Enable dev mode directly if application is in debug mode
-    if (await invoke("is_debug_mode")) {
-        store.commit('toggleDeveloperMode', true);
-    } else {
-        // Disable context menu in release build.
+    // Display dev view if dev mode was previously enabled.
+    const devModeEnabled: boolean = await persistentStore.get('dev_mode') ?? false;
+    const debugModeEnabled: boolean = await invoke("is_debug_mode");
+    if (devModeEnabled) {
+        store.commit('toggleDeveloperMode');
+    }
+    if (debugModeEnabled) {
+        store.commit('toggleDebugMode');
+    }
+
+    // Disable context menu in release build.
+    if (!debugModeEnabled) {
         document.addEventListener('contextmenu', event => event.preventDefault());
     }
 
