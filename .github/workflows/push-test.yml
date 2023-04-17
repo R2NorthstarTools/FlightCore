@@ -113,7 +113,7 @@ jobs:
       if: matrix.platform == 'ubuntu-22.04'
       uses: actions/upload-artifact@v3
       with:
-        name: linux-artifacts
+        name: linux-appimage
         path: |
           src-tauri/target/release/bundle/appimage/*.AppImage
     - name: Upload Windows artifact
@@ -128,6 +128,6 @@ jobs:
       if: matrix.platform == 'windows-latest'
       uses: actions/upload-artifact@v3
       with:
-        name: windows-artifacts
+        name: windows-msi
         path: |
           src-tauri/target/release/bundle/msi/*.msi
