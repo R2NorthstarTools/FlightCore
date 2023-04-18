@@ -1,6 +1,6 @@
 # Dev tools
 
-![dev view screenshot](../assets/dev-view-screenshot.png)
+![dev view screenshot](assets/dev-view-screenshot.png)
 
 FlightCore features a hidden view that contains development features.
 
