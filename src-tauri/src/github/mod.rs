@@ -54,8 +54,6 @@ struct Comparison {
 /// Get a list of tags on the FlightCore repo
 #[tauri::command]
 pub fn get_list_of_tags(project: Project) -> Result<Vec<TagWrapper>, String> {
-    log::info!("{project:?}");
-
     // Set the repository name.
 
     // Create a `reqwest` client with a user agent.
@@ -89,7 +87,6 @@ pub fn get_list_of_tags(project: Project) -> Result<Vec<TagWrapper>, String> {
 /// Use GitHub API to compare two tags of the same repo against each other and get the resulting changes
 #[tauri::command]
 pub fn compare_tags(project: Project, first_tag: Tag, second_tag: Tag) -> Result<String, String> {
-    log::info!("{project:?}");
     if project == Project::Northstar {
         return compare_tags_northstar(first_tag, second_tag);
     }
