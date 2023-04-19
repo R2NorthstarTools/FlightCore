@@ -5,6 +5,15 @@
                 This page is designed for developers. Some of the buttons here can break your Northstar install if you do not know what you're doing!
             </el-alert>
 
+            <el-select v-model="selected_project" placeholder="Select">
+            <el-option
+                v-for="item in project"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+                />
+            </el-select>
+
             <el-button type="primary" @click="getTags">
                 Get tags
             </el-button>
@@ -91,6 +100,7 @@ import { GameInstall } from "../utils/GameInstall";
 import { TagWrapper } from "../../../src-tauri/bindings/TagWrapper";
 import PullRequestsSelector from "../components/PullRequestsSelector.vue";
 import { showErrorNotification, showNotification } from "../utils/ui";
+import { Project } from "../../../src-tauri/bindings/Project"
 
 export default defineComponent({
     name: "DeveloperView",
@@ -104,6 +114,17 @@ export default defineComponent({
             first_tag: { label: '', value: {name: ''} },
             second_tag: { label: '', value: {name: ''} },
             ns_release_tags: [] as TagWrapper[],
+            selected_project: "FlightCore",
+            project: [
+                {
+                    value: 'FlightCore',
+                    label: 'FlightCore',
+                },
+                {
+                    value: 'Northstar',
+                    label: 'Northstar',
+                }
+            ],
         }
     },
     computed: {
@@ -180,7 +201,7 @@ export default defineComponent({
                 });
         },
         async getTags() {
-            await invoke<TagWrapper[]>("get_list_of_tags")
+            await invoke<TagWrapper[]>("get_list_of_tags", {project: this.selected_project})
                 .then((message) => {
                     this.ns_release_tags = message;
                     showNotification("Done", "Fetched tags");

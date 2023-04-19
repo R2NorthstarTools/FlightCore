@@ -12,6 +12,13 @@ pub struct Tag {
     name: String,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
+pub enum Project {
+    FlightCore,
+    Northstar,
+}
+
 /// Wrapper type needed for frontend
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
 #[ts(export)]
@@ -38,7 +45,9 @@ struct Comparison {
 
 /// Get a list of tags on the FlightCore repo
 #[tauri::command]
-pub fn get_list_of_tags() -> Result<Vec<TagWrapper>, String> {
+pub fn get_list_of_tags(project: Project) -> Result<Vec<TagWrapper>, String> {
+    log::info!("{project:?}");
+
     // Set the repository name.
 
     // Create a `reqwest` client with a user agent.
