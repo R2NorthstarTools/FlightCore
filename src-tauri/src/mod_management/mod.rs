@@ -401,7 +401,7 @@ pub async fn fc_download_mod_and_install(
             r => r,
         }
     } else {
-        // this would never up
+        // this would never up show
         Err(ThermiteError::MiscError(String::new()))
     };
 
