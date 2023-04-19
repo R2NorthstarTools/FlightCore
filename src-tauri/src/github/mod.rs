@@ -85,7 +85,9 @@ pub fn get_list_of_tags(project: Project) -> Result<Vec<TagWrapper>, String> {
 pub fn compare_tags(project: Project, first_tag: Tag, second_tag: Tag) -> Result<String, String> {
     log::info!("{project:?}");
     if project != Project::FlightCore {
-        return Err(format!("Generating release notes not supported for Projedt \"{project:?}\""));
+        return Err(format!(
+            "Generating release notes not supported for Project \"{project:?}\""
+        ));
     }
 
     // Fetch the list of commits between the two tags.
