@@ -87,10 +87,13 @@ pub fn get_list_of_tags(project: Project) -> Result<Vec<TagWrapper>, String> {
 /// Use GitHub API to compare two tags of the same repo against each other and get the resulting changes
 #[tauri::command]
 pub fn compare_tags(project: Project, first_tag: Tag, second_tag: Tag) -> Result<String, String> {
-    if project == Project::Northstar {
-        return compare_tags_northstar(first_tag, second_tag);
+    match project {
+        Project::FlightCore => compare_tags_flightcore(first_tag, second_tag),
+        Project::Northstar => compare_tags_northstar(first_tag, second_tag),
     }
+}
 
+pub fn compare_tags_flightcore(first_tag: Tag, second_tag: Tag) -> Result<String, String> {
     // Fetch the list of commits between the two tags.
 
     // Create a `reqwest` client with a user agent.
