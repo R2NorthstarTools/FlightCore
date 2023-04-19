@@ -91,7 +91,7 @@ pub fn get_list_of_tags(project: Project) -> Result<Vec<TagWrapper>, String> {
 pub fn compare_tags(project: Project, first_tag: Tag, second_tag: Tag) -> Result<String, String> {
     log::info!("{project:?}");
     if project == Project::Northstar {
-        return compare_tags_northstar(first_tag.name, second_tag.name);
+        return compare_tags_northstar(first_tag, second_tag);
     }
 
     // Fetch the list of commits between the two tags.
@@ -210,9 +210,7 @@ fn group_commits_by_type(commits: Vec<String>) -> HashMap<String, Vec<String>> {
     grouped_commits
 }
 
-pub fn compare_tags_northstar(first_tag: String, second_tag: String) -> Result<String, String> {
-    // pub fn compare_tags(first_tag: Tag, second_tag: Tag) -> Result<(), String> {
-    // TODO args should be `Tag` not `String`
+pub fn compare_tags_northstar(first_tag: Tag, second_tag: Tag) -> Result<String, String> {
     // Fetch the list of commits between the two tags.
 
     // Create a `reqwest` client with a user agent.
@@ -238,10 +236,7 @@ pub fn compare_tags_northstar(first_tag: String, second_tag: String) -> Result<S
         // let repo = "R2Northstar/NorthstarLauncher";
         let comparison_url = format!(
             "https://api.github.com/repos/{}/compare/{}...{}",
-            // repo, first_tag.name, second_tag.name
-            repo,
-            first_tag,
-            second_tag
+            repo, first_tag.name, second_tag.name
         );
 
         dbg!(comparison_url.clone());
@@ -252,9 +247,7 @@ pub fn compare_tags_northstar(first_tag: String, second_tag: String) -> Result<S
         // Display the list of commits.
         println!(
             "Commits between {} and {}:",
-            // first_tag.name, second_tag.name
-            first_tag,
-            second_tag
+            first_tag.name, second_tag.name
         );
 
         //
