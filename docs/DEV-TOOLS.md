@@ -6,7 +6,7 @@ FlightCore features a hidden view that contains development features.
 
 It's targetted at both Northstar and FlightCore contributors. Among other things it contains buttons for unreleased features in FlightCore and tools to help with Northstar development.
 
-To activate it, spam click the FlightCore version number in the settings view at least 5 times. After that a new entry named _DEV_ should appear in the menubar.
+To activate it, spam click the FlightCore version number in the settings view at least 6 times. After that a new entry named _DEV_ should appear in the menubar.
 
 ## Northstar
 
