@@ -12,7 +12,7 @@ pub struct Tag {
     name: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, TS)]
 #[ts(export)]
 pub enum Project {
     FlightCore,
@@ -76,6 +76,9 @@ pub fn get_list_of_tags(project: Project) -> Result<Vec<TagWrapper>, String> {
 #[tauri::command]
 pub fn compare_tags(project: Project, first_tag: Tag, second_tag: Tag) -> Result<String, String> {
     log::info!("{project:?}");
+    if project != Project::FlightCore {
+        return Err(format!("Generating release notes not supported for Projedt \"{project:?}\""));
+    }
 
     // Fetch the list of commits between the two tags.
 
