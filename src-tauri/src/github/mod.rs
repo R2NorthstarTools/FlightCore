@@ -1,7 +1,9 @@
 pub mod pull_requests;
 pub mod release_notes;
 
-use app::constants::{APP_USER_AGENT, FLIGHTCORE_REPO_NAME, SECTION_ORDER};
+use app::constants::{
+    APP_USER_AGENT, FLIGHTCORE_REPO_NAME, NORTHSTAR_RELEASE_REPO_NAME, SECTION_ORDER,
+};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use ts_rs::TS;
@@ -56,8 +58,14 @@ pub fn get_list_of_tags(project: Project) -> Result<Vec<TagWrapper>, String> {
         .build()
         .unwrap();
 
+    // Switch repo to fetch from based on project
+    let repo_name = match project {
+        Project::FlightCore => FLIGHTCORE_REPO_NAME,
+        Project::Northstar => NORTHSTAR_RELEASE_REPO_NAME,
+    };
+
     // Fetch the list of tags for the repository as a `Vec<Tag>`.
-    let tags_url = format!("https://api.github.com/repos/{}/tags", FLIGHTCORE_REPO_NAME);
+    let tags_url = format!("https://api.github.com/repos/{}/tags", repo_name);
     let tags: Vec<Tag> = client.get(tags_url).send().unwrap().json().unwrap();
 
     // Map each `Tag` element to a `TagWrapper` element with the desired label and `Tag` value.

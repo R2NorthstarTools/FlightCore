@@ -48,3 +48,6 @@ pub const REFRESH_DELAY: Duration = Duration::from_secs(5 * 60);
 
 // Flightcore repo name and org name on GitHub
 pub const FLIGHTCORE_REPO_NAME: &str = "R2NorthstarTools/FlightCore";
+
+// Northstar release repo name and org name on GitHub
+pub const NORTHSTAR_RELEASE_REPO_NAME: &str = "R2Northstar/Northstar";
