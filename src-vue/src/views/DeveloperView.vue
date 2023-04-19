@@ -5,38 +5,6 @@
                 This page is designed for developers. Some of the buttons here can break your Northstar install if you do not know what you're doing!
             </el-alert>
 
-            <el-button type="primary" @click="getTags">
-                Get tags
-            </el-button>
-
-            <el-select v-model="firstTag" class="m-2" placeholder="First tag">
-                <el-option
-                    v-for="item in ns_release_tags"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item"
-                />
-            </el-select>
-            <el-select v-model="secondTag" class="m-2" placeholder="Second tag">
-                <el-option
-                    v-for="item in ns_release_tags"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item"
-                />
-            </el-select>
-
-            <el-button type="primary" @click="compareTags">
-                Compare Tags
-            </el-button>
-
-            <el-input
-                v-model="release_notes_text"
-                type="textarea"
-                :rows="5"
-                placeholder="Output"
-            />
-
             <h3>Basic:</h3>
 
             <el-button type="primary" @click="disableDevMode">
@@ -80,6 +48,40 @@
 
             <h3>Testing</h3>
             <pull-requests-selector />
+
+            <h3>Release management</h3>
+            
+            <el-button type="primary" @click="getTags">
+                Get tags
+            </el-button>
+
+            <el-select v-model="firstTag" class="m-2" placeholder="First tag">
+                <el-option
+                    v-for="item in ns_release_tags"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item"
+                />
+            </el-select>
+            <el-select v-model="secondTag" class="m-2" placeholder="Second tag">
+                <el-option
+                    v-for="item in ns_release_tags"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item"
+                />
+            </el-select>
+
+            <el-button type="primary" @click="compareTags">
+                Compare Tags
+            </el-button>
+
+            <el-input
+                v-model="release_notes_text"
+                type="textarea"
+                :rows="5"
+                placeholder="Output"
+            />
         </el-scrollbar>
     </div>
 </template>
