@@ -16,7 +16,9 @@ The dev view offers a way to install pull request from the [NorthstarLauncher](h
 
 Launcher pull requests overwrite `NorthstarLauncher.exe` and `Northstar.dll`.
 
-Mod pull requests install into a separate profile called `R2Northstar-PR-test-managed-folder`.
+Mod pull requests install into a separate profile called `R2Northstar-PR-test-managed-folder`. \
+When installing a mods PR, FlightCore will place `r2ns-launch-mod-pr-version.bat` into your Titanfall2 directory that can be used to run that PR profile directly. \
+The batch file simply runs `NorthstarLauncher.exe -profile=R2Northstar-PR-test-managed-folder`
 
 
 ## FlightCore
