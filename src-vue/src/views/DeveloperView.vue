@@ -211,7 +211,7 @@ export default defineComponent({
                 });
         },
         async compareTags() {
-            await invoke<string>("compare_tags", {firstTag: this.firstTag.value, secondTag: this.secondTag.value})
+            await invoke<string>("compare_tags", {project: this.selected_project, firstTag: this.firstTag.value, secondTag: this.secondTag.value})
                 .then((message) => {
                     this.release_notes_text = message;
                     showNotification("Done", "Generated release notes");
