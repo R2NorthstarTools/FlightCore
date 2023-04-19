@@ -103,15 +103,31 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
     - name: Upload Linux artifact
+      if: matrix.platform == 'ubuntu-22.04'
       uses: actions/upload-artifact@v3
       with:
         name: linux-artifacts
         path: |
           src-tauri/target/release/bundle/appimage/*
+    - name: Upload Linux AppImage
+      if: matrix.platform == 'ubuntu-22.04'
+      uses: actions/upload-artifact@v3
+      with:
+        name: linux-appimage
+        path: |
+          src-tauri/target/release/bundle/appimage/*.AppImage
     - name: Upload Windows artifact
+      if: matrix.platform == 'windows-latest'
       uses: actions/upload-artifact@v3
       with:
         name: windows-artifacts
         path: |
           src-tauri/target/release/bundle/msi/*
           src-tauri/target/release/app.pdb
+    - name: Additionally upload Windows installer separately
+      if: matrix.platform == 'windows-latest'
+      uses: actions/upload-artifact@v3
+      with:
+        name: windows-msi
+        path: |
+          src-tauri/target/release/bundle/msi/*.msi

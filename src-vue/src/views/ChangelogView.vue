@@ -46,7 +46,7 @@ export default defineComponent({
             let content: string = releaseBody.replaceAll(/\@(\S+)/g, `<a target="_blank" href="https://github.com/$1">@$1</a>`);
 
             // PR's links formatting
-            content = content.replaceAll(/\[\#(\S+)\]\(([^)]+)\)/g, `<a target="_blank" href="$2">#$1</a>`);
+            content = content.replaceAll(/\[(\S*)\#(\S+)\]\(([^)]+)\)/g, `<a target="_blank" href="$3">$1#$2</a>`);
 
             return marked.parse(content, {breaks: true});
         },
