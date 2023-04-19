@@ -12,7 +12,11 @@
         "no": "Nein",
         "error": "Fehler",
         "cancel": "Abbrechen",
-        "informationShort": "Info"
+        "informationShort": "Info",
+        "downloading": "Herunterladen",
+        "extracting": "Extrahieren",
+        "done": "Fertig",
+        "success": "Erfolg"
     },
 
     "play": {
@@ -110,9 +114,13 @@
                 "title": "FlightCore Reparierfenster",
                 "warning": "Dieses Fenster enthält verschiedene Funktionen um gängige Probleme mit Northstar und FlightCore zu beheben.",
                 "disable_all_but_core": "Alle außer notwendige Mods deaktivieren",
+                "disable_all_but_core_success": "Alle außer notwendige Mods wurden deaktiviert",
                 "force_reinstall_ns": "Northstar reinstallieren",
                 "force_delete_temp_dl": "Temporären FlightCore Downloadordner löschen",
-                "delete_persistent_store": "FlightCore Einstellungen zurücksetzen"
+                "delete_persistent_store": "FlightCore Einstellungen zurücksetzen",
+                "reinstall_title": "Northstar wird neu installiert",
+                "reinstall_text": "Bitte warten",
+                "reinstall_success": "Northstar erfolgreich neu installiert"
             }
         }
     },
