@@ -142,14 +142,9 @@ export default defineComponent({
             showErrorNotification("Never should have been able to get here!");
         },
         togglePluginsInstalling() {
-            let new_state = !$store.state.can_install_plugins;
-            
-            console.error(new_state);
-
-            $store.state.can_install_plugins = new_state;
+            let new_state = !this.$store.state.can_install_plugins;
+            this.$store.state.can_install_plugins = new_state;
             this.can_install_plugins_state = new_state ? "Enabled" : "Disabled";
-
-            showNotification('Plugins Install', this.can_install_plugins_state); // for testing
         },
         async checkLinuxCompatibility() {
             await invoke("linux_checks")
@@ -190,7 +185,7 @@ export default defineComponent({
                 install_type: this.$store.state.install_type
             } as GameInstall;
             let mod_to_install = this.mod_to_install_field_string;
-            await invoke<string>("install_mod_caller", { gameInstall: game_install, thunderstoreModString: mod_to_install, can_install_plugins : $store.state.can_install_plugins }).then((message) => {
+            await invoke<string>("install_mod_caller", { gameInstall: game_install, thunderstoreModString: mod_to_install, canInstallPlugins : $store.state.can_install_plugins }).then((message) => {
                 // Show user notification if mod install completed.
                 showNotification(`Installed ${mod_to_install}`, message);
             })

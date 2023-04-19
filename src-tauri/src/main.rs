@@ -344,7 +344,6 @@ async fn install_mod_caller(
     thunderstore_mod_string: String,
     can_install_plugins: bool,
 ) -> Result<(), String> {
-    log::info!("can_install_plugins {can_install_plugins}");
     fc_download_mod_and_install(&game_install, &thunderstore_mod_string, can_install_plugins)
         .await?;
     match clean_up_download_folder(&game_install, false) {

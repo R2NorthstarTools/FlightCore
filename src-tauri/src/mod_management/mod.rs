@@ -393,8 +393,6 @@ pub async fn fc_download_mod_and_install(
         Err(err) => Err(err.to_string())?,
     };
 
-    println!("can_install_plugins {can_install_plugins}");
-
     // Injected plugin install
     let result_plugin = if can_install_plugins {
         match install_plugin(game_install, &f).await {
