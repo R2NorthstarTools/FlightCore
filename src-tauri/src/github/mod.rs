@@ -215,7 +215,7 @@ pub fn compare_tags_northstar(first_tag: Tag, second_tag: Tag) -> Result<String,
 
     // Create a `reqwest` client with a user agent.
     let client = reqwest::blocking::Client::builder()
-        .user_agent("my-awesome-app")
+        .user_agent(APP_USER_AGENT)
         .build()
         .unwrap();
 
