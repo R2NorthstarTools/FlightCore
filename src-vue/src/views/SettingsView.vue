@@ -16,6 +16,12 @@
                     </el-input>
                 </div>
 
+                <!-- Launch arguments selection -->
+                <div class="fc_parameter__panel">
+                    <h3>Launch arguments</h3>
+                    <launch-arguments-selector/>
+                </div>
+
                 <!-- Thunderstore mods per page configuration -->
                 <div class="fc_parameter__panel">
                     <h3>{{ $t('settings.nb_ts_mods_per_page') }}</h3>
@@ -77,12 +83,14 @@ import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { Store } from 'tauri-plugin-store-api';
 import { showErrorNotification, showNotification } from "../utils/ui";
 import LanguageSelector from "../components/LanguageSelector.vue";
+import LaunchArgumentsSelector from "../components/LaunchArgumentsSelector.vue";
 const persistentStore = new Store('flight-core-settings.json');
 
 export default defineComponent({
     name: "SettingsView",
     components: {
-        LanguageSelector
+        LanguageSelector,
+        LaunchArgumentsSelector
     },
     data() {
         return {
