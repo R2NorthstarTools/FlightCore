@@ -48,6 +48,8 @@ export interface FlightCoreStore {
 
     // user custom settings
     mods_per_page: number,
+
+    can_install_plugins: boolean,
 }
 
 let notification_handle: NotificationHandle;
@@ -83,6 +85,8 @@ export const store = createStore<FlightCoreStore>({
             server_count: -1,
 
             mods_per_page: 20,
+
+            can_install_plugins: false,
         }
     },
     mutations: {

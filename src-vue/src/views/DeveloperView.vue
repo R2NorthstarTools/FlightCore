@@ -49,11 +49,11 @@
 
             <h3>Installing Plugins:</h3>
 
-            <el-button type="primary" @click="togglePluginsInstall">
+            <el-button type="primary" @click="togglePluginsInstalling">
                 Plugin Install Toggle
             </el-button>
 
-            <span>plugin_install_state</span>
+            <span v-text="can_install_plugins_state"></span>
 
             <h3>Linux:</h3>
 
@@ -112,7 +112,7 @@ export default defineComponent({
             first_tag: { label: '', value: {name: ''} },
             second_tag: { label: '', value: {name: ''} },
             ns_release_tags: [] as TagWrapper[],
-            plugin_install_state : "Disabled",
+            can_install_plugins_state : "Disabled",
         }
     },
     computed: {
@@ -141,11 +141,15 @@ export default defineComponent({
             await invoke("force_panic");
             showErrorNotification("Never should have been able to get here!");
         },
-        async togglePluginsInstall() {
-            await invoke("toggle_plugin_install")
-                .then((state) => {
-                    this.plugin_install_state = state ? "Enabled" : "Disabled";
-                })
+        togglePluginsInstalling() {
+            let new_state = !$store.state.can_install_plugins;
+            
+            console.error(new_state);
+
+            $store.state.can_install_plugins = new_state;
+            this.can_install_plugins_state = new_state ? "Enabled" : "Disabled";
+
+            showNotification('Plugins Install', this.can_install_plugins_state); // for testing
         },
         async checkLinuxCompatibility() {
             await invoke("linux_checks")
@@ -186,7 +190,7 @@ export default defineComponent({
                 install_type: this.$store.state.install_type
             } as GameInstall;
             let mod_to_install = this.mod_to_install_field_string;
-            await invoke<string>("install_mod_caller", { gameInstall: game_install, thunderstoreModString: mod_to_install }).then((message) => {
+            await invoke<string>("install_mod_caller", { gameInstall: game_install, thunderstoreModString: mod_to_install, can_install_plugins : $store.state.can_install_plugins }).then((message) => {
                 // Show user notification if mod install completed.
                 showNotification(`Installed ${mod_to_install}`, message);
             })

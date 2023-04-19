@@ -243,7 +243,7 @@ export default defineComponent({
                 this.isBeingInstalled = true;
             }
 
-            await invoke<string>("install_mod_caller", { gameInstall: game_install, thunderstoreModString: this.latestVersion.full_name }).then((message) => {
+            await invoke<string>("install_mod_caller", { gameInstall: game_install, thunderstoreModString: this.latestVersion.full_name, can_install_plugins: $store.state.can_install_plugins }).then((message) => {
                 showNotification(this.$t('mods.card.install_success', {modName: mod.name}), message);
             })
                 .catch((error) => {

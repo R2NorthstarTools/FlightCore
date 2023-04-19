@@ -317,6 +317,7 @@ async fn get_mod_dependencies(thunderstore_mod_string: &str) -> Result<Vec<Strin
 pub async fn fc_download_mod_and_install(
     game_install: &GameInstall,
     thunderstore_mod_string: &str,
+    can_install_plugins: bool,
 ) -> Result<(), String> {
     // Get mods and download directories
     let download_directory = format!(
@@ -338,7 +339,7 @@ pub async fn fc_download_mod_and_install(
 
     // Recursively install dependencies
     for dep in deps {
-        match fc_download_mod_and_install(game_install, &dep).await {
+        match fc_download_mod_and_install(game_install, &dep, can_install_plugins).await {
             Ok(()) => (),
             Err(err) => {
                 if err == "Cannot install Northstar as a mod!" {
@@ -373,8 +374,10 @@ pub async fn fc_download_mod_and_install(
     );
 
     // Download the mod
-    let f = thermite::core::manage::download_file(download_url, path.clone())
-        .map_err(|err| err.to_string())?;
+    let f = match thermite::core::manage::download_file(download_url, path.clone()) {
+        Ok(f) => f,
+        Err(e) => return Err(e.to_string()),
+    };
 
     // Get Thunderstore mod author
     let author = thunderstore_mod_string.split('-').next().unwrap();
@@ -390,18 +393,25 @@ pub async fn fc_download_mod_and_install(
         Err(err) => Err(err.to_string())?,
     };
 
+    println!("can_install_plugins {can_install_plugins}");
+
     // Injected plugin install
-    let result_plugin = match install_plugin(game_install, &f).await {
-        err if matches!(err, Err(ThermiteError::MissingFile(_))) => err,
-        Err(err) => Err(err.to_string())?,
-        r => r,
+    let result_plugin = if can_install_plugins {
+        match install_plugin(game_install, &f).await {
+            err if matches!(err, Err(ThermiteError::MissingFile(_))) => err,
+            Err(err) => Err(err.to_string())?,
+            r => r,
+        }
+    } else {
+        // this would never up
+        Err(ThermiteError::MiscError(String::new()))
     };
 
     // Delete downloaded zip file
     std::fs::remove_file(path).unwrap();
 
     // Because of the match expression only errors that can indicate missing mod/plugins folder
-    // we can check say that it worked if the plugin install worked
+    // we can say that it worked if the plugin install worked
     if result_plugin.is_ok() {
         Ok(())
     } else {

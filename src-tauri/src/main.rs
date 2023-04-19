@@ -35,7 +35,6 @@ use mod_management::{
 };
 
 mod plugin_management;
-use plugin_management::toggle_plugin_install;
 
 mod northstar;
 use northstar::get_northstar_version_number;
@@ -149,7 +148,6 @@ fn main() {
             apply_mods_pr,
             get_launcher_download_link,
             close_application,
-            toggle_plugin_install,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -344,8 +342,11 @@ async fn launch_northstar_steam_caller(
 async fn install_mod_caller(
     game_install: GameInstall,
     thunderstore_mod_string: String,
+    can_install_plugins: bool,
 ) -> Result<(), String> {
-    fc_download_mod_and_install(&game_install, &thunderstore_mod_string).await?;
+    log::info!("can_install_plugins {can_install_plugins}");
+    fc_download_mod_and_install(&game_install, &thunderstore_mod_string, can_install_plugins)
+        .await?;
     match clean_up_download_folder(&game_install, false) {
         Ok(()) => Ok(()),
         Err(err) => {
