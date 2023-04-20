@@ -19,6 +19,7 @@ import { searchModule } from './modules/search';
 import { i18n } from '../main';
 import { pullRequestModule } from './modules/pull_requests';
 import { showErrorNotification, showNotification } from '../utils/ui';
+import { ElMessageBox } from "element-plus";
 
 const persistentStore = new Store('flight-core-settings.json');
 
@@ -478,6 +479,10 @@ function _initializeListeners(state: any) {
         state.player_count = evt.payload.Ok[0];
         state.server_count = evt.payload.Ok[1];
     });
+
+    listen("display-plugin-warning", async function (evt: TauriEvent<any>) {
+        await display_plugin_warning() // could also disaplay the names of the plugins
+    });
 }
 
 /**
@@ -504,5 +509,20 @@ async function _get_northstar_version_number(state: any) {
         })
         .catch((error) => {
             state.northstar_state = NorthstarState.INSTALL;
+        })
+}
+
+async function display_plugin_warning() {
+    ElMessageBox.alert("This mod contains a plugin. Plugins CAN BE REALLY DANGEROURS since they have to access to your system!", "Warning");
+
+    // wait 5 seconds
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+
+    await ElMessageBox.confirm("Do you still want to install this mod with a plugin?", "Warning", { confirmButtonText: "YES", cancelButtonText: "Cancel", type: "warning", })
+        .then(() => {
+            invoke("receive_install_status", { comfirmedInstall: true })
+        })
+        .catch(() => {
+            invoke("receive_install_status", { comfirmedInstall: false })
         })
 }

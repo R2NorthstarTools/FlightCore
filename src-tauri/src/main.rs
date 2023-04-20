@@ -3,6 +3,8 @@
     windows_subsystem = "windows"
 )]
 
+use once_cell::sync::OnceCell;
+
 use std::{
     env,
     sync::{Arc, Mutex},
@@ -35,6 +37,7 @@ use mod_management::{
 };
 
 mod plugin_management;
+use crate::plugin_management::{receive_install_status, InstallStatusSender};
 
 mod northstar;
 use northstar::get_northstar_version_number;
@@ -42,11 +45,13 @@ use northstar::get_northstar_version_number;
 mod thunderstore;
 use thunderstore::query_thunderstore_packages_api;
 
-use tauri::{Manager, Runtime};
+use tauri::{AppHandle, Manager, Runtime};
 use tokio::time::sleep;
 
 #[derive(Default)]
 struct Counter(Arc<Mutex<i32>>);
+
+pub static APP_HANDLE: OnceCell<AppHandle> = OnceCell::new();
 
 fn main() {
     // Setup logger
@@ -109,9 +114,14 @@ fn main() {
                 }
             });
 
+            APP_HANDLE
+                .set(app.app_handle())
+                .expect("failed to set a app handle");
+
             Ok(())
         })
         .manage(Counter(Default::default()))
+        .manage(InstallStatusSender::new())
         .invoke_handler(tauri::generate_handler![
             force_panic,
             find_game_install_location_caller,
@@ -148,6 +158,7 @@ fn main() {
             apply_mods_pr,
             get_launcher_download_link,
             close_application,
+            receive_install_status,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

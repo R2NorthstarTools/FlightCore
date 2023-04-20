@@ -1,11 +1,34 @@
 use app::GameInstall;
+use once_cell::sync::OnceCell;
 use std::{
     fs::{self, File, OpenOptions},
     io,
     path::PathBuf,
 };
+use tauri::{
+    async_runtime::{block_on, channel, Mutex, Receiver, Sender},
+    Manager, State,
+};
 use thermite::{core::utils::TempDir, prelude::ThermiteError};
 use zip::ZipArchive;
+
+use crate::APP_HANDLE;
+
+static INSTALL_STATUS_RECV: OnceCell<Mutex<Receiver<bool>>> = OnceCell::new();
+
+pub struct InstallStatusSender(Mutex<Sender<bool>>);
+
+impl InstallStatusSender {
+    pub fn new() -> Self {
+        let (send, recv) = channel(1);
+
+        INSTALL_STATUS_RECV
+            .set(Mutex::new(recv))
+            .expect("failed to set INSTALL_STATUS_RECV");
+
+        Self(Mutex::new(send))
+    }
+}
 
 /// Tries to install plugins from a thunderstore zip
 pub async fn install_plugin(
@@ -42,19 +65,50 @@ pub async fn install_plugin(
         io::copy(&mut file, &mut outfile)?;
     }
 
-    for file in temp_dir
+    let plugins: Vec<fs::DirEntry> = temp_dir
         .join("plugins")
         .read_dir()
         .map_err(|_| ThermiteError::MissingFile(Box::new(temp_dir.join("plugins"))))?
         .filter_map(|f| f.ok()) // ignore any errors
         .filter(|f| f.path().extension().map(|e| e == "dll").unwrap_or(false)) // check for dll extension
-        .inspect(|f| {
-            _ = fs::remove_file(plugins_directory.join(f.file_name().to_string_lossy().to_string()))
-            // try remove plugins to update
-        })
-    {
+        .collect();
+
+    // warn user
+    if !plugins.is_empty() {
+        APP_HANDLE
+            .wait()
+            .emit_all("display-plugin-warning", ())
+            .map_err(|err| ThermiteError::MiscError(err.to_string()))?;
+
+        if !INSTALL_STATUS_RECV
+            .wait()
+            .lock()
+            .await
+            .recv()
+            .await
+            .unwrap_or(false)
+        {
+            Err(ThermiteError::MiscError(
+                "user denided plugin installing".to_string(),
+            ))?
+        }
+    }
+
+    for file in plugins.iter().inspect(|f| {
+        _ = fs::remove_file(plugins_directory.join(f.file_name().to_string_lossy().to_string()))
+        // try remove plugins to update
+    }) {
         fs::copy(file.path(), plugins_directory.join(file.file_name()))?;
     }
 
     Ok(())
+}
+
+#[tauri::command]
+pub fn receive_install_status(
+    sender: State<'_, InstallStatusSender>,
+    comfirmed_install: bool,
+) -> Result<(), String> {
+    block_on(async { sender.0.lock().await.send(comfirmed_install).await })
+        .map_err(|err| err.to_string())
 }
