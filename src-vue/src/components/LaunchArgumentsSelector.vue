@@ -1,6 +1,12 @@
 <template>
     <div>
-        Launch arguments selector
+        <el-check-tag 
+            v-for="argument of arguments"
+            checked
+            class="fc-launch_arg_tag"
+        >
+            {{ argument.argumentName }}
+        </el-check-tag>
     </div>
 </template>
 
@@ -27,3 +33,10 @@ export default defineComponent({
     }
 });
 </script>
+
+<style scoped>
+.fc-launch_arg_tag {
+    margin: 0 8px 8px 8px;
+    white-space: nowrap;
+}
+</style>
