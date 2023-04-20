@@ -76,7 +76,6 @@ pub async fn install_plugin(
 
     // warn user
     if !plugins.is_empty() {
-        
         // check here instead if we can install plugins so people don't get broken mods without plugins
         if !can_install_plugins {
             Err(ThermiteError::MiscError(

@@ -394,7 +394,7 @@ pub async fn fc_download_mod_and_install(
     };
 
     // Injected plugin install
-    
+
     let result_plugin = match install_plugin(game_install, &f, can_install_plugins).await {
         err if matches!(err, Err(ThermiteError::MissingFile(_))) => err,
         Err(err) => Err(err.to_string())?,
