@@ -1,5 +1,5 @@
 <template>
-    <div class="fc-tags_container">
+    <div :class="containerClasses">
         <el-tooltip
             v-for="argument of arguments"
             class="box-item"
@@ -19,6 +19,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { LaunchArgument } from '../utils/LaunchArgument';
+import { NorthstarState } from '../utils/NorthstarState';
 
 export default defineComponent({
     name: 'LaunchArgumentsSelector',
@@ -35,6 +36,12 @@ export default defineComponent({
                 new LaunchArgument("-novid", "Disables startup videos"),
                 new LaunchArgument("-nosound", "Disables all game sounds")
             ].sort((a, b) => a.argumentName.localeCompare(b.argumentName));
+        },
+        containerClasses(): string {
+            return this.gamePathIsSelected ? 'fc-tags_container' : 'fc-tags_container disabled_container';
+        },
+        gamePathIsSelected(): boolean {
+            return this.$store.state.northstar_state !== NorthstarState.GAME_NOT_FOUND;
         }
     }
 });
@@ -48,5 +55,10 @@ export default defineComponent({
 
 .fc-tags_container {
     transform: translateX(-8px);
+}
+
+.disabled_container {
+    pointer-events: none;
+    filter: grayscale();
 }
 </style>
