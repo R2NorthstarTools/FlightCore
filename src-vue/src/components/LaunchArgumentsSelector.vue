@@ -1,12 +1,18 @@
 <template>
     <div>
-        <el-check-tag 
+        <el-tooltip
             v-for="argument of arguments"
-            checked
-            class="fc-launch_arg_tag"
+            class="box-item"
+            :content="argument.i18nEntry"
+            placement="bottom"
         >
-            {{ argument.argumentName }}
-        </el-check-tag>
+            <el-check-tag
+                checked
+                class="fc-launch_arg_tag"
+            >
+                {{ argument.argumentName }}
+            </el-check-tag>
+        </el-tooltip>
     </div>
 </template>
 
