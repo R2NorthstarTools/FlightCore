@@ -1,14 +1,15 @@
 <template>
     <div :class="containerClasses">
         <el-tooltip
-            v-for="argument of arguments"
+            v-for="(argument, index) in arguments"
             class="box-item"
             :content="argument.i18nEntry"
             placement="bottom"
         >
             <el-check-tag
-                checked
                 class="fc-launch_arg_tag"
+                :checked="values[index]"
+                @change="onChange(index)"
             >
                 {{ argument.argumentName }}
             </el-check-tag>
@@ -43,6 +44,17 @@ export default defineComponent({
         gamePathIsSelected(): boolean {
             return this.$store.state.northstar_state !== NorthstarState.GAME_NOT_FOUND;
         }
+    },
+    data: () => ({
+        values: [] as boolean[]
+    }),
+    methods: {
+        onChange(index: number) {
+            this.values[index] = !this.values[index];
+        }
+    },
+    mounted() {
+        this.values = this.arguments.map(a => false);
     }
 });
 </script>
