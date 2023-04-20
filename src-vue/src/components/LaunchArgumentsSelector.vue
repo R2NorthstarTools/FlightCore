@@ -28,7 +28,7 @@ export default defineComponent({
                 new LaunchArgument("-noplugins", "Disables the plugin system"),
                 new LaunchArgument("-novid", "Disables startup videos"),
                 new LaunchArgument("-nosound", "Disables all game sounds")
-            ];
+            ].sort((a, b) => a.argumentName.localeCompare(b.argumentName));
         }
     }
 });
