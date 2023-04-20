@@ -513,16 +513,17 @@ async function _get_northstar_version_number(state: any) {
 }
 
 async function display_plugin_warning() {
-    ElMessageBox.alert("This mod contains a plugin. Plugins CAN BE REALLY DANGEROURS since they have to access to your system!", "Warning");
+    // just wait for the end user to click ok button
+    await ElMessageBox.alert("This mod contains a plugin. Plugins CAN BE REALLY DANGEROURS since they have to access to your system!", "Warning");
 
-    // wait 5 seconds
-    await new Promise((resolve) => setTimeout(resolve, 5000));
 
-    await ElMessageBox.confirm("Do you still want to install this mod with a plugin?", "Warning", { confirmButtonText: "YES", cancelButtonText: "Cancel", type: "warning", })
+    // I switched comfirm and cancel button so end users don't spam throught the popups 
+    // without reading and install a plugin by accident
+    await ElMessageBox.confirm("Do you still want to install this mod with a plugin?", "Warning", { confirmButtonText: "No", cancelButtonText: "Yes", type: "warning", })
         .then(() => {
-            invoke("receive_install_status", { comfirmedInstall: true })
+            invoke("receive_install_status", { comfirmedInstall: false })
         })
         .catch(() => {
-            invoke("receive_install_status", { comfirmedInstall: false })
+            invoke("receive_install_status", { comfirmedInstall: true })
         })
 }

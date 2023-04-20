@@ -394,15 +394,11 @@ pub async fn fc_download_mod_and_install(
     };
 
     // Injected plugin install
-    let result_plugin = if can_install_plugins {
-        match install_plugin(game_install, &f).await {
-            err if matches!(err, Err(ThermiteError::MissingFile(_))) => err,
-            Err(err) => Err(err.to_string())?,
-            r => r,
-        }
-    } else {
-        // this would never up show
-        Err(ThermiteError::MiscError(String::new()))
+    
+    let result_plugin = match install_plugin(game_install, &f, can_install_plugins).await {
+        err if matches!(err, Err(ThermiteError::MissingFile(_))) => err,
+        Err(err) => Err(err.to_string())?,
+        r => r,
     };
 
     // Delete downloaded zip file

@@ -34,6 +34,7 @@ impl InstallStatusSender {
 pub async fn install_plugin(
     game_install: &GameInstall,
     zip_file: &File,
+    can_install_plugins: bool,
 ) -> Result<(), ThermiteError> {
     let plugins_directory = PathBuf::new()
         .join(&game_install.game_path)
@@ -75,6 +76,14 @@ pub async fn install_plugin(
 
     // warn user
     if !plugins.is_empty() {
+        
+        // check here instead if we can install plugins so people don't get broken mods without plugins
+        if !can_install_plugins {
+            Err(ThermiteError::MiscError(
+                "plugin installing is disabled; this mod contains a plugin; plugin can be enabled in the dev menu".to_string(),
+            ))?
+        }
+
         APP_HANDLE
             .wait()
             .emit_all("display-plugin-warning", ())
@@ -92,6 +101,10 @@ pub async fn install_plugin(
                 "user denided plugin installing".to_string(),
             ))?
         }
+    } else {
+        Err(ThermiteError::MissingFile(Box::new(
+            temp_dir.join("plugins/anyplugins.dll"),
+        )))?;
     }
 
     for file in plugins.iter().inspect(|f| {

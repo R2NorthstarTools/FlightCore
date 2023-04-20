@@ -112,7 +112,7 @@ export default defineComponent({
             first_tag: { label: '', value: {name: ''} },
             second_tag: { label: '', value: {name: ''} },
             ns_release_tags: [] as TagWrapper[],
-            can_install_plugins_state : "Disabled",
+            can_install_plugins_state : this.$store.state.can_install_plugins ? "Enabled" : "Disabled",
         }
     },
     computed: {
