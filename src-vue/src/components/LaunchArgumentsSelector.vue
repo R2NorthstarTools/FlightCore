@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="fc-tags_container">
         <el-tooltip
             v-for="argument of arguments"
             class="box-item"
@@ -44,5 +44,9 @@ export default defineComponent({
 .fc-launch_arg_tag {
     margin: 0 8px 8px 8px;
     white-space: nowrap;
+}
+
+.fc-tags_container {
+    transform: translateX(-8px);
 }
 </style>
