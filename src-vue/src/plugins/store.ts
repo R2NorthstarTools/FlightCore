@@ -481,7 +481,7 @@ function _initializeListeners(state: any) {
     });
 
     listen("display-plugin-warning", async function (evt: TauriEvent<any>) {
-        await display_plugin_warning() // could also disaplay the names of the plugins
+        await display_plugin_warning() // could also display the names of the plugins
     });
 }
 
@@ -513,13 +513,23 @@ async function _get_northstar_version_number(state: any) {
 }
 
 async function display_plugin_warning() {
+    let warning_title = i18n.global.tc('generic.warning');
+
     // just wait for the end user to click ok button
-    await ElMessageBox.alert("This mod contains a plugin. Plugins CAN BE REALLY DANGEROURS since they have to access to your system!", "Warning");
+    await ElMessageBox.alert(i18n.global.tc('plugins.warning_dialog.warning_text'), warning_title);
 
 
     // I switched comfirm and cancel button so end users don't spam throught the popups 
     // without reading and install a plugin by accident
-    await ElMessageBox.confirm("Do you still want to install this mod with a plugin?", "Warning", { confirmButtonText: "No", cancelButtonText: "Yes", type: "warning", })
+    await ElMessageBox.confirm(
+        i18n.global.tc('plugins.warning_dialog.comfirm_text'),
+        warning_title,
+        {
+            confirmButtonText: i18n.global.tc('generic.no'),
+            cancelButtonText: i18n.global.tc('generic.yes'),
+            type: "warning",
+        }
+    )
         .then(() => {
             invoke("receive_install_status", { comfirmedInstall: false })
         })

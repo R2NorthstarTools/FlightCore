@@ -16,7 +16,8 @@
         "downloading": "Downloading",
         "extracting": "Extracting",
         "done": "Done",
-        "success": "Success"
+        "success": "Success",
+        "warning": "Warning"
     },
 
     "play": {
@@ -159,6 +160,13 @@
         "names": {
             "Northstar": "Northstar",
             "NorthstarReleaseCandidate": "Northstar release candidate"
+        }
+    },
+
+    "plugins": {
+        "warning_dialog": {
+            "warning_text": "This mod contains a plugin. Plugins CAN BE REALLY DANGEROURS since they have to access to your system!",
+            "comfirm_text": "Do you still want to install this mod with a plugin?"
         }
     }
 }
