@@ -3,11 +3,13 @@
     windows_subsystem = "windows"
 )]
 
+use std::ptr::null_mut;
 use std::{
     env,
     sync::{Arc, Mutex},
     time::Duration,
 };
+use winapi::um::winuser::{MessageBoxW, MB_ICONERROR, MB_OK, MB_USERICON};
 
 use app::{
     constants::{APP_USER_AGENT, MASTER_SERVER_URL, REFRESH_DELAY, SERVER_BROWSER_ENDPOINT},
@@ -66,7 +68,7 @@ fn main() {
         },
     ));
 
-    tauri::Builder::default()
+    match tauri::Builder::default()
         .plugin(tauri_plugin_store::Builder::default().build())
         .setup(|app| {
             let app_handle = app.app_handle();
@@ -148,7 +150,40 @@ fn main() {
             close_application,
         ])
         .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+    {
+        Ok(()) => (),
+        Err(err) => {
+            // Linux
+            #[cfg(not(target_os = "windows"))]
+            {
+                log::error!("{err}");
+            }
+
+            // Windows
+            #[cfg(target_os = "windows")]
+            {
+                log::error!("WebView2 not installed: {err}");
+                // Display a message box to the user with a button to open the installation instructions
+                let title = "WebView2 not found"
+                    .encode_utf16()
+                    .chain(Some(0))
+                    .collect::<Vec<_>>();
+                let message = "FlightCore requires WebView2 to run.\n\nClick OK to open installation instructions.".encode_utf16().chain(Some(0)).collect::<Vec<_>>();
+                unsafe {
+                    let result = MessageBoxW(
+                        null_mut(),
+                        message.as_ptr(),
+                        title.as_ptr(),
+                        MB_OK | MB_ICONERROR | MB_USERICON,
+                    );
+                    if result == 1 {
+                        // Open the installation instructions URL in the user's default web browser
+                        open::that(format!("https://example.com")).unwrap();
+                    }
+                }
+            }
+        }
+    };
 }
 
 #[tauri::command]
