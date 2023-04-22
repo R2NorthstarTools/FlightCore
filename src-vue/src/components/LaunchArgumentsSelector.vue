@@ -21,6 +21,7 @@
 import { defineComponent } from 'vue';
 import { LaunchArgument } from '../utils/LaunchArgument';
 import { NorthstarState } from '../utils/NorthstarState';
+import {invoke} from "@tauri-apps/api";
 
 export default defineComponent({
     name: 'LaunchArgumentsSelector',
@@ -53,8 +54,15 @@ export default defineComponent({
             this.values[index] = !this.values[index];
         }
     },
-    mounted() {
+    async mounted() {
         this.values = this.arguments.map(a => false);
+
+        const fileArgs = await invoke<string[]>("get_launch_arguments", { gamePath: this.$store.state.game_path});
+        this.arguments.forEach((argument, index) => {
+            if (fileArgs.includes(argument.argumentName)) {
+                this.values[index] = true;
+            }
+        });
     }
 });
 </script>
