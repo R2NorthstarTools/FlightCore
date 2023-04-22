@@ -115,6 +115,7 @@ fn main() {
             find_game_install_location_caller,
             get_flightcore_version_number,
             get_northstar_version_number_caller,
+            northstar::launch_arguments::get_launch_arguments,
             check_is_northstar_outdated,
             verify_install_location,
             get_host_os_caller,
@@ -145,7 +146,7 @@ fn main() {
             apply_launcher_pr,
             apply_mods_pr,
             get_launcher_download_link,
-            close_application,
+            close_application
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

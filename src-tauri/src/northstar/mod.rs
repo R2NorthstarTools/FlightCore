@@ -3,6 +3,7 @@
 
 use crate::{check_mod_version_number, constants::CORE_MODS};
 use anyhow::anyhow;
+pub mod launch_arguments;
 
 /// Returns the current Northstar version number as a string
 pub fn get_northstar_version_number(game_path: &str) -> Result<String, anyhow::Error> {
