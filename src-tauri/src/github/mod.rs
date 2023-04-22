@@ -33,7 +33,7 @@ pub struct TagWrapper {
 struct CommitInfo {
     sha: String,
     commit: Commit,
-    author: CommitAuthor,
+    author: Option<CommitAuthor>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -263,7 +263,9 @@ pub fn compare_tags_northstar(first_tag: Tag, second_tag: Tag) -> Result<String,
             ));
 
             // Store authors in set
-            authors_set.insert(commit.author.login);
+            if commit.author.is_some() {
+                authors_set.insert(commit.author.unwrap().login);
+            }
         }
 
         full_patch_notes += &patch_notes.join("\n");
