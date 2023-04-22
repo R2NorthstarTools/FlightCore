@@ -5,38 +5,6 @@
                 This page is designed for developers. Some of the buttons here can break your Northstar install if you do not know what you're doing!
             </el-alert>
 
-            <el-button type="primary" @click="getTags">
-                Get tags
-            </el-button>
-
-            <el-select v-model="firstTag" class="m-2" placeholder="First tag">
-                <el-option
-                    v-for="item in ns_release_tags"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item"
-                />
-            </el-select>
-            <el-select v-model="secondTag" class="m-2" placeholder="Second tag">
-                <el-option
-                    v-for="item in ns_release_tags"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item"
-                />
-            </el-select>
-
-            <el-button type="primary" @click="compareTags">
-                Compare Tags
-            </el-button>
-
-            <el-input
-                v-model="release_notes_text"
-                type="textarea"
-                :rows="5"
-                placeholder="Output"
-            />
-
             <h3>Basic:</h3>
 
             <el-button type="primary" @click="disableDevMode">
@@ -71,14 +39,6 @@
                 Launch Northstar via Steam
             </el-button>
 
-            <h3>Mod install:</h3>
-
-            <el-input v-model="mod_to_install_field_string" placeholder="Please input Thunderstore dependency string (example: AuthorName-ModName-1.2.3)" clearable />
-
-            <el-button type="primary" @click="installMod">
-                Install mod
-            </el-button>
-
             <h3>Repair:</h3>
 
 
@@ -88,6 +48,48 @@
 
             <h3>Testing</h3>
             <pull-requests-selector />
+
+            <h3>Mod install:</h3>
+
+            <el-input v-model="mod_to_install_field_string" placeholder="Please input Thunderstore dependency string (example: AuthorName-ModName-1.2.3)" clearable />
+
+            <el-button type="primary" @click="installMod">
+                Install mod
+            </el-button>
+
+            <h3>Release management</h3>
+            
+            <el-button type="primary" @click="getTags">
+                Get tags
+            </el-button>
+
+            <el-select v-model="firstTag" class="m-2" placeholder="First tag">
+                <el-option
+                    v-for="item in ns_release_tags"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item"
+                />
+            </el-select>
+            <el-select v-model="secondTag" class="m-2" placeholder="Second tag">
+                <el-option
+                    v-for="item in ns_release_tags"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item"
+                />
+            </el-select>
+
+            <el-button type="primary" @click="compareTags">
+                Compare Tags
+            </el-button>
+
+            <el-input
+                v-model="release_notes_text"
+                type="textarea"
+                :rows="5"
+                placeholder="Output"
+            />
         </el-scrollbar>
     </div>
 </template>

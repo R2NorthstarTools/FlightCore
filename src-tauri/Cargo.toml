@@ -49,7 +49,8 @@ json5 = "0.4.1"
 # Async recursion for recursive mod install
 async-recursion = "1.0.0"
 # Game scanner
-game-scanner = "1.1.4"
+# Use specific commit that updates deprecated library
+game-scanner = { git = "https://github.com/EqualGames/game-scanner.git", rev = "94dcbd086a5987361a2847988a060da9b5dd3908" }
 # For parsing timestamps
 chrono = "0.4.23"
 # TypeScript bindings
