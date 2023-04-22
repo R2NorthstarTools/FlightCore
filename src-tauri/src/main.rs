@@ -3,12 +3,15 @@
     windows_subsystem = "windows"
 )]
 
-use std::ptr::null_mut;
 use std::{
     env,
     sync::{Arc, Mutex},
     time::Duration,
 };
+
+#[cfg(target_os = "windows")]
+use std::ptr::null_mut;
+#[cfg(target_os = "windows")]
 use winapi::um::winuser::{MessageBoxW, MB_ICONERROR, MB_OK, MB_USERICON};
 
 use app::{
