@@ -156,13 +156,15 @@ fn main() {
     {
         Ok(()) => (),
         Err(err) => {
-            // Linux
+            // Failed to launch system native web view
+
+            // Log error on Linux
             #[cfg(not(target_os = "windows"))]
             {
                 log::error!("{err}");
             }
 
-            // Windows
+            // On Windows we can show an error window using Windows API to show how to install WebView2
             #[cfg(target_os = "windows")]
             {
                 log::error!("WebView2 not installed: {err}");
