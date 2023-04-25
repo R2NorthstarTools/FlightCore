@@ -42,8 +42,8 @@ impl std::str::FromStr for ParsedThunderstoreModString {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ThunderstoreManifest {
-    name: String,
-    version_number: String,
+    pub name: String,
+    pub version_number: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]

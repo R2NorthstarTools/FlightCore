@@ -12,7 +12,7 @@ use tauri::{
 use thermite::{core::utils::TempDir, prelude::ThermiteError};
 use zip::ZipArchive;
 
-use crate::APP_HANDLE;
+use crate::{mod_management::ThunderstoreManifest, APP_HANDLE};
 
 static INSTALL_STATUS_RECV: OnceCell<Mutex<Receiver<bool>>> = OnceCell::new();
 
@@ -41,6 +41,7 @@ pub async fn install_plugin(
         .join("R2Northstar")
         .join("plugins");
     let temp_dir = TempDir::create(plugins_directory.join("___flightcore-temp-plugin-dir"))?;
+    let manifest_path = temp_dir.join("manifest.json");
     let mut archive = ZipArchive::new(zip_file)?;
 
     for i in 0..archive.len() {
@@ -66,7 +67,25 @@ pub async fn install_plugin(
         io::copy(&mut file, &mut outfile)?;
     }
 
-    let plugins: Vec<fs::DirEntry> = temp_dir
+    let this_plugin_dir = {
+        let data = std::fs::read_to_string(&manifest_path)?;
+        let manifest: ThunderstoreManifest =
+            json5::from_str(&data).map_err(|err| ThermiteError::MiscError(err.to_string()))?;
+
+        plugins_directory.join(manifest.name)
+    };
+
+    // create the plugin subdir
+    if !this_plugin_dir.exists() {
+        fs::create_dir(&this_plugin_dir)?;
+    }
+
+    fs::copy(
+        &manifest_path,
+        this_plugin_dir.join(manifest_path.file_name().unwrap_or_default()),
+    )?;
+
+    let plugins: Vec<std::fs::DirEntry> = temp_dir
         .join("plugins")
         .read_dir()
         .map_err(|_| ThermiteError::MissingFile(Box::new(temp_dir.join("plugins"))))?
@@ -79,7 +98,7 @@ pub async fn install_plugin(
         // check here instead if we can install plugins so people don't get broken mods without plugins
         if !can_install_plugins {
             Err(ThermiteError::MiscError(
-                "plugin installing is disabled; this mod contains a plugin; plugin can be enabled in the dev menu".to_string(),
+                "plugin installing is disabled; this mod contains a plugin; plugins can be enabled in the dev menu".to_string(),
             ))?
         }
 
@@ -107,10 +126,10 @@ pub async fn install_plugin(
     }
 
     for file in plugins.iter().inspect(|f| {
-        _ = fs::remove_file(plugins_directory.join(f.file_name().to_string_lossy().to_string()))
+        _ = fs::remove_file(this_plugin_dir.join(f.file_name().to_string_lossy().to_string()))
         // try remove plugins to update
     }) {
-        fs::copy(file.path(), plugins_directory.join(file.file_name()))?;
+        fs::copy(file.path(), this_plugin_dir.join(file.file_name()))?;
     }
 
     Ok(())
