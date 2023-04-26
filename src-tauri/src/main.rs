@@ -332,8 +332,7 @@ async fn launch_northstar_steam_caller(
     game_install: GameInstall,
     bypass_checks: Option<bool>,
 ) -> Result<String, String> {
-    let res = launch_northstar_steam(&game_install, bypass_checks);
-    res
+    launch_northstar_steam(&game_install, bypass_checks)
 }
 
 #[tauri::command]
