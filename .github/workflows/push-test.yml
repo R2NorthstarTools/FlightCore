@@ -37,7 +37,7 @@ jobs:
           toolchain: stable
           components: rustfmt
       - name: Run clippy
-        run: cargo clippy --manifest-path src-tauri/Cargo.toml -- --deny warnings
+        run: cargo clippy --manifest-path src-tauri/Cargo.toml -- --no-deps --deny warnings
 
   # Ensure committed bindings correct
   autogen-ts-bindings-check:
