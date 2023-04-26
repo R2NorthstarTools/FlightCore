@@ -3,7 +3,7 @@ use anyhow::{anyhow, Result};
 
 use crate::{check_is_valid_game_path, constants::TITANFALL2_ORIGIN_IDS};
 
-/// Runs a powershell command and parses output to get Titanfall2 install location on Origin
+/// Gets Titanfall2 install location on Origin
 pub fn origin_install_location_detection() -> Result<String, anyhow::Error> {
     // Iterate over known Titanfall2 Origin IDs
     for origin_id in TITANFALL2_ORIGIN_IDS {
@@ -18,14 +18,14 @@ pub fn origin_install_location_detection() -> Result<String, anyhow::Error> {
                             return Ok(game_path_str.to_string());
                         }
                         Err(err) => {
-                            println!("{}", err.to_string());
+                            log::warn!("{}", err);
                             continue; // Not a valid game path
                         }
                     }
                 }
             }
             Err(err) => {
-                println!("Couldn't find {origin_id}: {err}")
+                log::warn!("Couldn't find {origin_id}: {err}")
             }
         }
     }

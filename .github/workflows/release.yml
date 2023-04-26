@@ -1,7 +1,11 @@
 name: "release"
 on:
-  release:
-    types: [ created ]
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write # Needed to write to GitHub draft release
 
 jobs:
   # Ensure version numbers in various places match up
@@ -14,7 +18,7 @@ jobs:
           pip install toml
       - name: Run check
         run: |
-          python3 scripts/check_version_numbers.py --release ${{github.event.release.tag_name}}
+          python3 scripts/check_version_numbers.py --release ${{github.ref_name}}
 
   build:
     needs: ensure-same-version
@@ -47,8 +51,8 @@ jobs:
       env:
         TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
       run: |
-        npm install
-        cd src-vue && npm install && cd ..
+        npm clean-install
+        cd src-vue && npm clean-install && cd ..
         npm run tauri build
     - uses: tauri-apps/tauri-action@v0
       env:
@@ -76,6 +80,7 @@ jobs:
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
+        draft: true
         files: |
           src-tauri/target/release/bundle/appimage/*AppImage*
           src-tauri/target/release/bundle/msi/*msi*
@@ -88,10 +93,11 @@ jobs:
     - uses: actions/download-artifact@v3
     - name: Create release file
       run: |
-        python3 scripts/create-release-file.py --version ${{github.event.release.tag_name}}
+        python3 scripts/create-release-file.py --version ${{github.ref_name}}
 
     - name: upload release file
       uses: softprops/action-gh-release@v1
       with:
+        draft: true
         files: |
           latest-release.json

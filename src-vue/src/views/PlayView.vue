@@ -1,12 +1,13 @@
 <script lang="ts">
-import { ElNotification } from 'element-plus';
 import { Tabs } from "../utils/Tabs";
 import PlayButton from '../components/PlayButton.vue';
 import { defineComponent } from "vue";
+import InstallProgressBar from "../components/InstallProgressBar.vue";
 
 export default defineComponent({
     components: {
-        PlayButton
+        PlayButton,
+        InstallProgressBar
     },
     computed: {
         northstarIsRunning(): boolean {
@@ -34,37 +35,40 @@ export default defineComponent({
     <div class="fc_launch__container">
         <div class="fc_title">Northstar</div>
         <div class="fc_northstar__version__container">
-            {{ northstarVersion === '' ? 'Unknown version' : `v${northstarVersion}` }}
+            {{ northstarVersion === '' ? $t('play.unknown_version') : `v${northstarVersion}` }}
             <div v-if="northstarVersion !== ''" class="fc_changelog__link" @click="showChangelogPage">
-                (see patch notes)
+                ({{ $t('play.see_patch_notes') }})
             </div>
             <div v-if="playerCount >= 0" class="fc-stats__container">
-                {{ playerCount }} players,
-                {{ serverCount }} servers
+                {{ playerCount }} {{ $t('play.players') }},
+                {{ serverCount }} {{ $t('play.servers') }}
             </div>
             <div v-else="playerCount >= 0" class="fc-stats__container">
-                Unable to load playercount
+                {{ $t('play.unable_to_load_playercount') }}
             </div>
         </div>
-        <div>
+
+        <!-- Align play button and services state container -->
+        <div style="display: flex">
             <PlayButton />
             <div v-if="$store.state.developer_mode" id="fc_services__status">
                 <div>
-                    <div class="fc_version__line">Northstar is running: </div>
+                    <div class="fc_version__line">{{ $t('play.northstar_running') }}</div>
                     <div class="fc_version__line fc_version__line__boolean"> {{ northstarIsRunning }}</div>
                 </div>
                 <div>
-                    <div class="fc_version__line">Origin is running: </div>
+                    <div class="fc_version__line">{{ $t('play.origin_running') }}</div>
                     <div class="fc_version__line fc_version__line__boolean">{{ $store.state.origin_is_running }}</div>
                 </div>
             </div>
         </div>
+        <InstallProgressBar />
     </div>
 </template>
 
 <style scoped>
 .fc_launch__container {
-    margin: 50px;
+    margin: 50px 50px 30px 50px;
     position: fixed;
     bottom: 0;
 }
@@ -102,13 +106,9 @@ export default defineComponent({
     border-color: var(--el-color-primary);
 }
 
-
 #fc_services__status {
-    display: inline-block;
-    position: fixed;
-    padding: 10px 20px;
     color: #e8edef;
-    bottom: 43px;
+    align-self: end;
 }
 
 .fc_version__line {

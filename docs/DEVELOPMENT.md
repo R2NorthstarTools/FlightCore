@@ -14,7 +14,6 @@ As for splitting logic between _frontend_ and _backend_, state and UI related lo
 
 Make sure you have the necessary dependencies for Tauri installed as described in this link: https://tauri.app/v1/guides/getting-started/prerequisites
 
-
 Then, install `npm` dependencies with
 
 ```sh
@@ -24,7 +23,7 @@ npm install
 Install UI dependencies too
 
 ```sh
-cd src-vue && npm install
+cd src-vue && npm install && cd ..
 ```
 
 Then for developing
@@ -34,6 +33,30 @@ npx tauri dev
 ```
 
 Automatic recompiling on save is enabled for both the Rust and the Typescript/Vue code.
+
+If you want to build FlightCore from source, run
+
+```sh
+npx tauri build
+```
+
+This will build the executable and bundles, such as `AppImage`, `.deb` or `.msi`.
+
+To build just the executable, edit [tauri.conf.json](https://github.com/R2NorthstarTools/FlightCore/blob/main/src-tauri/tauri.conf.json) in the same folder:
+
+```json
+    "bundle": {
+      "active": true,
+```
+
+Change `active` from `true` to `false`, and bundles won't be included afterwards.
+
+To disable the updater (which requires a private key) change `active` value to `false`:
+
+```json
+    "updater": {
+      "active": true,
+```
 
 ## Tauri
 
@@ -145,6 +168,7 @@ const persistentStore = new Store('flight-core-settings.json');
 
 // Save change in persistent store
 await persistentStore.set('northstar-release-canal', { value: "NorthstarReleasecandidate" });
+await persistentStore.save(); // explicit save to disk
 
 // Grab Northstar release canal value from store if exists
 var persistent_northstar_release_canal = (await persistentStore.get('northstar-release-canal')) as any;
@@ -177,6 +201,89 @@ struct User {
 ```
 
 then simply run `cargo test`. The generated bindings are placed in `src-tauri/bindings/`. Make sure to add and commit them as well!
+
+### Internationalization
+
+For FlightCore to be used by the largest number, its interface is translated in several languages; users can choose used language through FlightCore settings.
+
+Localization files are located in `src-vue/src/i18n/lang`.
+
+To add a new language, you have to create associated file, *e.g. `src-vue/src/i18n/lang/de.json`*, and import it in the i18n application object in `main.ts`:
+```javascript
+import de from "./i18n/lang/de.json";
+
+export const i18n = createI18n({
+    locale: 'en',
+    fallbackLocale: 'en',
+    messages: {
+        en, fr, de
+    }
+});
+```
+
+In order to be able to select it, make sure to that it to the `LanguageSelector` componenent in `src-vue/src/components/LanguageSelector.vue`.
+
+```vue
+export default defineComponent({
+    name: 'LanguageSelector',
+    data: () => ({
+        value: '',
+        options: [
+            {
+                value: 'en',
+                label: 'English'
+            },
+            <!-- ... -->
+            {
+                value: 'de',
+                label: 'Deutsch'
+            },
+        ]
+    }),
+    <!-- ... -->
+})
+```
+
+There are different ways to use translations in views; in HTML template, invoke the `$t` method with translation key:
+
+```html
+<div>
+    {{ $t('menu.play') }}
+</div>
+```
+
+For use in Typescript code (inside components), invoke the `this.$t` method:
+
+```javascript
+return this.$t("play.button.select_game_dir");
+```
+
+For Typescript code outside components, translations are still accessible:
+
+```javascript
+import { i18n } from '../main';
+i18n.global.tc('notification.game_folder.new.text');
+```
+
+---
+
+It is possible to inject variables into translations:
+
+```json
+"channels": {
+    "release": {
+        "component": {
+            "text": "Switched release channel to {canal}."
+        }
+    }
+}
+```
+
+```javascript
+return this.$t("channels.release.component.text", {canal: "MyCanalName"});
+```
+
+
 
 ## Other
 

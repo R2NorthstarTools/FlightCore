@@ -14,10 +14,10 @@ pub fn check_glibc_v() -> f32 {
     let lddvl: Vec<&str> = lddva.split('\n').collect();
     let lddvlo = &lddvl[0];
     let reg = Regex::new(r"(2.\d{2}$)").unwrap();
-    for caps in reg.captures_iter(lddvlo) {
+    if let Some(caps) = reg.captures_iter(lddvlo).next() {
         return caps.get(1).unwrap().as_str().parse::<f32>().unwrap(); // theres prolly a better way ijdk how tho
     }
-    return 0.0; // this shouldnt ever be reached but it has to be here
+    0.0 // this shouldnt ever be reached but it has to be here
 }
 
 /*

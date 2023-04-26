@@ -18,22 +18,22 @@ export default defineComponent({
         },
         playButtonLabel(): string {
             if (this.$store.state.northstar_is_running) {
-                return "Game is running";
+                return this.$t("play.button.northstar_is_running");
             }
 
             switch(this.$store.state.northstar_state) {
                 case NorthstarState.GAME_NOT_FOUND:
-                    return "Select Titanfall2 game folder";
+                    return this.$t("play.button.select_game_dir");
                 case NorthstarState.INSTALL:
-                    return "Install";
+                    return this.$t("play.button.install");
                 case NorthstarState.INSTALLING:
-                    return "Installing..."
+                    return this.$t("play.button.installing");
                 case NorthstarState.MUST_UPDATE:
-                    return "Update";
+                    return this.$t("play.button.update");
                 case NorthstarState.UPDATING:
-                    return "Updating...";
+                    return this.$t("play.button.updating");
                 case NorthstarState.READY_TO_PLAY:
-                    return "Launch game";
+                    return this.$t("play.button.ready_to_play");
 
                 default:
                     return "";
@@ -57,7 +57,7 @@ export default defineComponent({
                     options: [
                         {
                             value: ReleaseCanal.RELEASE_CANDIDATE,
-                            label: 'Northstar release candidate',
+                            label: this.$t('channels.names.NorthstarReleaseCandidate'),
                         },
                     ]
                 },
@@ -83,10 +83,10 @@ export default defineComponent({
             return this.showReleaseSwitch
                 ? 'border-radius: 2px 0 0 2px;'
                 : 'border-radius: 2px';
-        }
+        },
     },
     methods: {
-        launchGame() {
+        async launchGame() {
             this.$store.commit('launchGame');
         }
     }
@@ -94,30 +94,31 @@ export default defineComponent({
 </script>
 
 <template>
-    <el-button :disabled="northstarIsRunning"
-               type="primary" size="large" @click="launchGame"
-               class="fc_launch__button" :style="buttonRadiusStyle">
-        {{ playButtonLabel }}
-    </el-button>
-    <el-select v-if="showReleaseSwitch" :disabled="northstarIsRunning"
-               v-model="currentCanal" placeholder="Select">
-        <el-option-group
-            v-for="group in selectOptions"
-            :key="group.label"
-            :label="group.label"
-        >
-            <el-option
-                v-for="item in group.options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-            />
-        </el-option-group>
-    </el-select>
+    <nav>
+        <el-button :disabled="northstarIsRunning"
+                   type="primary" size="large" @click="launchGame"
+                   class="fc_launch__button" :style="buttonRadiusStyle">
+            {{ playButtonLabel }}
+        </el-button>
+        <el-select v-if="showReleaseSwitch" :disabled="northstarIsRunning"
+                   v-model="currentCanal" placeholder="Select">
+            <el-option-group
+                v-for="group in selectOptions"
+                :key="group.label"
+                :label="group.label"
+            >
+                <el-option
+                    v-for="item in group.options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                />
+            </el-option-group>
+        </el-select>
+    </nav>
 </template>
 
 <style scoped>
-
 button {
     text-transform: uppercase;
     padding: 30px;
@@ -130,7 +131,6 @@ button {
 }
 
 /* Release canal selector */
-
 .el-select {
     width: 0;
     margin-right: 50px;

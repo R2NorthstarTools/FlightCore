@@ -27,6 +27,34 @@ jobs:
       - name: Format check
         run: cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check
 
+  clippy:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [ubuntu-22.04, windows-latest]
+
+    name: clippy-check
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          components: clippy
+      - name: install dependencies (ubuntu only)
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev webkit2gtk-4.0 libappindicator3-dev librsvg2-dev patchelf
+      - name: Create dist folder (Ubuntu only)
+        if: matrix.platform == 'ubuntu-22.04'
+        run: mkdir --parent src-vue/dist
+      - name: Create dist folder (Windows only)
+        if: matrix.platform == 'windows-latest'
+        run: New-Item -ItemType Directory -Force -Path "src-vue\dist"
+      - name: Run clippy
+        run: cargo clippy --manifest-path src-tauri/Cargo.toml -- --no-deps --deny warnings
+
   # Ensure committed bindings correct
   autogen-ts-bindings-check:
     runs-on: ubuntu-latest
@@ -95,23 +123,39 @@ jobs:
       env:
         TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
       run: |
-        npm install
-        cd src-vue && npm install && cd ..
+        npm clean-install
+        cd src-vue && npm clean-install && cd ..
         npm run tauri build
     - uses: tauri-apps/tauri-action@v0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
     - name: Upload Linux artifact
+      if: matrix.platform == 'ubuntu-22.04'
       uses: actions/upload-artifact@v3
       with:
         name: linux-artifacts
         path: |
           src-tauri/target/release/bundle/appimage/*
+    - name: Upload Linux AppImage
+      if: matrix.platform == 'ubuntu-22.04'
+      uses: actions/upload-artifact@v3
+      with:
+        name: linux-appimage
+        path: |
+          src-tauri/target/release/bundle/appimage/*.AppImage
     - name: Upload Windows artifact
+      if: matrix.platform == 'windows-latest'
       uses: actions/upload-artifact@v3
       with:
         name: windows-artifacts
         path: |
           src-tauri/target/release/bundle/msi/*
           src-tauri/target/release/app.pdb
+    - name: Additionally upload Windows installer separately
+      if: matrix.platform == 'windows-latest'
+      uses: actions/upload-artifact@v3
+      with:
+        name: windows-msi
+        path: |
+          src-tauri/target/release/bundle/msi/*.msi
