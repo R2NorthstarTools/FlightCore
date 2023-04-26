@@ -46,10 +46,14 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev webkit2gtk-4.0 libappindicator3-dev librsvg2-dev patchelf
+      - name: Create dist folder (Ubuntu only)
+        if: matrix.platform == 'ubuntu-22.04'
+        run: mkdir --parent src-vue/dist
+      - name: Create dist folder (Windows only)
+        if: matrix.platform == 'windows-latest'
+        run: New-Item -ItemType Directory -Force -Path "src-vue\dist"
       - name: Run clippy
-        run: |
-          mkdir --parent src-vue/dist
-          cargo clippy --manifest-path src-tauri/Cargo.toml -- --no-deps --deny warnings
+        run: cargo clippy --manifest-path src-tauri/Cargo.toml -- --no-deps --deny warnings
 
   # Ensure committed bindings correct
   autogen-ts-bindings-check:
