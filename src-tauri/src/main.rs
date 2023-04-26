@@ -183,7 +183,7 @@ fn main() {
                     );
                     if result == 1 {
                         // Open the installation instructions URL in the user's default web browser
-                        open::that(format!("https://github.com/R2NorthstarTools/FlightCore/blob/main/docs/TROUBLESHOOTING.md#flightcore-wont-launch")).unwrap();
+                        open::that("https://github.com/R2NorthstarTools/FlightCore/blob/main/docs/TROUBLESHOOTING.md#flightcore-wont-launch".to_string()).unwrap();
                     }
                 }
             }
