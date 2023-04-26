@@ -47,7 +47,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev webkit2gtk-4.0 libappindicator3-dev librsvg2-dev patchelf
       - name: Run clippy
-        run: cargo clippy --manifest-path src-tauri/Cargo.toml -- --no-deps --deny warnings
+        run: |
+          mkdir --parent src-vue/dist
+          cargo clippy --manifest-path src-tauri/Cargo.toml -- --no-deps --deny warnings
 
   # Ensure committed bindings correct
   autogen-ts-bindings-check:
