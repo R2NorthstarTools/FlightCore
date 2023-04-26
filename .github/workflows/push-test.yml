@@ -28,6 +28,11 @@ jobs:
         run: cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check
 
   clippy:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [ubuntu-22.04, windows-latest]
+
     name: clippy-check
     runs-on: ${{ matrix.platform }}
     steps:
