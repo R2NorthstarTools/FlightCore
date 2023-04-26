@@ -40,7 +40,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
-          components: rustfmt
+          components: clippy
       - name: Run clippy
         run: cargo clippy --manifest-path src-tauri/Cargo.toml -- --no-deps --deny warnings
 
