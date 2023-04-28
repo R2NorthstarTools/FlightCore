@@ -4,6 +4,7 @@ use std::{
     fs::{self, File, OpenOptions},
     io,
     path::PathBuf,
+    str::FromStr,
 };
 use tauri::{
     async_runtime::{block_on, channel, Mutex, Receiver, Sender},
@@ -12,7 +13,7 @@ use tauri::{
 use thermite::{core::utils::TempDir, prelude::ThermiteError};
 use zip::ZipArchive;
 
-use crate::{mod_management::ThunderstoreManifest, APP_HANDLE};
+use crate::{mod_management::ParsedThunderstoreModString, APP_HANDLE};
 
 static INSTALL_STATUS_RECV: OnceCell<Mutex<Receiver<bool>>> = OnceCell::new();
 
@@ -34,6 +35,7 @@ impl InstallStatusSender {
 pub async fn install_plugin(
     game_install: &GameInstall,
     zip_file: &File,
+    thunderstore_mod_string: &str,
     can_install_plugins: bool,
 ) -> Result<(), ThermiteError> {
     let plugins_directory = PathBuf::new()
@@ -43,6 +45,13 @@ pub async fn install_plugin(
     let temp_dir = TempDir::create(plugins_directory.join("___flightcore-temp-plugin-dir"))?;
     let manifest_path = temp_dir.join("manifest.json");
     let mut archive = ZipArchive::new(zip_file)?;
+
+    let parsed_mod_string = ParsedThunderstoreModString::from_str(thunderstore_mod_string).map_err(|_|ThermiteError::MiscError("Gecko why is this returning nothing? anyway the error is failed to parse thunderstore string lmao".into()))?;
+    let folder_name_string = format!(
+        "{}-{}",
+        parsed_mod_string.author_name, parsed_mod_string.mod_name
+    ); // version omited because it would be a pain to replace/update
+       // manifest is in the folder so the version is not lost
 
     for i in 0..archive.len() {
         let mut file = archive.by_index(i)?;
@@ -67,23 +76,7 @@ pub async fn install_plugin(
         io::copy(&mut file, &mut outfile)?;
     }
 
-    let this_plugin_dir = {
-        let data = std::fs::read_to_string(&manifest_path)?;
-        let manifest: ThunderstoreManifest =
-            json5::from_str(&data).map_err(|err| ThermiteError::MiscError(err.to_string()))?;
-
-        plugins_directory.join(manifest.name)
-    };
-
-    // create the plugin subdir
-    if !this_plugin_dir.exists() {
-        fs::create_dir(&this_plugin_dir)?;
-    }
-
-    fs::copy(
-        &manifest_path,
-        this_plugin_dir.join(manifest_path.file_name().unwrap_or_default()),
-    )?;
+    let this_plugin_dir = plugins_directory.join(folder_name_string);
 
     let plugins: Vec<std::fs::DirEntry> = temp_dir
         .join("plugins")
@@ -124,6 +117,16 @@ pub async fn install_plugin(
             temp_dir.join("plugins/anyplugins.dll"),
         )))?;
     }
+
+    // create the plugin subdir
+    if !this_plugin_dir.exists() {
+        fs::create_dir(&this_plugin_dir)?;
+    }
+
+    fs::copy(
+        &manifest_path,
+        this_plugin_dir.join(manifest_path.file_name().unwrap_or_default()),
+    )?;
 
     for file in plugins.iter().inspect(|f| {
         _ = fs::remove_file(this_plugin_dir.join(f.file_name().to_string_lossy().to_string()))

@@ -16,10 +16,10 @@ use app::GameInstall;
 use crate::plugin_management::download::install_plugin;
 
 #[derive(Debug, Clone)]
-struct ParsedThunderstoreModString {
-    author_name: String,
-    mod_name: String,
-    version: Option<String>,
+pub struct ParsedThunderstoreModString {
+    pub author_name: String,
+    pub mod_name: String,
+    pub version: Option<String>,
 }
 
 impl std::str::FromStr for ParsedThunderstoreModString {
@@ -395,7 +395,14 @@ pub async fn fc_download_mod_and_install(
 
     // Injected plugin install
 
-    let result_plugin = match install_plugin(game_install, &f, can_install_plugins).await {
+    let result_plugin = match install_plugin(
+        game_install,
+        &f,
+        thunderstore_mod_string,
+        can_install_plugins,
+    )
+    .await
+    {
         err if matches!(err, Err(ThermiteError::MissingFile(_))) => err,
         Err(err) => Err(err.to_string())?,
         r => r,
