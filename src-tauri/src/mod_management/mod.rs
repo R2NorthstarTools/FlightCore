@@ -13,7 +13,7 @@ use thermite::prelude::ThermiteError;
 use app::get_enabled_mods;
 use app::GameInstall;
 
-use crate::plugin_management::install_plugin;
+use crate::plugin_management::download::install_plugin;
 
 #[derive(Debug, Clone)]
 struct ParsedThunderstoreModString {

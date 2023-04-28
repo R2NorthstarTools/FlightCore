@@ -1,4 +1,1 @@
-mod download;
-
-// should be refactored later
-pub use download::*;
+pub mod download;
