@@ -13,6 +13,8 @@ use thermite::prelude::ThermiteError;
 use app::get_enabled_mods;
 use app::GameInstall;
 
+use crate::plugin_management::detection::find_installed_plugins;
+use crate::plugin_management::detection::installed_plugins_to_mod;
 use crate::plugin_management::install_plugin;
 
 #[derive(Debug, Clone)]
@@ -252,6 +254,12 @@ pub fn get_installed_mods_and_properties(
         current_mod.enabled = current_mod_enabled;
         installed_mods.push(current_mod);
     }
+
+    // push plugins into this list
+    // plugins should probably have there own tab but I hate frontend
+    installed_mods.extend(installed_plugins_to_mod(
+        &find_installed_plugins(&game_install).map_err(|err| err.to_string())?,
+    ));
 
     Ok(installed_mods)
 }
