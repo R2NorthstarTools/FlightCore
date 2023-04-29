@@ -37,7 +37,7 @@ use mod_management::{
 };
 
 mod plugin_management;
-use crate::plugin_management::{receive_install_status, InstallStatusSender};
+use crate::plugin_management::download::{receive_install_status, InstallStatusSender};
 
 mod northstar;
 use northstar::get_northstar_version_number;

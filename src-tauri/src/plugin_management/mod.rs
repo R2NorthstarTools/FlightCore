@@ -1,5 +1,2 @@
-mod download;
 pub mod detection;
-
-// should be refactored later
-pub use download::*;
+pub mod download;
