@@ -1,5 +1,5 @@
 use crate::{mod_management::ThunderstoreManifest, GameInstall, NorthstarMod};
-use std::{ffi::OsStr, fs, path::PathBuf};
+use std::{ffi::OsStr, path::{PathBuf, Path}};
 use thermite::prelude::ThermiteError;
 
 pub fn installed_plugins_to_mod(
@@ -29,16 +29,29 @@ pub fn find_installed_plugins(
         .read_dir()
         .map_err(|_| ThermiteError::MissingFile(Box::new(plugins_directory)))?
         .filter_map(|f| f.ok())
-        .filter(|e| e.path().is_dir())
-        .filter_map(find_manifest)
+        .map(|e| e.path())
+        .filter_map(|p| find_manifest(p.as_path()).or_else(|| find_plugin_in_root(p.as_path())))
         .collect())
 }
 
+fn find_plugin_in_root(file: &Path) -> Option<(ThunderstoreManifest, PathBuf)> {
+    if file.extension()? == ".dll" {
+        Some((
+            ThunderstoreManifest {
+                name: file.file_name()?.to_str()?.to_string(),
+                version_number: "0.0.0".to_string(), // TODO: peak the dll to find it's version
+            },
+            file.to_owned(),
+        ))
+    } else {
+        None
+    }
+}
+
 // this can't be async :(
-fn find_manifest(dir: fs::DirEntry) -> Option<(ThunderstoreManifest, PathBuf)> {
+fn find_manifest(dir: &Path) -> Option<(ThunderstoreManifest, PathBuf)> {
     pasre_manifest_path(
-        dir.path()
-            .read_dir()
+        dir.read_dir()
             .ok()?
             .filter_map(|e| e.ok())
             .map(|e| e.path())
