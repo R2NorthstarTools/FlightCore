@@ -35,7 +35,7 @@ pub fn find_installed_plugins(
 }
 
 fn find_plugin_in_root(file: &Path) -> Option<(ThunderstoreManifest, PathBuf)> {
-    if file.extension()? == ".dll" {
+    if file.extension()? == "dll" {
         Some((
             ThunderstoreManifest {
                 name: file.file_name()?.to_str()?.to_string(),
