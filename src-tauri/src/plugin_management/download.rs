@@ -47,11 +47,13 @@ pub async fn install_plugin(
     let mut archive = ZipArchive::new(zip_file)?;
 
     let parsed_mod_string = ParsedThunderstoreModString::from_str(thunderstore_mod_string).map_err(|_|ThermiteError::MiscError("Gecko why is this returning nothing? anyway the error is failed to parse thunderstore string lmao".into()))?;
-    let folder_name_string = format!(
-        "{}-{}",
-        parsed_mod_string.author_name, parsed_mod_string.mod_name
-    ); // version omited because it would be a pain to replace/update
-       // manifest is in the folder so the version is not lost
+    let package_name = parsed_mod_string.mod_name.to_owned();
+    let folder_name = format!(
+        "{}-{}-{}",
+        parsed_mod_string.author_name,
+        package_name,
+        parsed_mod_string.version.unwrap_or_else(|| "0.0.0".into())
+    );
 
     for i in 0..archive.len() {
         let mut file = archive.by_index(i)?;
@@ -76,7 +78,7 @@ pub async fn install_plugin(
         io::copy(&mut file, &mut outfile)?;
     }
 
-    let this_plugin_dir = plugins_directory.join(folder_name_string);
+    let this_plugin_dir = plugins_directory.join(folder_name);
 
     let plugins: Vec<std::fs::DirEntry> = temp_dir
         .join("plugins")
@@ -118,6 +120,21 @@ pub async fn install_plugin(
         )))?;
     }
 
+    // nuke previous version if it exists
+    for (_, path) in plugins_directory
+        .read_dir()
+        .map_err(|_| ThermiteError::MissingFile(Box::new(temp_dir.join("plugins"))))?
+        .filter_map(|f| f.ok()) // ignore any errors
+        .map(|e| e.path())
+        .filter(|path| path.is_dir())
+        .filter_map(|path| Some((path.clone().file_name()?.to_str()?.to_owned(), path)))
+        .filter_map(|(name, path)| Some((name.parse::<ParsedThunderstoreModString>().ok()?, path)))
+        .filter(|(p, _)| p.mod_name == package_name)
+        .inspect(|(_, path)| println!("removing {}", path.display()))
+    {
+        fs::remove_dir_all(path)?
+    }
+
     // create the plugin subdir
     if !this_plugin_dir.exists() {
         fs::create_dir(&this_plugin_dir)?;
@@ -128,10 +145,7 @@ pub async fn install_plugin(
         this_plugin_dir.join(manifest_path.file_name().unwrap_or_default()),
     )?;
 
-    for file in plugins.iter().inspect(|f| {
-        _ = fs::remove_file(this_plugin_dir.join(f.file_name().to_string_lossy().to_string()))
-        // try remove plugins to update
-    }) {
+    for file in plugins {
         fs::copy(file.path(), this_plugin_dir.join(file.file_name()))?;
     }
 
