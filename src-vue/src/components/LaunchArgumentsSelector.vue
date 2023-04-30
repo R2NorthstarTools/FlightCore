@@ -52,6 +52,16 @@ export default defineComponent({
     methods: {
         onChange(index: number) {
             this.values[index] = !this.values[index];
+
+            const newArgs = this.arguments
+                .filter((value: LaunchArgument, index: number) => {
+                    return this.values[index];
+                })
+                .map((value: LaunchArgument) => value.argumentName)
+
+            invoke<string[]>("set_launch_arguments", {
+                gamePath: this.$store.state.game_path, arguments: newArgs
+            });
         }
     },
     async mounted() {
