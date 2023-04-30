@@ -67,10 +67,9 @@ pub enum PullRequestType {
 /// Parse pull requests from specified URL
 pub async fn get_pull_requests(url: String) -> Result<Vec<PullsApiResponseElement>, String> {
     let mut all_pull_requests: Vec<PullsApiResponseElement> = vec![];
-    // This fetched 3 pages of GitHubs pull request API
-    // Optimally we should check at runtime how many pages we need
-    // but this should suffice for now
-    for i in 1..4 {
+
+    let mut i = 1; // pagination on GitHub starts with `1`.
+    loop {
         let paginated_url = format!("{}?page={}", url, i);
 
         let json_response = match fetch_github_releases_api(&paginated_url).await {
@@ -84,7 +83,14 @@ pub async fn get_pull_requests(url: String) -> Result<Vec<PullsApiResponseElemen
                 Err(err) => return Err(err.to_string()),
             };
 
-        all_pull_requests.extend(pulls_response)
+        // Check if we still got a result
+        if pulls_response.is_empty() {
+            // Empty result means we went through all pages with content
+            break;
+        }
+
+        all_pull_requests.extend(pulls_response);
+        i += 1;
     }
 
     Ok(all_pull_requests)
