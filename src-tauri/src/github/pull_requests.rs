@@ -66,17 +66,28 @@ pub enum PullRequestType {
 
 /// Parse pull requests from specified URL
 pub async fn get_pull_requests(url: String) -> Result<Vec<PullsApiResponseElement>, String> {
-    let json_response = match fetch_github_releases_api(&url).await {
-        Ok(result) => result,
-        Err(err) => return Err(err),
-    };
+    let mut all_pull_requests: Vec<PullsApiResponseElement> = vec![];
+    // This fetched 3 pages of GitHubs pull request API
+    // Optimally we should check at runtime how many pages we need
+    // but this should suffice for now
+    for i in 1..4 {
+        let paginated_url = format!("{}?page={}", url, i);
 
-    let pulls_response: Vec<PullsApiResponseElement> = match serde_json::from_str(&json_response) {
-        Ok(res) => res,
-        Err(err) => return Err(err.to_string()),
-    };
+        let json_response = match fetch_github_releases_api(&paginated_url).await {
+            Ok(result) => result,
+            Err(err) => return Err(err),
+        };
 
-    Ok(pulls_response)
+        let pulls_response: Vec<PullsApiResponseElement> =
+            match serde_json::from_str(&json_response) {
+                Ok(res) => res,
+                Err(err) => return Err(err.to_string()),
+            };
+
+        all_pull_requests.extend(pulls_response)
+    }
+
+    Ok(all_pull_requests)
 }
 
 /// Gets either launcher or mods PRs
