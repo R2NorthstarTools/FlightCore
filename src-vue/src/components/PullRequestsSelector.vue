@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-collapse @change="onChange">
-            <el-collapse-item name="1">
+            <el-collapse-item name="1" @keydown.space="launcherSearchSpace">
                 <template #title>
                     Launcher PRs
                     <el-input class="pr_search_input" v-model="launcherSearch" placeholder="Filter pull requests" @click.stop="() =>  false"></el-input>
@@ -34,7 +34,7 @@
                 </div>
             </el-collapse-item>
 
-            <el-collapse-item name="2">
+            <el-collapse-item name="2" @keydown.space="modsSearchSpace">
                 <template #title>
                     Mods PRs
                     <el-input class="pr_search_input" v-model="modsSearch" placeholder="Filter pull requests" @click.stop="() =>  false"></el-input>
@@ -127,6 +127,14 @@ export default defineComponent({
             if (openedCollapseNames.includes('2') && this.pull_requests_mods.length === 0) {
                 this.getPullRequests('Mods');
             }
+        },
+        launcherSearchSpace(e: KeyboardEvent) {
+            e.preventDefault();
+            this.launcherSearch += ' ';
+        },
+        modsSearchSpace(e: KeyboardEvent) {
+            e.preventDefault();
+            this.modsSearch += ' ';
         },
         async getPullRequests(pull_request_type: PullRequestType) {
             this.$store.commit('getPullRequests', pull_request_type);
