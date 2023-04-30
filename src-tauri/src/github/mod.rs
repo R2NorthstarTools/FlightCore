@@ -257,9 +257,9 @@ pub fn compare_tags_northstar(first_tag: Tag, second_tag: Tag) -> Result<String,
                 commit.sha,
                 turn_pr_number_into_link(commit.commit.message.split('\n').next().unwrap(), repo)
             );
-            patch_notes.push(format!(
-                "{}",
-                turn_pr_number_into_link(commit.commit.message.split('\n').next().unwrap(), repo)
+            patch_notes.push(turn_pr_number_into_link(
+                commit.commit.message.split('\n').next().unwrap(),
+                repo,
             ));
 
             // Store authors in set
@@ -282,7 +282,7 @@ pub fn compare_tags_northstar(first_tag: Tag, second_tag: Tag) -> Result<String,
     // Create a new list with the prefix prepended to each element.
     let prefixed_list: Vec<String> = sorted_vec.iter().map(|s| prefix.to_owned() + s).collect();
 
-    full_patch_notes += &"**Contributors:**\n";
+    full_patch_notes += "**Contributors:**\n";
     full_patch_notes += &prefixed_list.join(" ");
 
     Ok(full_patch_notes.to_string())
