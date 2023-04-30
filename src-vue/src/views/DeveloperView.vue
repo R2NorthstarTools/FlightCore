@@ -5,6 +5,52 @@
                 This page is designed for developers. Some of the buttons here can break your Northstar install if you do not know what you're doing!
             </el-alert>
 
+            <h3>Basic:</h3>
+
+            <el-button type="primary" @click="disableDevMode">
+                Disable developer mode
+            </el-button>
+
+            <el-button type="primary" @click="crashApplication">
+                Panic button
+            </el-button>
+
+            <h3>Linux:</h3>
+
+            <el-button type="primary" @click="checkLinuxCompatibility">
+                Check NSProton Compatibility
+            </el-button>
+
+            <h3>Testing:</h3>
+
+            <el-button type="primary" @click="launchGameWithoutChecks">
+                Launch Northstar (bypass all checks)
+            </el-button>
+
+            <el-button type="primary" @click="launchGameViaSteam">
+                Launch Northstar via Steam
+            </el-button>
+
+            <h3>Repair:</h3>
+
+
+            <el-button type="primary" @click="getInstalledMods">
+                Get installed mods
+            </el-button>
+
+            <h3>Testing</h3>
+            <pull-requests-selector />
+
+            <h3>Mod install:</h3>
+
+            <el-input v-model="mod_to_install_field_string" placeholder="Please input Thunderstore dependency string (example: AuthorName-ModName-1.2.3)" clearable />
+
+            <el-button type="primary" @click="installMod">
+                Install mod
+            </el-button>
+
+            <h3>Release management</h3>
+            
             <el-button type="primary" @click="getTags">
                 Get tags
             </el-button>
@@ -36,50 +82,6 @@
                 :rows="5"
                 placeholder="Output"
             />
-
-            <h3>Basic:</h3>
-
-            <el-button type="primary" @click="disableDevMode">
-                Disable developer mode
-            </el-button>
-
-            <el-button type="primary" @click="crashApplication">
-                Panic button
-            </el-button>
-
-            <h3>Linux:</h3>
-
-            <el-button type="primary" @click="checkLinuxCompatibility">
-                Check NSProton Compatibility
-            </el-button>
-
-            <h3>Testing:</h3>
-
-            <el-button type="primary" @click="launchGameWithoutChecks">
-                Launch Northstar (bypass all checks)
-            </el-button>
-
-            <el-button type="primary" @click="launchGameViaSteam">
-                Launch Northstar via Steam
-            </el-button>
-
-            <h3>Mod install:</h3>
-
-            <el-input v-model="mod_to_install_field_string" placeholder="Please input Thunderstore dependency string (example: AuthorName-ModName-1.2.3)" clearable />
-
-            <el-button type="primary" @click="installMod">
-                Install mod
-            </el-button>
-
-            <h3>Repair:</h3>
-
-
-            <el-button type="primary" @click="getInstalledMods">
-                Get installed mods
-            </el-button>
-
-            <h3>Testing</h3>
-            <pull-requests-selector />
         </el-scrollbar>
     </div>
 </template>

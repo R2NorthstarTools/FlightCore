@@ -33,6 +33,8 @@ Answers to frequently asked questions can be found in [docs/FAQ.md](docs/FAQ.md)
 
 If you'd like to contribute to FlightCore, see [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)
 
+If you are a Northstar developer/contributor, you might want to look at [docs/DEV-TOOLS.md](docs/DEV-TOOLS.md)
+
 ## Roadmap
 
 --> See https://github.com/R2NorthstarTools/FlightCore/issues/1
