@@ -116,6 +116,7 @@ fn main() {
             get_flightcore_version_number,
             get_northstar_version_number_caller,
             northstar::launch_arguments::get_launch_arguments,
+            northstar::launch_arguments::set_launch_arguments,
             check_is_northstar_outdated,
             verify_install_location,
             get_host_os_caller,
