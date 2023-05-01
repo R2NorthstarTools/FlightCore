@@ -16,21 +16,21 @@ use app::GameInstall;
 use crate::plugin_management::download::install_plugin;
 
 #[derive(Debug, Clone)]
-pub struct ParsedThunderstoreModString {
-    pub author_name: String,
-    pub mod_name: String,
-    pub version: Option<String>,
+struct ParsedThunderstoreModString {
+    author_name: String,
+    mod_name: String,
+    version: String,
 }
 
 impl std::str::FromStr for ParsedThunderstoreModString {
-    type Err = ();
+    type Err = &'static str; // todo use an better error management
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut parts = s.split('-');
 
-        let author_name = parts.next().unwrap().to_string();
-        let mod_name = parts.next().unwrap().to_string();
-        let version = parts.next().map(|s| s.to_string());
+        let author_name = parts.next().ok_or("None value on author_name")?.to_string();
+        let mod_name = parts.next().ok_or("None value on mod_name")?.to_string();
+        let version = parts.next().ok_or("None value on version")?.to_string();
 
         Ok(ParsedThunderstoreModString {
             author_name,
@@ -271,7 +271,7 @@ async fn get_ns_mod_download_url(thunderstore_mod_string: &str) -> Result<String
         "{}/{}/{}",
         parsed_ts_mod_string.author_name,
         parsed_ts_mod_string.mod_name,
-        parsed_ts_mod_string.version.unwrap()
+        parsed_ts_mod_string.version
     );
 
     for ns_mod in index {

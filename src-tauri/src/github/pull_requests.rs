@@ -66,17 +66,34 @@ pub enum PullRequestType {
 
 /// Parse pull requests from specified URL
 pub async fn get_pull_requests(url: String) -> Result<Vec<PullsApiResponseElement>, String> {
-    let json_response = match fetch_github_releases_api(&url).await {
-        Ok(result) => result,
-        Err(err) => return Err(err),
-    };
+    let mut all_pull_requests: Vec<PullsApiResponseElement> = vec![];
 
-    let pulls_response: Vec<PullsApiResponseElement> = match serde_json::from_str(&json_response) {
-        Ok(res) => res,
-        Err(err) => return Err(err.to_string()),
-    };
+    let mut i = 1; // pagination on GitHub starts with `1`.
+    loop {
+        let paginated_url = format!("{}?page={}", url, i);
 
-    Ok(pulls_response)
+        let json_response = match fetch_github_releases_api(&paginated_url).await {
+            Ok(result) => result,
+            Err(err) => return Err(err),
+        };
+
+        let pulls_response: Vec<PullsApiResponseElement> =
+            match serde_json::from_str(&json_response) {
+                Ok(res) => res,
+                Err(err) => return Err(err.to_string()),
+            };
+
+        // Check if we still got a result
+        if pulls_response.is_empty() {
+            // Empty result means we went through all pages with content
+            break;
+        }
+
+        all_pull_requests.extend(pulls_response);
+        i += 1;
+    }
+
+    Ok(all_pull_requests)
 }
 
 /// Gets either launcher or mods PRs
