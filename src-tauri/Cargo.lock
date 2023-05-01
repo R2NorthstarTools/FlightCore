@@ -112,6 +112,7 @@ dependencies = [
  "tauri-plugin-store",
  "tokio",
  "ts-rs",
+ "winapi",
  "zip",
  "zip-extract",
 ]

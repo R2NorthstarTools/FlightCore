@@ -64,6 +64,8 @@ log = "0.4.17"
 zip-extract = "0.1.2"
 # open urls
 open = "3.2.0"
+# Windows API stuff
+winapi = "0.3.9"
 
 [features]
 # by default Tauri runs in production mode
