@@ -16,10 +16,10 @@ use app::GameInstall;
 use crate::plugin_management::download::install_plugin;
 
 #[derive(Debug, Clone)]
-struct ParsedThunderstoreModString {
-    author_name: String,
-    mod_name: String,
-    version: String,
+pub struct ParsedThunderstoreModString {
+    pub author_name: String,
+    pub mod_name: String,
+    pub version: String,
 }
 
 impl std::str::FromStr for ParsedThunderstoreModString {

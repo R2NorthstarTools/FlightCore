@@ -46,13 +46,14 @@ pub async fn install_plugin(
     let manifest_path = temp_dir.join("manifest.json");
     let mut archive = ZipArchive::new(zip_file)?;
 
-    let parsed_mod_string = ParsedThunderstoreModString::from_str(thunderstore_mod_string).map_err(|_|ThermiteError::MiscError("Gecko why is this returning nothing? anyway the error is failed to parse thunderstore string lmao".into()))?;
+    let parsed_mod_string = ParsedThunderstoreModString::from_str(thunderstore_mod_string)
+        .map_err(|err| {
+            ThermiteError::MiscError(format!("failed to parse thunderstore mod string : {err}"))
+        })?;
     let package_name = parsed_mod_string.mod_name.to_owned();
     let folder_name = format!(
         "{}-{}-{}",
-        parsed_mod_string.author_name,
-        package_name,
-        parsed_mod_string.version.unwrap_or_else(|| "0.0.0".into())
+        parsed_mod_string.author_name, package_name, parsed_mod_string.version
     );
 
     for i in 0..archive.len() {
