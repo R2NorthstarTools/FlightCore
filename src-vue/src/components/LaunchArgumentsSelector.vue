@@ -74,7 +74,9 @@ export default defineComponent({
     methods: {
         onChange(index: number) {
             this.values[index] = !this.values[index];
-
+            this.saveLaunchArgumentsToFile();
+        },
+        saveLaunchArgumentsToFile() {
             const newArgs = this.arguments
                 .filter((value: LaunchArgument, index: number) => {
                     return this.values[index];
@@ -98,6 +100,7 @@ export default defineComponent({
                 this.localCustomArgs.push( newArgument );
                 const index: number = this.arguments.map(arg => arg.argumentName).indexOf(newArgument.argumentName);
                 this.values.splice(index, 0, true);
+                this.saveLaunchArgumentsToFile();
             }
             this.inputVisible = false;
             this.inputValue = '';
