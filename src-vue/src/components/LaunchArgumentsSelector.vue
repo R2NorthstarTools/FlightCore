@@ -96,7 +96,7 @@ export default defineComponent({
         },
         handleInputConfirm() {
             if (this.inputValue.length !== 0) {
-                const newArgument: LaunchArgument = new LaunchArgument(this.inputValue, '');
+                const newArgument: LaunchArgument = new LaunchArgument(this.inputValue);
                 this.localCustomArgs.push( newArgument );
                 const index: number = this.arguments.map(arg => arg.argumentName).indexOf(newArgument.argumentName);
                 this.values.splice(index, 0, true);
@@ -110,7 +110,7 @@ export default defineComponent({
         this.values = this.arguments.map(a => false);
 
         const fileArgs = await invoke<string[]>("get_launch_arguments", { gamePath: this.$store.state.game_path});
-        this.localCustomArgs = fileArgs.map(arg => new LaunchArgument(arg, ''));
+        this.localCustomArgs = fileArgs.map(arg => new LaunchArgument(arg));
 
         this.arguments.forEach((argument, index) => {
             if (fileArgs.includes(argument.argumentName)) {
