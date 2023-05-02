@@ -5,6 +5,7 @@
             class="box-item"
             :content="argument.i18nEntry"
             placement="bottom"
+            :disabled="argument.i18nEntry.length === 0"
         >
             <el-check-tag
                 class="fc-launch_arg_tag"
@@ -73,7 +74,7 @@ export default defineComponent({
 
         const fileArgs = await invoke<string[]>("get_launch_arguments", { gamePath: this.$store.state.game_path});
         this.localCustomArgs = fileArgs.map(arg => new LaunchArgument(arg, ''));
-        
+
         this.arguments.forEach((argument, index) => {
             if (fileArgs.includes(argument.argumentName)) {
                 this.values[index] = true;
