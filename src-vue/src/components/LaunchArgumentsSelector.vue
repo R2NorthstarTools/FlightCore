@@ -27,7 +27,7 @@ export default defineComponent({
     name: 'LaunchArgumentsSelector',
     computed: {
         arguments(): LaunchArgument[] {
-            return [
+            const officialArguments = [
                 new LaunchArgument("-disablelogs", "Disable logging and creation of log files"),
                 new LaunchArgument("-vanilla", "Disables Northstar loading"),
                 new LaunchArgument("-northstar", "Enables Northstar loading"),
@@ -37,7 +37,10 @@ export default defineComponent({
                 new LaunchArgument("-noplugins", "Disables the plugin system"),
                 new LaunchArgument("-novid", "Disables startup videos"),
                 new LaunchArgument("-nosound", "Disables all game sounds")
-            ].sort((a, b) => a.argumentName.localeCompare(b.argumentName));
+            ];
+
+            return (this.localCustomArgs.concat(officialArguments))
+                .sort((a, b) => a.argumentName.localeCompare(b.argumentName));
         },
         containerClasses(): string {
             return this.gamePathIsSelected ? 'fc-tags_container' : 'fc-tags_container disabled_container';
@@ -47,7 +50,8 @@ export default defineComponent({
         }
     },
     data: () => ({
-        values: [] as boolean[]
+        values: [] as boolean[],
+        localCustomArgs: [] as LaunchArgument[]
     }),
     methods: {
         onChange(index: number) {
@@ -68,6 +72,8 @@ export default defineComponent({
         this.values = this.arguments.map(a => false);
 
         const fileArgs = await invoke<string[]>("get_launch_arguments", { gamePath: this.$store.state.game_path});
+        this.localCustomArgs = fileArgs.map(arg => new LaunchArgument(arg, ''));
+        
         this.arguments.forEach((argument, index) => {
             if (fileArgs.includes(argument.argumentName)) {
                 this.values[index] = true;
