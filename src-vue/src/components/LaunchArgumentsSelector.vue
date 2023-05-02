@@ -96,11 +96,16 @@ export default defineComponent({
         },
         handleInputConfirm() {
             if (this.inputValue.length !== 0) {
-                const newArgument: LaunchArgument = new LaunchArgument(this.inputValue);
-                this.localCustomArgs.push( newArgument );
-                const index: number = this.arguments.map(arg => arg.argumentName).indexOf(newArgument.argumentName);
-                this.values.splice(index, 0, true);
-                this.saveLaunchArgumentsToFile();
+                const allArgumentsNames: string[] = this.arguments.map(arg => arg.argumentName);
+                if (allArgumentsNames.indexOf(this.inputValue) !== -1) {
+                    console.warn(`Argument "${this.inputValue}" already present, ignoring.`);
+                } else {
+                    const newArgument: LaunchArgument = new LaunchArgument(this.inputValue);
+                    this.localCustomArgs.push( newArgument );
+                    const index: number = allArgumentsNames.indexOf(newArgument.argumentName);
+                    this.values.splice(index, 0, true);
+                    this.saveLaunchArgumentsToFile();
+                }
             }
             this.inputVisible = false;
             this.inputValue = '';
