@@ -6,9 +6,11 @@ pub fn get_launch_arguments(game_path: &str) -> Result<Vec<String>, ()> {
         return Ok(vec![]);
     }
 
-    let data =  match std::fs::read_to_string(launch_args_path.clone()) {
+    let data = match std::fs::read_to_string(launch_args_path.clone()) {
         Ok(content) => content,
-        Err(_) => { return Ok(vec![]); }
+        Err(_) => {
+            return Ok(vec![]);
+        }
     };
 
     Ok(data.split_whitespace().map(|arg| arg.to_string()).collect())
