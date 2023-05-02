@@ -15,6 +15,20 @@
                 {{ argument.argumentName }}
             </el-check-tag>
         </el-tooltip>
+
+        <!-- User-input tag -->
+        <el-input
+            v-if="inputVisible"
+            ref="InputRef"
+            class="fc-tag__input"
+            v-model="inputValue"
+            size="small"
+            @keyup.enter="handleInputConfirm"
+            @blur="handleInputConfirm"
+        />
+        <el-button v-else class="button-new-tag ml-1" size="small" @click="showInput">
+            + New launch argument
+        </el-button>
     </div>
 </template>
 
@@ -51,6 +65,9 @@ export default defineComponent({
         }
     },
     data: () => ({
+        inputValue: '',
+        inputVisible: false,
+
         values: [] as boolean[],
         localCustomArgs: [] as LaunchArgument[]
     }),
@@ -67,7 +84,24 @@ export default defineComponent({
             invoke<string[]>("set_launch_arguments", {
                 gamePath: this.$store.state.game_path, arguments: newArgs
             });
-        }
+        },
+        showInput() {
+            this.inputVisible = true;
+            this.$nextTick(() => {
+                // @ts-ignore
+                this.$refs.InputRef.input.focus();
+            });
+        },
+        handleInputConfirm() {
+            if (this.inputValue.length !== 0) {
+                const newArgument: LaunchArgument = new LaunchArgument(this.inputValue, '');
+                this.localCustomArgs.push( newArgument );
+                const index: number = this.arguments.map(arg => arg.argumentName).indexOf(newArgument.argumentName);
+                this.values.splice(index, 0, true);
+            }
+            this.inputVisible = false;
+            this.inputValue = '';
+        },
     },
     async mounted() {
         this.values = this.arguments.map(a => false);
@@ -97,5 +131,9 @@ export default defineComponent({
 .disabled_container {
     pointer-events: none;
     filter: grayscale();
+}
+
+.fc-tag__input {
+    width: auto;
 }
 </style>
