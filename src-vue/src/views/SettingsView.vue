@@ -14,6 +14,10 @@
                             <el-button icon="Folder" @click="updateGamePath"/>
                         </template>
                     </el-input>
+                    <el-button @click="openGameInstallFolder">
+                        Open Folder
+                    </el-button>
+
                 </div>
 
                 <!-- Thunderstore mods per page configuration -->
@@ -78,6 +82,7 @@ import { Store } from 'tauri-plugin-store-api';
 import { showErrorNotification, showNotification } from "../utils/ui";
 import LanguageSelector from "../components/LanguageSelector.vue";
 const persistentStore = new Store('flight-core-settings.json');
+import { open } from '@tauri-apps/api/shell';
 
 export default defineComponent({
     name: "SettingsView",
@@ -143,6 +148,10 @@ export default defineComponent({
                     showErrorNotification(error);
                 });
         },
+        async openGameInstallFolder() {
+            // Opens the folder in default file explorer application
+            await open(`${this.$store.state.game_path}`);
+        }
     },
     mounted() {
         document.querySelector('input')!.disabled = true;
