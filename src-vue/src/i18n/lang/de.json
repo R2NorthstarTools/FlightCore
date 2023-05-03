@@ -93,6 +93,7 @@
     "settings": {
         "manage_install": "Installation verwalten",
         "choose_folder": "Installationsordner wählen",
+        "open_game_folder": "Ordner öffnen",
         "nb_ts_mods_per_page": "Anzahl an Thunderstore Mods pro Seite",
         "nb_ts_mods_per_page_desc1": "Ändern dieser Einstellung kann die Leistung beim Suchen von Thunderstore Mods beeinflussen.",
         "nb_ts_mods_per_page_desc2": "Setze diesen Wert auf 0 um alle Mods auf einer einzelnen Seite anzuzeigen",
