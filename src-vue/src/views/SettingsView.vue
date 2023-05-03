@@ -15,7 +15,7 @@
                         </template>
                     </el-input>
                     <el-button @click="openGameInstallFolder">
-                        Open Folder
+                        {{ $t('settings.open_game_folder') }}
                     </el-button>
 
                 </div>
