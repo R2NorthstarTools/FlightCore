@@ -4,7 +4,13 @@ Got an issue with FlightCore? Hopefully one of the steps below will help you res
 
 ## FlightCore won't launch
 
-If you are on Windows on FlightCore won't start, make sure you have WebView2 installed. You can grab the latest version from the Microsoft website: \
+If you are on Windows and FlightCore won't start but instead shows an error message like this
+
+![webview2 error message windows](assets/flightcore-webview2-windows-error-message.png)
+
+that means that WebView2 is not installed. WebView2 is an embedded browser framework used by FlightCore to display its GUI.
+
+To install it, you can grab the latest version from the Microsoft website: \
 https://developer.microsoft.com/en-us/microsoft-edge/webview2/#download-section
 
 ![webview2 download screenshot](assets/webview2-download-screenshot.png)
