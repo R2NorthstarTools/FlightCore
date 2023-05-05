@@ -3,7 +3,7 @@
         <el-tooltip
             v-for="(argument, index) in arguments"
             class="box-item"
-            :content="argument.i18nEntry"
+            :content="$t(argument.i18nEntry)"
             placement="bottom"
             :disabled="argument.i18nEntry.length === 0"
         >
@@ -27,7 +27,7 @@
             @blur="handleInputConfirm"
         />
         <el-button v-else class="button-new-tag ml-1" size="small" @click="showInput">
-            + New launch argument
+            {{ $t('settings.launch_args.new_arg_btn') }}
         </el-button>
     </div>
 </template>
@@ -47,15 +47,15 @@ export default defineComponent({
         },
         officialArguments(): LaunchArgument[] {
             return [
-                new LaunchArgument("-disablelogs", "Disable logging and creation of log files"),
-                new LaunchArgument("-vanilla", "Disables Northstar loading"),
-                new LaunchArgument("-northstar", "Enables Northstar loading"),
-                new LaunchArgument("-dedicated", "Starts a dedicated server without video output"),
-                new LaunchArgument("-waitfordebugger", "Waits for debugger to connect before launching game"),
-                new LaunchArgument("-enablechathooks", "Enables the use of chathooks for use by mods"),
-                new LaunchArgument("-noplugins", "Disables the plugin system"),
-                new LaunchArgument("-novid", "Disables startup videos"),
-                new LaunchArgument("-nosound", "Disables all game sounds")
+                new LaunchArgument("-disablelogs", "settings.launch_args.descriptions.disablelogs"),
+                new LaunchArgument("-vanilla", "settings.launch_args.descriptions.vanilla"),
+                new LaunchArgument("-northstar", "settings.launch_args.descriptions.northstar"),
+                new LaunchArgument("-dedicated", "settings.launch_args.descriptions.dedicated"),
+                new LaunchArgument("-waitfordebugger", "settings.launch_args.descriptions.waitfordebugger"),
+                new LaunchArgument("-enablechathooks", "settings.launch_args.descriptions.enablechathooks"),
+                new LaunchArgument("-noplugins", "settings.launch_args.descriptions.noplugins"),
+                new LaunchArgument("-novid", "settings.launch_args.descriptions.novid"),
+                new LaunchArgument("-nosound", "settings.launch_args.descriptions.nosound")
             ];
         },
         containerClasses(): string {

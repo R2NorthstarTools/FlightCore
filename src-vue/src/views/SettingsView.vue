@@ -18,7 +18,7 @@
 
                 <!-- Launch arguments selection -->
                 <div class="fc_parameter__panel">
-                    <h3>Launch arguments</h3>
+                    <h3>{{ $t('settings.launch_args.title') }}</h3>
                     <launch-arguments-selector/>
                 </div>
 
