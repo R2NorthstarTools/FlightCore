@@ -9,9 +9,9 @@ use std::{
     time::Duration,
 };
 
+use serde::{Deserialize, Serialize};
 #[cfg(target_os = "windows")]
 use std::ptr::null_mut;
-use serde::{Deserialize, Serialize};
 use ts_rs::TS;
 #[cfg(target_os = "windows")]
 use winapi::um::winuser::{MessageBoxW, MB_ICONERROR, MB_OK, MB_USERICON};
@@ -213,7 +213,8 @@ async fn is_debug_mode() -> bool {
     cfg!(debug_assertions)
 }
 
-#[tauri::command]/// Returns true if linux compatible
+#[tauri::command]
+/// Returns true if linux compatible
 async fn linux_checks() -> Result<(), String> {
     // Different behaviour depending on OS
     // MacOS is missing as it is not a target
@@ -493,7 +494,8 @@ struct NorthstarThunderstoreReleaseWrapper {
 use semver::Version;
 
 #[tauri::command]
-async fn get_available_northstar_versions() -> Result<Vec<NorthstarThunderstoreReleaseWrapper>, ()> {
+async fn get_available_northstar_versions() -> Result<Vec<NorthstarThunderstoreReleaseWrapper>, ()>
+{
     let northstar_package_name = "Northstar";
     let index = thermite::api::get_package_index().unwrap().to_vec();
     let nsmod = index
@@ -509,7 +511,11 @@ async fn get_available_northstar_versions() -> Result<Vec<NorthstarThunderstoreR
             version: my_version.version.clone(),
         };
         let current_elem_wrapped = NorthstarThunderstoreReleaseWrapper {
-            label: format!("{} v{}", my_version.name.clone(), my_version.version.clone()),
+            label: format!(
+                "{} v{}",
+                my_version.name.clone(),
+                my_version.version.clone()
+            ),
             value: current_elem,
         };
 
