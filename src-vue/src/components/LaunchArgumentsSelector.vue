@@ -37,6 +37,7 @@ import { defineComponent } from 'vue';
 import { LaunchArgument } from '../utils/LaunchArgument';
 import { NorthstarState } from '../utils/NorthstarState';
 import {invoke} from "@tauri-apps/api";
+import { showErrorNotification } from '../utils/ui';
 
 export default defineComponent({
     name: 'LaunchArgumentsSelector',
@@ -86,6 +87,8 @@ export default defineComponent({
 
             invoke<string[]>("set_launch_arguments", {
                 gamePath: this.$store.state.game_path, arguments: newArgs
+            }).catch((err: any) => {
+                showErrorNotification(err);
             });
         },
         showInput() {
