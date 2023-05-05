@@ -67,9 +67,7 @@ impl TempFile {
 
 impl Drop for TempFile {
     fn drop(&mut self) {
-        println!("path {}", self.1.display());
-
-        _ = dbg!(fs::remove_file(&self.1));
+        _ = fs::remove_file(&self.1)
     }
 }
 
@@ -361,7 +359,7 @@ pub async fn fc_download_mod_and_install(
     };
 
     // Recursively install dependencies
-    for dep in dbg!(deps) {
+    for dep in deps {
         match fc_download_mod_and_install(game_install, &dep).await {
             Ok(()) => (),
             Err(err) => {
