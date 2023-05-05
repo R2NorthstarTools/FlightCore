@@ -17,7 +17,7 @@
         </el-tooltip>
 
         <!-- Language selector -->
-        <el-select v-model="langArgumentValue" class="m-2" placeholder="-lang=" @change="onLanguageSelection">
+        <el-select v-if="displayLanguageSelector" v-model="langArgumentValue" class="m-2" placeholder="-lang=" @change="onLanguageSelection">
             <el-option
                 v-for="item in langArgumentOptions"
                 :key="item.value"
@@ -55,6 +55,13 @@ export default defineComponent({
         arguments(): LaunchArgument[] {
             return (this.localCustomArgs.concat(this.officialArguments))
                 .sort((a, b) => a.argumentName.localeCompare(b.argumentName));
+        },
+        displayLanguageSelector(): boolean {
+            const langArgPrefix = '-language="';
+            return this.arguments
+                .map(arg => arg.argumentName)
+                .filter(name => name.substring(0, langArgPrefix.length) === langArgPrefix)
+                .length === 0;
         },
         officialArguments(): LaunchArgument[] {
             return [
