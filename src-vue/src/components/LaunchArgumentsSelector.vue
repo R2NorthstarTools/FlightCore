@@ -16,6 +16,16 @@
             </el-check-tag>
         </el-tooltip>
 
+        <!-- Language selector -->
+        <el-select v-model="langArgumentValue" class="m-2" placeholder="-lang=" @change="onLanguageSelection">
+            <el-option
+                v-for="item in langArgumentOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+            />
+        </el-select>
+
         <!-- User-input tag -->
         <el-input
             v-if="inputVisible"
@@ -64,16 +74,38 @@ export default defineComponent({
         },
         gamePathIsSelected(): boolean {
             return this.$store.state.northstar_state !== NorthstarState.GAME_NOT_FOUND;
+        },
+        langArgumentOptions() {
+            const languages = ['english', 'french', 'german', 'italian', 'japanese', 'mspanish', 'portuguese', 'russian', 'spanish', 'tchinese'];
+            return languages.map(lang => ({value: lang, label: lang}));
         }
     },
     data: () => ({
         inputValue: '',
         inputVisible: false,
 
+        langArgumentValue: '',
         values: [] as boolean[],
         localCustomArgs: [] as LaunchArgument[]
     }),
     methods: {
+        onLanguageSelection( lang: string ) {
+            this.createNewArgument( `-language="${lang}"` );
+        },
+        createNewArgument(arg: string) {
+            let allArgumentsNames: string[] = this.arguments.map(arg => arg.argumentName);
+            if (allArgumentsNames.indexOf(arg) !== -1) {
+                console.warn(`Argument "${arg}" already present, ignoring.`);
+            } else {
+                const newArgument: LaunchArgument = new LaunchArgument(arg);
+                this.localCustomArgs.push( newArgument );
+                allArgumentsNames = this.arguments.map(arg => arg.argumentName);
+
+                const index: number = allArgumentsNames.indexOf(newArgument.argumentName);
+                this.values.splice(index, 0, true);
+                this.saveLaunchArgumentsToFile();
+            }
+        },
         onChange(index: number) {
             this.values[index] = !this.values[index];
             this.saveLaunchArgumentsToFile();
@@ -100,16 +132,7 @@ export default defineComponent({
         },
         handleInputConfirm() {
             if (this.inputValue.length !== 0) {
-                const allArgumentsNames: string[] = this.arguments.map(arg => arg.argumentName);
-                if (allArgumentsNames.indexOf(this.inputValue) !== -1) {
-                    console.warn(`Argument "${this.inputValue}" already present, ignoring.`);
-                } else {
-                    const newArgument: LaunchArgument = new LaunchArgument(this.inputValue);
-                    this.localCustomArgs.push( newArgument );
-                    const index: number = allArgumentsNames.indexOf(newArgument.argumentName);
-                    this.values.splice(index, 0, true);
-                    this.saveLaunchArgumentsToFile();
-                }
+                this.createNewArgument(this.inputValue);
             }
             this.inputVisible = false;
             this.inputValue = '';
