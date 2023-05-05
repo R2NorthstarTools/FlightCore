@@ -1,6 +1,6 @@
 #[tauri::command]
 /// This method loads arguments from the ns_startup_args.txt Northstar launch
-/// arguments files.
+/// arguments files, filtering out eventual argument duplicates.
 /// If this file does not exist, this will return an empty array.
 pub fn get_launch_arguments(game_path: &str) -> Result<Vec<String>, ()> {
     let launch_args_path = format!("{}/ns_startup_args.txt", game_path);
@@ -15,7 +15,12 @@ pub fn get_launch_arguments(game_path: &str) -> Result<Vec<String>, ()> {
         }
     };
 
-    Ok(data.split_whitespace().map(|arg| arg.to_string()).collect())
+    let mut arguments = data.split_whitespace()
+        .map(|arg| arg.to_string())
+        .collect::<Vec<_>>();
+    arguments.sort_unstable();
+    arguments.dedup();
+    Ok(arguments)
 }
 
 #[tauri::command]
