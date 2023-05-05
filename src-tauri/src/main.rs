@@ -348,13 +348,7 @@ async fn update_northstar_caller(
     log::info!("Updating Northstar");
 
     // Simply re-run install with up-to-date version for upate
-    match install_latest_northstar(window, &game_path, northstar_package_name).await {
-        Ok(_) => Ok(true),
-        Err(err) => {
-            log::error!("{}", err);
-            Err(err)
-        }
-    }
+    install_northstar_caller(window, game_path, northstar_package_name).await
 }
 
 #[tauri::command]
