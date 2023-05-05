@@ -11,6 +11,8 @@ use std::{
 
 #[cfg(target_os = "windows")]
 use std::ptr::null_mut;
+use serde::{Deserialize, Serialize};
+use ts_rs::TS;
 #[cfg(target_os = "windows")]
 use winapi::um::winuser::{MessageBoxW, MB_ICONERROR, MB_OK, MB_USERICON};
 
@@ -151,6 +153,7 @@ fn main() {
             apply_mods_pr,
             get_launcher_download_link,
             close_application,
+            get_available_northstar_versions,
         ])
         .run(tauri::generate_context!())
     {
@@ -210,8 +213,7 @@ async fn is_debug_mode() -> bool {
     cfg!(debug_assertions)
 }
 
-#[tauri::command]
-/// Returns true if linux compatible
+#[tauri::command]/// Returns true if linux compatible
 async fn linux_checks() -> Result<(), String> {
     // Different behaviour depending on OS
     // MacOS is missing as it is not a target
@@ -327,8 +329,10 @@ async fn install_northstar_caller(
     window: tauri::Window,
     game_path: String,
     northstar_package_name: Option<String>,
+    version_number: Option<String>,
 ) -> Result<bool, String> {
     log::info!("Running");
+    dbg!(version_number.clone());
 
     // Get Northstar package name (`Northstar` vs `NorthstarReleaseCandidate`)
     let northstar_package_name = match northstar_package_name {
@@ -342,7 +346,7 @@ async fn install_northstar_caller(
         None => "Northstar".to_string(),
     };
 
-    match install_latest_northstar(window, &game_path, northstar_package_name).await {
+    match install_northstar(window, &game_path, northstar_package_name, version_number).await {
         Ok(_) => Ok(true),
         Err(err) => {
             log::error!("{}", err);
@@ -361,7 +365,7 @@ async fn update_northstar_caller(
     log::info!("Updating Northstar");
 
     // Simply re-run install with up-to-date version for upate
-    install_northstar_caller(window, game_path, northstar_package_name).await
+    install_northstar_caller(window, game_path, northstar_package_name, None).await
 }
 
 #[tauri::command]
@@ -470,4 +474,57 @@ async fn open_repair_window(handle: tauri::AppHandle) -> Result<(), String> {
 async fn close_application<R: Runtime>(app: tauri::AppHandle<R>) -> Result<(), String> {
     app.exit(0); // Close application
     Ok(())
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
+struct NorthstarThunderstoreRelease {
+    package: String,
+    version: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
+struct NorthstarThunderstoreReleaseWrapper {
+    label: String,
+    value: NorthstarThunderstoreRelease,
+}
+
+use semver::Version;
+
+#[tauri::command]
+async fn get_available_northstar_versions() -> Result<Vec<NorthstarThunderstoreReleaseWrapper>, ()> {
+    let northstar_package_name = "Northstar";
+    let index = thermite::api::get_package_index().unwrap().to_vec();
+    let nsmod = index
+        .iter()
+        .find(|f| f.name.to_lowercase() == northstar_package_name.to_lowercase())
+        .ok_or_else(|| panic!("Couldn't find Northstar on thunderstore???"))
+        .unwrap();
+
+    let mut releases: Vec<NorthstarThunderstoreReleaseWrapper> = vec![];
+    for (my_string, my_version) in nsmod.versions.iter() {
+        let current_elem = NorthstarThunderstoreRelease {
+            package: my_version.name.clone(),
+            version: my_version.version.clone(),
+        };
+        let current_elem_wrapped = NorthstarThunderstoreReleaseWrapper {
+            label: format!("{} v{}", my_version.name.clone(), my_version.version.clone()),
+            value: current_elem,
+        };
+
+        dbg!(my_string);
+        dbg!(my_version);
+
+        releases.push(current_elem_wrapped);
+    }
+
+    releases.sort_by(|a, b| {
+        // Parse version number
+        let a_ver = Version::parse(&a.value.version).unwrap();
+        let b_ver = Version::parse(&b.value.version).unwrap();
+        b_ver.partial_cmp(&a_ver).unwrap() // Sort newest first
+    });
+
+    Ok(releases)
 }

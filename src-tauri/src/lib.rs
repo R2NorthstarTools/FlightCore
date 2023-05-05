@@ -276,10 +276,11 @@ async fn do_install(
     Ok(())
 }
 
-pub async fn install_latest_northstar(
+pub async fn install_northstar(
     window: tauri::Window,
     game_path: &str,
     northstar_package_name: String,
+    version_number: Option<String>,
 ) -> Result<String, String> {
     let index = thermite::api::get_package_index().unwrap().to_vec();
     let nmod = index
@@ -288,11 +289,17 @@ pub async fn install_latest_northstar(
         .ok_or_else(|| panic!("Couldn't find Northstar on thunderstore???"))
         .unwrap();
 
+
+    // Use passed version or latest if no version was passed
+    let version = version_number.unwrap_or_else(|| nmod.latest.clone());
+
+    let latest_nmod = nmod.versions.get(&version).unwrap();
+
     log::info!("Install path \"{}\"", game_path);
 
     match do_install(
         window,
-        nmod.versions.get(&nmod.latest).unwrap(),
+        latest_nmod,
         std::path::Path::new(game_path),
     )
     .await

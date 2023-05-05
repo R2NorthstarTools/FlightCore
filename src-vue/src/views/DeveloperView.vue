@@ -5,6 +5,23 @@
                 This page is designed for developers. Some of the buttons here can break your Northstar install if you do not know what you're doing!
             </el-alert>
 
+            <el-button type="primary" @click="getAvailableNorthstarVersions">
+                Get available versions
+            </el-button>
+
+            <el-select v-model="selected_ns_version" class="m-2" placeholder="Versions">
+                <el-option
+                    v-for="item in ns_versions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item"
+                />
+            </el-select>
+
+            <el-button type="primary" @click="installNorthstarVersion">
+                Install
+            </el-button>
+
             <h3>Basic:</h3>
 
             <el-button type="primary" @click="disableDevMode">
@@ -50,7 +67,7 @@
             </el-button>
 
             <h3>Release management</h3>
-            
+
             <el-button type="primary" @click="getTags">
                 Get tags
             </el-button>
@@ -91,6 +108,7 @@ import { defineComponent } from "vue";
 import { invoke } from "@tauri-apps/api";
 import { GameInstall } from "../utils/GameInstall";
 import { TagWrapper } from "../../../src-tauri/bindings/TagWrapper";
+import { NorthstarThunderstoreReleaseWrapper } from "../../../src-tauri/bindings/NorthstarThunderstoreReleaseWrapper";
 import PullRequestsSelector from "../components/PullRequestsSelector.vue";
 import { showErrorNotification, showNotification } from "../utils/ui";
 
@@ -106,6 +124,8 @@ export default defineComponent({
             first_tag: { label: '', value: {name: ''} },
             second_tag: { label: '', value: {name: ''} },
             ns_release_tags: [] as TagWrapper[],
+            ns_versions: [] as NorthstarThunderstoreReleaseWrapper[],
+            selected_ns_version: { label: '', value: { package: '', version: '' } } as NorthstarThunderstoreReleaseWrapper,
         }
     },
     computed: {
@@ -199,6 +219,49 @@ export default defineComponent({
                 })
                 .catch((error) => {
                     showErrorNotification(error);
+                });
+        },
+        async getAvailableNorthstarVersions() {
+            await invoke<NorthstarThunderstoreReleaseWrapper[]>("get_available_northstar_versions")
+                .then((message) => {
+                    console.log(message);
+                    this.ns_versions = message;
+                    showNotification("Done", "TODO");
+                })
+                .catch((error) => {
+                    showErrorNotification(error);
+                });
+        },
+        async installNorthstarVersion() {
+            let game_install = {
+                game_path: this.$store.state.game_path,
+                install_type: this.$store.state.install_type
+            } as GameInstall;
+
+            // Send notification telling the user to wait for the process to finish
+            const notification = showNotification(
+                `Installing Northstar version v${this.selected_ns_version.value.version}`,
+                "Please wait",
+                'info',
+                0
+            );
+
+            console.log(this.selected_ns_version.value);
+            let install_northstar_result = invoke("install_northstar_caller", { gamePath: game_install.game_path, northstarPackageName: this.selected_ns_version.value.package, versionNumber: this.selected_ns_version.value.version });
+
+            await install_northstar_result
+                .then((message) => {
+                    // Send notification
+                    showNotification(this.$t('generic.done'), this.$t('settings.repair.window.reinstall_success'));
+                    this.$store.commit('checkNorthstarUpdates');
+                })
+                .catch((error) => {
+                    showErrorNotification(error);
+                    console.error(error);
+                })
+                .finally(() => {
+                    // Clear old notification
+                    notification.close();
                 });
         },
     }
