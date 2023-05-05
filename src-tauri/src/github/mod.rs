@@ -239,10 +239,9 @@ pub fn compare_tags_northstar(first_tag: Tag, second_tag: Tag) -> Result<String,
             repo, first_tag.name, second_tag.name
         );
 
-        dbg!(comparison_url.clone());
+        log::info!("Compare URL: {}", comparison_url.clone());
         let comparison: Comparison = client.get(&comparison_url).send().unwrap().json().unwrap();
         let commits = comparison.commits;
-        dbg!();
 
         // Display the list of commits.
         println!(
