@@ -327,6 +327,7 @@ async fn install_northstar_caller(
     window: tauri::Window,
     game_path: String,
     northstar_package_name: Option<String>,
+    version_number: Option<String>,
 ) -> Result<bool, String> {
     log::info!("Running");
 
@@ -342,7 +343,7 @@ async fn install_northstar_caller(
         None => "Northstar".to_string(),
     };
 
-    match install_latest_northstar(window, &game_path, northstar_package_name).await {
+    match install_latest_northstar(window, &game_path, northstar_package_name, version_number).await {
         Ok(_) => Ok(true),
         Err(err) => {
             log::error!("{}", err);
@@ -361,7 +362,7 @@ async fn update_northstar_caller(
     log::info!("Updating Northstar");
 
     // Simply re-run install with up-to-date version for upate
-    install_northstar_caller(window, game_path, northstar_package_name).await
+    install_northstar_caller(window, game_path, northstar_package_name, None).await
 }
 
 #[tauri::command]
