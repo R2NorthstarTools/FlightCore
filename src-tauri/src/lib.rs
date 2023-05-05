@@ -281,7 +281,6 @@ pub async fn install_latest_northstar(
     game_path: &str,
     northstar_package_name: String,
 ) -> Result<String, String> {
-
     let index = thermite::api::get_package_index().unwrap().to_vec();
     let nmod = index
         .iter()
