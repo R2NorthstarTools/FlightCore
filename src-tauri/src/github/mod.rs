@@ -210,6 +210,8 @@ fn group_commits_by_type(commits: Vec<String>) -> HashMap<String, Vec<String>> {
     grouped_commits
 }
 
+/// Compares two tags on Northstar repo and generates release notes over the diff in tags
+/// over the 3 major repos (Northstar, NorthstarLauncher, NorthstarMods)
 pub fn compare_tags_northstar(first_tag: Tag, second_tag: Tag) -> Result<String, String> {
     // Fetch the list of commits between the two tags.
 
@@ -289,14 +291,20 @@ pub fn compare_tags_northstar(first_tag: Tag, second_tag: Tag) -> Result<String,
 
 use regex::Regex;
 
+/// Takes the commit title and repo slug and formats it as
+/// `[commit title(SHORTENED_REPO#NUMBER)](LINK)`
 fn turn_pr_number_into_link(input: &str, repo: &str) -> String {
+    // Extract `Mods/Launcher` from repo title
     let last_line = repo
         .split('/')
         .rev()
         .next()
         .unwrap()
         .trim_start_matches("Northstar");
+    // Extract PR number
     let re = Regex::new(r"#(\d+)").unwrap();
+
+    // Generate pull request link
     let pull_link = format!("https://github.com/{}/pull/", repo);
     re.replace_all(input, format!("[{}#$1]({}$1)", last_line, pull_link))
         .to_string()
