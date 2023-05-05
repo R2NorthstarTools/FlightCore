@@ -329,6 +329,19 @@ async fn install_northstar_caller(
     northstar_package_name: Option<String>,
 ) -> Result<bool, String> {
     log::info!("Running");
+
+    // Get Northstar package name (`Northstar` vs `NorthstarReleaseCandidate`)
+    let northstar_package_name = match northstar_package_name {
+        Some(northstar_package_name) => {
+            if northstar_package_name.len() <= 1 {
+                "Northstar".to_string()
+            } else {
+                northstar_package_name
+            }
+        }
+        None => "Northstar".to_string(),
+    };
+
     match install_latest_northstar(window, &game_path, northstar_package_name).await {
         Ok(_) => Ok(true),
         Err(err) => {

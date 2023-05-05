@@ -279,18 +279,8 @@ async fn do_install(
 pub async fn install_latest_northstar(
     window: tauri::Window,
     game_path: &str,
-    northstar_package_name: Option<String>,
+    northstar_package_name: String,
 ) -> Result<String, String> {
-    let northstar_package_name = match northstar_package_name {
-        Some(northstar_package_name) => {
-            if northstar_package_name.len() <= 1 {
-                "Northstar".to_string()
-            } else {
-                northstar_package_name
-            }
-        }
-        None => "Northstar".to_string(),
-    };
 
     let index = thermite::api::get_package_index().unwrap().to_vec();
     let nmod = index
