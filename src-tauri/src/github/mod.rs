@@ -4,6 +4,7 @@ pub mod release_notes;
 use app::constants::{
     APP_USER_AGENT, FLIGHTCORE_REPO_NAME, NORTHSTAR_RELEASE_REPO_NAME, SECTION_ORDER,
 };
+use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use ts_rs::TS;
@@ -288,8 +289,6 @@ pub fn compare_tags_northstar(first_tag: Tag, second_tag: Tag) -> Result<String,
 
     Ok(full_patch_notes.to_string())
 }
-
-use regex::Regex;
 
 /// Takes the commit title and repo slug and formats it as
 /// `[commit title(SHORTENED_REPO#NUMBER)](LINK)`
