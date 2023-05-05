@@ -343,7 +343,7 @@ async fn install_northstar_caller(
         None => "Northstar".to_string(),
     };
 
-    match install_latest_northstar(window, &game_path, northstar_package_name, version_number).await {
+    match install_northstar(window, &game_path, northstar_package_name, version_number).await {
         Ok(_) => Ok(true),
         Err(err) => {
             log::error!("{}", err);
