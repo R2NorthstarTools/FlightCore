@@ -276,7 +276,7 @@ async fn do_install(
     Ok(())
 }
 
-pub async fn install_northstar(
+pub async fn install_latest_northstar(
     window: tauri::Window,
     game_path: &str,
     northstar_package_name: Option<String>,

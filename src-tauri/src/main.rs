@@ -329,7 +329,7 @@ async fn install_northstar_caller(
     northstar_package_name: Option<String>,
 ) -> Result<bool, String> {
     log::info!("Running");
-    match install_northstar(window, &game_path, northstar_package_name).await {
+    match install_latest_northstar(window, &game_path, northstar_package_name).await {
         Ok(_) => Ok(true),
         Err(err) => {
             log::error!("{}", err);
@@ -348,7 +348,7 @@ async fn update_northstar_caller(
     log::info!("Updating Northstar");
 
     // Simply re-run install with up-to-date version for upate
-    match install_northstar(window, &game_path, northstar_package_name).await {
+    match install_latest_northstar(window, &game_path, northstar_package_name).await {
         Ok(_) => Ok(true),
         Err(err) => {
             log::error!("{}", err);
