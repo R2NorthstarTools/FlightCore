@@ -289,7 +289,6 @@ pub async fn install_northstar(
         .ok_or_else(|| panic!("Couldn't find Northstar on thunderstore???"))
         .unwrap();
 
-
     // Use passed version or latest if no version was passed
     let version = version_number.unwrap_or_else(|| nmod.latest.clone());
 
@@ -297,13 +296,7 @@ pub async fn install_northstar(
 
     log::info!("Install path \"{}\"", game_path);
 
-    match do_install(
-        window,
-        latest_nmod,
-        std::path::Path::new(game_path),
-    )
-    .await
-    {
+    match do_install(window, latest_nmod, std::path::Path::new(game_path)).await {
         Ok(_) => (),
         Err(err) => {
             if game_path
