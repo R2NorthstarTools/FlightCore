@@ -12,6 +12,7 @@
             <el-menu-item index="2" @click="$emit('showLocalMods', false)">
                 <el-icon><Connection /></el-icon>
                 <span>{{ $t('mods.menu.online') }}</span>
+                <el-badge :value="3" />
             </el-menu-item>
 
             <!-- Search inputs -->
