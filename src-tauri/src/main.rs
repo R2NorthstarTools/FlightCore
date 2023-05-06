@@ -479,7 +479,7 @@ async fn install_git_main(game_install_path: &str) -> Result<String, String> {
     // let commits: Vec<CommitInfo> = serde_json::from_str(&res).unwrap();
 
     let commits: Vec<CommitInfo> =
-        serde_json::from_value(check_github_api(&url).await.expect("Failed request")).unwrap();
+        serde_json::from_value(check_github_api(url).await.expect("Failed request")).unwrap();
 
     let latest_commit_sha = commits[0].sha.clone();
 
