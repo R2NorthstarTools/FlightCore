@@ -202,7 +202,7 @@ pub async fn get_launcher_download_link(
     }
 
     Err(format!(
-        "Couldn't grab download link for PR \"{}\". PR might be too old and therefore no CI build has been deleted. Maybe ask author to update?",
+        "Couldn't grab download link for PR \"{}\". PR might be too old and therefore no CI build has been detected. Maybe ask author to update?",
         pull_request.number
     ))
 }
