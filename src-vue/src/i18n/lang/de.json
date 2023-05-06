@@ -104,7 +104,7 @@
         "testing": "Testen:",
         "enable_test_channels": "Testversionen aktivieren",
         "dev_mode_enabled_title": "Vorsicht!",
-        "dev_mod_enabled_text": "Entwicklermodus aktiviert.",
+        "dev_mode_enabled_text": "Entwicklermodus aktiviert.",
 
         "repair": {
             "title": "Reparieren",
