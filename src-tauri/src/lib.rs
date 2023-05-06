@@ -279,19 +279,9 @@ async fn do_install(
 pub async fn install_northstar(
     window: tauri::Window,
     game_path: &str,
-    northstar_package_name: Option<String>,
+    northstar_package_name: String,
+    version_number: Option<String>,
 ) -> Result<String, String> {
-    let northstar_package_name = match northstar_package_name {
-        Some(northstar_package_name) => {
-            if northstar_package_name.len() <= 1 {
-                "Northstar".to_string()
-            } else {
-                northstar_package_name
-            }
-        }
-        None => "Northstar".to_string(),
-    };
-
     let index = thermite::api::get_package_index().unwrap().to_vec();
     let nmod = index
         .iter()
@@ -299,11 +289,14 @@ pub async fn install_northstar(
         .ok_or_else(|| panic!("Couldn't find Northstar on thunderstore???"))
         .unwrap();
 
+    // Use passed version or latest if no version was passed
+    let version = version_number.as_ref().unwrap_or(&nmod.latest);
+
     log::info!("Install path \"{}\"", game_path);
 
     match do_install(
         window,
-        nmod.versions.get(&nmod.latest).unwrap(),
+        nmod.versions.get(version).unwrap(),
         std::path::Path::new(game_path),
     )
     .await
