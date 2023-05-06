@@ -542,6 +542,9 @@ async fn install_git_main(game_install_path: &str) -> Result<String, String> {
         }
     }
 
-    log::info!("All done with installing launcher from {}", latest_commit_sha);
+    log::info!(
+        "All done with installing launcher from {}",
+        latest_commit_sha
+    );
     Ok(latest_commit_sha)
 }
