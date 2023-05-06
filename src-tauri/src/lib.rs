@@ -121,7 +121,7 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
                     };
                     return Ok(game_install);
                 }
-                None => log::info!("Couldn't locate Titanfall2 Steam instal"),
+                None => log::info!("Couldn't locate Titanfall2 Steam install"),
             }
         }
         None => log::info!("Couldn't locate Steam on this computer!"),
