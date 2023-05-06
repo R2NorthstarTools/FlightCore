@@ -21,8 +21,8 @@ pub struct TagWrapper {
 }
 
 #[derive(Debug, Deserialize)]
-struct CommitInfo {
-    sha: String,
+pub struct CommitInfo {
+    pub sha: String,
     commit: Commit,
 }
 
