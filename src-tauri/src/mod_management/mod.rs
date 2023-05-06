@@ -52,6 +52,10 @@ pub struct ModJson {
     version: Option<String>,
 }
 
+/// A wrapper around a temporary file handle and its path.
+///
+/// This struct is designed to be used for temporary files that should be automatically deleted
+/// when the `TempFile` instance goes out of scope.
 #[derive(Debug)]
 pub struct TempFile(fs::File, PathBuf);
 
