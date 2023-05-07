@@ -121,7 +121,7 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
                     };
                     return Ok(game_install);
                 }
-                None => log::info!("Couldn't locate Titanfall2 Steam instal"),
+                None => log::info!("Couldn't locate Titanfall2 Steam install"),
             }
         }
         None => log::info!("Couldn't locate Steam on this computer!"),
@@ -290,13 +290,13 @@ pub async fn install_northstar(
         .unwrap();
 
     // Use passed version or latest if no version was passed
-    let version = version_number.unwrap_or_else(|| nmod.latest.clone());
+    let version = version_number.as_ref().unwrap_or(&nmod.latest);
 
     log::info!("Install path \"{}\"", game_path);
 
     match do_install(
         window,
-        nmod.versions.get(&version).unwrap(),
+        nmod.versions.get(version).unwrap(),
         std::path::Path::new(game_path),
     )
     .await

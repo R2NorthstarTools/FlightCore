@@ -87,7 +87,7 @@ checksum = "224afbd727c3d6e4b90103ece64b8d1b67fbb1973b1046c2281eed3f3803f800"
 
 [[package]]
 name = "app"
-version = "1.14.0"
+version = "1.14.1"
 dependencies = [
  "anyhow",
  "async-recursion",
@@ -3951,9 +3951,9 @@ checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 
 [[package]]
 name = "steamlocate"
-version = "1.2.0"
+version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6b3962619891cd4c87dc0ae9332b97285eb59ab7cf65c9bec3fba62188390e74"
+checksum = "4ec01c74611d14a808cb212d17c6e03f0e30736a15ed1d5736f8a53154cea3ae"
 dependencies = [
  "dirs",
  "keyvalues-parser",

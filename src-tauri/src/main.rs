@@ -336,16 +336,15 @@ async fn install_northstar_caller(
     dbg!(version_number.clone());
 
     // Get Northstar package name (`Northstar` vs `NorthstarReleaseCandidate`)
-    let northstar_package_name = match northstar_package_name {
-        Some(northstar_package_name) => {
-            if northstar_package_name.len() <= 1 {
+    let northstar_package_name = northstar_package_name
+        .map(|name| {
+            if name.len() <= 1 {
                 "Northstar".to_string()
             } else {
-                northstar_package_name
+                name
             }
-        }
-        None => "Northstar".to_string(),
-    };
+        })
+        .unwrap_or("Northstar".to_string());
 
     match install_northstar(window, &game_path, northstar_package_name, version_number).await {
         Ok(_) => Ok(true),
