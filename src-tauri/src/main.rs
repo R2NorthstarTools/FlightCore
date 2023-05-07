@@ -412,20 +412,28 @@ async fn clean_up_download_folder_caller(
     }
 }
 
-/// Gets server and playercount from master server API
-#[tauri::command]
-async fn get_server_player_count() -> Result<(i32, usize), String> {
+/// Fetches `/client/servers` endpoint from master server
+async fn fetch_server_list() -> Result<String, anyhow::Error> {
     let url = format!("{MASTER_SERVER_URL}{SERVER_BROWSER_ENDPOINT}");
     let client = reqwest::Client::new();
     let res = client
         .get(url)
         .header(reqwest::header::USER_AGENT, APP_USER_AGENT)
         .send()
-        .await
-        .unwrap()
+        .await?
         .text()
-        .await
-        .unwrap();
+        .await?;
+
+    Ok(res)
+}
+
+/// Gets server and playercount from master server API
+#[tauri::command]
+async fn get_server_player_count() -> Result<(i32, usize), String> {
+    let res = match fetch_server_list().await {
+        Ok(res) => res,
+        Err(err) => return Err(err.to_string()),
+    };
 
     let ns_servers: Vec<NorthstarServer> =
         serde_json::from_str(&res).expect("JSON was not well-formatted");
