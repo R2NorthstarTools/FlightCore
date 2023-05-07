@@ -327,9 +327,22 @@ async fn install_northstar_caller(
     window: tauri::Window,
     game_path: String,
     northstar_package_name: Option<String>,
+    version_number: Option<String>,
 ) -> Result<bool, String> {
     log::info!("Running");
-    match install_northstar(window, &game_path, northstar_package_name).await {
+
+    // Get Northstar package name (`Northstar` vs `NorthstarReleaseCandidate`)
+    let northstar_package_name = northstar_package_name
+        .map(|name| {
+            if name.len() <= 1 {
+                "Northstar".to_string()
+            } else {
+                name
+            }
+        })
+        .unwrap_or("Northstar".to_string());
+
+    match install_northstar(window, &game_path, northstar_package_name, version_number).await {
         Ok(_) => Ok(true),
         Err(err) => {
             log::error!("{}", err);
@@ -348,13 +361,7 @@ async fn update_northstar_caller(
     log::info!("Updating Northstar");
 
     // Simply re-run install with up-to-date version for upate
-    match install_northstar(window, &game_path, northstar_package_name).await {
-        Ok(_) => Ok(true),
-        Err(err) => {
-            log::error!("{}", err);
-            Err(err)
-        }
-    }
+    install_northstar_caller(window, game_path, northstar_package_name, None).await
 }
 
 /// Launches Northstar
