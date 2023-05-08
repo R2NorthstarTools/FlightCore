@@ -1,20 +1,27 @@
 <template>
     <div :class="containerClasses">
-        <el-tooltip
-            v-for="(argument, index) in arguments"
-            class="box-item"
-            :content="$t(argument.i18nEntry)"
-            placement="bottom"
-            :disabled="argument.i18nEntry.length === 0"
-        >
-            <el-check-tag
-                class="fc-launch_arg_tag"
-                :checked="values[index]"
-                @change="onChange(index)"
+        <div class="fc-launch_arg_tag_container" 
+                v-for="(argument, index) in arguments">
+            <!-- Official arguments -->
+            <el-tooltip
+                v-if="argument.i18nEntry.length !== 0"
+                class="box-item"
+                :content="$t(argument.i18nEntry)"
+                placement="bottom"
             >
+                <el-check-tag
+                    :checked="values[index]"
+                    @change="onChange(index)"
+                >
+                    {{ argument.argumentName }}
+                </el-check-tag>
+            </el-tooltip>
+
+            <!-- Custom arguments -->
+            <el-tag v-else>
                 {{ argument.argumentName }}
-            </el-check-tag>
-        </el-tooltip>
+            </el-tag>
+        </div>
 
         <!-- Language selector -->
         <el-select v-if="displayLanguageSelector" v-model="langArgumentValue" class="m-2" placeholder="-lang=" @change="onLanguageSelection">
@@ -164,9 +171,10 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.fc-launch_arg_tag {
+
+.fc-launch_arg_tag_container {
+    display: inline-block;
     margin: 0 8px 8px 8px;
-    white-space: nowrap;
 }
 
 .fc-tags_container {
