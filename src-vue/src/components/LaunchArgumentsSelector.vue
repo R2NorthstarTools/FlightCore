@@ -1,55 +1,66 @@
 <template>
-    <div :class="containerClasses">
-        <div class="fc-launch_arg_tag_container" 
-                v-for="(argument, index) in arguments">
-            <!-- Official arguments -->
-            <el-tooltip
-                v-if="argument.i18nEntry.length !== 0"
-                class="box-item"
-                :content="$t(argument.i18nEntry)"
-                placement="bottom"
-            >
-                <el-check-tag
-                    :checked="values[index]"
-                    @change="onChange(index)"
+    <div>
+        <div :class="containerClasses">
+            <div class="fc-launch_arg_tag_container" 
+                    v-for="(argument, index) in arguments">
+                <!-- Official arguments -->
+                <el-tooltip
+                    v-if="argument.i18nEntry.length !== 0"
+                    class="box-item"
+                    :content="$t(argument.i18nEntry)"
+                    placement="bottom"
+                >
+                    <el-check-tag
+                        :checked="values[index]"
+                        @change="onChange(index)"
+                    >
+                        {{ argument.argumentName }}
+                    </el-check-tag>
+                </el-tooltip>
+
+                <!-- Custom arguments -->
+                <el-tag
+                    v-else
+                    closable
+                    @close="onClose(index, argument.argumentName)"
                 >
                     {{ argument.argumentName }}
-                </el-check-tag>
-            </el-tooltip>
+                </el-tag>
+            </div>
 
-            <!-- Custom arguments -->
-            <el-tag
-                v-else
-                closable
-                @close="onClose(index, argument.argumentName)"
-            >
-                {{ argument.argumentName }}
-            </el-tag>
+            <!-- User-input tag -->
+            <div class="fc-launch_arg_tag_container">
+                <el-input
+                    v-if="inputVisible"
+                    ref="InputRef"
+                    class="fc-tag__input"
+                    v-model="inputValue"
+                    @keyup.enter="handleInputConfirm"
+                    @blur="handleInputConfirm"
+                />
+                <el-button v-else class="button-new-tag ml-1 fc-tag__input" @click="showInput">
+                    {{ $t('settings.launch_args.new_arg_btn') }}
+                </el-button>
+            </div>
         </div>
 
-        <!-- Language selector -->
-        <el-select v-if="displayLanguageSelector" v-model="langArgumentValue" class="m-2" placeholder="-lang=" @change="onLanguageSelection">
-            <el-option
-                v-for="item in langArgumentOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-            />
-        </el-select>
 
-        <!-- User-input tag -->
-        <el-input
-            v-if="inputVisible"
-            ref="InputRef"
-            class="fc-tag__input"
-            v-model="inputValue"
-            size="small"
-            @keyup.enter="handleInputConfirm"
-            @blur="handleInputConfirm"
-        />
-        <el-button v-else class="button-new-tag ml-1" size="small" @click="showInput">
-            {{ $t('settings.launch_args.new_arg_btn') }}
-        </el-button>
+        <!-- Language selector -->
+        <div :class="containerClasses">
+            <el-select v-if="displayLanguageSelector"
+                v-model="langArgumentValue"
+                class="m-2 fc-launch_arg_tag_container fc-tag__input"
+                placeholder="-lang="
+                @change="onLanguageSelection"
+            >
+                <el-option
+                    v-for="item in langArgumentOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                />
+            </el-select>
+        </div>
     </div>
 </template>
 
@@ -220,5 +231,7 @@ export default defineComponent({
 
 .fc-tag__input {
     width: auto;
+    height: 28px;
+    --el-component-size: 28px;
 }
 </style>
