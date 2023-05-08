@@ -54,7 +54,7 @@ import { ThunderstoreModVersion } from "../../../../src-tauri/bindings/Thunderst
 
 export default defineComponent({
     name: "ThunderstoreModsView",
-    components: {ThunderstoreModCard},
+    components: { ThunderstoreModCard },
     async mounted() {
         this.$store.commit('fetchThunderstoreMods');
     },
@@ -100,7 +100,7 @@ export default defineComponent({
 
             // Sort mods regarding user selected algorithm.
             let compare: (a: ThunderstoreMod, b: ThunderstoreMod) => number;
-            switch(this.modSorting) {
+            switch (this.modSorting) {
                 case SortOptions.NAME_ASC:
                     compare = (a: ThunderstoreMod, b: ThunderstoreMod) => a.name.localeCompare(b.name);
                     break;
@@ -116,10 +116,10 @@ export default defineComponent({
                 case SortOptions.MOST_DOWNLOADED:
                     compare = (a: ThunderstoreMod, b: ThunderstoreMod) => {
                         const aTotal = a.versions.reduce((prev, next) => {
-                            return {downloads: prev.downloads + next.downloads} as ThunderstoreModVersion;
+                            return { downloads: prev.downloads + next.downloads } as ThunderstoreModVersion;
                         }).downloads;
                         const bTotal = b.versions.reduce((prev, next) => {
-                            return {downloads: prev.downloads + next.downloads} as ThunderstoreModVersion;
+                            return { downloads: prev.downloads + next.downloads } as ThunderstoreModVersion;
                         }).downloads;
                         return -1 * (aTotal - bTotal);
                     };
@@ -142,7 +142,7 @@ export default defineComponent({
 
             const startIndex = this.currentPageIndex * perPageValue;
             const endIndexCandidate = startIndex + perPageValue;
-            const endIndex =  endIndexCandidate > this.modsList.length ? this.modsList.length : endIndexCandidate;
+            const endIndex = endIndexCandidate > this.modsList.length ? this.modsList.length : endIndexCandidate;
             return this.modsList.slice(startIndex, endIndex);
         },
         shouldDisplayPagination(): boolean {

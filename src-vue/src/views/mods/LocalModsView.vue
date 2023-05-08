@@ -101,7 +101,7 @@ export default defineComponent({
             await invoke("delete_northstar_mod", { gameInstall: game_install, nsmodName: mod.name })
                 .then((message) => {
                     // Just a visual indicator that it worked
-                    showNotification(this.$t('mods.local.success_deleting', {modName: mod.name}));
+                    showNotification(this.$t('mods.local.success_deleting', { modName: mod.name }));
                 })
                 .catch((error) => {
                     showErrorNotification(error);

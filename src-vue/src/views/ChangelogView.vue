@@ -48,7 +48,7 @@ export default defineComponent({
             // PR's links formatting
             content = content.replaceAll(/\[(\S*)\#(\S+)\]\(([^)]+)\)/g, `<a target="_blank" href="$3">$1#$2</a>`);
 
-            return marked.parse(content, {breaks: true});
+            return marked.parse(content, { breaks: true });
         },
         // Formats an ISO-formatted date into a human-readable string.
         formatDate(timestamp: string): string {

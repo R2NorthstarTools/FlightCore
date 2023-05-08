@@ -40,7 +40,7 @@ export default defineComponent({
             },
         ]
     }),
-    mounted: async function() {
+    mounted: async function () {
         const lang: string = await persistentStore.get('lang') as string;
         this.value = lang;
     },
