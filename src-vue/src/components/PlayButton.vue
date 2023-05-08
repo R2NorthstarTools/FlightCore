@@ -125,6 +125,7 @@ button {
     font-size: 15px;
     margin-right: 0;
 }
+
 .fc_launch__button:focus {
     background-color: var(--el-color-primary);
     border-color: var(--el-color-primary);

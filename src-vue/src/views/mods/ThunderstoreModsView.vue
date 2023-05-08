@@ -229,36 +229,43 @@ export default defineComponent({
 
     width: calc(var(--thunderstore-mod-card-width) * var(--thunderstore-mod-card-columns-count) + var(--thunderstore-mod-card-margin) * 2 * var(--thunderstore-mod-card-columns-count));
 }
+
 @media (min-width: 628px) {
     .card-container {
         --thunderstore-mod-card-columns-count: 2;
     }
 }
+
 @media (min-width: 836px) {
     .card-container {
         --thunderstore-mod-card-columns-count: 3;
     }
 }
+
 @media (min-width: 1006px) {
     .card-container {
         --thunderstore-mod-card-columns-count: 4;
     }
 }
+
 @media (min-width: 1196px) {
     .card-container {
         --thunderstore-mod-card-columns-count: 5;
     }
 }
+
 @media (min-width: 1386px) {
     .card-container {
         --thunderstore-mod-card-columns-count: 6;
     }
 }
+
 @media (min-width: 1576px) {
     .card-container {
         --thunderstore-mod-card-columns-count: 7;
     }
 }
+
 @media (min-width: 1766px) {
     .card-container {
         --thunderstore-mod-card-columns-count: 8;
