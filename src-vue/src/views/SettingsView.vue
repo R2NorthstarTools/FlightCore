@@ -13,11 +13,12 @@
                         <template #prepend>
                             <el-button icon="Folder" @click="updateGamePath"/>
                         </template>
+                        <template #append>
+                            <el-button @click="openGameInstallFolder">
+                                {{ $t('settings.open_game_folder') }}
+                            </el-button>
+                        </template>
                     </el-input>
-                    <el-button @click="openGameInstallFolder">
-                        {{ $t('settings.open_game_folder') }}
-                    </el-button>
-
                 </div>
 
                 <!-- Thunderstore mods per page configuration -->
