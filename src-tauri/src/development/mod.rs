@@ -6,14 +6,14 @@ use crate::github::{
 #[tauri::command]
 pub async fn install_git_main(game_install_path: &str) -> Result<String, String> {
     let url = "https://api.github.com/repos/R2Northstar/NorthstarLauncher/commits";
-    // let res = fetch_github_releases_api(url).await.unwrap();
-    // let commits: Vec<CommitInfo> = serde_json::from_str(&res).unwrap();
 
+    // Get list of commits
     let commits: Vec<CommitInfo> =
         serde_json::from_value(check_github_api(url).await.expect("Failed request")).unwrap();
 
+    // Get latest commit...
     let latest_commit_sha = commits[0].sha.clone();
-
+    // ...and according artifact download URL
     let download_url = get_launcher_download_link(latest_commit_sha.clone()).await?;
 
     let archive = match download_zip_into_memory(download_url).await {
