@@ -11,10 +11,10 @@
                     :timestamp="formatDate(release.published_at)"
                     placement="top"
                 >
-                <el-card>
-                    <h4>{{ release.name }}</h4>
-                    <p v-html="formatRelease(release.body)"></p>
-                </el-card>
+                    <el-card>
+                        <h4>{{ release.name }}</h4>
+                        <p v-html="formatRelease(release.body)"></p>
+                    </el-card>
                 </el-timeline-item>
             </el-timeline>
         </el-scrollbar>
