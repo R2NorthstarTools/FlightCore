@@ -67,7 +67,14 @@
             </el-button>
 
             <h3>Release management</h3>
-
+            <el-select v-model="selected_project" placeholder="Select">
+            <el-option
+                v-for="item in project"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+                />
+            </el-select>            
             <el-button type="primary" @click="getTags">
                 Get tags
             </el-button>
@@ -111,6 +118,7 @@ import { TagWrapper } from "../../../src-tauri/bindings/TagWrapper";
 import { NorthstarThunderstoreReleaseWrapper } from "../../../src-tauri/bindings/NorthstarThunderstoreReleaseWrapper";
 import PullRequestsSelector from "../components/PullRequestsSelector.vue";
 import { showErrorNotification, showNotification } from "../utils/ui";
+import { Project } from "../../../src-tauri/bindings/Project"
 
 export default defineComponent({
     name: "DeveloperView",
@@ -126,6 +134,17 @@ export default defineComponent({
             ns_release_tags: [] as TagWrapper[],
             ns_versions: [] as NorthstarThunderstoreReleaseWrapper[],
             selected_ns_version: { label: '', value: { package: '', version: '' } } as NorthstarThunderstoreReleaseWrapper,
+            selected_project: "FlightCore",
+            project: [
+                {
+                    value: 'FlightCore',
+                    label: 'FlightCore',
+                },
+                {
+                    value: 'Northstar',
+                    label: 'Northstar',
+                }
+            ],
         }
     },
     computed: {
@@ -202,7 +221,7 @@ export default defineComponent({
                 });
         },
         async getTags() {
-            await invoke<TagWrapper[]>("get_list_of_tags")
+            await invoke<TagWrapper[]>("get_list_of_tags", {project: this.selected_project})
                 .then((message) => {
                     this.ns_release_tags = message;
                     showNotification("Done", "Fetched tags");
@@ -212,7 +231,7 @@ export default defineComponent({
                 });
         },
         async compareTags() {
-            await invoke<string>("compare_tags", {firstTag: this.firstTag.value, secondTag: this.secondTag.value})
+            await invoke<string>("compare_tags", {project: this.selected_project, firstTag: this.firstTag.value, secondTag: this.secondTag.value})
                 .then((message) => {
                     this.release_notes_text = message;
                     showNotification("Done", "Generated release notes");
