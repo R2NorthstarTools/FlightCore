@@ -127,6 +127,7 @@
         "launch_args": {
             "title": "Launch arguments",
             "new_arg_btn": "+ New launch argument",
+            "select_game_language": "Select game language",
             "descriptions": {
                 "disablelogs": "Disable logging and creation of log files",
                 "vanilla": "Disables Northstar loading",

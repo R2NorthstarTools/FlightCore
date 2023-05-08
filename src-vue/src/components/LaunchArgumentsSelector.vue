@@ -50,7 +50,7 @@
             <el-select v-if="displayLanguageSelector"
                 v-model="langArgumentValue"
                 class="m-2 fc-launch_arg_tag_container fc-tag__input"
-                placeholder="-lang="
+                :placeholder="$t('settings.launch_args.select_game_language')"
                 @change="onLanguageSelection"
             >
                 <el-option
