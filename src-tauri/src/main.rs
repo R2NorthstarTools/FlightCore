@@ -151,6 +151,7 @@ fn main() {
             apply_mods_pr,
             get_launcher_download_link,
             close_application,
+            get_available_northstar_versions,
         ])
         .run(tauri::generate_context!())
     {
@@ -330,6 +331,7 @@ async fn install_northstar_caller(
     version_number: Option<String>,
 ) -> Result<bool, String> {
     log::info!("Running");
+    dbg!(version_number.clone());
 
     // Get Northstar package name (`Northstar` vs `NorthstarReleaseCandidate`)
     let northstar_package_name = northstar_package_name
@@ -470,4 +472,65 @@ async fn open_repair_window(handle: tauri::AppHandle) -> Result<(), String> {
 async fn close_application<R: Runtime>(app: tauri::AppHandle<R>) -> Result<(), String> {
     app.exit(0); // Close application
     Ok(())
+}
+
+use serde::{Deserialize, Serialize};
+use ts_rs::TS;
+
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
+struct NorthstarThunderstoreRelease {
+    package: String,
+    version: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
+struct NorthstarThunderstoreReleaseWrapper {
+    label: String,
+    value: NorthstarThunderstoreRelease,
+}
+
+use semver::Version;
+
+#[tauri::command]
+async fn get_available_northstar_versions() -> Result<Vec<NorthstarThunderstoreReleaseWrapper>, ()>
+{
+    let northstar_package_name = "Northstar";
+    let index = thermite::api::get_package_index().unwrap().to_vec();
+    let nsmod = index
+        .iter()
+        .find(|f| f.name.to_lowercase() == northstar_package_name.to_lowercase())
+        .ok_or_else(|| panic!("Couldn't find Northstar on thunderstore???"))
+        .unwrap();
+
+    let mut releases: Vec<NorthstarThunderstoreReleaseWrapper> = vec![];
+    for (my_string, my_version) in nsmod.versions.iter() {
+        let current_elem = NorthstarThunderstoreRelease {
+            package: my_version.name.clone(),
+            version: my_version.version.clone(),
+        };
+        let current_elem_wrapped = NorthstarThunderstoreReleaseWrapper {
+            label: format!(
+                "{} v{}",
+                my_version.name.clone(),
+                my_version.version.clone()
+            ),
+            value: current_elem,
+        };
+
+        dbg!(my_string);
+        dbg!(my_version);
+
+        releases.push(current_elem_wrapped);
+    }
+
+    releases.sort_by(|a, b| {
+        // Parse version number
+        let a_ver = Version::parse(&a.value.version).unwrap();
+        let b_ver = Version::parse(&b.value.version).unwrap();
+        b_ver.partial_cmp(&a_ver).unwrap() // Sort newest first
+    });
+
+    Ok(releases)
 }
