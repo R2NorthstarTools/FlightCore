@@ -120,6 +120,7 @@ export default defineComponent({
     methods: {
         onLanguageSelection( lang: string ) {
             this.createNewArgument( `-language="${lang}"` );
+            this.langArgumentValue = '';
         },
         createNewArgument(arg: string) {
             let allArgumentsNames: string[] = this.arguments.map(arg => arg.argumentName);
