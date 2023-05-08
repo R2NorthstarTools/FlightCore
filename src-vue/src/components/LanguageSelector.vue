@@ -36,7 +36,7 @@ export default defineComponent({
             },
             {
                 value: 'pl',
-                label: 'Polski'
+                label: 'polski'
             },
         ]
     }),
