@@ -37,24 +37,24 @@ pub struct PullsApiResponseElement {
 
 // GitHub API response JSON elements as structs
 #[derive(Debug, Deserialize, Clone)]
-pub struct WorkflowRun {
-    pub id: u64,
-    pub head_sha: String,
+struct WorkflowRun {
+    id: u64,
+    head_sha: String,
 }
 #[derive(Debug, Deserialize, Clone)]
-pub struct ActionsRunsResponse {
-    pub workflow_runs: Vec<WorkflowRun>,
-}
-
-#[derive(Debug, Deserialize, Clone)]
-pub struct Artifact {
-    pub id: u64,
-    pub workflow_run: WorkflowRun,
+struct ActionsRunsResponse {
+    workflow_runs: Vec<WorkflowRun>,
 }
 
 #[derive(Debug, Deserialize, Clone)]
-pub struct ArtifactsResponse {
-    pub artifacts: Vec<Artifact>,
+struct Artifact {
+    id: u64,
+    workflow_run: WorkflowRun,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+struct ArtifactsResponse {
+    artifacts: Vec<Artifact>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
