@@ -18,7 +18,11 @@
             </el-tooltip>
 
             <!-- Custom arguments -->
-            <el-tag v-else>
+            <el-tag
+                v-else
+                closable
+                @close="onClose(index, argument.argumentName)"
+            >
                 {{ argument.argumentName }}
             </el-tag>
         </div>
@@ -122,6 +126,20 @@ export default defineComponent({
         },
         onChange(index: number) {
             this.values[index] = !this.values[index];
+            this.saveLaunchArgumentsToFile();
+        },
+        onClose(index: number, argumentName: string) {
+            // remove item state value
+            this.values.splice(index, 1);
+
+            // remove item from list of custom arguments
+            const localIndex = this.localCustomArgs.map(arg => arg.argumentName).indexOf(argumentName);
+            if (localIndex === -1) {
+                console.error(`Failed removing argument "${argumentName}".`);
+                return;
+            }
+            this.localCustomArgs.splice(localIndex, 1);
+
             this.saveLaunchArgumentsToFile();
         },
         saveLaunchArgumentsToFile() {
