@@ -199,6 +199,20 @@ export default defineComponent({
     transform: translateX(-8px);
 }
 
+.el-tag {
+    background-color: var(--el-color-primary-light-8);
+    color: var(--el-color-primary);
+    font-size: var(--el-font-size-base);
+    line-height: var(--el-font-size-base);
+    padding: 14px 5px 12px 15px;
+    transition: var(--el-transition-all);
+    font-weight: 700;
+}
+
+.el-check-tag {
+    padding: 9px 15px 5px 15px;
+}
+
 .disabled_container {
     pointer-events: none;
     filter: grayscale();
