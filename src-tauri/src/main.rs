@@ -29,9 +29,7 @@ use github::release_notes::{
 use github::{compare_tags, get_list_of_tags};
 
 mod repair_and_verify;
-use repair_and_verify::{
-    clean_up_download_folder, disable_all_but_core, get_log_list, verify_game_files,
-};
+use repair_and_verify::clean_up_download_folder;
 
 mod mod_management;
 use mod_management::fc_download_mod_and_install;
@@ -125,10 +123,10 @@ fn main() {
             launch_northstar_caller,
             launch_northstar_steam_caller,
             check_is_flightcore_outdated_caller,
-            get_log_list,
-            verify_game_files,
+            repair_and_verify::get_log_list,
+            repair_and_verify::verify_game_files,
             mod_management::set_mod_enabled_status,
-            disable_all_but_core,
+            repair_and_verify::disable_all_but_core,
             is_debug_mode,
             get_northstar_release_notes,
             linux_checks,
