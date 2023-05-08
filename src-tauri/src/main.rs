@@ -198,27 +198,27 @@ fn main() {
     };
 }
 
-#[tauri::command]
 /// Wrapper for `find_game_install_location` as tauri doesn't allow passing `Result<>` types to front-end
+#[tauri::command]
 async fn find_game_install_location_caller() -> Result<GameInstall, String> {
     find_game_install_location()
 }
 
-#[tauri::command]
 /// This function's only use is to force a `panic!()`
 // This must NOT be async to ensure crashing whole application.
+#[tauri::command]
 fn force_panic() {
     panic!("Force panicked!");
 }
 
-#[tauri::command]
 /// Returns true if built in debug mode
+#[tauri::command]
 async fn is_debug_mode() -> bool {
     cfg!(debug_assertions)
 }
 
-#[tauri::command]
 /// Returns true if linux compatible
+#[tauri::command]
 async fn linux_checks() -> Result<(), String> {
     // Different behaviour depending on OS
     // MacOS is missing as it is not a target
@@ -234,8 +234,8 @@ async fn linux_checks() -> Result<(), String> {
     }
 }
 
-#[tauri::command]
 /// Returns the current version number as a string
+#[tauri::command]
 async fn get_flightcore_version_number() -> String {
     let version = env!("CARGO_PKG_VERSION");
     if cfg!(debug_assertions) {
@@ -255,10 +255,10 @@ async fn get_northstar_version_number_caller(game_path: String) -> Result<String
     }
 }
 
-#[tauri::command]
 /// Checks if installed Northstar version is up-to-date
 /// false -> Northstar install is up-to-date
 /// true  -> Northstar install is outdated
+#[tauri::command]
 async fn check_is_northstar_outdated(
     game_path: String,
     northstar_package_name: Option<String>,
@@ -302,16 +302,16 @@ async fn check_is_northstar_outdated(
     }
 }
 
-#[tauri::command]
 /// Checks if installed FlightCore version is up-to-date
 /// false -> FlightCore install is up-to-date
 /// true  -> FlightCore install is outdated
+#[tauri::command]
 async fn check_is_flightcore_outdated_caller() -> Result<bool, String> {
     check_is_flightcore_outdated().await
 }
 
-#[tauri::command]
 /// Checks if is valid Titanfall2 install based on certain conditions
+#[tauri::command]
 async fn verify_install_location(game_path: String) -> bool {
     match check_is_valid_game_path(&game_path) {
         Ok(()) => true,
@@ -322,21 +322,34 @@ async fn verify_install_location(game_path: String) -> bool {
     }
 }
 
-#[tauri::command]
 /// Returns identifier of host OS FlightCore is running on
+#[tauri::command]
 async fn get_host_os_caller() -> String {
     get_host_os()
 }
 
-#[tauri::command]
 /// Installs Northstar to the given path
+#[tauri::command]
 async fn install_northstar_caller(
     window: tauri::Window,
     game_path: String,
     northstar_package_name: Option<String>,
+    version_number: Option<String>,
 ) -> Result<bool, String> {
     log::info!("Running");
-    match install_northstar(window, &game_path, northstar_package_name).await {
+
+    // Get Northstar package name (`Northstar` vs `NorthstarReleaseCandidate`)
+    let northstar_package_name = northstar_package_name
+        .map(|name| {
+            if name.len() <= 1 {
+                "Northstar".to_string()
+            } else {
+                name
+            }
+        })
+        .unwrap_or("Northstar".to_string());
+
+    match install_northstar(window, &game_path, northstar_package_name, version_number).await {
         Ok(_) => Ok(true),
         Err(err) => {
             log::error!("{}", err);
@@ -345,8 +358,8 @@ async fn install_northstar_caller(
     }
 }
 
-#[tauri::command]
 /// Update Northstar install in the given path
+#[tauri::command]
 async fn update_northstar_caller(
     window: tauri::Window,
     game_path: String,
@@ -355,17 +368,11 @@ async fn update_northstar_caller(
     log::info!("Updating Northstar");
 
     // Simply re-run install with up-to-date version for upate
-    match install_northstar(window, &game_path, northstar_package_name).await {
-        Ok(_) => Ok(true),
-        Err(err) => {
-            log::error!("{}", err);
-            Err(err)
-        }
-    }
+    install_northstar_caller(window, game_path, northstar_package_name, None).await
 }
 
-#[tauri::command]
 /// Launches Northstar
+#[tauri::command]
 async fn launch_northstar_caller(
     game_install: GameInstall,
     bypass_checks: Option<bool>,
@@ -373,8 +380,8 @@ async fn launch_northstar_caller(
     launch_northstar(&game_install, bypass_checks)
 }
 
-#[tauri::command]
 /// Launches Northstar
+#[tauri::command]
 async fn launch_northstar_steam_caller(
     game_install: GameInstall,
     bypass_checks: Option<bool>,
@@ -382,8 +389,8 @@ async fn launch_northstar_steam_caller(
     launch_northstar_steam(&game_install, bypass_checks)
 }
 
-#[tauri::command]
 /// Installs the specified mod
+#[tauri::command]
 async fn install_mod_caller(
     game_install: GameInstall,
     thunderstore_mod_string: String,
@@ -400,8 +407,8 @@ async fn install_mod_caller(
     }
 }
 
-#[tauri::command]
 /// Installs the specified mod
+#[tauri::command]
 async fn clean_up_download_folder_caller(
     game_install: GameInstall,
     force: bool,
@@ -442,8 +449,8 @@ async fn get_server_player_count() -> Result<(i32, usize), String> {
     Ok((total_player_count, server_count))
 }
 
-#[tauri::command]
 /// Spawns repair window
+#[tauri::command]
 async fn open_repair_window(handle: tauri::AppHandle) -> Result<(), String> {
     // Spawn new window
     let repair_window = match tauri::WindowBuilder::new(

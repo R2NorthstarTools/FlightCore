@@ -174,9 +174,9 @@ pub async fn get_launcher_download_link(commit_sha: String) -> Result<String, St
             Err(err) => return Err(format!("{}", err)),
         };
 
-        // Cross-reference PR head commit sha against workflow runs
+        // Cross-reference commit sha against workflow runs
         for workflow_run in &runs_response.workflow_runs {
-            // If head commit sha of run and PR match, grab CI output
+            // If head commit sha of CI run matches the one passed to this function, grab CI output
             if workflow_run.head_sha == commit_sha {
                 // Check artifacts
                 let api_url = format!("https://api.github.com/repos/R2Northstar/NorthstarLauncher/actions/runs/{}/artifacts", workflow_run.id);
@@ -187,7 +187,7 @@ pub async fn get_launcher_download_link(commit_sha: String) -> Result<String, St
 
                 // Iterate over artifacts
                 for artifact in artifacts_response.artifacts {
-                    // Make sure run is from PR head commit
+                    // Make sure artifact and CI run commit head sha match
                     if artifact.workflow_run.head_sha == workflow_run.head_sha {
                         dbg!(artifact.id);
 
