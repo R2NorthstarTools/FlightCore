@@ -33,8 +33,8 @@ pub const TITANFALL2_ORIGIN_IDS: [&str; 2] = ["Origin.OFR.50.0001452", "Origin.O
 pub const TITANFALL2_STEAM_ID: &str = "1237970";
 
 // Order in which the sections for release notes should be displayed
-pub const SECTION_ORDER: [&str; 9] = [
-    "feat", "fix", "docs", "style", "refactor", "build", "test", "chore", "other",
+pub const SECTION_ORDER: [&str; 10] = [
+    "feat", "fix", "docs", "style", "refactor", "build", "test", "i18n", "chore", "other",
 ];
 
 // GitHub API endpoints for launcher/mods PRs

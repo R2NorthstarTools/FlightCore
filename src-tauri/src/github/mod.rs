@@ -165,6 +165,7 @@ fn generate_flightcore_release_notes(commits: Vec<String>) -> String {
                     "build" => "**Build:**",
                     "test" => "**Tests:**",
                     "chore" => "**Chores:**",
+                    "i18n" => "**Translation:**",
                     _ => "**Other:**",
                 };
 
