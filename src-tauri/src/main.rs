@@ -34,10 +34,7 @@ use repair_and_verify::{
 };
 
 mod mod_management;
-use mod_management::{
-    delete_northstar_mod, delete_thunderstore_mod, fc_download_mod_and_install,
-    get_installed_mods_and_properties, set_mod_enabled_status,
-};
+use mod_management::fc_download_mod_and_install;
 
 mod northstar;
 use northstar::get_northstar_version_number;
@@ -130,18 +127,18 @@ fn main() {
             check_is_flightcore_outdated_caller,
             get_log_list,
             verify_game_files,
-            set_mod_enabled_status,
+            mod_management::set_mod_enabled_status,
             disable_all_but_core,
             is_debug_mode,
             get_northstar_release_notes,
             linux_checks,
-            get_installed_mods_and_properties,
+            mod_management::get_installed_mods_and_properties,
             install_mod_caller,
             clean_up_download_folder_caller,
             get_newest_flightcore_version,
-            delete_northstar_mod,
+            mod_management::delete_northstar_mod,
             get_server_player_count,
-            delete_thunderstore_mod,
+            mod_management::delete_thunderstore_mod,
             open_repair_window,
             query_thunderstore_packages_api,
             get_list_of_tags,
