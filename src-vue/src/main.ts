@@ -14,6 +14,7 @@ import {createRouter, createWebHashHistory} from "vue-router";
 import en from "./i18n/lang/en.json";
 import fr from "./i18n/lang/fr.json";
 import de from "./i18n/lang/de.json";
+import pl from "./i18n/lang/pl.json";
 
 
 const app = createApp(App);
@@ -23,7 +24,7 @@ export const i18n = createI18n({
     locale: 'en',
     fallbackLocale: 'en',
     messages: {
-        en, fr, de
+        en, fr, de, pl
     }
 });
 app.use(i18n);

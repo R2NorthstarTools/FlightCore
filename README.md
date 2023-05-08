@@ -24,6 +24,9 @@ All versions of FlightCore feature an auto-updater that will ask to self-update 
 
 <a href="https://github.com/R2NorthstarTools/FlightCore/releases"><img src="https://img.shields.io/github/v/release/R2NorthstarTools/FlightCore" alt="GitHub release (latest by date)"></a>
 <img src="https://img.shields.io/github/downloads/R2NorthstarTools/FlightCore/latest/total" alt="GitHub release downloads (latest by date)">
+<a href="https://translate.harmony.tf/engage/northstar/">
+<img src="https://translate.harmony.tf/widgets/northstar/-/flightcore/svg-badge.svg" alt="Translation status" />
+</a>
 
 ## Frequently Asked Questions (FAQ)
 
@@ -34,6 +37,15 @@ Answers to frequently asked questions can be found in [docs/FAQ.md](docs/FAQ.md)
 If you'd like to contribute to FlightCore, see [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)
 
 If you are a Northstar developer/contributor, you might want to look at [docs/DEV-TOOLS.md](docs/DEV-TOOLS.md)
+
+### Translating
+
+Translations can be submitted via [weblate](https://translate.harmony.tf/projects/northstar/flightcore/). \
+If you want to add translations for a new language that does not exist in FlightCore yet, please [reach out via GitHub issues](https://github.com/R2NorthstarTools/FlightCore/issues/new) so that we can add support for it.
+
+<a href="https://translate.harmony.tf/engage/northstar/">
+<img src="https://translate.harmony.tf/widgets/northstar/-/flightcore/multi-auto.svg" alt="Translation status" />
+</a>
 
 ## Roadmap
 
