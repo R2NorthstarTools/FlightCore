@@ -213,7 +213,7 @@ async fn do_install(
     log::info!("Download path: {download_path}");
 
     let last_emit = RefCell::new(Instant::now()); // Keep track of the last time a signal was emitted
-    let nfile = thermite::core::manage::download_file_with_progress(
+    let nfile = match thermite::core::manage::download_file_with_progress(
         &nmod.url,
         download_path,
         |delta, current, total| {
@@ -236,8 +236,10 @@ async fn do_install(
                 }
             }
         },
-    )
-    .unwrap();
+    ) {
+        Ok(res) => res,
+        Err(err) => return Err(anyhow!("Failed downloading Northstar {}", err)),
+    };
 
     window
         .emit(
