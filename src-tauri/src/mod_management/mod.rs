@@ -6,8 +6,8 @@ use async_recursion::async_recursion;
 use anyhow::{anyhow, Result};
 use app::NorthstarMod;
 use serde::{Deserialize, Serialize};
-use thermite::prelude::ThermiteError;
 use std::{fs, io::Read, path::PathBuf};
+use thermite::prelude::ThermiteError;
 
 use crate::get_enabled_mods;
 use app::GameInstall;
@@ -436,7 +436,7 @@ pub async fn fc_download_mod_and_install(
         err if matches!(err, Err(ThermiteError::PrefixError(_))) => err, // probably happens when there is not mod folder found
         Err(err) => Err(err.to_string())?,
     };
-    
+
     // Because of the match expression only errors that can indicate missing mod/plugins folder
     // we can say that it worked if the plugin install worked
     if result_plugin.is_ok() {
