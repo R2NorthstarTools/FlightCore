@@ -109,10 +109,10 @@ export default defineComponent({
     },
     data() {
         return {
-            mod_to_install_field_string : "",
-            release_notes_text : "",
-            first_tag: { label: '', value: {name: ''} },
-            second_tag: { label: '', value: {name: ''} },
+            mod_to_install_field_string: "",
+            release_notes_text: "",
+            first_tag: { label: '', value: { name: '' } },
+            second_tag: { label: '', value: { name: '' } },
             ns_release_tags: [] as TagWrapper[],
             selected_project: "FlightCore",
             project: [
@@ -201,7 +201,7 @@ export default defineComponent({
                 });
         },
         async getTags() {
-            await invoke<TagWrapper[]>("get_list_of_tags", {project: this.selected_project})
+            await invoke<TagWrapper[]>("get_list_of_tags", { project: this.selected_project })
                 .then((message) => {
                     this.ns_release_tags = message;
                     showNotification("Done", "Fetched tags");
@@ -211,7 +211,7 @@ export default defineComponent({
                 });
         },
         async compareTags() {
-            await invoke<string>("compare_tags", {project: this.selected_project, firstTag: this.firstTag.value, secondTag: this.secondTag.value})
+            await invoke<string>("compare_tags", { project: this.selected_project, firstTag: this.firstTag.value, secondTag: this.secondTag.value })
                 .then((message) => {
                     this.release_notes_text = message;
                     showNotification("Done", "Generated release notes");

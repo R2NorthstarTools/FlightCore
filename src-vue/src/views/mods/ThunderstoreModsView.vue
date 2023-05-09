@@ -54,7 +54,7 @@ import { ThunderstoreModVersion } from "../../../../src-tauri/bindings/Thunderst
 
 export default defineComponent({
     name: "ThunderstoreModsView",
-    components: {ThunderstoreModCard},
+    components: { ThunderstoreModCard },
     async mounted() {
         this.$store.commit('fetchThunderstoreMods');
     },
@@ -100,7 +100,7 @@ export default defineComponent({
 
             // Sort mods regarding user selected algorithm.
             let compare: (a: ThunderstoreMod, b: ThunderstoreMod) => number;
-            switch(this.modSorting) {
+            switch (this.modSorting) {
                 case SortOptions.NAME_ASC:
                     compare = (a: ThunderstoreMod, b: ThunderstoreMod) => a.name.localeCompare(b.name);
                     break;
@@ -116,10 +116,10 @@ export default defineComponent({
                 case SortOptions.MOST_DOWNLOADED:
                     compare = (a: ThunderstoreMod, b: ThunderstoreMod) => {
                         const aTotal = a.versions.reduce((prev, next) => {
-                            return {downloads: prev.downloads + next.downloads} as ThunderstoreModVersion;
+                            return { downloads: prev.downloads + next.downloads } as ThunderstoreModVersion;
                         }).downloads;
                         const bTotal = b.versions.reduce((prev, next) => {
-                            return {downloads: prev.downloads + next.downloads} as ThunderstoreModVersion;
+                            return { downloads: prev.downloads + next.downloads } as ThunderstoreModVersion;
                         }).downloads;
                         return -1 * (aTotal - bTotal);
                     };
@@ -142,7 +142,7 @@ export default defineComponent({
 
             const startIndex = this.currentPageIndex * perPageValue;
             const endIndexCandidate = startIndex + perPageValue;
-            const endIndex =  endIndexCandidate > this.modsList.length ? this.modsList.length : endIndexCandidate;
+            const endIndex = endIndexCandidate > this.modsList.length ? this.modsList.length : endIndexCandidate;
             return this.modsList.slice(startIndex, endIndex);
         },
         shouldDisplayPagination(): boolean {
@@ -229,36 +229,43 @@ export default defineComponent({
 
     width: calc(var(--thunderstore-mod-card-width) * var(--thunderstore-mod-card-columns-count) + var(--thunderstore-mod-card-margin) * 2 * var(--thunderstore-mod-card-columns-count));
 }
+
 @media (min-width: 628px) {
     .card-container {
         --thunderstore-mod-card-columns-count: 2;
     }
 }
+
 @media (min-width: 836px) {
     .card-container {
         --thunderstore-mod-card-columns-count: 3;
     }
 }
+
 @media (min-width: 1006px) {
     .card-container {
         --thunderstore-mod-card-columns-count: 4;
     }
 }
+
 @media (min-width: 1196px) {
     .card-container {
         --thunderstore-mod-card-columns-count: 5;
     }
 }
+
 @media (min-width: 1386px) {
     .card-container {
         --thunderstore-mod-card-columns-count: 6;
     }
 }
+
 @media (min-width: 1576px) {
     .card-container {
         --thunderstore-mod-card-columns-count: 7;
     }
 }
+
 @media (min-width: 1766px) {
     .card-container {
         --thunderstore-mod-card-columns-count: 8;
