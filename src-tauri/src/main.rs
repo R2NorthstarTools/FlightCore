@@ -45,8 +45,25 @@ use northstar::get_northstar_version_number;
 mod thunderstore;
 use thunderstore::query_thunderstore_packages_api;
 
+use semver::Version;
+use serde::{Deserialize, Serialize};
 use tauri::{Manager, Runtime};
 use tokio::time::sleep;
+use ts_rs::TS;
+
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
+struct NorthstarThunderstoreRelease {
+    package: String,
+    version: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
+struct NorthstarThunderstoreReleaseWrapper {
+    label: String,
+    value: NorthstarThunderstoreRelease,
+}
 
 #[derive(Default)]
 struct Counter(Arc<Mutex<i32>>);
@@ -481,25 +498,6 @@ async fn close_application<R: Runtime>(app: tauri::AppHandle<R>) -> Result<(), S
     app.exit(0); // Close application
     Ok(())
 }
-
-use serde::{Deserialize, Serialize};
-use ts_rs::TS;
-
-#[derive(Serialize, Deserialize, Debug, Clone, TS)]
-#[ts(export)]
-struct NorthstarThunderstoreRelease {
-    package: String,
-    version: String,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, TS)]
-#[ts(export)]
-struct NorthstarThunderstoreReleaseWrapper {
-    label: String,
-    value: NorthstarThunderstoreRelease,
-}
-
-use semver::Version;
 
 /// Gets list of available Northstar versions from Thunderstore
 #[tauri::command]
