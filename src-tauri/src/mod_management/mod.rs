@@ -8,7 +8,7 @@ use app::NorthstarMod;
 use serde::{Deserialize, Serialize};
 use std::{fs, io::Read, path::PathBuf};
 
-use app::get_enabled_mods;
+use crate::get_enabled_mods;
 use app::GameInstall;
 
 #[derive(Debug, Clone)]

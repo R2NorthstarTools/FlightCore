@@ -480,3 +480,28 @@ async fn close_application<R: Runtime>(app: tauri::AppHandle<R>) -> Result<(), S
     app.exit(0); // Close application
     Ok(())
 }
+
+/// Returns a serde json object of the parsed `enabledmods.json` file
+pub fn get_enabled_mods(game_install: &GameInstall) -> Result<serde_json::value::Value, String> {
+    let enabledmods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
+
+    // Check for JSON file
+    if !std::path::Path::new(&enabledmods_json_path).exists() {
+        return Err("enabledmods.json not found".to_string());
+    }
+
+    // Read file
+    let data = match std::fs::read_to_string(enabledmods_json_path) {
+        Ok(data) => data,
+        Err(err) => return Err(err.to_string()),
+    };
+
+    // Parse JSON
+    let res: serde_json::Value = match serde_json::from_str(&data) {
+        Ok(result) => result,
+        Err(err) => return Err(format!("Failed to read JSON due to: {}", err)),
+    };
+
+    // Return parsed data
+    Ok(res)
+}
