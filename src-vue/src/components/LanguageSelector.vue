@@ -38,6 +38,10 @@ export default defineComponent({
                 value: 'pl',
                 label: 'polski'
             },
+            {
+                value: 'ru',
+                label: 'русский'
+            },
         ]
     }),
     mounted: async function() {
