@@ -2,8 +2,6 @@ use std::{cell::RefCell, env, fs, path::Path, time::Duration, time::Instant};
 
 use anyhow::{anyhow, Context, Result};
 
-mod northstar;
-
 pub mod constants;
 mod platform_specific;
 #[cfg(target_os = "windows")]
@@ -17,8 +15,6 @@ use sysinfo::SystemExt;
 use tokio::time::sleep;
 use ts_rs::TS;
 use zip::ZipArchive;
-
-use northstar::get_northstar_version_number;
 
 use crate::constants::TITANFALL2_STEAM_ID;
 
@@ -121,7 +117,7 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
                     };
                     return Ok(game_install);
                 }
-                None => log::info!("Couldn't locate Titanfall2 Steam instal"),
+                None => log::info!("Couldn't locate Titanfall2 Steam install"),
             }
         }
         None => log::info!("Couldn't locate Steam on this computer!"),
@@ -279,19 +275,9 @@ async fn do_install(
 pub async fn install_northstar(
     window: tauri::Window,
     game_path: &str,
-    northstar_package_name: Option<String>,
+    northstar_package_name: String,
+    version_number: Option<String>,
 ) -> Result<String, String> {
-    let northstar_package_name = match northstar_package_name {
-        Some(northstar_package_name) => {
-            if northstar_package_name.len() <= 1 {
-                "Northstar".to_string()
-            } else {
-                northstar_package_name
-            }
-        }
-        None => "Northstar".to_string(),
-    };
-
     let index = thermite::api::get_package_index().unwrap().to_vec();
     let nmod = index
         .iter()
@@ -299,11 +285,14 @@ pub async fn install_northstar(
         .ok_or_else(|| panic!("Couldn't find Northstar on thunderstore???"))
         .unwrap();
 
+    // Use passed version or latest if no version was passed
+    let version = version_number.as_ref().unwrap_or(&nmod.latest);
+
     log::info!("Install path \"{}\"", game_path);
 
     match do_install(
         window,
-        nmod.versions.get(&nmod.latest).unwrap(),
+        nmod.versions.get(version).unwrap(),
         std::path::Path::new(game_path),
     )
     .await
@@ -330,73 +319,6 @@ pub async fn install_northstar(
 /// Returns identifier of host OS FlightCore is running on
 pub fn get_host_os() -> String {
     env::consts::OS.to_string()
-}
-
-pub fn launch_northstar(
-    game_install: &GameInstall,
-    bypass_checks: Option<bool>,
-) -> Result<String, String> {
-    dbg!(game_install.clone());
-
-    let host_os = get_host_os();
-
-    // Explicitly fail early certain (currently) unsupported install setups
-    if host_os != "windows"
-        || !(matches!(game_install.install_type, InstallType::STEAM)
-            || matches!(game_install.install_type, InstallType::ORIGIN)
-            || matches!(game_install.install_type, InstallType::UNKNOWN))
-    {
-        return Err(format!(
-            "Not yet implemented for \"{}\" with Titanfall2 installed via \"{:?}\"",
-            get_host_os(),
-            game_install.install_type
-        ));
-    }
-
-    let bypass_checks = bypass_checks.unwrap_or(false);
-
-    // Only check guards if bypassing checks is not enabled
-    if !bypass_checks {
-        // Some safety checks before, should have more in the future
-        if get_northstar_version_number(&game_install.game_path).is_err() {
-            return Err(anyhow!("Not all checks were met").to_string());
-        }
-
-        // Require Origin to be running to launch Northstar
-        let origin_is_running = check_origin_running();
-        if !origin_is_running {
-            return Err(
-                anyhow!("Origin not running, start Origin before launching Northstar").to_string(),
-            );
-        }
-    }
-
-    // Switch to Titanfall2 directory for launching
-    // NorthstarLauncher.exe expects to be run from that folder
-    if std::env::set_current_dir(game_install.game_path.clone()).is_err() {
-        // We failed to get to Titanfall2 directory
-        return Err(anyhow!("Couldn't access Titanfall2 directory").to_string());
-    }
-
-    // Only Windows with Steam or Origin are supported at the moment
-    if host_os == "windows"
-        && (matches!(game_install.install_type, InstallType::STEAM)
-            || matches!(game_install.install_type, InstallType::ORIGIN)
-            || matches!(game_install.install_type, InstallType::UNKNOWN))
-    {
-        let ns_exe_path = format!("{}/NorthstarLauncher.exe", game_install.game_path);
-        let _output = std::process::Command::new("C:\\Windows\\System32\\cmd.exe")
-            .args(["/C", "start", "", &ns_exe_path])
-            .spawn()
-            .expect("failed to execute process");
-        return Ok("Launched game".to_string());
-    }
-
-    Err(format!(
-        "Not yet implemented for {:?} on {}",
-        game_install.install_type,
-        get_host_os()
-    ))
 }
 
 /// Prepare Northstar and Launch through Steam using the Browser Protocol
@@ -502,38 +424,4 @@ pub fn check_northstar_running() -> bool {
         .is_some()
         || s.processes_by_name("Titanfall2.exe").next().is_some();
     x
-}
-
-/// Helps with converting release candidate numbers which are different on Thunderstore
-/// due to restrictions imposed by the platform
-pub fn convert_release_candidate_number(version_number: String) -> String {
-    // This simply converts `-rc` to `0`
-    // Works as intended for RCs < 10, e.g.  `v1.9.2-rc1`  -> `v1.9.201`
-    // Doesn't work for larger numbers, e.g. `v1.9.2-rc11` -> `v1.9.2011` (should be `v1.9.211`)
-    version_number.replace("-rc", "0").replace("00", "")
-}
-
-/// Returns a serde json object of the parsed `enabledmods.json` file
-pub fn get_enabled_mods(game_install: &GameInstall) -> Result<serde_json::value::Value, String> {
-    let enabledmods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
-
-    // Check for JSON file
-    if !std::path::Path::new(&enabledmods_json_path).exists() {
-        return Err("enabledmods.json not found".to_string());
-    }
-
-    // Read file
-    let data = match std::fs::read_to_string(enabledmods_json_path) {
-        Ok(data) => data,
-        Err(err) => return Err(err.to_string()),
-    };
-
-    // Parse JSON
-    let res: serde_json::Value = match serde_json::from_str(&data) {
-        Ok(result) => result,
-        Err(err) => return Err(format!("Failed to read JSON due to: {}", err)),
-    };
-
-    // Return parsed data
-    Ok(res)
 }

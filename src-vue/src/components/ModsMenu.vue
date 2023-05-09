@@ -4,7 +4,7 @@
             default-active="1"
             text-color="#fff"
         >
-            <h5>Mods</h5>
+            <h5>{{ $t('menu.mods') }}</h5>
             <el-menu-item index="1" @click="$emit('showLocalMods', true)">
                 <el-icon><Folder /></el-icon>
                 <span>{{ $t('mods.menu.local') }}</span>

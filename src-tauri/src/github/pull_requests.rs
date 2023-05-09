@@ -158,11 +158,9 @@ fn get_mods_download_link(pull_request: PullsApiResponseElement) -> Result<Strin
     Ok(download_url)
 }
 
-/// Gets `nightly.link` artifact download link of a launcher PR
+/// Gets `nightly.link` artifact download link of a launcher commit
 #[tauri::command]
-pub async fn get_launcher_download_link(
-    pull_request: PullsApiResponseElement,
-) -> Result<String, String> {
+pub async fn get_launcher_download_link(commit_sha: String) -> Result<String, String> {
     // Iterate over the first 10 pages of
     for i in 1..=10 {
         // Crossreference with runs API
@@ -176,10 +174,10 @@ pub async fn get_launcher_download_link(
             Err(err) => return Err(format!("{}", err)),
         };
 
-        // Cross-reference PR head commit sha against workflow runs
+        // Cross-reference commit sha against workflow runs
         for workflow_run in &runs_response.workflow_runs {
-            // If head commit sha of run and PR match, grab CI output
-            if workflow_run.head_sha == pull_request.head.sha {
+            // If head commit sha of CI run matches the one passed to this function, grab CI output
+            if workflow_run.head_sha == commit_sha {
                 // Check artifacts
                 let api_url = format!("https://api.github.com/repos/R2Northstar/NorthstarLauncher/actions/runs/{}/artifacts", workflow_run.id);
                 let artifacts_response: ArtifactsResponse = serde_json::from_value(
@@ -189,7 +187,7 @@ pub async fn get_launcher_download_link(
 
                 // Iterate over artifacts
                 for artifact in artifacts_response.artifacts {
-                    // Make sure run is from PR head commit
+                    // Make sure artifact and CI run commit head sha match
                     if artifact.workflow_run.head_sha == workflow_run.head_sha {
                         dbg!(artifact.id);
 
@@ -202,8 +200,8 @@ pub async fn get_launcher_download_link(
     }
 
     Err(format!(
-        "Couldn't grab download link for PR \"{}\". PR might be too old and therefore no CI build has been deleted. Maybe ask author to update?",
-        pull_request.number
+        "Couldn't grab download link for \"{}\". Corresponding PR might be too old and therefore no CI build has been detected. Maybe ask author to update?",
+        commit_sha
     ))
 }
 
@@ -239,7 +237,15 @@ pub async fn apply_launcher_pr(
     check_is_valid_game_path(game_install_path)?;
 
     // get download link
-    let download_url = get_launcher_download_link(pull_request.clone()).await?;
+    let download_url = match get_launcher_download_link(pull_request.head.sha.clone()).await {
+        Ok(res) => res,
+        Err(err) => {
+            return Err(format!(
+                "Couldn't grab download link for PR \"{}\". {}",
+                pull_request.number, err
+            ))
+        }
+    };
 
     let archive = match download_zip_into_memory(download_url).await {
         Ok(archive) => archive,

@@ -24,7 +24,7 @@
             <span v-if="mod.version != null">(v{{ mod.version }})</span>
             <img
                 v-if="mod.thunderstore_mod_string != null"
-                :title="$t('mods.local.part_of_ts_mod')"
+                :title="$t('mods.local.part_of_ts_mod') + '\n' + mod.thunderstore_mod_string"
                 src="/src/assets/thunderstore-icon.png"
                 class="image"
                 height="16"
