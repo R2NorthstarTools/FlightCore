@@ -501,6 +501,7 @@ struct NorthstarThunderstoreReleaseWrapper {
 
 use semver::Version;
 
+/// Gets list of available Northstar versions from Thunderstore
 #[tauri::command]
 async fn get_available_northstar_versions() -> Result<Vec<NorthstarThunderstoreReleaseWrapper>, ()>
 {
