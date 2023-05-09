@@ -415,7 +415,7 @@ pub async fn fc_download_mod_and_install(
     // Injected plugin install
     let result_plugin = match install_plugin(
         game_install,
-        &f,
+        temp_file.file(),
         thunderstore_mod_string,
         can_install_plugins,
     )
@@ -436,10 +436,7 @@ pub async fn fc_download_mod_and_install(
         err if matches!(err, Err(ThermiteError::PrefixError(_))) => err, // probably happens when there is not mod folder found
         Err(err) => Err(err.to_string())?,
     };
-
-    // Delete downloaded zip file
-    std::fs::remove_file(path).unwrap(); // lol this never gets removed if this returns an erorr
-
+    
     // Because of the match expression only errors that can indicate missing mod/plugins folder
     // we can say that it worked if the plugin install worked
     if result_plugin.is_ok() {
