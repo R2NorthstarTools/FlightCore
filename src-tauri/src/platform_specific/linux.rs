@@ -3,6 +3,28 @@
 use regex::Regex;
 use std::process::Command;
 
+// I intend to add more linux related stuff to check here, so making a func
+// for now tho it only checks `ldd --version`
+// - salmon
+#[cfg(target_os = "linux")]
+pub fn linux_checks_librs() -> Result<(), String> {
+    // Perform various checks in terms of Linux compatibility
+    // Return early with error message if a check fails
+
+    // check `ldd --version` to see if glibc is up to date for northstar proton
+    let min_required_ldd_version = 2.33;
+    let lddv = check_glibc_v();
+    if lddv < min_required_ldd_version {
+        return Err(format!(
+            "GLIBC is not version {} or greater",
+            min_required_ldd_version
+        ));
+    };
+
+    // All checks passed
+    Ok(())
+}
+
 pub fn check_glibc_v() -> f32 {
     let out = Command::new("/bin/ldd")
         .arg("--version")

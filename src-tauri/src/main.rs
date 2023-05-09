@@ -42,6 +42,8 @@ use mod_management::{
 mod northstar;
 use northstar::get_northstar_version_number;
 
+mod platform_specific;
+
 mod thunderstore;
 use thunderstore::query_thunderstore_packages_api;
 
@@ -223,7 +225,7 @@ async fn linux_checks() -> Result<(), String> {
 
     #[cfg(target_os = "linux")]
     {
-        linux_checks_librs()
+        platform_specific::linux::linux_checks_librs()
     }
 }
 
