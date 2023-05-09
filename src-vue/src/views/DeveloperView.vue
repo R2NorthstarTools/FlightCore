@@ -246,7 +246,6 @@ export default defineComponent({
         async getAvailableNorthstarVersions() {
             await invoke<NorthstarThunderstoreReleaseWrapper[]>("get_available_northstar_versions")
                 .then((message) => {
-                    console.log(message);
                     this.ns_versions = message;
                     showNotification("Done", "TODO");
                 })
@@ -268,7 +267,6 @@ export default defineComponent({
                 0
             );
 
-            console.log(this.selected_ns_version.value);
             let install_northstar_result = invoke("install_northstar_caller", { gamePath: game_install.game_path, northstarPackageName: this.selected_ns_version.value.package, versionNumber: this.selected_ns_version.value.version });
 
             await install_northstar_result
