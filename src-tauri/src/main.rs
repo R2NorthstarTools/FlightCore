@@ -512,16 +512,16 @@ async fn get_available_northstar_versions() -> Result<Vec<NorthstarThunderstoreR
         .unwrap();
 
     let mut releases: Vec<NorthstarThunderstoreReleaseWrapper> = vec![];
-    for (_my_string, my_version) in nsmod.versions.iter() {
+    for (_version_string, nsmod_version_obj) in nsmod.versions.iter() {
         let current_elem = NorthstarThunderstoreRelease {
-            package: my_version.name.clone(),
-            version: my_version.version.clone(),
+            package: nsmod_version_obj.name.clone(),
+            version: nsmod_version_obj.version.clone(),
         };
         let current_elem_wrapped = NorthstarThunderstoreReleaseWrapper {
             label: format!(
                 "{} v{}",
-                my_version.name.clone(),
-                my_version.version.clone()
+                nsmod_version_obj.name.clone(),
+                nsmod_version_obj.version.clone()
             ),
             value: current_elem,
         };
