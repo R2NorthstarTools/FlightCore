@@ -247,7 +247,7 @@ export default defineComponent({
             await invoke<NorthstarThunderstoreReleaseWrapper[]>("get_available_northstar_versions")
                 .then((message) => {
                     this.ns_versions = message;
-                    showNotification("Done", "TODO");
+                    showNotification("Done", "Fetched all available Northstar versions");
                 })
                 .catch((error) => {
                     showErrorNotification(error);
