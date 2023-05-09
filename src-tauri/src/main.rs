@@ -20,24 +20,13 @@ use app::{
 };
 
 mod github;
-use github::pull_requests::{
-    apply_launcher_pr, apply_mods_pr, get_launcher_download_link, get_pull_requests_wrapper,
-};
-use github::release_notes::{
-    check_is_flightcore_outdated, get_newest_flightcore_version, get_northstar_release_notes,
-};
-use github::{compare_tags, get_list_of_tags};
+use github::release_notes::check_is_flightcore_outdated;
 
 mod repair_and_verify;
-use repair_and_verify::{
-    clean_up_download_folder, disable_all_but_core, get_log_list, verify_game_files,
-};
+use repair_and_verify::clean_up_download_folder;
 
 mod mod_management;
-use mod_management::{
-    delete_northstar_mod, delete_thunderstore_mod, fc_download_mod_and_install,
-    get_installed_mods_and_properties, set_mod_enabled_status,
-};
+use mod_management::fc_download_mod_and_install;
 
 mod northstar;
 use northstar::get_northstar_version_number;
@@ -128,28 +117,28 @@ fn main() {
             launch_northstar_caller,
             launch_northstar_steam_caller,
             check_is_flightcore_outdated_caller,
-            get_log_list,
-            verify_game_files,
-            set_mod_enabled_status,
-            disable_all_but_core,
+            repair_and_verify::get_log_list,
+            repair_and_verify::verify_game_files,
+            mod_management::set_mod_enabled_status,
+            repair_and_verify::disable_all_but_core,
             is_debug_mode,
-            get_northstar_release_notes,
+            github::release_notes::get_northstar_release_notes,
             linux_checks,
-            get_installed_mods_and_properties,
+            mod_management::get_installed_mods_and_properties,
             install_mod_caller,
             clean_up_download_folder_caller,
-            get_newest_flightcore_version,
-            delete_northstar_mod,
+            github::release_notes::get_newest_flightcore_version,
+            mod_management::delete_northstar_mod,
             get_server_player_count,
-            delete_thunderstore_mod,
+            mod_management::delete_thunderstore_mod,
             open_repair_window,
             query_thunderstore_packages_api,
-            get_list_of_tags,
-            compare_tags,
-            get_pull_requests_wrapper,
-            apply_launcher_pr,
-            apply_mods_pr,
-            get_launcher_download_link,
+            github::get_list_of_tags,
+            github::compare_tags,
+            github::pull_requests::get_pull_requests_wrapper,
+            github::pull_requests::apply_launcher_pr,
+            github::pull_requests::apply_mods_pr,
+            github::pull_requests::get_launcher_download_link,
             close_application,
         ])
         .run(tauri::generate_context!())
