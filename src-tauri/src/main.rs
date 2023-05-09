@@ -379,7 +379,7 @@ async fn launch_northstar_caller(
     game_install: GameInstall,
     bypass_checks: Option<bool>,
 ) -> Result<String, String> {
-    launch_northstar(&game_install, bypass_checks)
+    northstar::launch_northstar(&game_install, bypass_checks)
 }
 
 /// Launches Northstar
