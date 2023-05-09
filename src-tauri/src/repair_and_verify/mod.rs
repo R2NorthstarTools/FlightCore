@@ -1,7 +1,8 @@
 use crate::mod_management::{rebuild_enabled_mods_json, set_mod_enabled_status};
 use anyhow::anyhow;
 /// Contains various functions to repair common issues and verifying installation
-use app::{constants::CORE_MODS, get_enabled_mods, GameInstall};
+use app::{constants::CORE_MODS, GameInstall};
+use crate::get_enabled_mods;
 
 /// Verifies Titanfall2 game files
 #[tauri::command]
