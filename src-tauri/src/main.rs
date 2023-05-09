@@ -225,7 +225,7 @@ async fn linux_checks() -> Result<(), String> {
 
     #[cfg(target_os = "linux")]
     {
-        platform_specific::linux::linux_checks_librs()
+        platform_specific::linux::linux_checks()
     }
 }
 

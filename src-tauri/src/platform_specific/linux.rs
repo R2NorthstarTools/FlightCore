@@ -7,7 +7,7 @@ use std::process::Command;
 // for now tho it only checks `ldd --version`
 // - salmon
 #[cfg(target_os = "linux")]
-pub fn linux_checks_librs() -> Result<(), String> {
+pub fn linux_checks() -> Result<(), String> {
     // Perform various checks in terms of Linux compatibility
     // Return early with error message if a check fails
 
