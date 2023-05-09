@@ -1,7 +1,7 @@
 use crate::github::release_notes::fetch_github_releases_api;
 
-use crate::check_is_valid_game_path;
 use anyhow::anyhow;
+use app::check_is_valid_game_path;
 use app::constants::{APP_USER_AGENT, PULLS_API_ENDPOINT_LAUNCHER, PULLS_API_ENDPOINT_MODS};
 use serde::{Deserialize, Serialize};
 use std::fs::File;
