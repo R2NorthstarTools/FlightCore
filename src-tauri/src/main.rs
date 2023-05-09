@@ -340,7 +340,6 @@ async fn install_northstar_caller(
     version_number: Option<String>,
 ) -> Result<bool, String> {
     log::info!("Running");
-    dbg!(version_number.clone());
 
     // Get Northstar package name (`Northstar` vs `NorthstarReleaseCandidate`)
     let northstar_package_name = northstar_package_name
@@ -514,7 +513,7 @@ async fn get_available_northstar_versions() -> Result<Vec<NorthstarThunderstoreR
         .unwrap();
 
     let mut releases: Vec<NorthstarThunderstoreReleaseWrapper> = vec![];
-    for (my_string, my_version) in nsmod.versions.iter() {
+    for (_my_string, my_version) in nsmod.versions.iter() {
         let current_elem = NorthstarThunderstoreRelease {
             package: my_version.name.clone(),
             version: my_version.version.clone(),
@@ -527,9 +526,6 @@ async fn get_available_northstar_versions() -> Result<Vec<NorthstarThunderstoreR
             ),
             value: current_elem,
         };
-
-        dbg!(my_string);
-        dbg!(my_version);
 
         releases.push(current_elem_wrapped);
     }
