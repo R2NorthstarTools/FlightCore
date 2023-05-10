@@ -1,6 +1,6 @@
-use std::{cell::RefCell, env, fs, path::Path, time::Duration, time::Instant};
+use std::{cell::RefCell, time::Duration, time::Instant};
 
-use anyhow::{anyhow, Context, Result};
+use anyhow::{Context, Result};
 
 pub mod constants;
 mod platform_specific;
@@ -11,8 +11,6 @@ use platform_specific::windows;
 use platform_specific::linux;
 
 use serde::{Deserialize, Serialize};
-use sysinfo::SystemExt;
-use tokio::time::sleep;
 use ts_rs::TS;
 use zip::ZipArchive;
 
@@ -298,114 +296,4 @@ pub async fn install_northstar(
     }
 
     Ok(nmod.latest.clone())
-}
-
-/// Returns identifier of host OS FlightCore is running on
-pub fn get_host_os() -> String {
-    env::consts::OS.to_string()
-}
-
-/// Prepare Northstar and Launch through Steam using the Browser Protocol
-pub fn launch_northstar_steam(
-    game_install: &GameInstall,
-    _bypass_checks: Option<bool>,
-) -> Result<String, String> {
-    if !matches!(game_install.install_type, InstallType::STEAM) {
-        return Err("Titanfall2 was not installed via Steam".to_string());
-    }
-
-    match steamlocate::SteamDir::locate() {
-        Some(mut steamdir) => {
-            if get_host_os() != "windows" {
-                let titanfall2_steamid: u32 = TITANFALL2_STEAM_ID.parse().unwrap();
-                match steamdir.compat_tool(&titanfall2_steamid) {
-                    Some(compat) => {
-                        if !compat
-                            .name
-                            .clone()
-                            .unwrap()
-                            .to_ascii_lowercase()
-                            .contains("northstarproton")
-                        {
-                            return Err(
-                                "Titanfall2 was not configured to use NorthstarProton".to_string()
-                            );
-                        }
-                    }
-                    None => {
-                        return Err(
-                            "Titanfall2 was not configured to use a compatibility tool".to_string()
-                        );
-                    }
-                }
-            }
-        }
-        None => {
-            return Err("Couldn't access Titanfall2 directory".to_string());
-        }
-    }
-
-    // Switch to Titanfall2 directory to set everything up
-    if std::env::set_current_dir(game_install.game_path.clone()).is_err() {
-        // We failed to get to Titanfall2 directory
-        return Err("Couldn't access Titanfall2 directory".to_string());
-    }
-
-    let run_northstar = "run_northstar.txt";
-    let run_northstar_bak = "run_northstar.txt.bak";
-
-    if Path::new(run_northstar).exists() {
-        // rename should ovewrite existing files
-        fs::rename(run_northstar, run_northstar_bak).unwrap();
-    }
-
-    // Passing arguments gives users a prompt, so we use run_northstar.txt
-    fs::write(run_northstar, b"1").unwrap();
-
-    let retval = match open::that(format!("steam://run/{}/", TITANFALL2_STEAM_ID)) {
-        Ok(()) => Ok("Started game".to_string()),
-        Err(_err) => Err("Failed to launch Titanfall 2 via Steam".to_string()),
-    };
-
-    let is_err = retval.is_err();
-
-    // Handle the rest in the backround
-    tauri::async_runtime::spawn(async move {
-        // Starting the EA app and Titanfall might take a good minute or three
-        let mut wait_countdown = 60 * 3;
-        while wait_countdown > 0 && !check_northstar_running() && !is_err {
-            sleep(Duration::from_millis(1000)).await;
-            wait_countdown -= 1;
-        }
-
-        // Northstar may be running, but it may not have loaded the file yet
-        sleep(Duration::from_millis(2000)).await;
-
-        // intentionally ignore Result
-        let _ = fs::remove_file(run_northstar);
-
-        if Path::new(run_northstar_bak).exists() {
-            fs::rename(run_northstar_bak, run_northstar).unwrap();
-        }
-    });
-
-    retval
-}
-
-pub fn check_origin_running() -> bool {
-    let s = sysinfo::System::new_all();
-    let x = s.processes_by_name("Origin.exe").next().is_some()
-        || s.processes_by_name("EADesktop.exe").next().is_some();
-    x
-}
-
-/// Checks if Northstar process is running
-pub fn check_northstar_running() -> bool {
-    let s = sysinfo::System::new_all();
-    let x = s
-        .processes_by_name("NorthstarLauncher.exe")
-        .next()
-        .is_some()
-        || s.processes_by_name("Titanfall2.exe").next().is_some();
-    x
 }
