@@ -31,6 +31,26 @@
                 Launch Northstar via Steam
             </el-button>
 
+            <br />
+            <br />
+
+            <el-button type="primary" @click="getAvailableNorthstarVersions">
+                Get available versions
+            </el-button>
+
+            <el-select v-model="selected_ns_version" class="m-2" placeholder="Versions">
+                <el-option
+                    v-for="item in ns_versions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item"
+                />
+            </el-select>
+
+            <el-button type="primary" @click="installNorthstarVersion">
+                Install
+            </el-button>
+
             <h3>Repair:</h3>
 
 
@@ -50,7 +70,14 @@
             </el-button>
 
             <h3>Release management</h3>
-            
+            <el-select v-model="selected_project" placeholder="Select">
+            <el-option
+                v-for="item in project"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+                />
+            </el-select>            
             <el-button type="primary" @click="getTags">
                 Get tags
             </el-button>
@@ -91,8 +118,10 @@ import { defineComponent } from "vue";
 import { invoke } from "@tauri-apps/api";
 import { GameInstall } from "../utils/GameInstall";
 import { TagWrapper } from "../../../src-tauri/bindings/TagWrapper";
+import { NorthstarThunderstoreReleaseWrapper } from "../../../src-tauri/bindings/NorthstarThunderstoreReleaseWrapper";
 import PullRequestsSelector from "../components/PullRequestsSelector.vue";
 import { showErrorNotification, showNotification } from "../utils/ui";
+import { Project } from "../../../src-tauri/bindings/Project"
 
 export default defineComponent({
     name: "DeveloperView",
@@ -101,11 +130,24 @@ export default defineComponent({
     },
     data() {
         return {
-            mod_to_install_field_string : "",
-            release_notes_text : "",
-            first_tag: { label: '', value: {name: ''} },
-            second_tag: { label: '', value: {name: ''} },
+            mod_to_install_field_string: "",
+            release_notes_text: "",
+            first_tag: { label: '', value: { name: '' } },
+            second_tag: { label: '', value: { name: '' } },
             ns_release_tags: [] as TagWrapper[],
+            ns_versions: [] as NorthstarThunderstoreReleaseWrapper[],
+            selected_ns_version: { label: '', value: { package: '', version: '' } } as NorthstarThunderstoreReleaseWrapper,
+            selected_project: "FlightCore",
+            project: [
+                {
+                    value: 'FlightCore',
+                    label: 'FlightCore',
+                },
+                {
+                    value: 'Northstar',
+                    label: 'Northstar',
+                }
+            ],
         }
     },
     computed: {
@@ -182,7 +224,7 @@ export default defineComponent({
                 });
         },
         async getTags() {
-            await invoke<TagWrapper[]>("get_list_of_tags")
+            await invoke<TagWrapper[]>("get_list_of_tags", { project: this.selected_project })
                 .then((message) => {
                     this.ns_release_tags = message;
                     showNotification("Done", "Fetched tags");
@@ -192,13 +234,54 @@ export default defineComponent({
                 });
         },
         async compareTags() {
-            await invoke<string>("compare_tags", {firstTag: this.firstTag.value, secondTag: this.secondTag.value})
+            await invoke<string>("compare_tags", { project: this.selected_project, firstTag: this.firstTag.value, secondTag: this.secondTag.value })
                 .then((message) => {
                     this.release_notes_text = message;
                     showNotification("Done", "Generated release notes");
                 })
                 .catch((error) => {
                     showErrorNotification(error);
+                });
+        },
+        async getAvailableNorthstarVersions() {
+            await invoke<NorthstarThunderstoreReleaseWrapper[]>("get_available_northstar_versions")
+                .then((message) => {
+                    this.ns_versions = message;
+                    showNotification("Done", "Fetched all available Northstar versions");
+                })
+                .catch((error) => {
+                    showErrorNotification(error);
+                });
+        },
+        async installNorthstarVersion() {
+            let game_install = {
+                game_path: this.$store.state.game_path,
+                install_type: this.$store.state.install_type
+            } as GameInstall;
+
+            // Send notification telling the user to wait for the process to finish
+            const notification = showNotification(
+                `Installing Northstar version v${this.selected_ns_version.value.version}`,
+                "Please wait",
+                'info',
+                0
+            );
+
+            let install_northstar_result = invoke("install_northstar_caller", { gamePath: game_install.game_path, northstarPackageName: this.selected_ns_version.value.package, versionNumber: this.selected_ns_version.value.version });
+
+            await install_northstar_result
+                .then((message) => {
+                    // Send notification
+                    showNotification(this.$t('generic.done'), this.$t('settings.repair.window.reinstall_success'));
+                    this.$store.commit('checkNorthstarUpdates');
+                })
+                .catch((error) => {
+                    showErrorNotification(error);
+                    console.error(error);
+                })
+                .finally(() => {
+                    // Clear old notification
+                    notification.close();
                 });
         },
     }

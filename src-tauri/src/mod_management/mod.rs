@@ -1,6 +1,6 @@
 // This file contains various mod management functions
 
-use app::constants::{BLACKLISTED_MODS, CORE_MODS};
+use crate::constants::{BLACKLISTED_MODS, CORE_MODS};
 use async_recursion::async_recursion;
 
 use anyhow::{anyhow, Result};

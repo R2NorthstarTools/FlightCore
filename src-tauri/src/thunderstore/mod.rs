@@ -1,5 +1,5 @@
 //! For interacting with Thunderstore API
-use app::constants::{APP_USER_AGENT, BLACKLISTED_MODS};
+use crate::constants::{APP_USER_AGENT, BLACKLISTED_MODS};
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 use ts_rs::TS;

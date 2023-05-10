@@ -11,10 +11,10 @@
                     :timestamp="formatDate(release.published_at)"
                     placement="top"
                 >
-                <el-card>
-                    <h4>{{ release.name }}</h4>
-                    <p v-html="formatRelease(release.body)"></p>
-                </el-card>
+                    <el-card>
+                        <h4>{{ release.name }}</h4>
+                        <p v-html="formatRelease(release.body)"></p>
+                    </el-card>
                 </el-timeline-item>
             </el-timeline>
         </el-scrollbar>
@@ -48,7 +48,7 @@ export default defineComponent({
             // PR's links formatting
             content = content.replaceAll(/\[(\S*)\#(\S+)\]\(([^)]+)\)/g, `<a target="_blank" href="$3">$1#$2</a>`);
 
-            return marked.parse(content, {breaks: true});
+            return marked.parse(content, { breaks: true });
         },
         // Formats an ISO-formatted date into a human-readable string.
         formatDate(timestamp: string): string {

@@ -1,8 +1,6 @@
 use std::{cell::RefCell, env, fs, path::Path, time::Duration, time::Instant};
 
-use anyhow::{anyhow, Context, Result};
-
-mod northstar;
+use anyhow::{Context, Result};
 
 pub mod constants;
 mod platform_specific;
@@ -17,8 +15,6 @@ use sysinfo::SystemExt;
 use tokio::time::sleep;
 use ts_rs::TS;
 use zip::ZipArchive;
-
-use northstar::get_northstar_version_number;
 
 use crate::constants::TITANFALL2_STEAM_ID;
 
@@ -66,22 +62,6 @@ struct InstallProgress {
     current_downloaded: u64,
     total_size: u64,
     state: InstallState,
-}
-
-/// Check version number of a mod
-pub fn check_mod_version_number(path_to_mod_folder: &str) -> Result<String, anyhow::Error> {
-    // println!("{}", format!("{}/mod.json", path_to_mod_folder));
-    let data = std::fs::read_to_string(format!("{path_to_mod_folder}/mod.json"))?;
-    let parsed_json: serde_json::Value = serde_json::from_str(&data)?;
-    // println!("{}", parsed_json);
-    let mod_version_number = match parsed_json.get("Version").and_then(|value| value.as_str()) {
-        Some(version_number) => version_number,
-        None => return Err(anyhow!("No version number found")),
-    };
-
-    log::info!("{}", mod_version_number);
-
-    Ok(mod_version_number.to_string())
 }
 
 // I intend to add more linux related stuff to check here, so making a func
@@ -325,73 +305,6 @@ pub fn get_host_os() -> String {
     env::consts::OS.to_string()
 }
 
-pub fn launch_northstar(
-    game_install: &GameInstall,
-    bypass_checks: Option<bool>,
-) -> Result<String, String> {
-    dbg!(game_install.clone());
-
-    let host_os = get_host_os();
-
-    // Explicitly fail early certain (currently) unsupported install setups
-    if host_os != "windows"
-        || !(matches!(game_install.install_type, InstallType::STEAM)
-            || matches!(game_install.install_type, InstallType::ORIGIN)
-            || matches!(game_install.install_type, InstallType::UNKNOWN))
-    {
-        return Err(format!(
-            "Not yet implemented for \"{}\" with Titanfall2 installed via \"{:?}\"",
-            get_host_os(),
-            game_install.install_type
-        ));
-    }
-
-    let bypass_checks = bypass_checks.unwrap_or(false);
-
-    // Only check guards if bypassing checks is not enabled
-    if !bypass_checks {
-        // Some safety checks before, should have more in the future
-        if get_northstar_version_number(&game_install.game_path).is_err() {
-            return Err(anyhow!("Not all checks were met").to_string());
-        }
-
-        // Require Origin to be running to launch Northstar
-        let origin_is_running = check_origin_running();
-        if !origin_is_running {
-            return Err(
-                anyhow!("Origin not running, start Origin before launching Northstar").to_string(),
-            );
-        }
-    }
-
-    // Switch to Titanfall2 directory for launching
-    // NorthstarLauncher.exe expects to be run from that folder
-    if std::env::set_current_dir(game_install.game_path.clone()).is_err() {
-        // We failed to get to Titanfall2 directory
-        return Err(anyhow!("Couldn't access Titanfall2 directory").to_string());
-    }
-
-    // Only Windows with Steam or Origin are supported at the moment
-    if host_os == "windows"
-        && (matches!(game_install.install_type, InstallType::STEAM)
-            || matches!(game_install.install_type, InstallType::ORIGIN)
-            || matches!(game_install.install_type, InstallType::UNKNOWN))
-    {
-        let ns_exe_path = format!("{}/NorthstarLauncher.exe", game_install.game_path);
-        let _output = std::process::Command::new("C:\\Windows\\System32\\cmd.exe")
-            .args(["/C", "start", "", &ns_exe_path])
-            .spawn()
-            .expect("failed to execute process");
-        return Ok("Launched game".to_string());
-    }
-
-    Err(format!(
-        "Not yet implemented for {:?} on {}",
-        game_install.install_type,
-        get_host_os()
-    ))
-}
-
 /// Prepare Northstar and Launch through Steam using the Browser Protocol
 pub fn launch_northstar_steam(
     game_install: &GameInstall,
@@ -495,13 +408,4 @@ pub fn check_northstar_running() -> bool {
         .is_some()
         || s.processes_by_name("Titanfall2.exe").next().is_some();
     x
-}
-
-/// Helps with converting release candidate numbers which are different on Thunderstore
-/// due to restrictions imposed by the platform
-pub fn convert_release_candidate_number(version_number: String) -> String {
-    // This simply converts `-rc` to `0`
-    // Works as intended for RCs < 10, e.g.  `v1.9.2-rc1`  -> `v1.9.201`
-    // Doesn't work for larger numbers, e.g. `v1.9.2-rc11` -> `v1.9.2011` (should be `v1.9.211`)
-    version_number.replace("-rc", "0").replace("00", "")
 }

@@ -13,6 +13,11 @@
                         <template #prepend>
                             <el-button icon="Folder" @click="updateGamePath"/>
                         </template>
+                        <template #append>
+                            <el-button @click="openGameInstallFolder">
+                                {{ $t('settings.open_game_folder') }}
+                            </el-button>
+                        </template>
                     </el-input>
                 </div>
 
@@ -78,6 +83,7 @@ import { Store } from 'tauri-plugin-store-api';
 import { showErrorNotification, showNotification } from "../utils/ui";
 import LanguageSelector from "../components/LanguageSelector.vue";
 const persistentStore = new Store('flight-core-settings.json');
+import { open } from '@tauri-apps/api/shell';
 
 export default defineComponent({
     name: "SettingsView",
@@ -143,6 +149,10 @@ export default defineComponent({
                     showErrorNotification(error);
                 });
         },
+        async openGameInstallFolder() {
+            // Opens the folder in default file explorer application
+            await open(`${this.$store.state.game_path}`);
+        }
     },
     mounted() {
         document.querySelector('input')!.disabled = true;
@@ -169,7 +179,8 @@ h3:first-of-type {
     font-weight: unset;
 }
 
-.el-input, .el-select {
+.el-input,
+.el-select {
     width: 50%;
 }
 

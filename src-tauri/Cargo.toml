@@ -1,6 +1,6 @@
 [package]
 name = "app"
-version = "1.14.1"
+version = "1.15.1"
 description = "A Tauri App"
 authors = ["you"]
 license = ""
@@ -66,6 +66,7 @@ zip-extract = "0.1.2"
 open = "3.2.0"
 # Windows API stuff
 winapi = "0.3.9"
+semver = "1.0"
 
 [features]
 # by default Tauri runs in production mode

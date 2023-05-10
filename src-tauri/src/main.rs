@@ -14,30 +14,18 @@ use std::ptr::null_mut;
 #[cfg(target_os = "windows")]
 use winapi::um::winuser::{MessageBoxW, MB_ICONERROR, MB_OK, MB_USERICON};
 
-use app::{
-    constants::{APP_USER_AGENT, MASTER_SERVER_URL, REFRESH_DELAY, SERVER_BROWSER_ENDPOINT},
-    *,
-};
+use app::*;
+
+use crate::constants::{APP_USER_AGENT, MASTER_SERVER_URL, REFRESH_DELAY, SERVER_BROWSER_ENDPOINT};
 
 mod github;
-use github::pull_requests::{
-    apply_launcher_pr, apply_mods_pr, get_launcher_download_link, get_pull_requests_wrapper,
-};
-use github::release_notes::{
-    check_is_flightcore_outdated, get_newest_flightcore_version, get_northstar_release_notes,
-};
-use github::{compare_tags, get_list_of_tags};
+use github::release_notes::check_is_flightcore_outdated;
 
 mod repair_and_verify;
-use repair_and_verify::{
-    clean_up_download_folder, disable_all_but_core, get_log_list, verify_game_files,
-};
+use repair_and_verify::clean_up_download_folder;
 
 mod mod_management;
-use mod_management::{
-    delete_northstar_mod, delete_thunderstore_mod, fc_download_mod_and_install,
-    get_installed_mods_and_properties, set_mod_enabled_status,
-};
+use mod_management::fc_download_mod_and_install;
 
 mod northstar;
 use northstar::get_northstar_version_number;
@@ -45,8 +33,25 @@ use northstar::get_northstar_version_number;
 mod thunderstore;
 use thunderstore::query_thunderstore_packages_api;
 
+use semver::Version;
+use serde::{Deserialize, Serialize};
 use tauri::{Manager, Runtime};
 use tokio::time::sleep;
+use ts_rs::TS;
+
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
+struct NorthstarThunderstoreRelease {
+    package: String,
+    version: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
+struct NorthstarThunderstoreReleaseWrapper {
+    label: String,
+    value: NorthstarThunderstoreRelease,
+}
 
 #[derive(Default)]
 struct Counter(Arc<Mutex<i32>>);
@@ -128,29 +133,30 @@ fn main() {
             launch_northstar_caller,
             launch_northstar_steam_caller,
             check_is_flightcore_outdated_caller,
-            get_log_list,
-            verify_game_files,
-            set_mod_enabled_status,
-            disable_all_but_core,
+            repair_and_verify::get_log_list,
+            repair_and_verify::verify_game_files,
+            mod_management::set_mod_enabled_status,
+            repair_and_verify::disable_all_but_core,
             is_debug_mode,
-            get_northstar_release_notes,
+            github::release_notes::get_northstar_release_notes,
             linux_checks,
-            get_installed_mods_and_properties,
+            mod_management::get_installed_mods_and_properties,
             install_mod_caller,
             clean_up_download_folder_caller,
-            get_newest_flightcore_version,
-            delete_northstar_mod,
+            github::release_notes::get_newest_flightcore_version,
+            mod_management::delete_northstar_mod,
             get_server_player_count,
-            delete_thunderstore_mod,
+            mod_management::delete_thunderstore_mod,
             open_repair_window,
             query_thunderstore_packages_api,
-            get_list_of_tags,
-            compare_tags,
-            get_pull_requests_wrapper,
-            apply_launcher_pr,
-            apply_mods_pr,
-            get_launcher_download_link,
+            github::get_list_of_tags,
+            github::compare_tags,
+            github::pull_requests::get_pull_requests_wrapper,
+            github::pull_requests::apply_launcher_pr,
+            github::pull_requests::apply_mods_pr,
+            github::pull_requests::get_launcher_download_link,
             close_application,
+            get_available_northstar_versions,
         ])
         .run(tauri::generate_context!())
     {
@@ -191,27 +197,27 @@ fn main() {
     };
 }
 
-#[tauri::command]
 /// Wrapper for `find_game_install_location` as tauri doesn't allow passing `Result<>` types to front-end
+#[tauri::command]
 async fn find_game_install_location_caller() -> Result<GameInstall, String> {
     find_game_install_location()
 }
 
-#[tauri::command]
 /// This function's only use is to force a `panic!()`
 // This must NOT be async to ensure crashing whole application.
+#[tauri::command]
 fn force_panic() {
     panic!("Force panicked!");
 }
 
-#[tauri::command]
 /// Returns true if built in debug mode
+#[tauri::command]
 async fn is_debug_mode() -> bool {
     cfg!(debug_assertions)
 }
 
-#[tauri::command]
 /// Returns true if linux compatible
+#[tauri::command]
 async fn linux_checks() -> Result<(), String> {
     // Different behaviour depending on OS
     // MacOS is missing as it is not a target
@@ -227,8 +233,8 @@ async fn linux_checks() -> Result<(), String> {
     }
 }
 
-#[tauri::command]
 /// Returns the current version number as a string
+#[tauri::command]
 async fn get_flightcore_version_number() -> String {
     let version = env!("CARGO_PKG_VERSION");
     if cfg!(debug_assertions) {
@@ -248,10 +254,19 @@ async fn get_northstar_version_number_caller(game_path: String) -> Result<String
     }
 }
 
-#[tauri::command]
+/// Helps with converting release candidate numbers which are different on Thunderstore
+/// due to restrictions imposed by the platform
+pub fn convert_release_candidate_number(version_number: String) -> String {
+    // This simply converts `-rc` to `0`
+    // Works as intended for RCs < 10, e.g.  `v1.9.2-rc1`  -> `v1.9.201`
+    // Doesn't work for larger numbers, e.g. `v1.9.2-rc11` -> `v1.9.2011` (should be `v1.9.211`)
+    version_number.replace("-rc", "0").replace("00", "")
+}
+
 /// Checks if installed Northstar version is up-to-date
 /// false -> Northstar install is up-to-date
 /// true  -> Northstar install is outdated
+#[tauri::command]
 async fn check_is_northstar_outdated(
     game_path: String,
     northstar_package_name: Option<String>,
@@ -295,16 +310,16 @@ async fn check_is_northstar_outdated(
     }
 }
 
-#[tauri::command]
 /// Checks if installed FlightCore version is up-to-date
 /// false -> FlightCore install is up-to-date
 /// true  -> FlightCore install is outdated
+#[tauri::command]
 async fn check_is_flightcore_outdated_caller() -> Result<bool, String> {
     check_is_flightcore_outdated().await
 }
 
-#[tauri::command]
 /// Checks if is valid Titanfall2 install based on certain conditions
+#[tauri::command]
 async fn verify_install_location(game_path: String) -> bool {
     match check_is_valid_game_path(&game_path) {
         Ok(()) => true,
@@ -315,14 +330,14 @@ async fn verify_install_location(game_path: String) -> bool {
     }
 }
 
-#[tauri::command]
 /// Returns identifier of host OS FlightCore is running on
+#[tauri::command]
 async fn get_host_os_caller() -> String {
     get_host_os()
 }
 
-#[tauri::command]
 /// Installs Northstar to the given path
+#[tauri::command]
 async fn install_northstar_caller(
     window: tauri::Window,
     game_path: String,
@@ -351,8 +366,8 @@ async fn install_northstar_caller(
     }
 }
 
-#[tauri::command]
 /// Update Northstar install in the given path
+#[tauri::command]
 async fn update_northstar_caller(
     window: tauri::Window,
     game_path: String,
@@ -364,17 +379,17 @@ async fn update_northstar_caller(
     install_northstar_caller(window, game_path, northstar_package_name, None).await
 }
 
-#[tauri::command]
 /// Launches Northstar
+#[tauri::command]
 async fn launch_northstar_caller(
     game_install: GameInstall,
     bypass_checks: Option<bool>,
 ) -> Result<String, String> {
-    launch_northstar(&game_install, bypass_checks)
+    northstar::launch_northstar(&game_install, bypass_checks)
 }
 
-#[tauri::command]
 /// Launches Northstar
+#[tauri::command]
 async fn launch_northstar_steam_caller(
     game_install: GameInstall,
     bypass_checks: Option<bool>,
@@ -382,8 +397,8 @@ async fn launch_northstar_steam_caller(
     launch_northstar_steam(&game_install, bypass_checks)
 }
 
-#[tauri::command]
 /// Installs the specified mod
+#[tauri::command]
 async fn install_mod_caller(
     game_install: GameInstall,
     thunderstore_mod_string: String,
@@ -400,8 +415,8 @@ async fn install_mod_caller(
     }
 }
 
-#[tauri::command]
 /// Installs the specified mod
+#[tauri::command]
 async fn clean_up_download_folder_caller(
     game_install: GameInstall,
     force: bool,
@@ -412,20 +427,28 @@ async fn clean_up_download_folder_caller(
     }
 }
 
-/// Gets server and playercount from master server API
-#[tauri::command]
-async fn get_server_player_count() -> Result<(i32, usize), String> {
+/// Fetches `/client/servers` endpoint from master server
+async fn fetch_server_list() -> Result<String, anyhow::Error> {
     let url = format!("{MASTER_SERVER_URL}{SERVER_BROWSER_ENDPOINT}");
     let client = reqwest::Client::new();
     let res = client
         .get(url)
         .header(reqwest::header::USER_AGENT, APP_USER_AGENT)
         .send()
-        .await
-        .unwrap()
+        .await?
         .text()
-        .await
-        .unwrap();
+        .await?;
+
+    Ok(res)
+}
+
+/// Gets server and playercount from master server API
+#[tauri::command]
+async fn get_server_player_count() -> Result<(i32, usize), String> {
+    let res = match fetch_server_list().await {
+        Ok(res) => res,
+        Err(err) => return Err(err.to_string()),
+    };
 
     let ns_servers: Vec<NorthstarServer> =
         serde_json::from_str(&res).expect("JSON was not well-formatted");
@@ -442,8 +465,8 @@ async fn get_server_player_count() -> Result<(i32, usize), String> {
     Ok((total_player_count, server_count))
 }
 
-#[tauri::command]
 /// Spawns repair window
+#[tauri::command]
 async fn open_repair_window(handle: tauri::AppHandle) -> Result<(), String> {
     // Spawn new window
     let repair_window = match tauri::WindowBuilder::new(
@@ -470,4 +493,44 @@ async fn open_repair_window(handle: tauri::AppHandle) -> Result<(), String> {
 async fn close_application<R: Runtime>(app: tauri::AppHandle<R>) -> Result<(), String> {
     app.exit(0); // Close application
     Ok(())
+}
+
+/// Gets list of available Northstar versions from Thunderstore
+#[tauri::command]
+async fn get_available_northstar_versions() -> Result<Vec<NorthstarThunderstoreReleaseWrapper>, ()>
+{
+    let northstar_package_name = "Northstar";
+    let index = thermite::api::get_package_index().unwrap().to_vec();
+    let nsmod = index
+        .iter()
+        .find(|f| f.name.to_lowercase() == northstar_package_name.to_lowercase())
+        .ok_or_else(|| panic!("Couldn't find Northstar on thunderstore???"))
+        .unwrap();
+
+    let mut releases: Vec<NorthstarThunderstoreReleaseWrapper> = vec![];
+    for (_version_string, nsmod_version_obj) in nsmod.versions.iter() {
+        let current_elem = NorthstarThunderstoreRelease {
+            package: nsmod_version_obj.name.clone(),
+            version: nsmod_version_obj.version.clone(),
+        };
+        let current_elem_wrapped = NorthstarThunderstoreReleaseWrapper {
+            label: format!(
+                "{} v{}",
+                nsmod_version_obj.name.clone(),
+                nsmod_version_obj.version.clone()
+            ),
+            value: current_elem,
+        };
+
+        releases.push(current_elem_wrapped);
+    }
+
+    releases.sort_by(|a, b| {
+        // Parse version number
+        let a_ver = Version::parse(&a.value.version).unwrap();
+        let b_ver = Version::parse(&b.value.version).unwrap();
+        b_ver.partial_cmp(&a_ver).unwrap() // Sort newest first
+    });
+
+    Ok(releases)
 }
