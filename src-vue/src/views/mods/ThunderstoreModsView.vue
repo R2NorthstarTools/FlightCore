@@ -79,9 +79,11 @@ export default defineComponent({
             return this.mods.filter((mod: ThunderstoreMod) => {
                 // Filter with search words (only if search field isn't empty)
                 const inputMatches: boolean = this.searchValue.length === 0
-                    || (mod.name.toLowerCase().includes(this.searchValue)
-                        || mod.owner.toLowerCase().includes(this.searchValue)
-                        || mod.versions[0].description.toLowerCase().includes(this.searchValue));
+                    || (
+                        this.fuzzy_filter(mod.name, this.searchValue) ||
+                        this.fuzzy_filter(mod.owner, this.searchValue) ||
+                        mod.versions[0].description.toLowerCase().includes(this.searchValue)
+                    );
 
                 // Filter with categories (only if some categories are selected)
                 const categoriesMatch: boolean = this.selectedCategories.length === 0
@@ -162,7 +164,26 @@ export default defineComponent({
         onBottomPaginationChange(index: number) {
             this.currentPageIndex = index - 1;
             (this.$refs.scrollbar as ScrollbarInstance).scrollTo({ top: 0, behavior: 'smooth' });
-        }
+        },
+        /**
+         * Implements a fuzzy filter
+         */
+        fuzzy_filter(text: string, search_term: string): boolean {
+            const lowercase_text = text.toLowerCase();
+            const lowercase_search_term = search_term.toLowerCase();
+
+            let previousIndex = -1;
+            for (let i = 0; i < lowercase_search_term.length; i++) {
+                const char = lowercase_search_term[i];
+                const currentIndex = lowercase_text.indexOf(char, previousIndex + 1);
+                if (currentIndex === -1) {
+                    return false;
+                }
+                previousIndex = currentIndex;
+            }
+
+            return true;
+        },
     },
     watch: {
         searchValue(_: string, __: string) {
