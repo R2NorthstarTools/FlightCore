@@ -71,7 +71,7 @@
                 "install": "Zainstaluj",
                 "outdated": "Aktualizuj"
             },
-            "by": "przez",
+            "by": "od",
             "more_info": "Więcej informacji",
             "remove": "Usuń moda",
             "remove_dialog_title": "Ostrzeżenie",
@@ -110,7 +110,8 @@
                 "warning": "To okno zawiera różne funkcje do naprawy typowych problemów z Northstar i FlightCore."
             }
         },
-        "nb_ts_mods_per_page_desc1": "Ma to wpływ na wydajność wyświetlania podczas przeglądania modów Thunderstore."
+        "nb_ts_mods_per_page_desc1": "Ma to wpływ na wydajność wyświetlania podczas przeglądania modów Thunderstore.",
+        "open_game_folder": "Otwórz folder"
     },
     "notification": {
         "game_folder": {

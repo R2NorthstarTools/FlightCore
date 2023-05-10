@@ -1,0 +1,147 @@
+{
+    "generic": {
+        "yes": "Да",
+        "no": "Нет",
+        "extracting": "Распаковывание",
+        "done": "Готово",
+        "success": "Успешно",
+        "error": "Ошибка",
+        "cancel": "Отмена",
+        "informationShort": "Информация",
+        "downloading": "Скачивание"
+    },
+    "menu": {
+        "mods": "Моды",
+        "play": "Играть",
+        "settings": "Настройки",
+        "dev": "Разработчик",
+        "changelog": "Изменения"
+    },
+    "play": {
+        "button": {
+            "northstar_is_running": "Игра запущена",
+            "install": "Установить",
+            "installing": "Установка...",
+            "updating": "Обновление...",
+            "ready_to_play": "Запустить игру",
+            "update": "Обновить",
+            "select_game_dir": "Выберите папку с Titanfall 2"
+        },
+        "unknown_version": "Неизвестная версия",
+        "players": "игроков",
+        "servers": "серверов",
+        "unable_to_load_playercount": "Не можем загрузить количество игроков",
+        "northstar_running": "Нордстар запущен:",
+        "origin_running": "Origin запущен:",
+        "see_patch_notes": "просмотреть список изменений"
+    },
+    "mods": {
+        "local": {
+            "delete_confirm": "Вы уверены, что хотите удалить этот мод?",
+            "delete": "Удалить",
+            "success_deleting": "Успешно удалено {modName}",
+            "no_mods": "Моды не найдены.",
+            "part_of_ts_mod": "Этот мод Нордстара является частью мода на Thunderstore"
+        },
+        "online": {
+            "no_match": "Не найдено совпадающих модов.",
+            "try_another_search": "Попробуйте еще поиск!"
+        },
+        "menu": {
+            "online": "Онлайн",
+            "filter": "Фильтр",
+            "search": "Поиск",
+            "sort_mods": "Сортировать моды",
+            "sort": {
+                "name_asc": "По имени (от A до Z)",
+                "name_desc": "По имени (от Z до A)",
+                "date_asc": "По дате (со старейшего)",
+                "date_desc": "По дате (с новейшего)",
+                "top_rated": "Самый популярный",
+                "most_downloaded": "Самый загруженный"
+            },
+            "local": "Установленные",
+            "select_categories": "Выбрать категории"
+        },
+        "card": {
+            "button": {
+                "being_installed": "Установка...",
+                "being_updated": "Обновление...",
+                "installed": "Установлено",
+                "install": "Установить",
+                "outdated": "Обновить"
+            },
+            "by": "от",
+            "remove": "Удалить мод",
+            "remove_dialog_title": "Внимание",
+            "remove_dialog_text": "Удалить мод Thunderstore?",
+            "remove_success": "Удален {modName}",
+            "more_info": "Подробнее",
+            "install_success": "Установлен {modName}"
+        }
+    },
+    "settings": {
+        "manage_install": "Управлять установкой",
+        "choose_folder": "Выберите папку установки",
+        "open_game_folder": "Открыть папку",
+        "nb_ts_mods_reset": "Вернуть по умолчанию",
+        "language": "Язык",
+        "language_select": "Выберите свой любимый язык",
+        "testing": "Тестирование:",
+        "enable_test_channels": "Включить каналы с тестовыми релизами",
+        "dev_mode_enabled_title": "Осторожно!",
+        "repair": {
+            "open_window": "Открыть окно починки",
+            "window": {
+                "title": "Окно починки FlightCore",
+                "force_reinstall_ns": "Принудительно переустановить Нордстар",
+                "delete_persistent_store": "Удалить постоянное хранилище FlightCore",
+                "reinstall_title": "Принудительно переустанавливаем Нордстар",
+                "reinstall_text": "Пожалуйста, подождите",
+                "disable_all_but_core_success": "Выключены все моды кроме главных",
+                "disable_all_but_core": "Выключить все моды, кроме главных",
+                "warning": "Это окно содержит различные функции для устранения часто возникающих проблем с Northstar и FlightCore.",
+                "force_delete_temp_dl": "Принудительно удалить папку с временными загрузками",
+                "reinstall_success": "Нордстар успешно переустановлен"
+            },
+            "title": "Починка"
+        },
+        "nb_ts_mods_per_page_desc1": "Это влияет на производительность при просмотре модов с Thunderstore.",
+        "about": "Информация:",
+        "nb_ts_mods_per_page": "Количество модов Thunderstore на каждую страницу",
+        "nb_ts_mods_per_page_desc2": "Установите это значение на 0, чтобы отключить страницы.",
+        "flightcore_version": "Версия FlightCore:",
+        "dev_mode_enabled_text": "Включен режим разработчика."
+    },
+    "notification": {
+        "game_folder": {
+            "new": {
+                "title": "Новая папка игры",
+                "text": "Папка игры успешно обновлена."
+            },
+            "wrong": {
+                "title": "Неправильная папка",
+                "text": "Выбранная папка не является папкой с Titanfall 2."
+            },
+            "not_found": {
+                "title": "Titanfall 2 не найден!",
+                "text": "Пожалуйста, вручную выберите место установки"
+            }
+        },
+        "flightcore_outdated": {
+            "title": "FlightCore устарел!",
+            "text": "Пожалуйста, обновите FlightCore\nСейчас запущена старая версия - {oldVersion}.\nНовейшая версия - {newVersion}!"
+        }
+    },
+    "channels": {
+        "release": {
+            "switch": {
+                "text": "Релизный канал переключен на \"{canal}\"."
+            }
+        },
+        "names": {
+            "Northstar": "Нордстар",
+            "NorthstarReleaseCandidate": "Релизный кандидат Нордстар"
+        }
+    }
+}

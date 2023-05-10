@@ -90,7 +90,8 @@ export default defineComponent({
     margin-top: 3px;
 }
 
-.fc_northstar__version, .fc_changelog__link {
+.fc_northstar__version,
+.fc_changelog__link {
     display: inline-block;
 }
 

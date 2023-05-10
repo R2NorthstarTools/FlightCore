@@ -1,7 +1,7 @@
 pub mod pull_requests;
 pub mod release_notes;
 
-use app::constants::{
+use crate::constants::{
     APP_USER_AGENT, FLIGHTCORE_REPO_NAME, NORTHSTAR_RELEASE_REPO_NAME, SECTION_ORDER,
 };
 use regex::Regex;
@@ -165,6 +165,7 @@ fn generate_flightcore_release_notes(commits: Vec<String>) -> String {
                     "build" => "**Build:**",
                     "test" => "**Tests:**",
                     "chore" => "**Chores:**",
+                    "i18n" => "**Translations:**",
                     _ => "**Other:**",
                 };
 

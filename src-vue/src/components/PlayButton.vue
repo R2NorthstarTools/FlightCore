@@ -21,7 +21,7 @@ export default defineComponent({
                 return this.$t("play.button.northstar_is_running");
             }
 
-            switch(this.$store.state.northstar_state) {
+            switch (this.$store.state.northstar_state) {
                 case NorthstarState.GAME_NOT_FOUND:
                     return this.$t("play.button.select_game_dir");
                 case NorthstarState.INSTALL:
@@ -42,7 +42,7 @@ export default defineComponent({
         northstarIsRunning(): boolean {
             return this.$store.state.northstar_is_running;
         },
-        options(): {key: string, value: string}[] {
+        options(): { key: string, value: string }[] {
             return Object.keys(ReleaseCanal).map(function (v) {
                 return {
                     key: v,
@@ -50,7 +50,7 @@ export default defineComponent({
                 }
             });
         },
-        selectOptions(): {label: string, options: {value: ReleaseCanal, label: string}[]}[] {
+        selectOptions(): { label: string, options: { value: ReleaseCanal, label: string }[] }[] {
             return [
                 {
                     label: 'Beta',
@@ -125,6 +125,7 @@ button {
     font-size: 15px;
     margin-right: 0;
 }
+
 .fc_launch__button:focus {
     background-color: var(--el-color-primary);
     border-color: var(--el-color-primary);

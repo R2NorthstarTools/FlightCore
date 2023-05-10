@@ -1,6 +1,6 @@
 // This file contains various mod management functions
 
-use app::constants::{BLACKLISTED_MODS, CORE_MODS};
+use crate::constants::{BLACKLISTED_MODS, CORE_MODS};
 use async_recursion::async_recursion;
 
 use anyhow::{anyhow, Result};
@@ -8,7 +8,7 @@ use app::NorthstarMod;
 use serde::{Deserialize, Serialize};
 use std::{fs, io::Read, path::PathBuf};
 
-use app::get_enabled_mods;
+use crate::get_enabled_mods;
 use app::GameInstall;
 
 #[derive(Debug, Clone)]

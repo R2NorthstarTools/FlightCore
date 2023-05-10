@@ -179,7 +179,8 @@ h3:first-of-type {
     font-weight: unset;
 }
 
-.el-input, .el-select {
+.el-input,
+.el-select {
     width: 50%;
 }
 

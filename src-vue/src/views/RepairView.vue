@@ -126,7 +126,7 @@ export default defineComponent({
         // Lang value is propagated to repair view after it's mounted, so we need to watch
         // its value, and update window title accordingly.
         lang(newv: string) {
-            appWindow.setTitle( this.$t('settings.repair.window.title') );
+            appWindow.setTitle(this.$t('settings.repair.window.title'));
         }
     }
 });
