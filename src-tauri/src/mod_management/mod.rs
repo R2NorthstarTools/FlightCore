@@ -3,12 +3,12 @@
 use crate::constants::{BLACKLISTED_MODS, CORE_MODS};
 use async_recursion::async_recursion;
 
+use crate::NorthstarMod;
 use anyhow::{anyhow, Result};
-use app::NorthstarMod;
 use serde::{Deserialize, Serialize};
 use std::{fs, io::Read, path::PathBuf};
 
-use app::GameInstall;
+use crate::GameInstall;
 
 #[derive(Debug, Clone)]
 struct ParsedThunderstoreModString {
