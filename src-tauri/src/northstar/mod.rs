@@ -2,8 +2,8 @@
 //! - getting version number
 
 use crate::constants::CORE_MODS;
-use anyhow::anyhow;
 use crate::{check_origin_running, get_host_os, GameInstall, InstallType};
+use anyhow::anyhow;
 
 /// Check version number of a mod
 pub fn check_mod_version_number(path_to_mod_folder: &str) -> Result<String, anyhow::Error> {
