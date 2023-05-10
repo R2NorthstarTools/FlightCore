@@ -1,6 +1,6 @@
 use std::{cell::RefCell, env, fs, path::Path, time::Duration, time::Instant};
 
-use anyhow::{anyhow, Context, Result};
+use anyhow::{Context, Result};
 
 pub mod constants;
 mod platform_specific;
