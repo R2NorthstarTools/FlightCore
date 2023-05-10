@@ -14,10 +14,9 @@ use std::ptr::null_mut;
 #[cfg(target_os = "windows")]
 use winapi::um::winuser::{MessageBoxW, MB_ICONERROR, MB_OK, MB_USERICON};
 
-use app::{
-    constants::{APP_USER_AGENT, MASTER_SERVER_URL, REFRESH_DELAY, SERVER_BROWSER_ENDPOINT},
-    *,
-};
+use app::*;
+
+use crate::constants::{APP_USER_AGENT, MASTER_SERVER_URL, REFRESH_DELAY, SERVER_BROWSER_ENDPOINT};
 
 mod github;
 use github::release_notes::check_is_flightcore_outdated;
