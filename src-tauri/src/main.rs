@@ -15,10 +15,9 @@ use std::ptr::null_mut;
 #[cfg(target_os = "windows")]
 use winapi::um::winuser::{MessageBoxW, MB_ICONERROR, MB_OK, MB_USERICON};
 
-use app::{
-    constants::{APP_USER_AGENT, MASTER_SERVER_URL, REFRESH_DELAY, SERVER_BROWSER_ENDPOINT},
-    *,
-};
+use app::*;
+
+use crate::constants::{APP_USER_AGENT, MASTER_SERVER_URL, REFRESH_DELAY, SERVER_BROWSER_ENDPOINT};
 
 mod constants;
 use crate::constants::TITANFALL2_STEAM_ID;
@@ -44,8 +43,25 @@ use thunderstore::query_thunderstore_packages_api;
 
 use anyhow::Result;
 use sysinfo::SystemExt;
+use semver::Version;
+use serde::{Deserialize, Serialize};
 use tauri::{Manager, Runtime};
 use tokio::time::sleep;
+use ts_rs::TS;
+
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
+struct NorthstarThunderstoreRelease {
+    package: String,
+    version: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
+struct NorthstarThunderstoreReleaseWrapper {
+    label: String,
+    value: NorthstarThunderstoreRelease,
+}
 
 #[derive(Default)]
 struct Counter(Arc<Mutex<i32>>);
@@ -150,6 +166,7 @@ fn main() {
             github::pull_requests::apply_mods_pr,
             github::pull_requests::get_launcher_download_link,
             close_application,
+            get_available_northstar_versions,
         ])
         .run(tauri::generate_context!())
     {
@@ -420,20 +437,28 @@ async fn clean_up_download_folder_caller(
     }
 }
 
-/// Gets server and playercount from master server API
-#[tauri::command]
-async fn get_server_player_count() -> Result<(i32, usize), String> {
+/// Fetches `/client/servers` endpoint from master server
+async fn fetch_server_list() -> Result<String, anyhow::Error> {
     let url = format!("{MASTER_SERVER_URL}{SERVER_BROWSER_ENDPOINT}");
     let client = reqwest::Client::new();
     let res = client
         .get(url)
         .header(reqwest::header::USER_AGENT, APP_USER_AGENT)
         .send()
-        .await
-        .unwrap()
+        .await?
         .text()
-        .await
-        .unwrap();
+        .await?;
+
+    Ok(res)
+}
+
+/// Gets server and playercount from master server API
+#[tauri::command]
+async fn get_server_player_count() -> Result<(i32, usize), String> {
+    let res = match fetch_server_list().await {
+        Ok(res) => res,
+        Err(err) => return Err(err.to_string()),
+    };
 
     let ns_servers: Vec<NorthstarServer> =
         serde_json::from_str(&res).expect("JSON was not well-formatted");
@@ -588,6 +613,46 @@ pub fn check_northstar_running() -> bool {
         .is_some()
         || s.processes_by_name("Titanfall2.exe").next().is_some();
     x
+}
+
+/// Gets list of available Northstar versions from Thunderstore
+#[tauri::command]
+async fn get_available_northstar_versions() -> Result<Vec<NorthstarThunderstoreReleaseWrapper>, ()>
+{
+    let northstar_package_name = "Northstar";
+    let index = thermite::api::get_package_index().unwrap().to_vec();
+    let nsmod = index
+        .iter()
+        .find(|f| f.name.to_lowercase() == northstar_package_name.to_lowercase())
+        .ok_or_else(|| panic!("Couldn't find Northstar on thunderstore???"))
+        .unwrap();
+
+    let mut releases: Vec<NorthstarThunderstoreReleaseWrapper> = vec![];
+    for (_version_string, nsmod_version_obj) in nsmod.versions.iter() {
+        let current_elem = NorthstarThunderstoreRelease {
+            package: nsmod_version_obj.name.clone(),
+            version: nsmod_version_obj.version.clone(),
+        };
+        let current_elem_wrapped = NorthstarThunderstoreReleaseWrapper {
+            label: format!(
+                "{} v{}",
+                nsmod_version_obj.name.clone(),
+                nsmod_version_obj.version.clone()
+            ),
+            value: current_elem,
+        };
+
+        releases.push(current_elem_wrapped);
+    }
+
+    releases.sort_by(|a, b| {
+        // Parse version number
+        let a_ver = Version::parse(&a.value.version).unwrap();
+        let b_ver = Version::parse(&b.value.version).unwrap();
+        b_ver.partial_cmp(&a_ver).unwrap() // Sort newest first
+    });
+
+    Ok(releases)
 }
 
 /// Returns a serde json object of the parsed `enabledmods.json` file
