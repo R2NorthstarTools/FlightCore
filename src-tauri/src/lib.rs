@@ -64,22 +64,6 @@ struct InstallProgress {
     state: InstallState,
 }
 
-/// Check version number of a mod
-pub fn check_mod_version_number(path_to_mod_folder: &str) -> Result<String, anyhow::Error> {
-    // println!("{}", format!("{}/mod.json", path_to_mod_folder));
-    let data = std::fs::read_to_string(format!("{path_to_mod_folder}/mod.json"))?;
-    let parsed_json: serde_json::Value = serde_json::from_str(&data)?;
-    // println!("{}", parsed_json);
-    let mod_version_number = match parsed_json.get("Version").and_then(|value| value.as_str()) {
-        Some(version_number) => version_number,
-        None => return Err(anyhow!("No version number found")),
-    };
-
-    log::info!("{}", mod_version_number);
-
-    Ok(mod_version_number.to_string())
-}
-
 // I intend to add more linux related stuff to check here, so making a func
 // for now tho it only checks `ldd --version`
 // - salmon

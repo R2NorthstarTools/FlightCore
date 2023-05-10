@@ -1,9 +1,24 @@
 //! This module deals with handling things around Northstar such as
 //! - getting version number
 
-use crate::{check_mod_version_number, constants::CORE_MODS};
+use crate::constants::CORE_MODS;
 use anyhow::anyhow;
 use app::{check_origin_running, get_host_os, GameInstall, InstallType};
+
+/// Check version number of a mod
+pub fn check_mod_version_number(path_to_mod_folder: &str) -> Result<String, anyhow::Error> {
+    let data = std::fs::read_to_string(format!("{path_to_mod_folder}/mod.json"))?;
+    let parsed_json: serde_json::Value = serde_json::from_str(&data)?;
+
+    let mod_version_number = match parsed_json.get("Version").and_then(|value| value.as_str()) {
+        Some(version_number) => version_number,
+        None => return Err(anyhow!("No version number found")),
+    };
+
+    log::info!("{}", mod_version_number);
+
+    Ok(mod_version_number.to_string())
+}
 
 /// Returns the current Northstar version number as a string
 pub fn get_northstar_version_number(game_path: &str) -> Result<String, anyhow::Error> {
