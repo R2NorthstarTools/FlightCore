@@ -9,9 +9,9 @@ use crate::extract;
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
 #[ts(export)]
 enum InstallState {
-    DOWNLOADING,
-    EXTRACTING,
-    DONE,
+    Downloading,
+    Extracting,
+    Done,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
@@ -55,7 +55,7 @@ async fn do_install(
                             InstallProgress {
                                 current_downloaded: current,
                                 total_size: total,
-                                state: InstallState::DOWNLOADING,
+                                state: InstallState::Downloading,
                             },
                         )
                         .unwrap();
@@ -72,7 +72,7 @@ async fn do_install(
             InstallProgress {
                 current_downloaded: 0,
                 total_size: 0,
-                state: InstallState::EXTRACTING,
+                state: InstallState::Extracting,
             },
         )
         .unwrap();
@@ -91,7 +91,7 @@ async fn do_install(
             InstallProgress {
                 current_downloaded: 0,
                 total_size: 0,
-                state: InstallState::DONE,
+                state: InstallState::Done,
             },
         )
         .unwrap();
