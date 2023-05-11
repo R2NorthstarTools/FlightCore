@@ -51,6 +51,7 @@ import ThunderstoreModCard from "../../components/ThunderstoreModCard.vue";
 import { ElScrollbar, ScrollbarInstance } from "element-plus";
 import { SortOptions } from "../../utils/SortOptions.d";
 import { ThunderstoreModVersion } from "../../../../src-tauri/bindings/ThunderstoreModVersion";
+import { fuzzy_filter } from "../../utils/filter";
 
 export default defineComponent({
     name: "ThunderstoreModsView",
@@ -80,8 +81,8 @@ export default defineComponent({
                 // Filter with search words (only if search field isn't empty)
                 const inputMatches: boolean = this.searchValue.length === 0
                     || (
-                        this.fuzzy_filter(mod.name, this.searchValue) ||
-                        this.fuzzy_filter(mod.owner, this.searchValue) ||
+                        fuzzy_filter(mod.name, this.searchValue) ||
+                        fuzzy_filter(mod.owner, this.searchValue) ||
                         mod.versions[0].description.toLowerCase().includes(this.searchValue)
                     );
 
@@ -164,26 +165,7 @@ export default defineComponent({
         onBottomPaginationChange(index: number) {
             this.currentPageIndex = index - 1;
             (this.$refs.scrollbar as ScrollbarInstance).scrollTo({ top: 0, behavior: 'smooth' });
-        },
-        /**
-         * Implements a fuzzy filter
-         */
-        fuzzy_filter(text: string, search_term: string): boolean {
-            const lowercase_text = text.toLowerCase();
-            const lowercase_search_term = search_term.toLowerCase();
-
-            let previousIndex = -1;
-            for (let i = 0; i < lowercase_search_term.length; i++) {
-                const char = lowercase_search_term[i];
-                const currentIndex = lowercase_text.indexOf(char, previousIndex + 1);
-                if (currentIndex === -1) {
-                    return false;
-                }
-                previousIndex = currentIndex;
-            }
-
-            return true;
-        },
+        }
     },
     watch: {
         searchValue(_: string, __: string) {

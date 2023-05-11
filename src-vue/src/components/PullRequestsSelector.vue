@@ -80,6 +80,7 @@
 import { defineComponent } from 'vue'
 import { PullRequestType } from '../../../src-tauri/bindings/PullRequestType';
 import { PullsApiResponseElement } from '../../../src-tauri/bindings/PullsApiResponseElement';
+import { fuzzy_filter } from "../utils/filter";
 
 export default defineComponent({
     name: 'PullRequestsSelector',
@@ -102,7 +103,7 @@ export default defineComponent({
 
             return this.pull_requests_launcher.filter(pr =>
                 // Check PR id and title
-                this.fuzzy_filter(pr.number.toString(), this.launcherSearch) || this.fuzzy_filter(pr.title, this.launcherSearch));
+                fuzzy_filter(pr.number.toString(), this.launcherSearch) || fuzzy_filter(pr.title, this.launcherSearch));
         },
         filtered_mods_pull_requests(): PullsApiResponseElement[] {
             if (this.modsSearch.length === 0) {
@@ -111,7 +112,7 @@ export default defineComponent({
 
             return this.pull_requests_mods.filter(pr =>
                 // Check PR id and title
-                this.fuzzy_filter(pr.number.toString(), this.modsSearch) || this.fuzzy_filter(pr.title, this.modsSearch));
+                fuzzy_filter(pr.number.toString(), this.modsSearch) || fuzzy_filter(pr.title, this.modsSearch));
         },
     },
     methods: {
@@ -146,25 +147,6 @@ export default defineComponent({
         },
         async installModsPR(pull_request: PullsApiResponseElement) {
             this.$store.commit('installModsPR', pull_request);
-        },
-        /**
-         * Implements a fuzzy filter
-         */
-         fuzzy_filter(text: string, search_term: string): boolean {
-            const lowercase_text = text.toLowerCase();
-            const lowercase_search_term = search_term.toLowerCase();
-
-            let previousIndex = -1;
-            for (let i = 0; i < lowercase_search_term.length; i++) {
-                const char = lowercase_search_term[i];
-                const currentIndex = lowercase_text.indexOf(char, previousIndex + 1);
-                if (currentIndex === -1) {
-                    return false;
-                }
-                previousIndex = currentIndex;
-            }
-
-            return true;
         },
     }
 })
