@@ -96,8 +96,13 @@ pub async fn get_northstar_release_notes() -> Result<Vec<ReleaseInfo>, String> {
     let url = "https://api.github.com/repos/R2Northstar/Northstar/releases";
     let res = fetch_github_releases_api(url).await?;
 
-    let release_info_vector: Vec<ReleaseInfo> =
-        serde_json::from_str(&res).expect("JSON was not well-formatted");
+    let release_info_vector: Vec<ReleaseInfo> = match serde_json::from_str(&res) {
+        Ok(res) => res,
+        Err(err) => {
+            log::warn!("{err}");
+            return Err("Could not fetch release notes. JSON was not well-formatted".to_string());
+        }
+    };
     log::info!("Done checking GitHub API");
 
     Ok(release_info_vector)
