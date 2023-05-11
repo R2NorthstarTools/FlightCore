@@ -31,6 +31,8 @@ use northstar::get_northstar_version_number;
 mod thunderstore;
 use thunderstore::query_thunderstore_packages_api;
 
+mod util;
+
 use semver::Version;
 use serde::{Deserialize, Serialize};
 use tauri::{Manager, Runtime};
@@ -119,7 +121,7 @@ fn main() {
         })
         .manage(Counter(Default::default()))
         .invoke_handler(tauri::generate_handler![
-            force_panic,
+            util::force_panic,
             find_game_install_location_caller,
             get_flightcore_version_number,
             get_northstar_version_number_caller,
@@ -135,7 +137,7 @@ fn main() {
             repair_and_verify::verify_game_files,
             mod_management::set_mod_enabled_status,
             repair_and_verify::disable_all_but_core,
-            is_debug_mode,
+            util::is_debug_mode,
             github::release_notes::get_northstar_release_notes,
             linux_checks,
             mod_management::get_installed_mods_and_properties,
@@ -199,19 +201,6 @@ fn main() {
 #[tauri::command]
 async fn find_game_install_location_caller() -> Result<GameInstall, String> {
     find_game_install_location()
-}
-
-/// This function's only use is to force a `panic!()`
-// This must NOT be async to ensure crashing whole application.
-#[tauri::command]
-fn force_panic() {
-    panic!("Force panicked!");
-}
-
-/// Returns true if built in debug mode
-#[tauri::command]
-async fn is_debug_mode() -> bool {
-    cfg!(debug_assertions)
 }
 
 /// Returns true if linux compatible
@@ -355,7 +344,14 @@ async fn install_northstar_caller(
         })
         .unwrap_or("Northstar".to_string());
 
-    match install_northstar(window, &game_path, northstar_package_name, version_number).await {
+    match northstar::install::install_northstar(
+        window,
+        &game_path,
+        northstar_package_name,
+        version_number,
+    )
+    .await
+    {
         Ok(_) => Ok(true),
         Err(err) => {
             log::error!("{}", err);
@@ -535,7 +531,7 @@ async fn get_available_northstar_versions() -> Result<Vec<NorthstarThunderstoreR
 
 // The remaining below was originally in `lib.rs`.
 // As this was causing issues it was moved into `main.rs` until being later moved into dedicated modules
-use std::{cell::RefCell, fs, path::Path, time::Instant};
+use std::{fs, path::Path};
 
 use anyhow::{Context, Result};
 
@@ -580,22 +576,6 @@ pub struct NorthstarMod {
 pub struct NorthstarServer {
     #[serde(rename = "playerCount")]
     pub player_count: i32,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, TS)]
-#[ts(export)]
-pub enum InstallState {
-    DOWNLOADING,
-    EXTRACTING,
-    DONE,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, TS)]
-#[ts(export)]
-struct InstallProgress {
-    current_downloaded: u64,
-    total_size: u64,
-    state: InstallState,
 }
 
 // I intend to add more linux related stuff to check here, so making a func
@@ -711,127 +691,6 @@ fn extract(zip_file: std::fs::File, target: &std::path::Path) -> Result<()> {
     }
 
     Ok(())
-}
-
-/// Copied from `papa` source code and modified
-///Install N* from the provided mod
-///
-///Checks cache, else downloads the latest version
-async fn do_install(
-    window: tauri::Window,
-    nmod: &thermite::model::ModVersion,
-    game_path: &std::path::Path,
-) -> Result<()> {
-    let filename = format!("northstar-{}.zip", nmod.version);
-    let download_directory = format!("{}/___flightcore-temp-download-dir/", game_path.display());
-
-    std::fs::create_dir_all(download_directory.clone())?;
-
-    let download_path = format!("{}/{}", download_directory, filename);
-    log::info!("Download path: {download_path}");
-
-    let last_emit = RefCell::new(Instant::now()); // Keep track of the last time a signal was emitted
-    let nfile = thermite::core::manage::download_file_with_progress(
-        &nmod.url,
-        download_path,
-        |delta, current, total| {
-            if delta != 0 {
-                // Only emit a signal once every 100ms
-                // This way we don't bombard the frontend with events on fast download speeds
-                let time_since_last_emit = Instant::now().duration_since(*last_emit.borrow());
-                if time_since_last_emit >= Duration::from_millis(100) {
-                    window
-                        .emit(
-                            "northstar-install-download-progress",
-                            InstallProgress {
-                                current_downloaded: current,
-                                total_size: total,
-                                state: InstallState::DOWNLOADING,
-                            },
-                        )
-                        .unwrap();
-                    *last_emit.borrow_mut() = Instant::now();
-                }
-            }
-        },
-    )
-    .unwrap();
-
-    window
-        .emit(
-            "northstar-install-download-progress",
-            InstallProgress {
-                current_downloaded: 0,
-                total_size: 0,
-                state: InstallState::EXTRACTING,
-            },
-        )
-        .unwrap();
-
-    log::info!("Extracting Northstar...");
-    extract(nfile, game_path)?;
-
-    // Delete old copy
-    log::info!("Delete temp folder again");
-    std::fs::remove_dir_all(download_directory).unwrap();
-
-    log::info!("Done installing Northstar!");
-    window
-        .emit(
-            "northstar-install-download-progress",
-            InstallProgress {
-                current_downloaded: 0,
-                total_size: 0,
-                state: InstallState::DONE,
-            },
-        )
-        .unwrap();
-
-    Ok(())
-}
-
-pub async fn install_northstar(
-    window: tauri::Window,
-    game_path: &str,
-    northstar_package_name: String,
-    version_number: Option<String>,
-) -> Result<String, String> {
-    let index = thermite::api::get_package_index().unwrap().to_vec();
-    let nmod = index
-        .iter()
-        .find(|f| f.name.to_lowercase() == northstar_package_name.to_lowercase())
-        .ok_or_else(|| panic!("Couldn't find Northstar on thunderstore???"))
-        .unwrap();
-
-    // Use passed version or latest if no version was passed
-    let version = version_number.as_ref().unwrap_or(&nmod.latest);
-
-    log::info!("Install path \"{}\"", game_path);
-
-    match do_install(
-        window,
-        nmod.versions.get(version).unwrap(),
-        std::path::Path::new(game_path),
-    )
-    .await
-    {
-        Ok(_) => (),
-        Err(err) => {
-            if game_path
-                .to_lowercase()
-                .contains(&r#"C:\Program Files\"#.to_lowercase())
-            // default is `C:\Program Files\EA Games\Titanfall2`
-            {
-                return Err(
-                    "Cannot install to default EA App install path, please move Titanfall2 to a different install location.".to_string(),
-                );
-            } else {
-                return Err(err.to_string());
-            }
-        }
-    }
-
-    Ok(nmod.latest.clone())
 }
 
 /// Returns identifier of host OS FlightCore is running on
