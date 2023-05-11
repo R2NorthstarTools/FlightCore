@@ -31,6 +31,8 @@ use northstar::get_northstar_version_number;
 mod thunderstore;
 use thunderstore::query_thunderstore_packages_api;
 
+mod util;
+
 use semver::Version;
 use serde::{Deserialize, Serialize};
 use tauri::{Manager, Runtime};
@@ -119,7 +121,7 @@ fn main() {
         })
         .manage(Counter(Default::default()))
         .invoke_handler(tauri::generate_handler![
-            force_panic,
+            util::force_panic,
             find_game_install_location_caller,
             get_flightcore_version_number,
             get_northstar_version_number_caller,
@@ -135,7 +137,7 @@ fn main() {
             repair_and_verify::verify_game_files,
             mod_management::set_mod_enabled_status,
             repair_and_verify::disable_all_but_core,
-            is_debug_mode,
+            util::is_debug_mode,
             github::release_notes::get_northstar_release_notes,
             linux_checks,
             mod_management::get_installed_mods_and_properties,
@@ -199,19 +201,6 @@ fn main() {
 #[tauri::command]
 async fn find_game_install_location_caller() -> Result<GameInstall, String> {
     find_game_install_location()
-}
-
-/// This function's only use is to force a `panic!()`
-// This must NOT be async to ensure crashing whole application.
-#[tauri::command]
-fn force_panic() {
-    panic!("Force panicked!");
-}
-
-/// Returns true if built in debug mode
-#[tauri::command]
-async fn is_debug_mode() -> bool {
-    cfg!(debug_assertions)
 }
 
 /// Returns true if linux compatible
