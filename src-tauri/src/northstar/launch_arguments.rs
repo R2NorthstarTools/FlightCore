@@ -8,7 +8,7 @@ pub fn get_launch_arguments(game_path: &str) -> Result<Vec<String>, ()> {
         return Ok(vec![]);
     }
 
-    let data = match std::fs::read_to_string(launch_args_path.clone()) {
+    let data = match std::fs::read_to_string(launch_args_path) {
         Ok(content) => content,
         Err(_) => {
             return Ok(vec![]);
@@ -30,9 +30,9 @@ pub fn get_launch_arguments(game_path: &str) -> Result<Vec<String>, ()> {
 /// If the ns_startup_args.txt file does not exist, this will create it.
 pub fn set_launch_arguments(game_path: &str, arguments: Vec<String>) -> Result<(), String> {
     let launch_args_path = format!("{}/ns_startup_args.txt", game_path);
-    if let Err(_) = std::fs::write(launch_args_path.clone(), arguments.join(" ")) {
+    if std::fs::write(launch_args_path, arguments.join(" ")).is_err() {
         return Err("Failed to save launch arguments.".to_string());
     }
     log::info!("Launch arguments updated.");
-    return Ok(());
+    Ok(())
 }
