@@ -22,6 +22,7 @@
                 <el-tag
                     v-else
                     closable
+                    disable-transitions
                     @close="onClose(index, argument.argumentName)"
                 >
                     {{ argument.argumentName }}
@@ -223,6 +224,7 @@ export default defineComponent({
 
 .el-check-tag {
     padding: 9px 15px 5px 15px;
+    transition: none;
 }
 
 .disabled_container {
