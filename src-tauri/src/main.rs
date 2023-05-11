@@ -137,7 +137,7 @@ fn main() {
             repair_and_verify::verify_game_files,
             mod_management::set_mod_enabled_status,
             repair_and_verify::disable_all_but_core,
-            is_debug_mode,
+            util::is_debug_mode,
             github::release_notes::get_northstar_release_notes,
             linux_checks,
             mod_management::get_installed_mods_and_properties,
@@ -201,12 +201,6 @@ fn main() {
 #[tauri::command]
 async fn find_game_install_location_caller() -> Result<GameInstall, String> {
     find_game_install_location()
-}
-
-/// Returns true if built in debug mode
-#[tauri::command]
-async fn is_debug_mode() -> bool {
-    cfg!(debug_assertions)
 }
 
 /// Returns true if linux compatible
