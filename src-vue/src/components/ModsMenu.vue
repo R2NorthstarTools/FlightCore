@@ -4,7 +4,7 @@
             default-active="1"
             text-color="#fff"
         >
-            <h5>Mods</h5>
+            <h5>{{ $t('menu.mods') }}</h5>
             <el-menu-item index="1" @click="$emit('showLocalMods', true)">
                 <el-icon><Folder /></el-icon>
                 <span>{{ $t('mods.menu.local') }}</span>
@@ -19,7 +19,7 @@
             <el-input v-model="$store.state.search.searchValue" :placeholder="$t('mods.menu.search')" clearable />
             <el-select
                 v-if="!showingLocalMods"
-                v-model="$store.state.search.sortValue" 
+                v-model="$store.state.search.sortValue"
                 :placeholder="$t('mods.menu.sort_mods')"
             >
                 <el-option
@@ -63,7 +63,7 @@ export default defineComponent({
         this.$store.state.search.sortValue = this.sortValues[3].value;
     },
     computed: {
-        sortValues(): {label: string, value: string}[] {
+        sortValues(): { label: string, value: string }[] {
             return Object.keys(SortOptions).map((key: string) => ({
                 value: key,
                 label: this.$t('mods.menu.sort.' + Object.values(SortOptions)[Object.keys(SortOptions).indexOf(key)])
@@ -85,7 +85,7 @@ export default defineComponent({
     margin: 8px 0 16px 5px;
 }
 
-.fc_mods__menu h5:not(:first-child){
+.fc_mods__menu h5:not(:first-child) {
     margin-top: 32px;
 }
 

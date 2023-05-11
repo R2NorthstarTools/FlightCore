@@ -1,16 +1,14 @@
 // This file contains various mod management functions
 
-use app::constants::{BLACKLISTED_MODS, CORE_MODS};
+use crate::constants::{BLACKLISTED_MODS, CORE_MODS};
 use async_recursion::async_recursion;
 
+use crate::NorthstarMod;
 use anyhow::{anyhow, Result};
-use app::NorthstarMod;
 use serde::{Deserialize, Serialize};
-use std::io::Read;
-use std::path::PathBuf;
+use std::{fs, io::Read, path::PathBuf};
 
-use app::get_enabled_mods;
-use app::GameInstall;
+use crate::GameInstall;
 
 #[derive(Debug, Clone)]
 struct ParsedThunderstoreModString {
@@ -51,6 +49,62 @@ pub struct ModJson {
     thunderstore_mod_string: Option<String>,
     #[serde(rename = "Version")]
     version: Option<String>,
+}
+
+/// A wrapper around a temporary file handle and its path.
+///
+/// This struct is designed to be used for temporary files that should be automatically deleted
+/// when the `TempFile` instance goes out of scope.
+#[derive(Debug)]
+pub struct TempFile(fs::File, PathBuf);
+
+impl TempFile {
+    pub fn new(file: fs::File, path: PathBuf) -> Self {
+        Self(file, path)
+    }
+
+    pub fn file(&self) -> &fs::File {
+        &self.0
+    }
+}
+
+impl Drop for TempFile {
+    fn drop(&mut self) {
+        _ = fs::remove_file(&self.1)
+    }
+}
+
+impl std::ops::Deref for TempFile {
+    type Target = fs::File;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+/// Returns a serde json object of the parsed `enabledmods.json` file
+pub fn get_enabled_mods(game_install: &GameInstall) -> Result<serde_json::value::Value, String> {
+    let enabledmods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
+
+    // Check for JSON file
+    if !std::path::Path::new(&enabledmods_json_path).exists() {
+        return Err("enabledmods.json not found".to_string());
+    }
+
+    // Read file
+    let data = match std::fs::read_to_string(enabledmods_json_path) {
+        Ok(data) => data,
+        Err(err) => return Err(err.to_string()),
+    };
+
+    // Parse JSON
+    let res: serde_json::Value = match serde_json::from_str(&data) {
+        Ok(result) => result,
+        Err(err) => return Err(format!("Failed to read JSON due to: {}", err)),
+    };
+
+    // Return parsed data
+    Ok(res)
 }
 
 /// Gets all currently installed and enabled/disabled mods to rebuild `enabledmods.json`
@@ -370,8 +424,8 @@ pub async fn fc_download_mod_and_install(
     );
 
     // Download the mod
-    let f = match thermite::core::manage::download_file(download_url, path.clone()) {
-        Ok(f) => f,
+    let temp_file = match thermite::core::manage::download_file(download_url, &path) {
+        Ok(f) => TempFile::new(f, path.into()),
         Err(e) => return Err(e.to_string()),
     };
 
@@ -379,13 +433,14 @@ pub async fn fc_download_mod_and_install(
     let author = thunderstore_mod_string.split('-').next().unwrap();
 
     // Extract the mod to the mods directory
-    match thermite::core::manage::install_mod(author, &f, std::path::Path::new(&mods_directory)) {
+    match thermite::core::manage::install_mod(
+        author,
+        temp_file.file(),
+        std::path::Path::new(&mods_directory),
+    ) {
         Ok(()) => (),
         Err(err) => return Err(err.to_string()),
     };
-
-    // Delete downloaded zip file
-    std::fs::remove_file(path).unwrap();
 
     Ok(())
 }

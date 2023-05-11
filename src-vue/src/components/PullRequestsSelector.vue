@@ -37,7 +37,7 @@
             <el-collapse-item name="2" @keydown.space="modsSearchSpace">
                 <template #title>
                     Mods PRs
-                    <el-input class="pr_search_input" v-model="modsSearch" placeholder="Filter pull requests" @click.stop="() =>  false"></el-input>
+                    <el-input class="pr_search_input" v-model="modsSearch" placeholder="Filter pull requests" @click.stop="() => false"></el-input>
                 </template>
                 <div style="margin: 15px">
                     <el-alert title="Warning" type="warning" :closable="false" show-icon>

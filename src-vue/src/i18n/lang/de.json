@@ -6,7 +6,6 @@
         "settings": "Einstellungen",
         "dev": "Dev"
     },
-
     "generic": {
         "yes": "Ja",
         "no": "Nein",
@@ -18,7 +17,6 @@
         "done": "Fertig",
         "success": "Erfolg"
     },
-
     "play": {
         "button": {
             "northstar_is_running": "Spiel läuft",
@@ -29,7 +27,6 @@
             "updating": "Aktualisiert...",
             "ready_to_play": "Spiel starten"
         },
-
         "unknown_version": "Unbekannte Version",
         "see_patch_notes": "Siehe Patch-Notizen",
         "players": "Spieler",
@@ -38,7 +35,6 @@
         "northstar_running": "Northstar läuft:",
         "origin_running": "Origin läuft:"
     },
-
     "mods": {
         "local": {
             "no_mods": "Keine Mods gefunden.",
@@ -47,12 +43,10 @@
             "part_of_ts_mod": "Dieser Northstar Mod ist teil eines Thunderstore Mods",
             "success_deleting": "{modName} erfolgreich gelöscht"
         },
-
         "online": {
             "no_match": "Keine passenden Mods gefunden.",
             "try_another_search": "Versuche eine andere Suchanfrage!"
         },
-
         "menu": {
             "local": "Lokal",
             "online": "Online",
@@ -60,7 +54,6 @@
             "search": "Suche",
             "sort_mods": "Mods sortieren",
             "select_categories": "Kategorien wählen",
-
             "sort": {
                 "name_asc": "Nach Name (A to Z)",
                 "name_desc": "Nach Name (Z to A)",
@@ -70,7 +63,6 @@
                 "top_rated": "Am besten bewerted"
             }
         },
-
         "card": {
             "button": {
                 "being_installed": "Installiert...",
@@ -79,7 +71,6 @@
                 "install": "Installieren",
                 "outdated": "Aktualisieren"
             },
-
             "by": "von",
             "more_info": "Mehr Info",
             "remove": "Mod entfernen",
@@ -89,13 +80,13 @@
             "install_success": "{modName} installiert"
         }
     },
-
     "settings": {
         "manage_install": "Installation verwalten",
         "choose_folder": "Installationsordner wählen",
+        "open_game_folder": "Ordner öffnen",
         "nb_ts_mods_per_page": "Anzahl an Thunderstore Mods pro Seite",
         "nb_ts_mods_per_page_desc1": "Ändern dieser Einstellung kann die Leistung beim Suchen von Thunderstore Mods beeinflussen.",
-        "nb_ts_mods_per_page_desc2": "Setze diesen Wert auf 0 um alle Mods auf einer einzelnen Seite anzuzeigen",
+        "nb_ts_mods_per_page_desc2": "Setze diesen Wert auf 0 um alle Mods auf einer einzelnen Seite anzuzeigen.",
         "nb_ts_mods_reset": "Standard wiederherstellen",
         "language": "Sprache",
         "language_select": "Bevorzugte Sprache wählen",
@@ -104,12 +95,10 @@
         "testing": "Testen:",
         "enable_test_channels": "Testversionen aktivieren",
         "dev_mode_enabled_title": "Vorsicht!",
-        "dev_mod_enabled_text": "Entwicklermodus aktiviert.",
-
+        "dev_mode_enabled_text": "Entwicklermodus aktiviert.",
         "repair": {
             "title": "Reparieren",
             "open_window": "Reparierfenster öffnen",
-
             "window": {
                 "title": "FlightCore Reparierfenster",
                 "warning": "Dieses Fenster enthält verschiedene Funktionen um gängige Probleme mit Northstar und FlightCore zu beheben.",
@@ -124,38 +113,32 @@
             }
         }
     },
-
     "notification": {
         "game_folder": {
             "new": {
                 "title": "Neuer Spielordner",
                 "text": "Spielordner erfolgreich aktualisiert."
             },
-
             "wrong": {
                 "title": "Falscher Ordner",
                 "text": "Der gewählte Ordner enthält keine valide Titanfall2 Installation."
             },
-
             "not_found": {
                 "title": "Titanfall2 nicht gefunden!",
                 "text": "Bitte wähle den Installationsordner manuell aus"
             }
         },
-
         "flightcore_outdated": {
             "title": "FlightCore veraltet!",
             "text": "Bitte aktualisiere FlightCore.\nDu hast die veraltetet Version {oldVersion}.\nNeuste Version ist {newVersion}!"
         }
     },
-
     "channels": {
         "release": {
             "switch": {
                 "text": "Releasekanal zu \"{canal}\" gewechselt."
             }
         },
-
         "names": {
             "Northstar": "Northstar",
             "NorthstarReleaseCandidate": "Northstar Release Candidate"

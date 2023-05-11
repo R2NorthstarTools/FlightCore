@@ -34,9 +34,17 @@ export default defineComponent({
                 value: 'de',
                 label: 'Deutsch'
             },
+            {
+                value: 'pl',
+                label: 'polski'
+            },
+            {
+                value: 'ru',
+                label: 'русский'
+            },
         ]
     }),
-    mounted: async function() {
+    mounted: async function () {
         const lang: string = await persistentStore.get('lang') as string;
         this.value = lang;
     },

@@ -24,7 +24,7 @@
             <span v-if="mod.version != null">(v{{ mod.version }})</span>
             <img
                 v-if="mod.thunderstore_mod_string != null"
-                :title="$t('mods.local.part_of_ts_mod')"
+                :title="$t('mods.local.part_of_ts_mod') + '\n' + mod.thunderstore_mod_string"
                 src="/src/assets/thunderstore-icon.png"
                 class="image"
                 height="16"
@@ -101,7 +101,7 @@ export default defineComponent({
             await invoke("delete_northstar_mod", { gameInstall: game_install, nsmodName: mod.name })
                 .then((message) => {
                     // Just a visual indicator that it worked
-                    showNotification(this.$t('mods.local.success_deleting', {modName: mod.name}));
+                    showNotification(this.$t('mods.local.success_deleting', { modName: mod.name }));
                 })
                 .catch((error) => {
                     showErrorNotification(error);

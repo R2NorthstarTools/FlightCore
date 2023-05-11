@@ -18,7 +18,7 @@
                     <Star />
                 </el-icon>
             </span>
-            <br/>
+            <br />
 
             <div class="name hide-text-overflow">{{ mod.name }}</div>
             <div class="author hide-text-overflow">{{ $t('mods.card.by') }} {{ mod.owner }}</div>
@@ -53,7 +53,7 @@
                             <el-dropdown-item @click="openURL(mod.package_url)">
                                 {{ $t('mods.card.more_info') }}
                             </el-dropdown-item>
-                            <el-dropdown-item  @click="deleteMod(mod)">
+                            <el-dropdown-item @click="deleteMod(mod)">
                                 {{ $t('mods.card.remove') }}
                             </el-dropdown-item>
                         </el-dropdown-menu>
@@ -65,13 +65,13 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
-import {ThunderstoreMod} from "../../../src-tauri/bindings/ThunderstoreMod";
-import {ThunderstoreModVersion} from "../../../src-tauri/bindings/ThunderstoreModVersion";
-import {invoke, shell} from "@tauri-apps/api";
-import {ThunderstoreModStatus} from "../utils/thunderstore/ThunderstoreModStatus";
-import {NorthstarMod} from "../../../src-tauri/bindings/NorthstarMod";
-import {GameInstall} from "../utils/GameInstall";
+import { defineComponent } from "vue";
+import { ThunderstoreMod } from "../../../src-tauri/bindings/ThunderstoreMod";
+import { ThunderstoreModVersion } from "../../../src-tauri/bindings/ThunderstoreModVersion";
+import { invoke, shell } from "@tauri-apps/api";
+import { ThunderstoreModStatus } from "../utils/thunderstore/ThunderstoreModStatus";
+import { NorthstarMod } from "../../../src-tauri/bindings/NorthstarMod";
+import { GameInstall } from "../utils/GameInstall";
 import { NorthstarState } from "../utils/NorthstarState";
 import { ElMessageBox } from "element-plus";
 import { showErrorNotification, showNotification } from "../utils/ui";
@@ -89,7 +89,7 @@ export default defineComponent({
         isBeingUpdated: false
     }),
     computed: {
-        latestVersion (): ThunderstoreModVersion {
+        latestVersion(): ThunderstoreModVersion {
             return this.mod.versions[0];
         },
 
@@ -191,7 +191,7 @@ export default defineComponent({
          * (e.g. "taskinoz-WallrunningTitans-1.0.0" to
          * "taskinoz-WallrunningTitans").
          */
-        getThunderstoreDependencyStringPrefix (dependency: string): string {
+        getThunderstoreDependencyStringPrefix(dependency: string): string {
             const dependencyStringMembers = dependency.split('-');
             return `${dependencyStringMembers[0]}-${dependencyStringMembers[1]}`;
         },
@@ -216,7 +216,7 @@ export default defineComponent({
 
                     await invoke<string>("delete_thunderstore_mod", { gameInstall: game_install, thunderstoreModString: this.latestVersion.full_name })
                         .then((message) => {
-                            showNotification(this.$t('mods.card.remove_success', {modName: mod.name}), message);
+                            showNotification(this.$t('mods.card.remove_success', { modName: mod.name }), message);
                         })
                         .catch((error) => {
                             showErrorNotification(error);
@@ -230,7 +230,7 @@ export default defineComponent({
                 })
         },
 
-        async installMod (mod: ThunderstoreMod) {
+        async installMod(mod: ThunderstoreMod) {
             let game_install = {
                 game_path: this.$store.state.game_path,
                 install_type: this.$store.state.install_type
@@ -244,7 +244,7 @@ export default defineComponent({
             }
 
             await invoke<string>("install_mod_caller", { gameInstall: game_install, thunderstoreModString: this.latestVersion.full_name }).then((message) => {
-                showNotification(this.$t('mods.card.install_success', {modName: mod.name}), message);
+                showNotification(this.$t('mods.card.install_success', { modName: mod.name }), message);
             })
                 .catch((error) => {
                     showErrorNotification(error);
