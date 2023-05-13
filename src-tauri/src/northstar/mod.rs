@@ -2,7 +2,8 @@
 //! - getting version number
 pub mod install;
 
-use crate::{check_origin_running, constants::CORE_MODS, get_host_os, GameInstall, InstallType};
+use crate::util::check_origin_running;
+use crate::{constants::CORE_MODS, get_host_os, GameInstall, InstallType};
 use anyhow::anyhow;
 
 /// Check version number of a mod

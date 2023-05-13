@@ -92,7 +92,7 @@ fn main() {
                 loop {
                     sleep(Duration::from_millis(2000)).await;
                     app_handle
-                        .emit_all("origin-running-ping", check_origin_running())
+                        .emit_all("origin-running-ping", util::check_origin_running())
                         .unwrap();
                 }
             });
@@ -101,7 +101,7 @@ fn main() {
                 loop {
                     sleep(Duration::from_millis(2000)).await;
                     app_handle
-                        .emit_all("northstar-running-ping", check_northstar_running())
+                        .emit_all("northstar-running-ping", util::check_northstar_running())
                         .unwrap();
                 }
             });
@@ -506,8 +506,6 @@ mod platform_specific;
 #[cfg(target_os = "linux")]
 use platform_specific::linux;
 
-use sysinfo::SystemExt;
-
 use crate::constants::TITANFALL2_STEAM_ID;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -642,7 +640,7 @@ pub fn launch_northstar_steam(
     tauri::async_runtime::spawn(async move {
         // Starting the EA app and Titanfall might take a good minute or three
         let mut wait_countdown = 60 * 3;
-        while wait_countdown > 0 && !check_northstar_running() && !is_err {
+        while wait_countdown > 0 && !util::check_northstar_running() && !is_err {
             sleep(Duration::from_millis(1000)).await;
             wait_countdown -= 1;
         }
@@ -659,22 +657,4 @@ pub fn launch_northstar_steam(
     });
 
     retval
-}
-
-pub fn check_origin_running() -> bool {
-    let s = sysinfo::System::new_all();
-    let x = s.processes_by_name("Origin.exe").next().is_some()
-        || s.processes_by_name("EADesktop.exe").next().is_some();
-    x
-}
-
-/// Checks if Northstar process is running
-pub fn check_northstar_running() -> bool {
-    let s = sysinfo::System::new_all();
-    let x = s
-        .processes_by_name("NorthstarLauncher.exe")
-        .next()
-        .is_some()
-        || s.processes_by_name("Titanfall2.exe").next().is_some();
-    x
 }
