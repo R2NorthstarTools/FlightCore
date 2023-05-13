@@ -53,8 +53,10 @@ pub fn get_northstar_version_number(game_path: &str) -> Result<String, anyhow::E
     Ok(initial_version_number)
 }
 
+/// Launches Northstar
+#[tauri::command]
 pub fn launch_northstar(
-    game_install: &GameInstall,
+    game_install: GameInstall,
     bypass_checks: Option<bool>,
 ) -> Result<String, String> {
     dbg!(game_install.clone());

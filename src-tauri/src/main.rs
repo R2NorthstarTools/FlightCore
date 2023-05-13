@@ -133,7 +133,7 @@ fn main() {
             get_host_os_caller,
             install_northstar_caller,
             update_northstar_caller,
-            launch_northstar_caller,
+            northstar::launch_northstar,
             launch_northstar_steam_caller,
             check_is_flightcore_outdated_caller,
             repair_and_verify::get_log_list,
@@ -374,15 +374,6 @@ async fn update_northstar_caller(
 
     // Simply re-run install with up-to-date version for upate
     install_northstar_caller(window, game_path, northstar_package_name, None).await
-}
-
-/// Launches Northstar
-#[tauri::command]
-async fn launch_northstar_caller(
-    game_install: GameInstall,
-    bypass_checks: Option<bool>,
-) -> Result<String, String> {
-    northstar::launch_northstar(&game_install, bypass_checks)
 }
 
 /// Launches Northstar
