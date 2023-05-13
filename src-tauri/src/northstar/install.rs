@@ -144,7 +144,6 @@ pub async fn install_northstar(
     Ok(nmod.latest.clone())
 }
 
-
 /// Attempts to find the game install location
 pub fn find_game_install_location() -> Result<GameInstall, String> {
     // Attempt parsing Steam library directly
