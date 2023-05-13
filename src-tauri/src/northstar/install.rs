@@ -5,6 +5,7 @@ use std::{cell::RefCell, time::Instant};
 use ts_rs::TS;
 
 use crate::constants::TITANFALL2_STEAM_ID;
+use crate::platform_specific::windows;
 use crate::{extract, GameInstall, InstallType};
 
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
