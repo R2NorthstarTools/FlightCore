@@ -17,7 +17,6 @@ use winapi::um::winuser::{MessageBoxW, MB_ICONERROR, MB_OK, MB_USERICON};
 use crate::constants::REFRESH_DELAY;
 
 mod github;
-use github::release_notes::check_is_flightcore_outdated;
 
 mod repair_and_verify;
 use repair_and_verify::clean_up_download_folder;
@@ -135,7 +134,7 @@ fn main() {
             update_northstar_caller,
             northstar::launch_northstar,
             launch_northstar_steam_caller,
-            check_is_flightcore_outdated_caller,
+            github::release_notes::check_is_flightcore_outdated,
             repair_and_verify::get_log_list,
             repair_and_verify::verify_game_files,
             mod_management::set_mod_enabled_status,
@@ -298,14 +297,6 @@ async fn check_is_northstar_outdated(
         log::info!("Installed Northstar version up-to-date");
         Ok(false)
     }
-}
-
-/// Checks if installed FlightCore version is up-to-date
-/// false -> FlightCore install is up-to-date
-/// true  -> FlightCore install is outdated
-#[tauri::command]
-async fn check_is_flightcore_outdated_caller() -> Result<bool, String> {
-    check_is_flightcore_outdated().await
 }
 
 /// Checks if is valid Titanfall2 install based on certain conditions
