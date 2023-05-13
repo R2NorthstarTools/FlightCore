@@ -498,7 +498,7 @@ async fn get_available_northstar_versions() -> Result<Vec<NorthstarThunderstoreR
 // As this was causing issues it was moved into `main.rs` until being later moved into dedicated modules
 use std::{fs, path::Path};
 
-use anyhow::{Context, Result};
+use anyhow::Result;
 
 pub mod constants;
 mod platform_specific;
@@ -507,7 +507,6 @@ mod platform_specific;
 use platform_specific::linux;
 
 use sysinfo::SystemExt;
-use zip::ZipArchive;
 
 use crate::constants::TITANFALL2_STEAM_ID;
 
@@ -567,47 +566,6 @@ pub fn check_is_valid_game_path(game_install_path: &str) -> Result<(), String> {
     if !is_correct_game_path {
         return Err(format!("Incorrect game path \"{game_install_path}\"")); // Return error cause wrong game path
     }
-    Ok(())
-}
-
-/// Copied from `papa` source code and modified
-///Extract N* zip file to target game path
-// fn extract(ctx: &Ctx, zip_file: File, target: &Path) -> Result<()> {
-fn extract(zip_file: std::fs::File, target: &std::path::Path) -> Result<()> {
-    let mut archive = ZipArchive::new(&zip_file).context("Unable to open zip archive")?;
-    for i in 0..archive.len() {
-        let mut f = archive.by_index(i).unwrap();
-
-        //This should work fine for N* because the dir structure *should* always be the same
-        if f.enclosed_name().unwrap().starts_with("Northstar") {
-            let out = target.join(
-                f.enclosed_name()
-                    .unwrap()
-                    .strip_prefix("Northstar")
-                    .unwrap(),
-            );
-
-            if (*f.name()).ends_with('/') {
-                log::info!("Create directory {}", f.name());
-                std::fs::create_dir_all(target.join(f.name()))
-                    .context("Unable to create directory")?;
-                continue;
-            } else if let Some(p) = out.parent() {
-                std::fs::create_dir_all(p).context("Unable to create directory")?;
-            }
-
-            let mut outfile = std::fs::OpenOptions::new()
-                .create(true)
-                .write(true)
-                .truncate(true)
-                .open(&out)?;
-
-            log::info!("Write file {}", out.display());
-
-            std::io::copy(&mut f, &mut outfile).context("Unable to write to file")?;
-        }
-    }
-
     Ok(())
 }
 
