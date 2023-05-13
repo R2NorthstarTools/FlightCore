@@ -129,7 +129,7 @@ fn main() {
             get_northstar_version_number_caller,
             check_is_northstar_outdated,
             verify_install_location,
-            get_host_os_caller,
+            get_host_os,
             install_northstar_caller,
             update_northstar_caller,
             northstar::launch_northstar,
@@ -309,12 +309,6 @@ async fn verify_install_location(game_path: String) -> bool {
             false
         }
     }
-}
-
-/// Returns identifier of host OS FlightCore is running on
-#[tauri::command]
-async fn get_host_os_caller() -> String {
-    get_host_os()
 }
 
 /// Installs Northstar to the given path
@@ -550,7 +544,8 @@ pub fn check_is_valid_game_path(game_install_path: &str) -> Result<(), String> {
 }
 
 /// Returns identifier of host OS FlightCore is running on
-pub fn get_host_os() -> String {
+#[tauri::command]
+fn get_host_os() -> String {
     env::consts::OS.to_string()
 }
 
