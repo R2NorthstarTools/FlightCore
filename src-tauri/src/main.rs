@@ -124,7 +124,7 @@ fn main() {
         .manage(Counter(Default::default()))
         .invoke_handler(tauri::generate_handler![
             util::force_panic,
-            find_game_install_location_caller,
+            northstar::install::find_game_install_location,
             get_flightcore_version_number,
             get_northstar_version_number_caller,
             check_is_northstar_outdated,
@@ -197,12 +197,6 @@ fn main() {
             }
         }
     };
-}
-
-/// Wrapper for `find_game_install_location` as tauri doesn't allow passing `Result<>` types to front-end
-#[tauri::command]
-async fn find_game_install_location_caller() -> Result<GameInstall, String> {
-    northstar::install::find_game_install_location()
 }
 
 /// Returns true if linux compatible
