@@ -2,6 +2,7 @@
 
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
+use sysinfo::SystemExt;
 use zip::ZipArchive;
 
 use crate::constants::{APP_USER_AGENT, MASTER_SERVER_URL, SERVER_BROWSER_ENDPOINT};
@@ -102,4 +103,22 @@ pub fn extract(zip_file: std::fs::File, target: &std::path::Path) -> Result<()> 
     }
 
     Ok(())
+}
+
+pub fn check_origin_running() -> bool {
+    let s = sysinfo::System::new_all();
+    let x = s.processes_by_name("Origin.exe").next().is_some()
+        || s.processes_by_name("EADesktop.exe").next().is_some();
+    x
+}
+
+/// Checks if Northstar process is running
+pub fn check_northstar_running() -> bool {
+    let s = sysinfo::System::new_all();
+    let x = s
+        .processes_by_name("NorthstarLauncher.exe")
+        .next()
+        .is_some()
+        || s.processes_by_name("Titanfall2.exe").next().is_some();
+    x
 }
