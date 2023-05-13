@@ -4,7 +4,11 @@ use std::time::Duration;
 use std::{cell::RefCell, time::Instant};
 use ts_rs::TS;
 
-use crate::extract;
+use crate::constants::TITANFALL2_STEAM_ID;
+use crate::{extract, GameInstall, InstallType};
+
+#[cfg(target_os = "windows")]
+use crate::platform_specific::windows;
 
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
 #[ts(export)]
@@ -141,4 +145,43 @@ pub async fn install_northstar(
     }
 
     Ok(nmod.latest.clone())
+}
+
+/// Attempts to find the game install location
+pub fn find_game_install_location() -> Result<GameInstall, String> {
+    // Attempt parsing Steam library directly
+    match steamlocate::SteamDir::locate() {
+        Some(mut steamdir) => {
+            let titanfall2_steamid = TITANFALL2_STEAM_ID.parse().unwrap();
+            match steamdir.app(&titanfall2_steamid) {
+                Some(app) => {
+                    // println!("{:#?}", app);
+                    let game_install = GameInstall {
+                        game_path: app.path.to_str().unwrap().to_string(),
+                        install_type: InstallType::STEAM,
+                    };
+                    return Ok(game_install);
+                }
+                None => log::info!("Couldn't locate Titanfall2 Steam install"),
+            }
+        }
+        None => log::info!("Couldn't locate Steam on this computer!"),
+    }
+
+    // (On Windows only) try parsing Windows registry for Origin install path
+    #[cfg(target_os = "windows")]
+    match windows::origin_install_location_detection() {
+        Ok(game_path) => {
+            let game_install = GameInstall {
+                game_path,
+                install_type: InstallType::ORIGIN,
+            };
+            return Ok(game_install);
+        }
+        Err(err) => {
+            log::info!("{}", err);
+        }
+    };
+
+    Err("Could not auto-detect game install location! Please enter it manually.".to_string())
 }
