@@ -502,8 +502,6 @@ use anyhow::{Context, Result};
 
 pub mod constants;
 mod platform_specific;
-#[cfg(target_os = "windows")]
-use platform_specific::windows;
 
 #[cfg(target_os = "linux")]
 use platform_specific::linux;
