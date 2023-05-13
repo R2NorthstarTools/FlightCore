@@ -14,7 +14,7 @@ use std::ptr::null_mut;
 #[cfg(target_os = "windows")]
 use winapi::um::winuser::{MessageBoxW, MB_ICONERROR, MB_OK, MB_USERICON};
 
-use crate::constants::{APP_USER_AGENT, MASTER_SERVER_URL, REFRESH_DELAY, SERVER_BROWSER_ENDPOINT};
+use crate::constants::REFRESH_DELAY;
 
 mod github;
 use github::release_notes::check_is_flightcore_outdated;
@@ -112,7 +112,10 @@ fn main() {
                 loop {
                     sleep(REFRESH_DELAY).await;
                     app_handle
-                        .emit_all("northstar-statistics", get_server_player_count().await)
+                        .emit_all(
+                            "northstar-statistics",
+                            util::get_server_player_count().await,
+                        )
                         .unwrap();
                 }
             });
@@ -145,7 +148,7 @@ fn main() {
             clean_up_download_folder_caller,
             github::release_notes::get_newest_flightcore_version,
             mod_management::delete_northstar_mod,
-            get_server_player_count,
+            util::get_server_player_count,
             mod_management::delete_thunderstore_mod,
             open_repair_window,
             query_thunderstore_packages_api,
@@ -421,44 +424,6 @@ async fn clean_up_download_folder_caller(
     }
 }
 
-/// Fetches `/client/servers` endpoint from master server
-async fn fetch_server_list() -> Result<String, anyhow::Error> {
-    let url = format!("{MASTER_SERVER_URL}{SERVER_BROWSER_ENDPOINT}");
-    let client = reqwest::Client::new();
-    let res = client
-        .get(url)
-        .header(reqwest::header::USER_AGENT, APP_USER_AGENT)
-        .send()
-        .await?
-        .text()
-        .await?;
-
-    Ok(res)
-}
-
-/// Gets server and playercount from master server API
-#[tauri::command]
-async fn get_server_player_count() -> Result<(i32, usize), String> {
-    let res = match fetch_server_list().await {
-        Ok(res) => res,
-        Err(err) => return Err(err.to_string()),
-    };
-
-    let ns_servers: Vec<NorthstarServer> =
-        serde_json::from_str(&res).expect("JSON was not well-formatted");
-
-    // Get server count
-    let server_count = ns_servers.len();
-
-    // Sum up player count
-    let total_player_count: i32 = ns_servers.iter().map(|server| server.player_count).sum();
-
-    log::info!("total_player_count: {}", total_player_count);
-    log::info!("server_count:       {}", server_count);
-
-    Ok((total_player_count, server_count))
-}
-
 /// Spawns repair window
 #[tauri::command]
 async fn open_repair_window(handle: tauri::AppHandle) -> Result<(), String> {
@@ -570,12 +535,6 @@ pub struct NorthstarMod {
     pub thunderstore_mod_string: Option<String>,
     pub enabled: bool,
     pub directory: String,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct NorthstarServer {
-    #[serde(rename = "playerCount")]
-    pub player_count: i32,
 }
 
 // I intend to add more linux related stuff to check here, so making a func
