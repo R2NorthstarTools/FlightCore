@@ -269,7 +269,7 @@ async fn check_is_northstar_outdated(
         Err(err) => {
             log::warn!("{}", err);
             // If we fail to get new version just assume we are up-to-date
-            return Err(err.to_string());
+            return Err(err);
         }
     };
 
@@ -568,7 +568,7 @@ fn launch_northstar_steam(
     }
 
     // Switch to Titanfall2 directory to set everything up
-    if std::env::set_current_dir(game_install.game_path.clone()).is_err() {
+    if std::env::set_current_dir(game_install.game_path).is_err() {
         // We failed to get to Titanfall2 directory
         return Err("Couldn't access Titanfall2 directory".to_string());
     }
