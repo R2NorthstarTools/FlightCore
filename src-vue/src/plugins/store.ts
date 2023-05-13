@@ -246,7 +246,7 @@ export const store = createStore<FlightCoreStore>({
                 install_type: state.install_type
             } as GameInstall;
 
-            await invoke("launch_northstar_steam_caller", { gameInstall: game_install, bypassChecks: no_checks })
+            await invoke("launch_northstar_steam", { gameInstall: game_install, bypassChecks: no_checks })
                 .then((message) => {
                     showNotification('Success');
                 })

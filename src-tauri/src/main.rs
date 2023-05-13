@@ -133,7 +133,7 @@ fn main() {
             install_northstar_caller,
             update_northstar_caller,
             northstar::launch_northstar,
-            launch_northstar_steam_caller,
+            launch_northstar_steam,
             github::release_notes::check_is_flightcore_outdated,
             repair_and_verify::get_log_list,
             repair_and_verify::verify_game_files,
@@ -355,15 +355,6 @@ async fn update_northstar_caller(
     install_northstar_caller(window, game_path, northstar_package_name, None).await
 }
 
-/// Launches Northstar
-#[tauri::command]
-async fn launch_northstar_steam_caller(
-    game_install: GameInstall,
-    bypass_checks: Option<bool>,
-) -> Result<String, String> {
-    launch_northstar_steam(&game_install, bypass_checks)
-}
-
 /// Installs the specified mod
 #[tauri::command]
 async fn install_mod_caller(
@@ -544,8 +535,9 @@ fn get_host_os() -> String {
 }
 
 /// Prepare Northstar and Launch through Steam using the Browser Protocol
-pub fn launch_northstar_steam(
-    game_install: &GameInstall,
+#[tauri::command]
+fn launch_northstar_steam(
+    game_install: GameInstall,
     _bypass_checks: Option<bool>,
 ) -> Result<String, String> {
     if !matches!(game_install.install_type, InstallType::STEAM) {
