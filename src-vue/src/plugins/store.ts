@@ -481,7 +481,7 @@ function _initializeListeners(state: any) {
  * state, for it to be displayed in UI.
  */
 async function _get_northstar_version_number(state: any) {
-    await invoke("get_northstar_version_number_caller", { gamePath: state.game_path })
+    await invoke("get_northstar_version_number", { gamePath: state.game_path })
         .then((message) => {
             let northstar_version_number: string = message as string;
             state.installed_northstar_version = northstar_version_number;

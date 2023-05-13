@@ -126,7 +126,7 @@ fn main() {
             util::force_panic,
             northstar::install::find_game_install_location,
             get_flightcore_version_number,
-            get_northstar_version_number_caller,
+            get_northstar_version_number,
             check_is_northstar_outdated,
             verify_install_location,
             get_host_os,
@@ -226,14 +226,6 @@ async fn get_flightcore_version_number() -> String {
     } else {
         // Debugging disabled
         format!("v{}", version)
-    }
-}
-
-#[tauri::command]
-async fn get_northstar_version_number_caller(game_path: String) -> Result<String, String> {
-    match get_northstar_version_number(&game_path) {
-        Ok(version_number) => Ok(version_number),
-        Err(err) => Err(err.to_string()),
     }
 }
 

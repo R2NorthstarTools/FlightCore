@@ -22,7 +22,8 @@ pub fn check_mod_version_number(path_to_mod_folder: &str) -> Result<String, anyh
 }
 
 /// Returns the current Northstar version number as a string
-pub fn get_northstar_version_number(game_path: &str) -> Result<String, anyhow::Error> {
+#[tauri::command]
+pub fn get_northstar_version_number(game_path: &str) -> Result<String, String> {
     log::info!("{}", game_path);
 
     // TODO:
@@ -33,7 +34,7 @@ pub fn get_northstar_version_number(game_path: &str) -> Result<String, anyhow::E
         CORE_MODS[0]
     )) {
         Ok(version_number) => version_number,
-        Err(err) => return Err(err),
+        Err(err) => return Err(err.to_string()),
     };
 
     for core_mod in CORE_MODS {
@@ -41,11 +42,11 @@ pub fn get_northstar_version_number(game_path: &str) -> Result<String, anyhow::E
             "{game_path}/{profile_folder}/mods/{core_mod}",
         )) {
             Ok(version_number) => version_number,
-            Err(err) => return Err(err),
+            Err(err) => return Err(err.to_string()),
         };
         if current_version_number != initial_version_number {
             // We have a version number mismatch
-            return Err(anyhow!("Found version number mismatch"));
+            return Err("Found version number mismatch".to_string());
         }
     }
     log::info!("All mods same version");
