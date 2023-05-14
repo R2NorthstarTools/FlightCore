@@ -37,7 +37,7 @@ export const pullRequestModule = {
                 });
         },
         async downloadLauncherPR(state: PullRequestStoreState, pull_request: PullsApiResponseElement) {
-            await invoke<string>("get_launcher_download_link", { pullRequest: pull_request })
+            await invoke<string>("get_launcher_download_link", { commitSha: pull_request.head.sha })
                 .then((url) => {
                     // Open URL in default HTTPS handler (i.e. default browser)
                     shell.open(url);

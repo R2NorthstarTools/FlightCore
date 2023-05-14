@@ -16,10 +16,7 @@ use std::ptr::null_mut;
 #[cfg(target_os = "windows")]
 use winapi::um::winuser::{MessageBoxW, MB_ICONERROR, MB_OK, MB_USERICON};
 
-use app::{
-    constants::{APP_USER_AGENT, MASTER_SERVER_URL, REFRESH_DELAY, SERVER_BROWSER_ENDPOINT},
-    *,
-};
+use crate::constants::REFRESH_DELAY;
 
 mod github;
 use github::release_notes::check_is_flightcore_outdated;
@@ -39,8 +36,27 @@ use northstar::get_northstar_version_number;
 mod thunderstore;
 use thunderstore::query_thunderstore_packages_api;
 
-use tauri::{AppHandle, Manager, Runtime};
+mod util;
+
+use semver::Version;
+use serde::{Deserialize, Serialize};
+use tauri::AppHandle,{Manager, Runtime};
 use tokio::time::sleep;
+use ts_rs::TS;
+
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
+struct NorthstarThunderstoreRelease {
+    package: String,
+    version: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
+struct NorthstarThunderstoreReleaseWrapper {
+    label: String,
+    value: NorthstarThunderstoreRelease,
+}
 
 #[derive(Default)]
 struct Counter(Arc<Mutex<i32>>);
@@ -83,7 +99,7 @@ fn main() {
                 loop {
                     sleep(Duration::from_millis(2000)).await;
                     app_handle
-                        .emit_all("origin-running-ping", check_origin_running())
+                        .emit_all("origin-running-ping", util::check_origin_running())
                         .unwrap();
                 }
             });
@@ -92,7 +108,7 @@ fn main() {
                 loop {
                     sleep(Duration::from_millis(2000)).await;
                     app_handle
-                        .emit_all("northstar-running-ping", check_northstar_running())
+                        .emit_all("northstar-running-ping", util::check_northstar_running())
                         .unwrap();
                 }
             });
@@ -103,7 +119,10 @@ fn main() {
                 loop {
                     sleep(REFRESH_DELAY).await;
                     app_handle
-                        .emit_all("northstar-statistics", get_server_player_count().await)
+                        .emit_all(
+                            "northstar-statistics",
+                            util::get_server_player_count().await,
+                        )
                         .unwrap();
                 }
             });
@@ -117,7 +136,7 @@ fn main() {
         .manage(Counter(Default::default()))
         .manage(InstallStatusSender::new())
         .invoke_handler(tauri::generate_handler![
-            force_panic,
+            util::force_panic,
             find_game_install_location_caller,
             get_flightcore_version_number,
             get_northstar_version_number_caller,
@@ -133,7 +152,7 @@ fn main() {
             repair_and_verify::verify_game_files,
             mod_management::set_mod_enabled_status,
             repair_and_verify::disable_all_but_core,
-            is_debug_mode,
+            util::is_debug_mode,
             github::release_notes::get_northstar_release_notes,
             linux_checks,
             mod_management::get_installed_mods_and_properties,
@@ -141,7 +160,7 @@ fn main() {
             clean_up_download_folder_caller,
             github::release_notes::get_newest_flightcore_version,
             mod_management::delete_northstar_mod,
-            get_server_player_count,
+            util::get_server_player_count,
             mod_management::delete_thunderstore_mod,
             open_repair_window,
             query_thunderstore_packages_api,
@@ -153,6 +172,7 @@ fn main() {
             github::pull_requests::get_launcher_download_link,
             close_application,
             receive_install_status,
+            get_available_northstar_versions,
         ])
         .run(tauri::generate_context!())
     {
@@ -196,20 +216,7 @@ fn main() {
 /// Wrapper for `find_game_install_location` as tauri doesn't allow passing `Result<>` types to front-end
 #[tauri::command]
 async fn find_game_install_location_caller() -> Result<GameInstall, String> {
-    find_game_install_location()
-}
-
-/// This function's only use is to force a `panic!()`
-// This must NOT be async to ensure crashing whole application.
-#[tauri::command]
-fn force_panic() {
-    panic!("Force panicked!");
-}
-
-/// Returns true if built in debug mode
-#[tauri::command]
-async fn is_debug_mode() -> bool {
-    cfg!(debug_assertions)
+    northstar::install::find_game_install_location()
 }
 
 /// Returns true if linux compatible
@@ -353,7 +360,14 @@ async fn install_northstar_caller(
         })
         .unwrap_or("Northstar".to_string());
 
-    match install_northstar(window, &game_path, northstar_package_name, version_number).await {
+    match northstar::install::install_northstar(
+        window,
+        &game_path,
+        northstar_package_name,
+        version_number,
+    )
+    .await
+    {
         Ok(_) => Ok(true),
         Err(err) => {
             log::error!("{}", err);
@@ -425,36 +439,6 @@ async fn clean_up_download_folder_caller(
     }
 }
 
-/// Gets server and playercount from master server API
-#[tauri::command]
-async fn get_server_player_count() -> Result<(i32, usize), String> {
-    let url = format!("{MASTER_SERVER_URL}{SERVER_BROWSER_ENDPOINT}");
-    let client = reqwest::Client::new();
-    let res = client
-        .get(url)
-        .header(reqwest::header::USER_AGENT, APP_USER_AGENT)
-        .send()
-        .await
-        .unwrap()
-        .text()
-        .await
-        .unwrap();
-
-    let ns_servers: Vec<NorthstarServer> =
-        serde_json::from_str(&res).expect("JSON was not well-formatted");
-
-    // Get server count
-    let server_count = ns_servers.len();
-
-    // Sum up player count
-    let total_player_count: i32 = ns_servers.iter().map(|server| server.player_count).sum();
-
-    log::info!("total_player_count: {}", total_player_count);
-    log::info!("server_count:       {}", server_count);
-
-    Ok((total_player_count, server_count))
-}
-
 /// Spawns repair window
 #[tauri::command]
 async fn open_repair_window(handle: tauri::AppHandle) -> Result<(), String> {
@@ -485,27 +469,207 @@ async fn close_application<R: Runtime>(app: tauri::AppHandle<R>) -> Result<(), S
     Ok(())
 }
 
-/// Returns a serde json object of the parsed `enabledmods.json` file
-pub fn get_enabled_mods(game_install: &GameInstall) -> Result<serde_json::value::Value, String> {
-    let enabledmods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
+/// Gets list of available Northstar versions from Thunderstore
+#[tauri::command]
+async fn get_available_northstar_versions() -> Result<Vec<NorthstarThunderstoreReleaseWrapper>, ()>
+{
+    let northstar_package_name = "Northstar";
+    let index = thermite::api::get_package_index().unwrap().to_vec();
+    let nsmod = index
+        .iter()
+        .find(|f| f.name.to_lowercase() == northstar_package_name.to_lowercase())
+        .ok_or_else(|| panic!("Couldn't find Northstar on thunderstore???"))
+        .unwrap();
 
-    // Check for JSON file
-    if !std::path::Path::new(&enabledmods_json_path).exists() {
-        return Err("enabledmods.json not found".to_string());
+    let mut releases: Vec<NorthstarThunderstoreReleaseWrapper> = vec![];
+    for (_version_string, nsmod_version_obj) in nsmod.versions.iter() {
+        let current_elem = NorthstarThunderstoreRelease {
+            package: nsmod_version_obj.name.clone(),
+            version: nsmod_version_obj.version.clone(),
+        };
+        let current_elem_wrapped = NorthstarThunderstoreReleaseWrapper {
+            label: format!(
+                "{} v{}",
+                nsmod_version_obj.name.clone(),
+                nsmod_version_obj.version.clone()
+            ),
+            value: current_elem,
+        };
+
+        releases.push(current_elem_wrapped);
     }
 
-    // Read file
-    let data = match std::fs::read_to_string(enabledmods_json_path) {
-        Ok(data) => data,
-        Err(err) => return Err(err.to_string()),
+    releases.sort_by(|a, b| {
+        // Parse version number
+        let a_ver = Version::parse(&a.value.version).unwrap();
+        let b_ver = Version::parse(&b.value.version).unwrap();
+        b_ver.partial_cmp(&a_ver).unwrap() // Sort newest first
+    });
+
+    Ok(releases)
+}
+
+// The remaining below was originally in `lib.rs`.
+// As this was causing issues it was moved into `main.rs` until being later moved into dedicated modules
+use std::{fs, path::Path};
+
+use anyhow::Result;
+
+pub mod constants;
+mod platform_specific;
+
+#[cfg(target_os = "linux")]
+use platform_specific::linux;
+
+use crate::constants::TITANFALL2_STEAM_ID;
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub enum InstallType {
+    STEAM,
+    ORIGIN,
+    EAPLAY,
+    UNKNOWN,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct GameInstall {
+    pub game_path: String,
+    pub install_type: InstallType,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
+pub struct NorthstarMod {
+    pub name: String,
+    pub version: Option<String>,
+    pub thunderstore_mod_string: Option<String>,
+    pub enabled: bool,
+    pub directory: String,
+}
+
+// I intend to add more linux related stuff to check here, so making a func
+// for now tho it only checks `ldd --version`
+// - salmon
+#[cfg(target_os = "linux")]
+pub fn linux_checks_librs() -> Result<(), String> {
+    // Perform various checks in terms of Linux compatibility
+    // Return early with error message if a check fails
+
+    // check `ldd --version` to see if glibc is up to date for northstar proton
+    let min_required_ldd_version = 2.33;
+    let lddv = linux::check_glibc_v();
+    if lddv < min_required_ldd_version {
+        return Err(format!(
+            "GLIBC is not version {} or greater",
+            min_required_ldd_version
+        ));
     };
 
-    // Parse JSON
-    let res: serde_json::Value = match serde_json::from_str(&data) {
-        Ok(result) => result,
-        Err(err) => return Err(format!("Failed to read JSON due to: {}", err)),
+    // All checks passed
+    Ok(())
+}
+
+/// Checks whether the provided path is a valid Titanfall2 gamepath by checking against a certain set of criteria
+pub fn check_is_valid_game_path(game_install_path: &str) -> Result<(), String> {
+    let path_to_titanfall2_exe = format!("{game_install_path}/Titanfall2.exe");
+    let is_correct_game_path = std::path::Path::new(&path_to_titanfall2_exe).exists();
+    log::info!("Titanfall2.exe exists in path? {}", is_correct_game_path);
+
+    // Exit early if wrong game path
+    if !is_correct_game_path {
+        return Err(format!("Incorrect game path \"{game_install_path}\"")); // Return error cause wrong game path
+    }
+    Ok(())
+}
+
+/// Returns identifier of host OS FlightCore is running on
+pub fn get_host_os() -> String {
+    env::consts::OS.to_string()
+}
+
+/// Prepare Northstar and Launch through Steam using the Browser Protocol
+pub fn launch_northstar_steam(
+    game_install: &GameInstall,
+    _bypass_checks: Option<bool>,
+) -> Result<String, String> {
+    if !matches!(game_install.install_type, InstallType::STEAM) {
+        return Err("Titanfall2 was not installed via Steam".to_string());
+    }
+
+    match steamlocate::SteamDir::locate() {
+        Some(mut steamdir) => {
+            if get_host_os() != "windows" {
+                let titanfall2_steamid: u32 = TITANFALL2_STEAM_ID.parse().unwrap();
+                match steamdir.compat_tool(&titanfall2_steamid) {
+                    Some(compat) => {
+                        if !compat
+                            .name
+                            .clone()
+                            .unwrap()
+                            .to_ascii_lowercase()
+                            .contains("northstarproton")
+                        {
+                            return Err(
+                                "Titanfall2 was not configured to use NorthstarProton".to_string()
+                            );
+                        }
+                    }
+                    None => {
+                        return Err(
+                            "Titanfall2 was not configured to use a compatibility tool".to_string()
+                        );
+                    }
+                }
+            }
+        }
+        None => {
+            return Err("Couldn't access Titanfall2 directory".to_string());
+        }
+    }
+
+    // Switch to Titanfall2 directory to set everything up
+    if std::env::set_current_dir(game_install.game_path.clone()).is_err() {
+        // We failed to get to Titanfall2 directory
+        return Err("Couldn't access Titanfall2 directory".to_string());
+    }
+
+    let run_northstar = "run_northstar.txt";
+    let run_northstar_bak = "run_northstar.txt.bak";
+
+    if Path::new(run_northstar).exists() {
+        // rename should ovewrite existing files
+        fs::rename(run_northstar, run_northstar_bak).unwrap();
+    }
+
+    // Passing arguments gives users a prompt, so we use run_northstar.txt
+    fs::write(run_northstar, b"1").unwrap();
+
+    let retval = match open::that(format!("steam://run/{}/", TITANFALL2_STEAM_ID)) {
+        Ok(()) => Ok("Started game".to_string()),
+        Err(_err) => Err("Failed to launch Titanfall 2 via Steam".to_string()),
     };
 
-    // Return parsed data
-    Ok(res)
+    let is_err = retval.is_err();
+
+    // Handle the rest in the backround
+    tauri::async_runtime::spawn(async move {
+        // Starting the EA app and Titanfall might take a good minute or three
+        let mut wait_countdown = 60 * 3;
+        while wait_countdown > 0 && !util::check_northstar_running() && !is_err {
+            sleep(Duration::from_millis(1000)).await;
+            wait_countdown -= 1;
+        }
+
+        // Northstar may be running, but it may not have loaded the file yet
+        sleep(Duration::from_millis(2000)).await;
+
+        // intentionally ignore Result
+        let _ = fs::remove_file(run_northstar);
+
+        if Path::new(run_northstar_bak).exists() {
+            fs::rename(run_northstar_bak, run_northstar).unwrap();
+        }
+    });
+
+    retval
 }

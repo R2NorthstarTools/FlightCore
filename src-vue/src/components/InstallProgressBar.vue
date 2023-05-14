@@ -30,13 +30,13 @@ export default defineComponent({
             return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
         },
         formatText() {
-            if (this.status == "DOWNLOADING") {
+            if (this.status == "Downloading") {
                 const current_downloaded_string = this.formatBytes(this.current_downloaded);
                 const total_size_string = this.formatBytes(this.total_size);
                 const status = this.$t("generic.downloading");
                 return `${status}: ${current_downloaded_string}/${total_size_string}`;
             }
-            if (this.status == "EXTRACTING") {
+            if (this.status == "Extracting") {
                 return this.$t("generic.extracting");
             }
             return "Inactive";  // Needed to keep same size format when progress bar is hidden
@@ -49,17 +49,17 @@ export default defineComponent({
                 this.install_or_update = true;
                 let progress = payload;
                 this.status = progress.state;
-                if (progress.state == "DOWNLOADING") {
+                if (progress.state == "Downloading") {
                     this.percentage = ((Number(progress.current_downloaded) / Number(progress.total_size)) * 100);
                     this.color = '#409EFF';
                     this.current_downloaded = Number(progress.current_downloaded);
                     this.total_size = Number(progress.total_size);
                 }
-                if (progress.state == "EXTRACTING") {
+                if (progress.state == "Extracting") {
                     this.percentage = 100;
                     this.color = '#67C23A';
                 }
-                if (progress.state == "DONE") {
+                if (progress.state == "Done") {
                     // Clear state again
                     this.install_or_update = false
                 }
@@ -75,7 +75,7 @@ export default defineComponent({
         :format="formatText"
         :percentage="percentage"
         :color="color"
-        :indeterminate="status === 'EXTRACTING'"
+        :indeterminate="status === 'Extracting'"
         :duration="1"
     >
     </el-progress>

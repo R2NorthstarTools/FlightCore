@@ -28,12 +28,12 @@
             "select_game_dir": "Выберите папку с Titanfall 2"
         },
         "unknown_version": "Неизвестная версия",
-        "players": "игроки",
-        "servers": "сервера",
+        "players": "игроков",
+        "servers": "серверов",
         "unable_to_load_playercount": "Не можем загрузить количество игроков",
         "northstar_running": "Нордстар запущен:",
         "origin_running": "Origin запущен:",
-        "see_patch_notes": "просмотреть примечания к патчу"
+        "see_patch_notes": "просмотреть список изменений"
     },
     "mods": {
         "local": {
@@ -44,7 +44,7 @@
             "part_of_ts_mod": "Этот мод Нордстара является частью мода на Thunderstore"
         },
         "online": {
-            "no_match": "Не найден совпадающий мод.",
+            "no_match": "Не найдено совпадающих модов.",
             "try_another_search": "Попробуйте еще поиск!"
         },
         "menu": {
@@ -109,7 +109,7 @@
         "nb_ts_mods_per_page_desc1": "Это влияет на производительность при просмотре модов с Thunderstore.",
         "about": "Информация:",
         "nb_ts_mods_per_page": "Количество модов Thunderstore на каждую страницу",
-        "nb_ts_mods_per_page_desc2": "Установите это значение на 0, чтобы отключить нумерацию страниц.",
+        "nb_ts_mods_per_page_desc2": "Установите это значение на 0, чтобы отключить страницы.",
         "flightcore_version": "Версия FlightCore:",
         "dev_mode_enabled_text": "Включен режим разработчика."
     },
