@@ -40,7 +40,7 @@ mod util;
 
 use semver::Version;
 use serde::{Deserialize, Serialize};
-use tauri::AppHandle,{Manager, Runtime};
+use tauri::{AppHandle, Manager, Runtime};
 use tokio::time::sleep;
 use ts_rs::TS;
 

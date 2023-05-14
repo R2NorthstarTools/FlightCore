@@ -1,4 +1,3 @@
-use app::GameInstall;
 use once_cell::sync::OnceCell;
 use std::{
     fs::{self, File, OpenOptions},
@@ -13,7 +12,7 @@ use tauri::{
 use thermite::{core::utils::TempDir, prelude::ThermiteError};
 use zip::ZipArchive;
 
-use crate::{mod_management::ParsedThunderstoreModString, APP_HANDLE};
+use crate::{mod_management::ParsedThunderstoreModString, GameInstall, APP_HANDLE};
 
 static INSTALL_STATUS_RECV: OnceCell<Mutex<Receiver<bool>>> = OnceCell::new();
 
