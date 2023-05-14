@@ -131,7 +131,7 @@ fn main() {
             verify_install_location,
             get_host_os,
             install_northstar_caller,
-            update_northstar_caller,
+            update_northstar,
             northstar::launch_northstar,
             launch_northstar_steam,
             github::release_notes::check_is_flightcore_outdated,
@@ -336,7 +336,7 @@ async fn install_northstar_caller(
 
 /// Update Northstar install in the given path
 #[tauri::command]
-async fn update_northstar_caller(
+async fn update_northstar(
     window: tauri::Window,
     game_path: String,
     northstar_package_name: Option<String>,
