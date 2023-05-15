@@ -148,6 +148,7 @@ pub async fn install_northstar(
 }
 
 /// Attempts to find the game install location
+#[tauri::command]
 pub fn find_game_install_location() -> Result<GameInstall, String> {
     // Attempt parsing Steam library directly
     match steamlocate::SteamDir::locate() {

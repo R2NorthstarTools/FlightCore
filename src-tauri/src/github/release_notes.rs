@@ -54,6 +54,7 @@ pub async fn get_newest_flightcore_version() -> Result<FlightCoreVersion, String
 /// Checks if installed FlightCore version is up-to-date
 /// false -> FlightCore install is up-to-date
 /// true  -> FlightCore install is outdated
+#[tauri::command]
 pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
     let newest_flightcore_release = get_newest_flightcore_version().await?;
 
