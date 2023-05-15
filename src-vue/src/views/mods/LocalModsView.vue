@@ -39,6 +39,7 @@ import { defineComponent } from 'vue';
 import { GameInstall } from '../../utils/GameInstall';
 import { NorthstarMod } from "../../../../src-tauri/bindings/NorthstarMod";
 import { showErrorNotification, showNotification } from '../../utils/ui';
+import { fuzzy_filter } from "../../utils/filter";
 
 export default defineComponent({
     name: 'LocalModsView',
@@ -55,7 +56,7 @@ export default defineComponent({
             }
 
             return this.installedMods.filter((mod: NorthstarMod) => {
-                return mod.name.toLowerCase().includes(this.searchValue);
+                return fuzzy_filter(mod.name, this.searchValue);
             });
         }
     },
