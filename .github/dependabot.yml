@@ -7,9 +7,13 @@ updates:
     directory: '/src-vue'
     schedule:
       interval: "daily"
+    commit-message:
+      prefix: "chore: "
 
   # Rust crates
   - package-ecosystem: 'cargo'
     directory: '/src-tauri'
     schedule:
       interval: "daily"
+    commit-message:
+      prefix: "chore: "
