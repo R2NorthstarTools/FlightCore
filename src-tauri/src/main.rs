@@ -16,6 +16,8 @@ use winapi::um::winuser::{MessageBoxW, MB_ICONERROR, MB_OK, MB_USERICON};
 
 use crate::constants::REFRESH_DELAY;
 
+mod development;
+
 mod github;
 use github::release_notes::check_is_flightcore_outdated;
 
@@ -159,6 +161,7 @@ fn main() {
             github::pull_requests::apply_mods_pr,
             github::pull_requests::get_launcher_download_link,
             close_application,
+            development::install_git_main,
             get_available_northstar_versions,
         ])
         .run(tauri::generate_context!())
