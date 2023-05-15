@@ -51,6 +51,7 @@ import ThunderstoreModCard from "../../components/ThunderstoreModCard.vue";
 import { ElScrollbar, ScrollbarInstance } from "element-plus";
 import { SortOptions } from "../../utils/SortOptions.d";
 import { ThunderstoreModVersion } from "../../../../src-tauri/bindings/ThunderstoreModVersion";
+import { fuzzy_filter } from "../../utils/filter";
 
 export default defineComponent({
     name: "ThunderstoreModsView",
@@ -79,9 +80,11 @@ export default defineComponent({
             return this.mods.filter((mod: ThunderstoreMod) => {
                 // Filter with search words (only if search field isn't empty)
                 const inputMatches: boolean = this.searchValue.length === 0
-                    || (mod.name.toLowerCase().includes(this.searchValue)
-                        || mod.owner.toLowerCase().includes(this.searchValue)
-                        || mod.versions[0].description.toLowerCase().includes(this.searchValue));
+                    || (
+                        fuzzy_filter(mod.name, this.searchValue) ||
+                        fuzzy_filter(mod.owner, this.searchValue) ||
+                        mod.versions[0].description.toLowerCase().includes(this.searchValue)
+                    );
 
                 // Filter with categories (only if some categories are selected)
                 const categoriesMatch: boolean = this.selectedCategories.length === 0

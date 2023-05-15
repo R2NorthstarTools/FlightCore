@@ -31,6 +31,10 @@
                 Launch Northstar via Steam
             </el-button>
 
+            <el-button type="primary" @click="installLauncherGitMain">
+                Install launcher from main branch
+            </el-button>
+
             <br />
             <br />
 
@@ -241,6 +245,23 @@ export default defineComponent({
                 })
                 .catch((error) => {
                     showErrorNotification(error);
+                });
+        },
+        async installLauncherGitMain() {
+
+            const notification = showNotification(`Installing git main`, 'Please wait', 'info', 0);
+
+            await invoke<string>("install_git_main", { gameInstallPath: this.$store.state.game_path })
+                .then((message) => {
+                    this.release_notes_text = message;
+                    showNotification("Done", `Installed launcher build from ${message}`);
+                })
+                .catch((error) => {
+                    showErrorNotification(error);
+                })
+                .finally(() => {
+                    // Clear old notification
+                    notification.close();
                 });
         },
         async getAvailableNorthstarVersions() {
