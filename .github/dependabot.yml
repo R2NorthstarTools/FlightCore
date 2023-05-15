@@ -1,0 +1,11 @@
+# Configures depandabot
+
+version: 2
+updates:
+  # NPM packages
+  - package-ecosystem: 'npm'
+    directory: '/src-vue'
+
+  # Rust crates
+  - package-ecosystem: 'cargo'
+    directory: '/src-tauri'
