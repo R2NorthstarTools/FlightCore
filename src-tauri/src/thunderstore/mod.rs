@@ -40,24 +40,34 @@ pub struct ThunderstoreModVersion {
     pub file_size: i64,
 }
 
-/// Queries Thunderstore packages API
-#[tauri::command]
-pub async fn query_thunderstore_packages_api() -> Result<Vec<ThunderstoreMod>, String> {
+/// Performs actual fetch from Thunderstore and returns response
+async fn fetch_thunderstore_packages() -> Result<String, reqwest::Error> {
     log::info!("Fetching Thunderstore API");
 
     // Fetches
     let url = "https://northstar.thunderstore.io/api/v1/package/";
 
     let client = reqwest::Client::new();
-    let res = client
+    client
         .get(url)
         .header(reqwest::header::USER_AGENT, APP_USER_AGENT)
         .send()
-        .await
-        .unwrap()
+        .await?
         .text()
         .await
-        .unwrap();
+}
+
+/// Queries Thunderstore packages API
+#[tauri::command]
+pub async fn query_thunderstore_packages_api() -> Result<Vec<ThunderstoreMod>, String> {
+    let res = match fetch_thunderstore_packages().await {
+        Ok(res) => res,
+        Err(err) => {
+            let warn_response = format!("Couldn't fetch from Thunderstore: {err}");
+            log::warn!("{warn_response}");
+            return Err(warn_response);
+        }
+    };
 
     // Parse response
     let parsed_json: Vec<ThunderstoreMod> = match serde_json::from_str(&res) {

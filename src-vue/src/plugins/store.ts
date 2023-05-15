@@ -272,6 +272,7 @@ export const store = createStore<FlightCoreStore>({
                     mods = message;
                 })
                 .catch((error) => {
+                    showErrorNotification(error);
                     console.error(error);
                     return;
                 });
