@@ -5,7 +5,11 @@ updates:
   # NPM packages
   - package-ecosystem: 'npm'
     directory: '/src-vue'
+    schedule:
+      interval: "daily"
 
   # Rust crates
   - package-ecosystem: 'cargo'
     directory: '/src-tauri'
+    schedule:
+      interval: "daily"
