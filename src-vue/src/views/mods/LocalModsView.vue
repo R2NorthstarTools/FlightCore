@@ -12,6 +12,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { NorthstarMod } from "../../../../src-tauri/bindings/NorthstarMod";
+import { fuzzy_filter } from "../../utils/filter";
 import LocalModCard from "../../components/LocalModCard.vue";
 
 export default defineComponent({
@@ -30,7 +31,7 @@ export default defineComponent({
             }
 
             return this.installedMods.filter((mod: NorthstarMod) => {
-                return mod.name.toLowerCase().includes(this.searchValue);
+                return fuzzy_filter(mod.name, this.searchValue);
             });
         }
     },
