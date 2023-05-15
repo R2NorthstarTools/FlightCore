@@ -1,3 +1,4 @@
+use crate::constants::NS_LAUNCHER_COMMITS_API_URL;
 use crate::github::{
     pull_requests::{check_github_api, download_zip_into_memory, get_launcher_download_link},
     CommitInfo,
@@ -5,11 +6,13 @@ use crate::github::{
 
 #[tauri::command]
 pub async fn install_git_main(game_install_path: &str) -> Result<String, String> {
-    let url = "https://api.github.com/repos/R2Northstar/NorthstarLauncher/commits";
-
     // Get list of commits
-    let commits: Vec<CommitInfo> =
-        serde_json::from_value(check_github_api(url).await.expect("Failed request")).unwrap();
+    let commits: Vec<CommitInfo> = serde_json::from_value(
+        check_github_api(NS_LAUNCHER_COMMITS_API_URL)
+            .await
+            .expect("Failed request"),
+    )
+    .unwrap();
 
     // Get latest commit...
     let latest_commit_sha = commits[0].sha.clone();

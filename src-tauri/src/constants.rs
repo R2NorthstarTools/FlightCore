@@ -51,3 +51,7 @@ pub const FLIGHTCORE_REPO_NAME: &str = "R2NorthstarTools/FlightCore";
 
 // Northstar release repo name and org name on GitHub
 pub const NORTHSTAR_RELEASE_REPO_NAME: &str = "R2Northstar/Northstar";
+
+// URL to launcher commits API URL
+pub const NS_LAUNCHER_COMMITS_API_URL: &str =
+    "https://api.github.com/repos/R2Northstar/NorthstarLauncher/commits";
