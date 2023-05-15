@@ -457,7 +457,7 @@ pub async fn fc_download_mod_and_install(
         std::path::Path::new(&mods_directory),
     ) {
         Ok(()) => Ok(()),
-        err if matches!(err, Err(ThermiteError::PrefixError(_))) => err, // probably happens when there is not mod folder found
+        err if matches!(err, Err(ThermiteError::PrefixError(_))) => err, // happens when there is not mod folder found
         Err(err) => Err(err.to_string())?,
     };
 

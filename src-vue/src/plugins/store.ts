@@ -49,7 +49,6 @@ export interface FlightCoreStore {
 
     // user custom settings
     mods_per_page: number,
-
     can_install_plugins: boolean,
 }
 
