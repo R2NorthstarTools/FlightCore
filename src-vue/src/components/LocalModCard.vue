@@ -46,8 +46,6 @@ export default defineComponent({
             global_load_indicator: false,
         };
     },
-    computed: {
-    },
     methods: {
         async updateWhichModsEnabled(mod: NorthstarMod) {
             this.global_load_indicator = true;
