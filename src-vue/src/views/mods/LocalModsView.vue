@@ -5,7 +5,7 @@
     </div>
 
     <el-scrollbar v-else>
-    <local-mod-card v-for="mod of mods" v-bind:key="mod.name" :mod="mod" />
+        <local-mod-card v-for="mod of mods" v-bind:key="mod.name" :mod="mod" />
     </el-scrollbar>
 </template>
 
