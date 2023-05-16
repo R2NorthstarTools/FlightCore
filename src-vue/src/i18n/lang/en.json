@@ -166,7 +166,7 @@
 
     "plugins": {
         "warning_dialog": {
-            "warning_text": "This mod contains a plugin. Plugins CAN BE REALLY DANGEROURS since they have to access to your system!",
+            "warning_text": "This mod contains a plugin. Plugins CAN BE REALLY DANGEROUS since they have to access to your system!",
             "comfirm_text": "Do you still want to install this mod with a plugin?"
         }
     }
