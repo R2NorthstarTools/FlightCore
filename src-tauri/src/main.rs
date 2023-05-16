@@ -308,7 +308,7 @@ async fn install_northstar_caller(
     northstar_package_name: Option<String>,
     version_number: Option<String>,
 ) -> Result<bool, String> {
-    log::info!("Running");
+    log::info!("Running Northstar install");
 
     // Get Northstar package name (`Northstar` vs `NorthstarReleaseCandidate`)
     let northstar_package_name = northstar_package_name
