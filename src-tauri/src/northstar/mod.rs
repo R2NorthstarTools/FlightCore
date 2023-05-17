@@ -87,8 +87,8 @@ pub fn launch_northstar(
         }
 
         // Require Origin to be running to launch Northstar
-        let origin_is_running = check_origin_running();
-        if !origin_is_running {
+        let ea_app_is_running = check_origin_running();
+        if !ea_app_is_running {
             return Err(
                 anyhow!("EA App not running, start EA App before launching Northstar").to_string(),
             );
