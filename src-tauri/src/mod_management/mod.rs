@@ -369,6 +369,7 @@ pub async fn fc_download_mod_and_install(
     game_install: &GameInstall,
     thunderstore_mod_string: &str,
 ) -> Result<(), String> {
+    log::info!("Attempting to install \"{thunderstore_mod_string}\" to {game_install:?}");
     // Get mods and download directories
     let download_directory = format!(
         "{}/___flightcore-temp-download-dir/",
