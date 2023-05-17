@@ -440,7 +440,10 @@ pub async fn fc_download_mod_and_install(
         std::path::Path::new(&mods_directory),
     ) {
         Ok(()) => (),
-        Err(err) => return Err(err.to_string()),
+        Err(err) => {
+            log::warn!("libthermite couldn't install mod {thunderstore_mod_string} due to {err:?}",);
+            return Err(err.to_string());
+        }
     };
 
     Ok(())
