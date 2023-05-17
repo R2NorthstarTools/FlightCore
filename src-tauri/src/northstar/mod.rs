@@ -90,7 +90,7 @@ pub fn launch_northstar(
         let origin_is_running = check_origin_running();
         if !origin_is_running {
             return Err(
-                anyhow!("Origin not running, start Origin before launching Northstar").to_string(),
+                anyhow!("EA App not running, start EA App before launching Northstar").to_string(),
             );
         }
     }
