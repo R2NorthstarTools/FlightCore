@@ -386,7 +386,7 @@ pub async fn fc_download_mod_and_install(
         Ok(deps) => deps,
         Err(err) => return Err(err.to_string()),
     };
-    dbg!(deps.clone());
+    log::info!("Mod dependencies: {deps:?}");
 
     // Recursively install dependencies
     for dep in deps {
