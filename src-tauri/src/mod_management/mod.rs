@@ -340,7 +340,7 @@ async fn get_ns_mod_download_url(thunderstore_mod_string: &str) -> Result<String
 
 /// Returns a vector of modstrings containing the dependencies of a given mod
 async fn get_mod_dependencies(thunderstore_mod_string: &str) -> Result<Vec<String>, anyhow::Error> {
-    dbg!(thunderstore_mod_string);
+    log::info!("Attempting to get dependencies for: {thunderstore_mod_string}");
 
     // TODO: This will crash the thread if not internet connection exist. `match` should be used instead
     let index = thermite::api::get_package_index().unwrap().to_vec();
