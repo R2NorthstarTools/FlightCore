@@ -356,7 +356,13 @@ async fn install_mod_caller(
     game_install: GameInstall,
     thunderstore_mod_string: String,
 ) -> Result<(), String> {
-    fc_download_mod_and_install(&game_install, &thunderstore_mod_string).await?;
+    match fc_download_mod_and_install(&game_install, &thunderstore_mod_string).await {
+        Ok(()) => (),
+        Err(err) => {
+            log::warn!("{err}");
+            return Err(err);
+        }
+    };
     match clean_up_download_folder(&game_install, false) {
         Ok(()) => Ok(()),
         Err(err) => {
