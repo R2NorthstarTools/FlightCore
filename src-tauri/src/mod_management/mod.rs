@@ -340,7 +340,7 @@ async fn get_ns_mod_download_url(thunderstore_mod_string: &str) -> Result<String
 
 /// Returns a vector of modstrings containing the dependencies of a given mod
 async fn get_mod_dependencies(thunderstore_mod_string: &str) -> Result<Vec<String>, anyhow::Error> {
-    dbg!(thunderstore_mod_string);
+    log::info!("Attempting to get dependencies for: {thunderstore_mod_string}");
 
     // TODO: This will crash the thread if not internet connection exist. `match` should be used instead
     let index = thermite::api::get_package_index().unwrap().to_vec();
@@ -369,6 +369,7 @@ pub async fn fc_download_mod_and_install(
     game_install: &GameInstall,
     thunderstore_mod_string: &str,
 ) -> Result<(), String> {
+    log::info!("Attempting to install \"{thunderstore_mod_string}\" to {game_install:?}");
     // Get mods and download directories
     let download_directory = format!(
         "{}/___flightcore-temp-download-dir/",
@@ -385,7 +386,7 @@ pub async fn fc_download_mod_and_install(
         Ok(deps) => deps,
         Err(err) => return Err(err.to_string()),
     };
-    dbg!(deps.clone());
+    log::info!("Mod dependencies: {deps:?}");
 
     // Recursively install dependencies
     for dep in deps {
@@ -439,7 +440,10 @@ pub async fn fc_download_mod_and_install(
         std::path::Path::new(&mods_directory),
     ) {
         Ok(()) => (),
-        Err(err) => return Err(err.to_string()),
+        Err(err) => {
+            log::warn!("libthermite couldn't install mod {thunderstore_mod_string} due to {err:?}",);
+            return Err(err.to_string());
+        }
     };
 
     Ok(())
