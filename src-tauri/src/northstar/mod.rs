@@ -86,7 +86,7 @@ pub fn launch_northstar(
             return Err(anyhow!("Not all checks were met").to_string());
         }
 
-        // Require Origin to be running to launch Northstar
+        // Require EA App or Origin to be running to launch Northstar
         let ea_app_is_running = check_ea_app_or_origin_running();
         if !ea_app_is_running {
             return Err(
