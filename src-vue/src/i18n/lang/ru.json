@@ -32,7 +32,7 @@
         "servers": "серверов",
         "unable_to_load_playercount": "Не можем загрузить количество игроков",
         "northstar_running": "Нордстар запущен:",
-        "origin_running": "Origin запущен:",
+        "ea_app_running": "EA App запущен:",
         "see_patch_notes": "просмотреть список изменений"
     },
     "mods": {
