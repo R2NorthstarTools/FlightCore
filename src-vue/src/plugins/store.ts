@@ -463,7 +463,7 @@ async function _checkForFlightCoreUpdates(state: FlightCoreStore) {
  * Those events include Origin and Northstar running state.
  */
 function _initializeListeners(state: any) {
-    listen("origin-running-ping", function (evt: TauriEvent<any>) {
+    listen("ea-app-running-ping", function (evt: TauriEvent<any>) {
         state.origin_is_running = evt.payload as boolean;
     });
 

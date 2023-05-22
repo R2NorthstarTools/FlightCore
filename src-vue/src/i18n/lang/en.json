@@ -36,7 +36,7 @@
         "servers": "servers",
         "unable_to_load_playercount": "Unable to load playercount",
         "northstar_running": "Northstar is running:",
-        "origin_running": "Origin is running:"
+        "ea_app_running": "EA App is running:"
     },
 
     "mods": {

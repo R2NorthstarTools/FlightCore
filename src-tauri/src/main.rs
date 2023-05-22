@@ -93,7 +93,10 @@ fn main() {
                 loop {
                     sleep(Duration::from_millis(2000)).await;
                     app_handle
-                        .emit_all("origin-running-ping", util::check_origin_running())
+                        .emit_all(
+                            "ea-app-running-ping",
+                            util::check_ea_app_or_origin_running(),
+                        )
                         .unwrap();
                 }
             });
