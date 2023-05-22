@@ -1,1 +1,47 @@
-{}
+{
+    "generic": {
+        "yes": "Si",
+        "no": "No",
+        "error": "Errore",
+        "cancel": "Cancella",
+        "downloading": "Scaricando",
+        "extracting": "Estraendo",
+        "done": "Fatto",
+        "success": "Successo",
+        "informationShort": "Info"
+    },
+    "play": {
+        "unknown_version": "Versione sconosciuta",
+        "unable_to_load_playercount": "Impossibile caricare numero giocatori",
+        "northstar_running": "Northstar sta andando:",
+        "origin_running": "Origin sta andando:",
+        "see_patch_notes": "guarda le note della patch",
+        "players": "Giocatori",
+        "servers": "Server",
+        "button": {
+            "northstar_is_running": "Il Gioco sta andando",
+            "install": "Installa",
+            "installing": "Installazione...",
+            "update": "Aggiorna",
+            "updating": "Aggiornamento...",
+            "ready_to_play": "Gioca",
+            "select_game_dir": "Seleziona la cartella di Titanfall 2"
+        }
+    },
+    "mods": {
+        "local": {
+            "no_mods": "Nessuna mod è stata trovata.",
+            "delete_confirm": "Sei sicuro di voler eliminare questa mod?",
+            "part_of_ts_mod": "Questa Northstar mod è parte di una Thunderstore mod",
+            "success_deleting": "{modName} Eliminata con successo",
+            "delete": "Elimina"
+        }
+    },
+    "menu": {
+        "mods": "Mods",
+        "settings": "Impostazioni",
+        "dev": "Dev",
+        "play": "Gioca",
+        "changelog": "Note"
+    }
+}
