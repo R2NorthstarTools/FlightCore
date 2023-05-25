@@ -117,7 +117,7 @@ pub async fn install_northstar(
         Ok(res) => res.to_vec(),
         Err(err) => {
             log::warn!("Failed fetching package index due to: {err}");
-            return Err("Failed to connect to Thunderstore.".to_string());
+            return Err("Failed to connect to Thunderstore.\n If you have an antivirus program, try letting FlightCore through it.".to_string());
         }
     };
     let nmod = index
