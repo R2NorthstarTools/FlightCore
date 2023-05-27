@@ -375,7 +375,8 @@ async fn install_mod_caller(
 ) -> Result<(), String> {
     fc_download_mod_and_install(&game_install, &thunderstore_mod_string, can_install_plugins)
         .await
-        .map_err(|err| { // inspect_err isn't stable yet >:(
+        .map_err(|err| {
+            // inspect_err isn't stable yet >:(
             log::warn!("{err}");
             err
         })?;
