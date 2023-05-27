@@ -461,7 +461,7 @@ pub async fn fc_download_mod_and_install(
         err if matches!(err, Err(ThermiteError::PrefixError(_))) => err, // happens when there is not mod folder found
         Err(err) => {
             log::warn!("libthermite couldn't install mod {thunderstore_mod_string} due to {err:?}",);
-            Err(err.to_string())?;
+            Err(err.to_string())?
         }
     };
 
