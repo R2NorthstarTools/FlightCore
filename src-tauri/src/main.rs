@@ -100,7 +100,10 @@ fn main() {
                 loop {
                     sleep(Duration::from_millis(2000)).await;
                     app_handle
-                        .emit_all("origin-running-ping", util::check_origin_running())
+                        .emit_all(
+                            "ea-app-running-ping",
+                            util::check_ea_app_or_origin_running(),
+                        )
                         .unwrap();
                 }
             });
@@ -321,7 +324,7 @@ async fn install_northstar_caller(
     northstar_package_name: Option<String>,
     version_number: Option<String>,
 ) -> Result<bool, String> {
-    log::info!("Running");
+    log::info!("Running Northstar install");
 
     // Get Northstar package name (`Northstar` vs `NorthstarReleaseCandidate`)
     let northstar_package_name = northstar_package_name
@@ -371,7 +374,7 @@ async fn install_mod_caller(
     can_install_plugins: bool,
 ) -> Result<(), String> {
     fc_download_mod_and_install(&game_install, &thunderstore_mod_string, can_install_plugins)
-        .await?;
+        .await.inspect_err(|err| log::warn!("{err}"))?;
     match clean_up_download_folder(&game_install, false) {
         Ok(()) => Ok(()),
         Err(err) => {

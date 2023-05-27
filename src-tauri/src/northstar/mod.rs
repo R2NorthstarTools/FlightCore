@@ -2,7 +2,7 @@
 //! - getting version number
 pub mod install;
 
-use crate::util::check_origin_running;
+use crate::util::check_ea_app_or_origin_running;
 use crate::{constants::CORE_MODS, get_host_os, GameInstall, InstallType};
 use anyhow::anyhow;
 
@@ -86,11 +86,11 @@ pub fn launch_northstar(
             return Err(anyhow!("Not all checks were met").to_string());
         }
 
-        // Require Origin to be running to launch Northstar
-        let origin_is_running = check_origin_running();
-        if !origin_is_running {
+        // Require EA App or Origin to be running to launch Northstar
+        let ea_app_is_running = check_ea_app_or_origin_running();
+        if !ea_app_is_running {
             return Err(
-                anyhow!("Origin not running, start Origin before launching Northstar").to_string(),
+                anyhow!("EA App not running, start EA App before launching Northstar").to_string(),
             );
         }
     }

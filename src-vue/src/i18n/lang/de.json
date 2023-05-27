@@ -33,7 +33,7 @@
         "servers": "Server",
         "unable_to_load_playercount": "Spielerzahl konnte nicht geladen werden",
         "northstar_running": "Northstar läuft:",
-        "origin_running": "Origin läuft:"
+        "ea_app_running": "EA App läuft:"
     },
     "mods": {
         "local": {

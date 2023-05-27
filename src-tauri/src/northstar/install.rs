@@ -38,6 +38,10 @@ async fn do_install(
     let filename = format!("northstar-{}.zip", nmod.version);
     let download_directory = format!("{}/___flightcore-temp-download-dir/", game_path.display());
 
+    log::info!(
+        "Attempting to create temporary directory {}",
+        download_directory
+    );
     std::fs::create_dir_all(download_directory.clone())?;
 
     let download_path = format!("{}/{}", download_directory, filename);
@@ -109,7 +113,13 @@ pub async fn install_northstar(
     northstar_package_name: String,
     version_number: Option<String>,
 ) -> Result<String, String> {
-    let index = thermite::api::get_package_index().unwrap().to_vec();
+    let index = match thermite::api::get_package_index() {
+        Ok(res) => res.to_vec(),
+        Err(err) => {
+            log::warn!("Failed fetching package index due to: {err}");
+            return Err("Failed to connect to Thunderstore.".to_string());
+        }
+    };
     let nmod = index
         .iter()
         .find(|f| f.name.to_lowercase() == northstar_package_name.to_lowercase())

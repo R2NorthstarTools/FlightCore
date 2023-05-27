@@ -105,7 +105,7 @@ pub fn extract(zip_file: std::fs::File, target: &std::path::Path) -> Result<()> 
     Ok(())
 }
 
-pub fn check_origin_running() -> bool {
+pub fn check_ea_app_or_origin_running() -> bool {
     let s = sysinfo::System::new_all();
     let x = s.processes_by_name("Origin.exe").next().is_some()
         || s.processes_by_name("EADesktop.exe").next().is_some();
