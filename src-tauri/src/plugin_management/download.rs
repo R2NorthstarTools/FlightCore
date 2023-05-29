@@ -16,6 +16,7 @@ use crate::{mod_management::ParsedThunderstoreModString, GameInstall, APP_HANDLE
 
 static INSTALL_STATUS_RECV: OnceCell<Mutex<Receiver<bool>>> = OnceCell::new();
 
+// struct for the status about a plugin install
 pub struct InstallStatusSender(Mutex<Sender<bool>>);
 
 impl InstallStatusSender {
@@ -152,6 +153,7 @@ pub async fn install_plugin(
     Ok(())
 }
 
+/// function for receiving updates from the ui about the install comfirmation
 #[tauri::command]
 pub fn receive_install_status(
     sender: State<'_, InstallStatusSender>,
