@@ -74,7 +74,7 @@
             "by": "от",
             "remove": "Удалить мод",
             "remove_dialog_title": "Внимание",
-            "remove_dialog_text": "Удалить мод?",
+            "remove_dialog_text": "Удалить мод Thunderstore?",
             "remove_success": "Удален {modName}",
             "more_info": "Подробнее",
             "install_success": "Установлен {modName}"
