@@ -216,7 +216,9 @@ fn parse_installed_mods(game_install: &GameInstall) -> Result<Vec<NorthstarMod>,
 
     // Get list of folders in `mods` directory
     for path in paths {
+        log::info!("{path:?}");
         let my_path = path.unwrap().path();
+        log::info!("{my_path:?}");
 
         let md = std::fs::metadata(my_path.clone()).unwrap();
         if md.is_dir() {
