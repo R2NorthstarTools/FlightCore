@@ -74,7 +74,7 @@ pub async fn get_pull_requests(url: String) -> Result<Vec<PullsApiResponseElemen
 
         let json_response = match fetch_github_releases_api(&paginated_url).await {
             Ok(result) => result,
-            Err(err) => return Err(err),
+            Err(err) => return Err(format!("Failed fetching GitHub API {err}")),
         };
 
         let pulls_response: Vec<PullsApiResponseElement> =
