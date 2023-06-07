@@ -1,5 +1,5 @@
 <template>
-    <el-card :body-style="{ padding: '0px' }">
+    <el-card :body-style="getBodyStyle" :style="getCardStyle">
         <img
             :src="latestVersion.icon"
             class="image"
@@ -89,6 +89,14 @@ export default defineComponent({
         isBeingUpdated: false
     }),
     computed: {
+        getBodyStyle(): Object {
+            return this.mod.is_deprecated ? { 'background-color': 'rgba(255, 0, 0, 0.42)' } : {};
+        },
+
+        getCardStyle(): Object {
+            return this.mod.is_deprecated ? { 'border': '1px solid red' } : {};
+        },
+
         latestVersion(): ThunderstoreModVersion {
             return this.mod.versions[0];
         },
@@ -264,6 +272,11 @@ export default defineComponent({
     display: inline-block;
     max-width: 178px;
     margin: 5px;
+    --el-card-padding: 0;
+}
+
+.deprecated {
+    background-color: red !important;
 }
 
 .author {
