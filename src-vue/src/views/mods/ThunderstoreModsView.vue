@@ -86,13 +86,16 @@ export default defineComponent({
                         mod.versions[0].description.toLowerCase().includes(this.searchValue)
                     );
 
+                // Filter out deprecated mods
+                const isDeprecated = mod.is_deprecated;
+
                 // Filter with categories (only if some categories are selected)
                 const categoriesMatch: boolean = this.selectedCategories.length === 0
                     || mod.categories
                         .filter((category: string) => this.selectedCategories.includes(category))
                         .length === this.selectedCategories.length;
 
-                return inputMatches && categoriesMatch;
+                return inputMatches && categoriesMatch && !isDeprecated;
             });
         },
         modsList(): ThunderstoreMod[] {
