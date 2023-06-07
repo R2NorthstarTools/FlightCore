@@ -106,6 +106,9 @@
         "enable_test_channels": "Enable testing release channels",
         "dev_mode_enabled_title": "Watch out!",
         "dev_mode_enabled_text": "Developer mode enabled.",
+        "show_deprecated_mods": "Show deprecated Thunderstore mods",
+        "show_deprecated_mods_desc1": "This allows you to see deprecated mods in the online mods collection.",
+        "show_deprecated_mods_desc2": "Watch out, such mods are usually deprecated for a good reason.",
 
         "repair": {
             "title": "Repair",
