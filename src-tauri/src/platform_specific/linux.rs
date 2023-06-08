@@ -1,7 +1,77 @@
 // Linux specific code
 
 use regex::Regex;
+use std::env;
 use std::process::Command;
+
+fn get_proton_dir() -> Option<String> {
+    let steam_dir = steamlocate::SteamDir::locate()?;
+    let compat_dir = format!("{}/compatibilitytools.d/", steam_dir.path.display());
+
+    Some(compat_dir)
+}
+
+/// Downloads and installs NS proton
+/// Assumes Steam install
+pub fn install_ns_proton() -> Result<(), thermite::prelude::ThermiteError> {
+    // Get latest NorthstarProton release
+    let latest = thermite::core::latest_release()?;
+
+    let temp_dir = env::temp_dir();
+    let path = format!("{}/nsproton-{}.zip", temp_dir.display(), latest);
+
+    // Download NorthstarProton release
+    let archive = thermite::core::download_ns_proton(latest, path.clone())?;
+    dbg!("Download done");
+
+    let compat_dir = get_proton_dir().unwrap();
+    std::fs::create_dir_all(compat_dir.clone())?;
+
+    // Extract to Proton dir
+    thermite::core::install_ns_proton(&archive, compat_dir)?;
+    dbg!("Install done");
+
+    std::fs::remove_file(path)?;
+
+    Ok(())
+}
+
+/// Remove NS Proton
+pub fn uninstall_ns_proton() -> Result<(), String> {
+    let compat_dir = get_proton_dir().unwrap();
+    let pattern = format!("{}/NorthstarProton-*", compat_dir);
+    for e in glob::glob(&pattern).expect("Failed to read glob pattern") {
+        std::fs::remove_dir_all(e.unwrap()).unwrap();
+    }
+
+    Ok(())
+}
+
+/// Get the latest installed NS Proton version
+pub fn get_local_ns_proton_version() -> Result<String, String> {
+    let compat_dir = get_proton_dir().unwrap();
+    let ns_prefix = "NorthstarProton-";
+    let pattern = format!("{}/{}*/version", compat_dir, ns_prefix);
+
+    let mut version: String = "".to_string();
+
+    for e in glob::glob(&pattern).expect("Failed to read glob pattern") {
+        let version_content = std::fs::read_to_string(e.unwrap()).unwrap();
+        let version_string = version_content.split(' ').nth(1).unwrap();
+
+        if version_string.starts_with(ns_prefix) {
+            version = version_string[ns_prefix.len()..version_string.len() - 1]
+                .to_string()
+                .clone();
+        }
+    }
+
+    if version.is_empty() {
+        return Err("Northstar Proton is not installed".to_string());
+    }
+
+    Ok(version)
+}
 
 pub fn check_glibc_v() -> f32 {
     let out = Command::new("/bin/ldd")

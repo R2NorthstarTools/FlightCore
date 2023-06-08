@@ -94,6 +94,7 @@ dependencies = [
  "chrono",
  "const_format",
  "game-scanner",
+ "glob",
  "json5",
  "libthermite",
  "log",
@@ -2116,9 +2117,11 @@ version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0d8ef144beaf1e683b0ccb2e6e3e14d1e6a8f29e28be3c4fc93376539b28fe97"
 dependencies = [
+ "flate2",
  "json5",
  "serde",
  "serde_json",
+ "tar",
  "thiserror",
  "tracing",
  "ureq",

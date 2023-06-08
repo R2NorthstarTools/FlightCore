@@ -33,7 +33,7 @@ steamlocate = "1.2"
 # Error messages
 anyhow = "1.0"
 # libthermite for Northstar/mod install handling
-libthermite = "0.5.3"
+libthermite = { version = "0.5.3", features = ["proton"] }
 # zip stuff
 zip = "0.6.2"
 # Regex
@@ -67,6 +67,8 @@ open = "3.2.0"
 # Windows API stuff
 winapi = "0.3.9"
 semver = "1.0"
+# easier fs handling
+glob = "0.3.1"
 
 [features]
 # by default Tauri runs in production mode
