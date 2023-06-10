@@ -1,6 +1,6 @@
-import {ThunderstoreMod} from "../../../../src-tauri/bindings/ThunderstoreMod";
-import {NorthstarMod} from "../../../../src-tauri/bindings/NorthstarMod";
-import {store} from "../../plugins/store";
+import { ThunderstoreMod } from "../../../../src-tauri/bindings/ThunderstoreMod";
+import { NorthstarMod } from "../../../../src-tauri/bindings/NorthstarMod";
+import { store } from "../../plugins/store";
 
 /**
  * Strips off a Thunderstore dependency string from its version
