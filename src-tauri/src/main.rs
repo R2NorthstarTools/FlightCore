@@ -17,21 +17,11 @@ use winapi::um::winuser::{MessageBoxW, MB_ICONERROR, MB_OK, MB_USERICON};
 use crate::constants::REFRESH_DELAY;
 
 mod development;
-
 mod github;
-
-mod repair_and_verify;
-use repair_and_verify::clean_up_download_folder;
-
 mod mod_management;
-use mod_management::fc_download_mod_and_install;
-
 mod northstar;
-use northstar::get_northstar_version_number;
-
+mod repair_and_verify;
 mod thunderstore;
-use thunderstore::query_thunderstore_packages_api;
-
 mod util;
 
 use semver::Version;
@@ -131,7 +121,7 @@ fn main() {
             util::force_panic,
             northstar::install::find_game_install_location,
             get_flightcore_version_number,
-            get_northstar_version_number,
+            northstar::get_northstar_version_number,
             check_is_northstar_outdated,
             verify_install_location,
             get_host_os,
@@ -155,7 +145,7 @@ fn main() {
             util::get_server_player_count,
             mod_management::delete_thunderstore_mod,
             open_repair_window,
-            query_thunderstore_packages_api,
+            thunderstore::query_thunderstore_packages_api,
             github::get_list_of_tags,
             github::compare_tags,
             github::pull_requests::get_pull_requests_wrapper,
@@ -273,7 +263,7 @@ async fn check_is_northstar_outdated(
         .expect("Couldn't find Northstar on thunderstore???");
     // .ok_or_else(|| anyhow!("Couldn't find Northstar on thunderstore???"))?;
 
-    let version_number = match get_northstar_version_number(&game_path) {
+    let version_number = match northstar::get_northstar_version_number(&game_path) {
         Ok(version_number) => version_number,
         Err(err) => {
             log::warn!("{}", err);
@@ -362,14 +352,15 @@ async fn install_mod_caller(
     game_install: GameInstall,
     thunderstore_mod_string: String,
 ) -> Result<(), String> {
-    match fc_download_mod_and_install(&game_install, &thunderstore_mod_string).await {
+    match mod_management::fc_download_mod_and_install(&game_install, &thunderstore_mod_string).await
+    {
         Ok(()) => (),
         Err(err) => {
             log::warn!("{err}");
             return Err(err);
         }
     };
-    match clean_up_download_folder(&game_install, false) {
+    match repair_and_verify::clean_up_download_folder(&game_install, false) {
         Ok(()) => Ok(()),
         Err(err) => {
             log::info!("Failed to delete download folder due to {}", err);
@@ -386,7 +377,7 @@ async fn clean_up_download_folder_caller(
     game_install: GameInstall,
     force: bool,
 ) -> Result<(), String> {
-    match clean_up_download_folder(&game_install, force) {
+    match repair_and_verify::clean_up_download_folder(&game_install, force) {
         Ok(()) => Ok(()),
         Err(err) => Err(err.to_string()),
     }
