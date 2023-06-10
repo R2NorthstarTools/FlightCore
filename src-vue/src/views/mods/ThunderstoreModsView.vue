@@ -52,6 +52,8 @@ import { ElScrollbar, ScrollbarInstance } from "element-plus";
 import { SortOptions } from "../../utils/SortOptions.d";
 import { ThunderstoreModVersion } from "../../../../src-tauri/bindings/ThunderstoreModVersion";
 import { fuzzy_filter } from "../../utils/filter";
+import { isThunderstoreModOutdated } from "../../utils/thunderstore/version";
+
 
 export default defineComponent({
     name: "ThunderstoreModsView",
@@ -137,7 +139,18 @@ export default defineComponent({
                     throw new Error('Unknown mod sorting.');
             }
 
-            return mods.sort(compare);
+            // Always display outdated mods first
+            // (regardless of actual sort order)
+            const sortedMods = mods.sort(compare);
+            return sortedMods.sort((a, b) => {
+                if (isThunderstoreModOutdated(a)) {
+                    return -1;
+                } else if (isThunderstoreModOutdated(b)) {
+                    return 1;
+                } else {
+                    return compare(a, b);
+                }
+            })
         },
         modsPerPage(): number {
             return parseInt(this.$store.state.mods_per_page);
