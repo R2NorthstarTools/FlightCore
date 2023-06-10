@@ -1,6 +1,6 @@
-import { ThunderstoreMod } from "../../../../src-tauri/bindings/ThunderstoreMod";
-import { NorthstarMod } from "../../../../src-tauri/bindings/NorthstarMod";
-import { store } from "../../plugins/store";
+import {ThunderstoreMod} from "../../../../src-tauri/bindings/ThunderstoreMod";
+import {NorthstarMod} from "../../../../src-tauri/bindings/NorthstarMod";
+import {store} from "../../plugins/store";
 
 /**
  * Strips off a Thunderstore dependency string from its version
@@ -23,7 +23,8 @@ function isThunderstoreModOutdated(mod: ThunderstoreMod): boolean {
         // There shouldn't be several mods with same dependency string, but we never know...
         const matchingMod = matchingMods[0];
         // A mod is outdated if its dependency strings differs from Thunderstore dependency string
-        // (no need for semver check here)
+        // (no need for semver check here).
+        // This assumes mod versions list is sorted from newest to oldest version.
         return matchingMod.thunderstore_mod_string !== mod.versions[0].full_name;
     }
     return false;
