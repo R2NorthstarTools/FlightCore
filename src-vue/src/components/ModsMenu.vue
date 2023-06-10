@@ -58,8 +58,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { SortOptions } from '../utils/SortOptions.d';
-import {isThunderstoreModOutdated} from "../utils/thunderstore/version";
-import {ThunderstoreMod} from "../../../src-tauri/bindings/ThunderstoreMod";
+import { isThunderstoreModOutdated } from "../utils/thunderstore/version";
+import { ThunderstoreMod } from "../../../src-tauri/bindings/ThunderstoreMod";
 
 export default defineComponent({
     name: 'ModsMenu',
