@@ -67,7 +67,7 @@ open = "3.2.0"
 # Windows API stuff
 winapi = "0.3.9"
 semver = "1.0"
-# easier fs handling
+# simplified filesystem access
 glob = "0.3.1"
 
 [features]
