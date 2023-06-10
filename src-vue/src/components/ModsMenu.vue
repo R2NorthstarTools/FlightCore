@@ -9,7 +9,15 @@
                 <el-icon><Folder /></el-icon>
                 <span>{{ $t('mods.menu.local') }}</span>
             </el-menu-item>
-            <el-menu-item index="2" @click="$emit('showLocalMods', false)">
+
+            <!-- Display a badge if there are some outdated Thunderstore mods -->
+            <el-menu-item v-if="outdatedThunderstoreModsCount !== 0" index="2" @click="$emit('showLocalMods', false)">
+                <el-badge :value="outdatedThunderstoreModsCount" class="item" type="warning">
+                    <el-icon><Connection /></el-icon>
+                    <span>{{ $t('mods.menu.online') }}</span>
+                </el-badge>
+            </el-menu-item>
+            <el-menu-item v-else index="2" @click="$emit('showLocalMods', false)">
                 <el-icon><Connection /></el-icon>
                 <span>{{ $t('mods.menu.online') }}</span>
             </el-menu-item>
@@ -50,6 +58,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { SortOptions } from '../utils/SortOptions.d';
+import {isThunderstoreModOutdated} from "../utils/thunderstore/version";
+import {ThunderstoreMod} from "../../../src-tauri/bindings/ThunderstoreMod";
 
 export default defineComponent({
     name: 'ModsMenu',
@@ -63,6 +73,11 @@ export default defineComponent({
         this.$store.state.search.sortValue = this.sortValues[3].value;
     },
     computed: {
+        outdatedThunderstoreModsCount(): number {
+            return this.$store.state.thunderstoreMods
+                .filter((mod: ThunderstoreMod) => isThunderstoreModOutdated(mod))
+                .length;
+        },
         sortValues(): { label: string, value: string }[] {
             return Object.keys(SortOptions).map((key: string) => ({
                 value: key,
@@ -114,5 +129,13 @@ export default defineComponent({
 .el-select {
     width: 100%;
     margin-top: 5px;
+}
+
+/* Outdated thunderstore mods count */
+.el-badge {
+    width: 100%;
+}
+.el-badge:deep(.el-badge__content) {
+    top: 28px !important;
 }
 </style>
