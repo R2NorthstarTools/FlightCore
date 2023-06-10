@@ -52,7 +52,8 @@ import { ElScrollbar, ScrollbarInstance } from "element-plus";
 import { SortOptions } from "../../utils/SortOptions.d";
 import { ThunderstoreModVersion } from "../../../../src-tauri/bindings/ThunderstoreModVersion";
 import { fuzzy_filter } from "../../utils/filter";
-import {isThunderstoreModOutdated} from "../../utils/thunderstore/version";
+import { isThunderstoreModOutdated } from "../../utils/thunderstore/version";
+
 
 export default defineComponent({
     name: "ThunderstoreModsView",
