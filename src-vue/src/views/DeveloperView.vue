@@ -30,7 +30,7 @@
             </el-button>
 
             <el-button type="primary" @click="getLocalNSProtonVersion">
-                Get NSProton Version
+                Get local NSProton Version
             </el-button>
 
             <h3>Testing:</h3>
