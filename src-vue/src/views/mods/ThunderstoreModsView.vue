@@ -139,7 +139,8 @@ export default defineComponent({
                     throw new Error('Unknown mod sorting.');
             }
 
-            // Display outdated mods first
+            // Always display outdated mods first
+            // (regardless of actual sort order)
             const sortedMods = mods.sort(compare);
             return sortedMods.sort((a, b) => {
                 if (isThunderstoreModOutdated(a)) {
