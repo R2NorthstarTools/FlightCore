@@ -633,7 +633,7 @@ fn launch_northstar_steam(
 }
 
 #[tauri::command]
-fn install_northstar_proton_wrapper() -> Result<(), String> {
+async fn install_northstar_proton_wrapper() -> Result<(), String> {
     #[cfg(target_os = "linux")]
     return linux::install_ns_proton().map_err(|err| err.to_string());
 
@@ -642,7 +642,7 @@ fn install_northstar_proton_wrapper() -> Result<(), String> {
 }
 
 #[tauri::command]
-fn uninstall_northstar_proton_wrapper() -> Result<(), String> {
+async fn uninstall_northstar_proton_wrapper() -> Result<(), String> {
     #[cfg(target_os = "linux")]
     return linux::uninstall_ns_proton();
 
