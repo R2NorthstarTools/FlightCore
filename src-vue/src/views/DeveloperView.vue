@@ -232,8 +232,8 @@ export default defineComponent({
                 .then((message) => {
                     this.ns_release_tags = message;
                     showNotification("Done", "Fetched tags");
-                    this.first_tag = this.ns_release_tags[0];
-                    this.second_tag = this.ns_release_tags[1];
+                    this.first_tag = this.ns_release_tags[1];
+                    this.second_tag = this.ns_release_tags[0];
                 })
                 .catch((error) => {
                     showErrorNotification(error);
