@@ -251,8 +251,11 @@ export default defineComponent({
                 this.isBeingInstalled = true;
             }
 
-            await invoke<string>("install_mod_caller", { gameInstall: game_install, thunderstoreModString: this.latestVersion.full_name }).then((message) => {
-                showNotification(this.$t('mods.card.install_success', { modName: mod.name }), message);
+            // Capture translation method in a context, so it can be used outside Vue component context.
+            // (see https://github.com/R2NorthstarTools/FlightCore/issues/384)
+            (async (translate: Function) => {
+                await invoke<string>("install_mod_caller", { gameInstall: game_install, thunderstoreModString: this.latestVersion.full_name }).then((message) => {
+                showNotification(translate('mods.card.install_success', { modName: mod.name }), message);
             })
                 .catch((error) => {
                     showErrorNotification(error);
@@ -262,6 +265,9 @@ export default defineComponent({
                     this.isBeingUpdated = false;
                     this.$store.commit('loadInstalledMods');
                 });
+            // @ts-ignore
+            })(this.$i18n.t);
+
         },
     }
 });
