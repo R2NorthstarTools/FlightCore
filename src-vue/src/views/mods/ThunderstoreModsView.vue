@@ -62,6 +62,9 @@ export default defineComponent({
         this.$store.commit('fetchThunderstoreMods');
     },
     computed: {
+        showDeprecatedMods(): boolean {
+            return this.$store.state.search.showDeprecatedMods;
+        },
         searchValue(): string {
             return this.$store.getters.searchWords;
         },
@@ -89,7 +92,7 @@ export default defineComponent({
                     );
 
                 // Filter out deprecated mods
-                const showDeprecated = !mod.is_deprecated || this.$store.state.search.showDeprecatedMods;
+                const showDeprecated = !mod.is_deprecated || this.showDeprecatedMods;
 
                 // Filter with categories (only if some categories are selected)
                 const categoriesMatch: boolean = this.selectedCategories.length === 0
@@ -104,7 +107,9 @@ export default defineComponent({
             // Use filtered mods if user is searching, vanilla list otherwise.
             const mods: ThunderstoreMod[] = this.searchValue.length !== 0 || this.selectedCategories.length !== 0
                 ? this.filteredMods
-                : this.mods;
+                : this.showDeprecatedMods
+                    ? this.mods
+                    : this.mods.filter(mod => !mod.is_deprecated);
 
             // Sort mods regarding user selected algorithm.
             let compare: (a: ThunderstoreMod, b: ThunderstoreMod) => number;
