@@ -294,7 +294,8 @@ pub fn get_installed_mods_and_properties(
     };
 
     let mut installed_mods = Vec::new();
-    let mapping = enabled_mods.as_object().unwrap();
+    let binding = serde_json::Map::new(); // Empty map in case treating as object fails
+    let mapping = enabled_mods.as_object().unwrap_or(&binding);
 
     // Use list of installed mods and set enabled based on `enabledmods.json`
     for mut current_mod in found_installed_mods {
