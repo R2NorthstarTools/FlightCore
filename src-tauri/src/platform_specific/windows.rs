@@ -10,27 +10,24 @@ use crate::check_is_valid_game_path;
 pub fn origin_install_location_detection() -> Result<String, anyhow::Error> {
     #[cfg(target_os = "windows")]
     {
-        let error;
         let hklm = RegKey::predef(HKEY_LOCAL_MACHINE);
         match hklm.open_subkey("SOFTWARE\\Respawn\\Titanfall2") {
-            Ok(tf) => match cur_ver.get_value("Install Dir") {
-                Ok(install_dir) => match check_is_valid_game_path(install_dir) {
+            Ok(tf) => {
+                let game_path_str: String = tf.get_value("Install Dir")?;
+
+                match check_is_valid_game_path(&game_path_str) {
                     Ok(()) => {
-                        return Ok(install_dir.to_string());
+                        return Ok(game_path_str.to_string());
                     }
                     Err(err) => {
-                        error = err;
+                        log::warn!("{err}");
                     }
-                },
-                Err(err) => {
-                    error = err;
                 }
-            },
+            }
             Err(err) => {
-                error = err;
+                log::warn!("{err}");
             }
         }
-        log::warn!("{}", error);
     }
 
     Err(anyhow!("No Origin / EA App install path found"))
