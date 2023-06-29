@@ -443,7 +443,6 @@ pub async fn fc_download_mod_and_install(
             // Error can include the mod being found installed cause this is the first time it's being installed
             // As such we just ignore any error (but still log it just in case)
             log::info!("{err}");
-            ()
         }
     };
 
