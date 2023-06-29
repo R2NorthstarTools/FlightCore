@@ -435,6 +435,18 @@ pub async fn fc_download_mod_and_install(
     // Get Thunderstore mod author
     let author = thunderstore_mod_string.split('-').next().unwrap();
 
+    // Delete previous version of mod if already installed
+    // This way we ensure that any old files/folders are removed
+    match delete_thunderstore_mod(game_install.clone(), thunderstore_mod_string.to_string()) {
+        Ok(()) => (),
+        Err(err) => {
+            // Error can include the mod being found installed cause this is the first time it's being installed
+            // As such we just ignore any error (but still log it just in case)
+            log::info!("{err}");
+            ()
+        }
+    };
+
     // Extract the mod to the mods directory
     match thermite::core::manage::install_mod(
         author,
