@@ -48,9 +48,6 @@ tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", 
 json5 = "0.4.1"
 # Async recursion for recursive mod install
 async-recursion = "1.0.0"
-# Game scanner
-# Use specific commit that updates deprecated library
-game-scanner = { git = "https://github.com/EqualGames/game-scanner.git", rev = "94dcbd086a5987361a2847988a060da9b5dd3908" }
 # For parsing timestamps
 chrono = "0.4.23"
 # TypeScript bindings
@@ -64,9 +61,12 @@ log = "0.4.17"
 zip-extract = "0.1.2"
 # open urls
 open = "3.2.0"
+semver = "1.0"
+
+[target.'cfg(windows)'.dependencies]
 # Windows API stuff
 winapi = "0.3.9"
-semver = "1.0"
+winreg = "0.11.0"
 
 [features]
 # by default Tauri runs in production mode

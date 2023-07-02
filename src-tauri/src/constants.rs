@@ -26,9 +26,6 @@ pub const BLACKLISTED_MODS: [&str; 3] = [
     "ebkr-r2modman",
 ];
 
-// Titanfall2 game IDs on Origin/EA-App
-pub const TITANFALL2_ORIGIN_IDS: [&str; 2] = ["Origin.OFR.50.0001452", "Origin.OFR.50.0001456"];
-
 // Titanfall2 Steam App ID
 pub const TITANFALL2_STEAM_ID: &str = "1237970";
 
