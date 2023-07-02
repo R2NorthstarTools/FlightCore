@@ -17,6 +17,10 @@
                 {{ $t('settings.repair.window.force_reinstall_ns') }}
             </el-button>
 
+            <el-button type="primary" @click="disableModsettingsMod">
+                {{ $t('settings.repair.window.disable_modsettings') }}
+            </el-button>
+
             <h2>FlightCore</h2>
 
             <el-button type="primary" @click="cleanUpDownloadFolder">
@@ -120,6 +124,20 @@ export default defineComponent({
             await persistentStore.clear();
             // ...and save
             await persistentStore.save();
+        },
+        async disableModsettingsMod() {
+            let game_install = {
+                game_path: this.$store.state.game_path,
+                install_type: this.$store.state.install_type
+            } as GameInstall;
+
+            await invoke("set_mod_enabled_status", { gameInstall: game_install, modName: "Mod Settings", isEnabled: false })
+                .then((message) => {
+                    showNotification(this.$t('generic.success'), this.$t('settings.repair.window.disable_modsettings_success'));
+                })
+                .catch((error) => {
+                    showErrorNotification(error);
+                });
         },
     },
     watch: {
