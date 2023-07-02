@@ -234,6 +234,7 @@ export default defineComponent({
                     showNotification("Done", "Fetched tags");
                     this.first_tag = this.ns_release_tags[1];
                     this.second_tag = this.ns_release_tags[0];
+                    this.compareTags();
                 })
                 .catch((error) => {
                     showErrorNotification(error);
