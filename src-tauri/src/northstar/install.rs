@@ -71,8 +71,7 @@ async fn do_install(
                 }
             }
         },
-    )
-    .unwrap();
+    )?;
 
     window
         .emit(

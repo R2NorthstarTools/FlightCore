@@ -18,7 +18,7 @@
                         layout="prev, pager, next"
                         :page-size="modsPerPage"
                         :total="modsList.length"
-                        @current-change="(e: number) => currentPageIndex = e - 1"
+                        @update:current-page="onPaginationChange"
                     />
                 </div>
 
@@ -36,7 +36,8 @@
                         layout="prev, pager, next"
                         :page-size="modsPerPage"
                         :total="modsList.length"
-                        @current-change="onBottomPaginationChange"
+                        @update:current-page="onPaginationChange"
+                        @current-change="scrollTop"
                     />
                 </div>
             </div>
@@ -183,9 +184,13 @@ export default defineComponent({
         /**
          * This updates current pagination and scrolls view to the top.
          */
-        onBottomPaginationChange(index: number) {
+        onPaginationChange(index: number) {
             this.currentPageIndex = index - 1;
-            (this.$refs.scrollbar as ScrollbarInstance).scrollTo({ top: 0, behavior: 'smooth' });
+        },
+        scrollTop(index: number) {
+            setTimeout(() => {
+                (this.$refs.scrollbar as ScrollbarInstance).scrollTo({ top: 0, behavior: 'smooth' });
+            }, 100)
         }
     },
     watch: {

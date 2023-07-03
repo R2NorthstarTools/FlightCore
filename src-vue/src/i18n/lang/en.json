@@ -119,6 +119,8 @@
                 "warning": "This window contains various functionality to repair common issues with Northstar and FlightCore.",
                 "disable_all_but_core": "Disable all but core mods",
                 "disable_all_but_core_success": "Disabled all mods but core",
+                "disable_modsettings": "Disable ModSettings mod",
+                "disable_modsettings_success": "Disabled ModSettings mod",
                 "force_reinstall_ns": "Force reinstall Northstar",
                 "force_delete_temp_dl": "Force delete temp download folder",
                 "delete_persistent_store": "Delete FlightCore persistent store",
