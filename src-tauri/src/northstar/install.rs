@@ -48,9 +48,9 @@ async fn do_install(
     log::info!("Download path: {download_path}");
 
     let last_emit = RefCell::new(Instant::now()); // Keep track of the last time a signal was emitted
-    let nfile = thermite::core::manage::download_file_with_progress(
+    let nfile = thermite::core::manage::download_with_progress(
+        download_path, // Temp file here?
         &nmod.url,
-        download_path,
         |delta, current, total| {
             if delta != 0 {
                 // Only emit a signal once every 100ms
@@ -85,7 +85,7 @@ async fn do_install(
         .unwrap();
 
     log::info!("Extracting Northstar...");
-    extract(nfile, game_path)?;
+    extract(nfile, game_path)?; // Temp file here?
 
     // Delete old copy
     log::info!("Delete temp folder again");

@@ -427,9 +427,10 @@ pub async fn fc_download_mod_and_install(
     );
 
     // Download the mod
-    let temp_file = match thermite::core::manage::download_file(download_url, &path) {
-        Ok(f) => TempFile::new(f, path.into()),
-        Err(e) => return Err(e.to_string()),
+    let mut temp_file = TempFile::new(std::fs::File::new(), (&path).into());
+    match thermite::core::manage::download(temp_file.file(), download_url){
+        Ok(_written_bytes) => (),
+        Err(err) => return Err(err.to_string()),
     };
 
     // Get Thunderstore mod author
@@ -441,7 +442,7 @@ pub async fn fc_download_mod_and_install(
         temp_file.file(),
         std::path::Path::new(&mods_directory),
     ) {
-        Ok(()) => (),
+        Ok(_) => (),
         Err(err) => {
             log::warn!("libthermite couldn't install mod {thunderstore_mod_string} due to {err:?}",);
             return Err(err.to_string());
