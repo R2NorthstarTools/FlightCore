@@ -121,7 +121,6 @@ fn main() {
             util::force_panic,
             northstar::install::find_game_install_location,
             get_flightcore_version_number,
-            get_northstar_version_number_caller,
             northstar::launch_arguments::get_launch_arguments,
             northstar::launch_arguments::set_launch_arguments,
             northstar::get_northstar_version_number,
