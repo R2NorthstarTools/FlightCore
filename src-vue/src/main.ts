@@ -16,6 +16,7 @@ import fr from "./i18n/lang/fr.json";
 import de from "./i18n/lang/de.json";
 import pl from "./i18n/lang/pl.json";
 import ru from "./i18n/lang/ru.json";
+import it from "./i18n/lang/it.json";
 
 
 const app = createApp(App);
@@ -25,7 +26,7 @@ export const i18n = createI18n({
     locale: 'en',
     fallbackLocale: 'en',
     messages: {
-        en, fr, de, pl, ru
+        en, fr, de, pl, ru, it
     }
 });
 app.use(i18n);

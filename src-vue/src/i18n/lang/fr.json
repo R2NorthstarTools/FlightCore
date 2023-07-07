@@ -33,7 +33,7 @@
         "servers": "serveurs",
         "unable_to_load_playercount": "Impossible de charger les statistiques",
         "northstar_running": "Northstar est en cours d'exécution :",
-        "origin_running": "Origin est en cours d'exécution :"
+        "ea_app_running": "EA App est en cours d'exécution :"
     },
     "mods": {
         "local": {

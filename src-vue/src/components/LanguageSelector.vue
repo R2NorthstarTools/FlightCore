@@ -42,6 +42,10 @@ export default defineComponent({
                 value: 'ru',
                 label: 'русский'
             },
+            {
+                value: 'it',
+                label: 'Italiano'
+            },
         ]
     }),
     mounted: async function () {

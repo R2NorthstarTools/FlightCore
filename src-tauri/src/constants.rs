@@ -26,9 +26,6 @@ pub const BLACKLISTED_MODS: [&str; 3] = [
     "ebkr-r2modman",
 ];
 
-// Titanfall2 game IDs on Origin/EA-App
-pub const TITANFALL2_ORIGIN_IDS: [&str; 2] = ["Origin.OFR.50.0001452", "Origin.OFR.50.0001456"];
-
 // Titanfall2 Steam App ID
 pub const TITANFALL2_STEAM_ID: &str = "1237970";
 
@@ -51,3 +48,7 @@ pub const FLIGHTCORE_REPO_NAME: &str = "R2NorthstarTools/FlightCore";
 
 // Northstar release repo name and org name on GitHub
 pub const NORTHSTAR_RELEASE_REPO_NAME: &str = "R2Northstar/Northstar";
+
+// URL to launcher commits API URL
+pub const NS_LAUNCHER_COMMITS_API_URL: &str =
+    "https://api.github.com/repos/R2Northstar/NorthstarLauncher/commits";

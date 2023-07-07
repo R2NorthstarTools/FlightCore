@@ -37,6 +37,10 @@ export default defineComponent({
         return {
             show_local_mods: true,
         }
+    },
+    mounted() {
+        // Fetch Thunderstore mods to eventually display outdated mods count
+        this.$store.commit('fetchThunderstoreMods');
     }
 });
 </script>

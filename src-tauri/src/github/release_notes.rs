@@ -19,7 +19,7 @@ pub struct FlightCoreVersion {
 }
 
 // Fetches repo release API and returns response as string
-pub async fn fetch_github_releases_api(url: &str) -> Result<String, String> {
+pub async fn fetch_github_releases_api(url: &str) -> Result<String, anyhow::Error> {
     log::info!("Fetching releases notes from GitHub API");
 
     let client = reqwest::Client::new();
@@ -27,11 +27,9 @@ pub async fn fetch_github_releases_api(url: &str) -> Result<String, String> {
         .get(url)
         .header(reqwest::header::USER_AGENT, APP_USER_AGENT)
         .send()
-        .await
-        .unwrap()
+        .await?
         .text()
-        .await
-        .unwrap();
+        .await?;
 
     Ok(res)
 }
@@ -42,7 +40,10 @@ pub async fn get_newest_flightcore_version() -> Result<FlightCoreVersion, String
     // Get newest version number from GitHub API
     log::info!("Checking GitHub API");
     let url = "https://api.github.com/repos/R2NorthstarTools/FlightCore/releases/latest";
-    let res = fetch_github_releases_api(url).await?;
+    let res = match fetch_github_releases_api(url).await {
+        Ok(res) => res,
+        Err(err) => return Err(format!("Failed getting newest FlightCore version: {err}")),
+    };
 
     let flightcore_version: FlightCoreVersion =
         serde_json::from_str(&res).expect("JSON was not well-formatted");
@@ -54,6 +55,7 @@ pub async fn get_newest_flightcore_version() -> Result<FlightCoreVersion, String
 /// Checks if installed FlightCore version is up-to-date
 /// false -> FlightCore install is up-to-date
 /// true  -> FlightCore install is outdated
+#[tauri::command]
 pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
     let newest_flightcore_release = get_newest_flightcore_version().await?;
 
@@ -94,10 +96,18 @@ pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
 #[tauri::command]
 pub async fn get_northstar_release_notes() -> Result<Vec<ReleaseInfo>, String> {
     let url = "https://api.github.com/repos/R2Northstar/Northstar/releases";
-    let res = fetch_github_releases_api(url).await?;
+    let res = match fetch_github_releases_api(url).await {
+        Ok(res) => res,
+        Err(err) => return Err(format!("Failed getting Northstar release notes: {err}")),
+    };
 
-    let release_info_vector: Vec<ReleaseInfo> =
-        serde_json::from_str(&res).expect("JSON was not well-formatted");
+    let release_info_vector: Vec<ReleaseInfo> = match serde_json::from_str(&res) {
+        Ok(res) => res,
+        Err(err) => {
+            log::warn!("{err}");
+            return Err("Could not fetch release notes. JSON was not well-formatted".to_string());
+        }
+    };
     log::info!("Done checking GitHub API");
 
     Ok(release_info_vector)

@@ -57,7 +57,7 @@ export default defineComponent({
                     <div class="fc_version__line fc_version__line__boolean"> {{ northstarIsRunning }}</div>
                 </div>
                 <div>
-                    <div class="fc_version__line">{{ $t('play.origin_running') }}</div>
+                    <div class="fc_version__line">{{ $t('play.ea_app_running') }}</div>
                     <div class="fc_version__line fc_version__line__boolean">{{ $store.state.origin_is_running }}</div>
                 </div>
             </div>

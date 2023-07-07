@@ -216,7 +216,9 @@ fn parse_installed_mods(game_install: &GameInstall) -> Result<Vec<NorthstarMod>,
 
     // Get list of folders in `mods` directory
     for path in paths {
+        log::info!("{path:?}");
         let my_path = path.unwrap().path();
+        log::info!("{my_path:?}");
 
         let md = std::fs::metadata(my_path.clone()).unwrap();
         if md.is_dir() {
@@ -292,7 +294,8 @@ pub fn get_installed_mods_and_properties(
     };
 
     let mut installed_mods = Vec::new();
-    let mapping = enabled_mods.as_object().unwrap();
+    let binding = serde_json::Map::new(); // Empty map in case treating as object fails
+    let mapping = enabled_mods.as_object().unwrap_or(&binding);
 
     // Use list of installed mods and set enabled based on `enabledmods.json`
     for mut current_mod in found_installed_mods {
@@ -340,10 +343,9 @@ async fn get_ns_mod_download_url(thunderstore_mod_string: &str) -> Result<String
 
 /// Returns a vector of modstrings containing the dependencies of a given mod
 async fn get_mod_dependencies(thunderstore_mod_string: &str) -> Result<Vec<String>, anyhow::Error> {
-    dbg!(thunderstore_mod_string);
+    log::info!("Attempting to get dependencies for: {thunderstore_mod_string}");
 
-    // TODO: This will crash the thread if not internet connection exist. `match` should be used instead
-    let index = thermite::api::get_package_index().unwrap().to_vec();
+    let index = thermite::api::get_package_index()?.to_vec();
 
     // String replace works but more care should be taken in the future
     let ts_mod_string_url = thunderstore_mod_string.replace('-', "/");
@@ -369,6 +371,7 @@ pub async fn fc_download_mod_and_install(
     game_install: &GameInstall,
     thunderstore_mod_string: &str,
 ) -> Result<(), String> {
+    log::info!("Attempting to install \"{thunderstore_mod_string}\" to {game_install:?}");
     // Get mods and download directories
     let download_directory = format!(
         "{}/___flightcore-temp-download-dir/",
@@ -385,7 +388,7 @@ pub async fn fc_download_mod_and_install(
         Ok(deps) => deps,
         Err(err) => return Err(err.to_string()),
     };
-    dbg!(deps.clone());
+    log::info!("Mod dependencies: {deps:?}");
 
     // Recursively install dependencies
     for dep in deps {
@@ -439,7 +442,10 @@ pub async fn fc_download_mod_and_install(
         std::path::Path::new(&mods_directory),
     ) {
         Ok(()) => (),
-        Err(err) => return Err(err.to_string()),
+        Err(err) => {
+            log::warn!("libthermite couldn't install mod {thunderstore_mod_string} due to {err:?}",);
+            return Err(err.to_string());
+        }
     };
 
     Ok(())

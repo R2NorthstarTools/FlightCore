@@ -1,7 +1,9 @@
 //! This module deals with handling things around Northstar such as
 //! - getting version number
+pub mod install;
 
-use crate::{check_origin_running, constants::CORE_MODS, get_host_os, GameInstall, InstallType};
+use crate::util::check_ea_app_or_origin_running;
+use crate::{constants::CORE_MODS, get_host_os, GameInstall, InstallType};
 use anyhow::anyhow;
 pub mod launch_arguments;
 
@@ -21,7 +23,8 @@ pub fn check_mod_version_number(path_to_mod_folder: &str) -> Result<String, anyh
 }
 
 /// Returns the current Northstar version number as a string
-pub fn get_northstar_version_number(game_path: &str) -> Result<String, anyhow::Error> {
+#[tauri::command]
+pub fn get_northstar_version_number(game_path: &str) -> Result<String, String> {
     log::info!("{}", game_path);
 
     // TODO:
@@ -32,7 +35,7 @@ pub fn get_northstar_version_number(game_path: &str) -> Result<String, anyhow::E
         CORE_MODS[0]
     )) {
         Ok(version_number) => version_number,
-        Err(err) => return Err(err),
+        Err(err) => return Err(err.to_string()),
     };
 
     for core_mod in CORE_MODS {
@@ -40,11 +43,11 @@ pub fn get_northstar_version_number(game_path: &str) -> Result<String, anyhow::E
             "{game_path}/{profile_folder}/mods/{core_mod}",
         )) {
             Ok(version_number) => version_number,
-            Err(err) => return Err(err),
+            Err(err) => return Err(err.to_string()),
         };
         if current_version_number != initial_version_number {
             // We have a version number mismatch
-            return Err(anyhow!("Found version number mismatch"));
+            return Err("Found version number mismatch".to_string());
         }
     }
     log::info!("All mods same version");
@@ -52,8 +55,10 @@ pub fn get_northstar_version_number(game_path: &str) -> Result<String, anyhow::E
     Ok(initial_version_number)
 }
 
+/// Launches Northstar
+#[tauri::command]
 pub fn launch_northstar(
-    game_install: &GameInstall,
+    game_install: GameInstall,
     bypass_checks: Option<bool>,
 ) -> Result<String, String> {
     dbg!(game_install.clone());
@@ -82,11 +87,11 @@ pub fn launch_northstar(
             return Err(anyhow!("Not all checks were met").to_string());
         }
 
-        // Require Origin to be running to launch Northstar
-        let origin_is_running = check_origin_running();
-        if !origin_is_running {
+        // Require EA App or Origin to be running to launch Northstar
+        let ea_app_is_running = check_ea_app_or_origin_running();
+        if !ea_app_is_running {
             return Err(
-                anyhow!("Origin not running, start Origin before launching Northstar").to_string(),
+                anyhow!("EA App not running, start EA App before launching Northstar").to_string(),
             );
         }
     }
