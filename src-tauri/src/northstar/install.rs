@@ -1,5 +1,6 @@
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
+use std::fs::File;
 use std::time::Duration;
 use std::{cell::RefCell, time::Instant};
 use ts_rs::TS;
@@ -48,8 +49,14 @@ async fn do_install(
     log::info!("Download path: {download_path}");
 
     let last_emit = RefCell::new(Instant::now()); // Keep track of the last time a signal was emitted
-    let nfile = thermite::core::manage::download_with_progress(
-        download_path, // Temp file here?
+    let mut nfile = File::options()
+        .read(true)
+        .write(true)
+        .truncate(true)
+        .create(true)
+        .open(download_path)?;
+    thermite::core::manage::download_with_progress(
+        &mut nfile, // Temp file here?
         &nmod.url,
         |delta, current, total| {
             if delta != 0 {
