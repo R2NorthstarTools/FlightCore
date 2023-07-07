@@ -1995,9 +1995,9 @@ checksum = "201de327520df007757c1f0adce6e827fe8562fbc28bfd9c15571c66ca1f5f79"
 
 [[package]]
 name = "libthermite"
-version = "0.5.3"
+version = "0.6.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0d8ef144beaf1e683b0ccb2e6e3e14d1e6a8f29e28be3c4fc93376539b28fe97"
+checksum = "27cd844bbc25676cd14fa9ad04cc40e0f3c4d5c66107ef3a99896db1f81324c0"
 dependencies = [
  "json5",
  "serde",
