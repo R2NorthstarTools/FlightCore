@@ -427,8 +427,17 @@ pub async fn fc_download_mod_and_install(
     );
 
     // Download the mod
-    let mut temp_file = TempFile::new(std::fs::File::new(), (&path).into());
-    match thermite::core::manage::download(temp_file.file(), download_url){
+    let temp_file = TempFile::new(
+        std::fs::File::options()
+            .read(true)
+            .write(true)
+            .truncate(true)
+            .create(true)
+            .open(&path)
+            .map_err(|e| e.to_string())?,
+        (&path).into(),
+    );
+    match thermite::core::manage::download(temp_file.file(), download_url) {
         Ok(_written_bytes) => (),
         Err(err) => return Err(err.to_string()),
     };
