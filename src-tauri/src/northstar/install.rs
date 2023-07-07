@@ -55,7 +55,7 @@ async fn do_install(
         .create(true)
         .open(download_path)?;
     thermite::core::manage::download_with_progress(
-        &mut nfile, // Temp file here?
+        &mut nfile,
         &nmod.url,
         |delta, current, total| {
             if delta != 0 {
@@ -91,7 +91,7 @@ async fn do_install(
         .unwrap();
 
     log::info!("Extracting Northstar...");
-    extract(nfile, game_path)?; // Temp file here?
+    extract(nfile, game_path)?;
 
     // Delete old copy
     log::info!("Delete temp folder again");
