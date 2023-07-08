@@ -1,7 +1,7 @@
 <template>
     <div>
         <div :class="containerClasses">
-            <div class="fc-launch_arg_tag_container" 
+            <div class="fc-launch_arg_tag_container"
                     v-for="(argument, index) in arguments">
                 <!-- Official arguments -->
                 <el-tooltip
@@ -120,7 +120,7 @@ export default defineComponent({
     }),
     methods: {
         onLanguageSelection( lang: string ) {
-            this.createNewArgument( `-language="${lang}"` );
+            this.createNewArgument( `-language ${lang}` );
             this.langArgumentValue = '';
         },
         createNewArgument(arg: string) {
