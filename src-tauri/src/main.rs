@@ -584,6 +584,8 @@ fn launch_northstar_steam(
     }
 }
 
+/// On Linux attempts to install NorthstarProton
+/// On Windows simply returns an error message
 #[tauri::command]
 async fn install_northstar_proton_wrapper() -> Result<(), String> {
     #[cfg(target_os = "linux")]
