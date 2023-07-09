@@ -19,6 +19,18 @@ pub fn get_launch_arguments(game_path: &str) -> Result<Vec<String>, ()> {
         .split_whitespace()
         .map(|arg| arg.to_string())
         .collect::<Vec<_>>();
+
+    // associate language argument
+    let index = arguments.iter().position(|r| r == "-language").unwrap_or_else(|| { usize::MAX });
+    if index != usize::MAX {
+        let value_index = index + 1;
+        if value_index > arguments.len()-1 {
+            println!("-language argument has no associated value.");
+        } else {
+            println!("{}", value_index);
+        }
+    }
+
     arguments.sort_unstable();
     arguments.dedup();
     Ok(arguments)
