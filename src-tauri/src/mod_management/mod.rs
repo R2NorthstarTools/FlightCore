@@ -294,7 +294,8 @@ pub fn get_installed_mods_and_properties(
     };
 
     let mut installed_mods = Vec::new();
-    let mapping = enabled_mods.as_object().unwrap();
+    let binding = serde_json::Map::new(); // Empty map in case treating as object fails
+    let mapping = enabled_mods.as_object().unwrap_or(&binding);
 
     // Use list of installed mods and set enabled based on `enabledmods.json`
     for mut current_mod in found_installed_mods {
@@ -426,9 +427,19 @@ pub async fn fc_download_mod_and_install(
     );
 
     // Download the mod
-    let temp_file = match thermite::core::manage::download_file(download_url, &path) {
-        Ok(f) => TempFile::new(f, path.into()),
-        Err(e) => return Err(e.to_string()),
+    let temp_file = TempFile::new(
+        std::fs::File::options()
+            .read(true)
+            .write(true)
+            .truncate(true)
+            .create(true)
+            .open(&path)
+            .map_err(|e| e.to_string())?,
+        (&path).into(),
+    );
+    match thermite::core::manage::download(temp_file.file(), download_url) {
+        Ok(_written_bytes) => (),
+        Err(err) => return Err(err.to_string()),
     };
 
     // Get Thunderstore mod author
@@ -440,7 +451,7 @@ pub async fn fc_download_mod_and_install(
         temp_file.file(),
         std::path::Path::new(&mods_directory),
     ) {
-        Ok(()) => (),
+        Ok(_) => (),
         Err(err) => {
             log::warn!("libthermite couldn't install mod {thunderstore_mod_string} due to {err:?}",);
             return Err(err.to_string());

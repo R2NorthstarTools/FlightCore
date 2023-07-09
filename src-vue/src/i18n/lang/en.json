@@ -106,6 +106,9 @@
         "enable_test_channels": "Enable testing release channels",
         "dev_mode_enabled_title": "Watch out!",
         "dev_mode_enabled_text": "Developer mode enabled.",
+        "show_deprecated_mods": "Show deprecated Thunderstore mods",
+        "show_deprecated_mods_desc1": "This allows you to see deprecated mods in the online mods collection.",
+        "show_deprecated_mods_desc2": "Watch out, such mods are usually deprecated for a good reason.",
 
         "repair": {
             "title": "Repair",
@@ -116,6 +119,8 @@
                 "warning": "This window contains various functionality to repair common issues with Northstar and FlightCore.",
                 "disable_all_but_core": "Disable all but core mods",
                 "disable_all_but_core_success": "Disabled all mods but core",
+                "disable_modsettings": "Disable ModSettings mod",
+                "disable_modsettings_success": "Disabled ModSettings mod",
                 "force_reinstall_ns": "Force reinstall Northstar",
                 "force_delete_temp_dl": "Force delete temp download folder",
                 "delete_persistent_store": "Delete FlightCore persistent store",

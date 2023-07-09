@@ -18,7 +18,7 @@
                         layout="prev, pager, next"
                         :page-size="modsPerPage"
                         :total="modsList.length"
-                        @current-change="(e: number) => currentPageIndex = e - 1"
+                        @update:current-page="onPaginationChange"
                     />
                 </div>
 
@@ -36,7 +36,8 @@
                         layout="prev, pager, next"
                         :page-size="modsPerPage"
                         :total="modsList.length"
-                        @current-change="onBottomPaginationChange"
+                        @update:current-page="onPaginationChange"
+                        @current-change="scrollTop"
                     />
                 </div>
             </div>
@@ -52,6 +53,8 @@ import { ElScrollbar, ScrollbarInstance } from "element-plus";
 import { SortOptions } from "../../utils/SortOptions.d";
 import { ThunderstoreModVersion } from "../../../../src-tauri/bindings/ThunderstoreModVersion";
 import { fuzzy_filter } from "../../utils/filter";
+import { isThunderstoreModOutdated } from "../../utils/thunderstore/version";
+
 
 export default defineComponent({
     name: "ThunderstoreModsView",
@@ -60,6 +63,9 @@ export default defineComponent({
         this.$store.commit('fetchThunderstoreMods');
     },
     computed: {
+        showDeprecatedMods(): boolean {
+            return this.$store.state.search.showDeprecatedMods;
+        },
         searchValue(): string {
             return this.$store.getters.searchWords;
         },
@@ -86,20 +92,25 @@ export default defineComponent({
                         mod.versions[0].description.toLowerCase().includes(this.searchValue)
                     );
 
+                // Filter out deprecated mods
+                const showDeprecated = !mod.is_deprecated || this.showDeprecatedMods;
+
                 // Filter with categories (only if some categories are selected)
                 const categoriesMatch: boolean = this.selectedCategories.length === 0
                     || mod.categories
                         .filter((category: string) => this.selectedCategories.includes(category))
                         .length === this.selectedCategories.length;
 
-                return inputMatches && categoriesMatch;
+                return inputMatches && categoriesMatch && showDeprecated;
             });
         },
         modsList(): ThunderstoreMod[] {
             // Use filtered mods if user is searching, vanilla list otherwise.
             const mods: ThunderstoreMod[] = this.searchValue.length !== 0 || this.selectedCategories.length !== 0
                 ? this.filteredMods
-                : this.mods;
+                : this.showDeprecatedMods
+                    ? this.mods
+                    : this.mods.filter(mod => !mod.is_deprecated);
 
             // Sort mods regarding user selected algorithm.
             let compare: (a: ThunderstoreMod, b: ThunderstoreMod) => number;
@@ -134,7 +145,18 @@ export default defineComponent({
                     throw new Error('Unknown mod sorting.');
             }
 
-            return mods.sort(compare);
+            // Always display outdated mods first
+            // (regardless of actual sort order)
+            const sortedMods = mods.sort(compare);
+            return sortedMods.sort((a, b) => {
+                if (isThunderstoreModOutdated(a)) {
+                    return -1;
+                } else if (isThunderstoreModOutdated(b)) {
+                    return 1;
+                } else {
+                    return compare(a, b);
+                }
+            })
         },
         modsPerPage(): number {
             return parseInt(this.$store.state.mods_per_page);
@@ -162,9 +184,13 @@ export default defineComponent({
         /**
          * This updates current pagination and scrolls view to the top.
          */
-        onBottomPaginationChange(index: number) {
+        onPaginationChange(index: number) {
             this.currentPageIndex = index - 1;
-            (this.$refs.scrollbar as ScrollbarInstance).scrollTo({ top: 0, behavior: 'smooth' });
+        },
+        scrollTop(index: number) {
+            setTimeout(() => {
+                (this.$refs.scrollbar as ScrollbarInstance).scrollTo({ top: 0, behavior: 'smooth' });
+            }, 100)
         }
     },
     watch: {

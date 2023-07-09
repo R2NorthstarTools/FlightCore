@@ -17,21 +17,11 @@ use winapi::um::winuser::{MessageBoxW, MB_ICONERROR, MB_OK, MB_USERICON};
 use crate::constants::REFRESH_DELAY;
 
 mod development;
-
 mod github;
-
-mod repair_and_verify;
-use repair_and_verify::clean_up_download_folder;
-
 mod mod_management;
-use mod_management::fc_download_mod_and_install;
-
 mod northstar;
-use northstar::get_northstar_version_number;
-
+mod repair_and_verify;
 mod thunderstore;
-use thunderstore::query_thunderstore_packages_api;
-
 mod util;
 
 use semver::Version;
@@ -131,7 +121,7 @@ fn main() {
             util::force_panic,
             northstar::install::find_game_install_location,
             get_flightcore_version_number,
-            get_northstar_version_number,
+            northstar::get_northstar_version_number,
             check_is_northstar_outdated,
             verify_install_location,
             get_host_os,
@@ -158,7 +148,7 @@ fn main() {
             uninstall_northstar_proton_wrapper,
             get_local_northstar_proton_wrapper_version,
             open_repair_window,
-            query_thunderstore_packages_api,
+            thunderstore::query_thunderstore_packages_api,
             github::get_list_of_tags,
             github::compare_tags,
             github::pull_requests::get_pull_requests_wrapper,
@@ -276,7 +266,7 @@ async fn check_is_northstar_outdated(
         .expect("Couldn't find Northstar on thunderstore???");
     // .ok_or_else(|| anyhow!("Couldn't find Northstar on thunderstore???"))?;
 
-    let version_number = match get_northstar_version_number(&game_path) {
+    let version_number = match northstar::get_northstar_version_number(&game_path) {
         Ok(version_number) => version_number,
         Err(err) => {
             log::warn!("{}", err);
@@ -365,14 +355,15 @@ async fn install_mod_caller(
     game_install: GameInstall,
     thunderstore_mod_string: String,
 ) -> Result<(), String> {
-    match fc_download_mod_and_install(&game_install, &thunderstore_mod_string).await {
+    match mod_management::fc_download_mod_and_install(&game_install, &thunderstore_mod_string).await
+    {
         Ok(()) => (),
         Err(err) => {
             log::warn!("{err}");
             return Err(err);
         }
     };
-    match clean_up_download_folder(&game_install, false) {
+    match repair_and_verify::clean_up_download_folder(&game_install, false) {
         Ok(()) => Ok(()),
         Err(err) => {
             log::info!("Failed to delete download folder due to {}", err);
@@ -389,7 +380,7 @@ async fn clean_up_download_folder_caller(
     game_install: GameInstall,
     force: bool,
 ) -> Result<(), String> {
-    match clean_up_download_folder(&game_install, force) {
+    match repair_and_verify::clean_up_download_folder(&game_install, force) {
         Ok(()) => Ok(()),
         Err(err) => Err(err.to_string()),
     }
@@ -464,10 +455,6 @@ async fn get_available_northstar_versions() -> Result<Vec<NorthstarThunderstoreR
 
     Ok(releases)
 }
-
-// The remaining below was originally in `lib.rs`.
-// As this was causing issues it was moved into `main.rs` until being later moved into dedicated modules
-use std::{fs, path::Path};
 
 use anyhow::Result;
 
@@ -591,45 +578,10 @@ fn launch_northstar_steam(
         return Err("Couldn't access Titanfall2 directory".to_string());
     }
 
-    let run_northstar = "run_northstar.txt";
-    let run_northstar_bak = "run_northstar.txt.bak";
-
-    if Path::new(run_northstar).exists() {
-        // rename should ovewrite existing files
-        fs::rename(run_northstar, run_northstar_bak).unwrap();
-    }
-
-    // Passing arguments gives users a prompt, so we use run_northstar.txt
-    fs::write(run_northstar, b"1").unwrap();
-
-    let retval = match open::that(format!("steam://run/{}/", TITANFALL2_STEAM_ID)) {
+    match open::that(format!("steam://run/{}//--northstar/", TITANFALL2_STEAM_ID)) {
         Ok(()) => Ok("Started game".to_string()),
         Err(_err) => Err("Failed to launch Titanfall 2 via Steam".to_string()),
-    };
-
-    let is_err = retval.is_err();
-
-    // Handle the rest in the backround
-    tauri::async_runtime::spawn(async move {
-        // Starting the EA app and Titanfall might take a good minute or three
-        let mut wait_countdown = 60 * 3;
-        while wait_countdown > 0 && !util::check_northstar_running() && !is_err {
-            sleep(Duration::from_millis(1000)).await;
-            wait_countdown -= 1;
-        }
-
-        // Northstar may be running, but it may not have loaded the file yet
-        sleep(Duration::from_millis(2000)).await;
-
-        // intentionally ignore Result
-        let _ = fs::remove_file(run_northstar);
-
-        if Path::new(run_northstar_bak).exists() {
-            fs::rename(run_northstar_bak, run_northstar).unwrap();
-        }
-    });
-
-    retval
+    }
 }
 
 #[tauri::command]
