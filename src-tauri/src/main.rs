@@ -605,7 +605,7 @@ async fn uninstall_northstar_proton_wrapper() -> Result<(), String> {
 }
 
 #[tauri::command]
-fn get_local_northstar_proton_wrapper_version() -> Result<String, String> {
+async fn get_local_northstar_proton_wrapper_version() -> Result<String, String> {
     #[cfg(target_os = "linux")]
     return linux::get_local_ns_proton_version();
 
