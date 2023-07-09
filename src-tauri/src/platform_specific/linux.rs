@@ -1,7 +1,6 @@
 // Linux specific code
 
 use regex::Regex;
-use std::env;
 use std::process::Command;
 
 fn get_proton_dir() -> Option<String> {
@@ -17,12 +16,13 @@ pub fn install_ns_proton() -> Result<(), thermite::prelude::ThermiteError> {
     // Get latest NorthstarProton release
     let latest = thermite::core::latest_release()?;
 
-    let temp_dir = env::temp_dir();
+    let temp_dir = std::env::temp_dir();
     let path = format!("{}/nsproton-{}.zip", temp_dir.display(), latest);
+    let archive = std::fs::File::open(path.clone()).unwrap();
 
     // Download the latest Proton release
     log::info!("NorthstarProton download started");
-    let archive = thermite::core::download_ns_proton(latest, path.clone())?;
+    thermite::core::download_ns_proton(latest, &archive)?;
     log::info!("NorthstarProton download finished");
 
     let compat_dir = get_proton_dir().unwrap();
@@ -33,6 +33,7 @@ pub fn install_ns_proton() -> Result<(), thermite::prelude::ThermiteError> {
     thermite::core::install_ns_proton(&archive, compat_dir)?;
     log::info!("NorthstarProton installation finished");
 
+    drop(archive);
     std::fs::remove_file(path)?;
 
     Ok(())
