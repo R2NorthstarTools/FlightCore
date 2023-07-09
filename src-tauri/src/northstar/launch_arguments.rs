@@ -1,3 +1,5 @@
+const SUPPORTED_LANGUAGES: [&str; 10] = ["english", "french", "german", "italian", "japanese", "mspanish", "portuguese", "russian", "spanish", "tchinese"];
+
 #[tauri::command]
 /// This method loads arguments from the ns_startup_args.txt Northstar launch
 /// arguments files, filtering out eventual argument duplicates.
@@ -27,7 +29,18 @@ pub fn get_launch_arguments(game_path: &str) -> Result<Vec<String>, ()> {
         if value_index > arguments.len()-1 {
             println!("-language argument has no associated value.");
         } else {
-            println!("{}", value_index);
+            // Check if argument is a valid language value
+            let value = arguments.get(value_index).unwrap();
+            let language_value_index = SUPPORTED_LANGUAGES.iter().position(|s| s == value).unwrap_or_else(|| { usize::MAX });
+            if language_value_index == usize::MAX {
+                println!("-language argument is not among supported languages.");
+            } else {
+                // Join language key and value into a single argument
+                let language_key = arguments.remove(index);
+                let language_value = arguments.remove(index);
+                let new_argument = format!("{language_key} {language_value}");
+                arguments.insert(index, new_argument);
+            }
         }
     }
 
