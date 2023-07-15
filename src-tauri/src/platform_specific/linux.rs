@@ -18,7 +18,7 @@ pub fn install_ns_proton() -> Result<(), thermite::prelude::ThermiteError> {
 
     let temp_dir = std::env::temp_dir();
     let path = format!("{}/nsproton-{}.tar.gz", temp_dir.display(), latest);
-    let archive = std::fs::File::open(path.clone()).unwrap();
+    let archive = std::fs::File::create(path.clone())?;
 
     // Download the latest Proton release
     log::info!("NorthstarProton download started");
