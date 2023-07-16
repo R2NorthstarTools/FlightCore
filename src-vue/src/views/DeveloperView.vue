@@ -321,6 +321,7 @@ export default defineComponent({
                 });
         },
         async installNSProton() {
+            showNotification(`Started NSProton install`);
             await invoke("install_northstar_proton_wrapper")
                 .then((message) => { showNotification(`Done`); })
                 .catch((error) => { showNotification(`Error`, error, "error"); })
