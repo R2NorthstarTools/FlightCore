@@ -477,6 +477,20 @@ pub struct GameInstall {
     pub install_type: InstallType,
 }
 
+/// Describes whether a mod
+/// - is a core mod
+/// - follows the old legacy format
+/// - was manually installe
+/// - or is part of the newer package system
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
+pub enum LegacyOrPackage {
+    CORE,
+    LEGACY,
+    MANUAL,
+    PACKAGE,
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
 #[ts(export)]
 pub struct NorthstarMod {
@@ -485,6 +499,7 @@ pub struct NorthstarMod {
     pub thunderstore_mod_string: Option<String>,
     pub enabled: bool,
     pub directory: String,
+    // pub install_type: LegacyOrPackage,
 }
 
 // I intend to add more linux related stuff to check here, so making a func
