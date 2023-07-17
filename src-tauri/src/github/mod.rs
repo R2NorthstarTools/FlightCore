@@ -31,8 +31,8 @@ pub struct TagWrapper {
 }
 
 #[derive(Debug, Deserialize)]
-struct CommitInfo {
-    sha: String,
+pub struct CommitInfo {
+    pub sha: String,
     commit: Commit,
     author: Option<CommitAuthor>,
 }
@@ -297,8 +297,7 @@ fn turn_pr_number_into_link(input: &str, repo: &str) -> String {
     // Extract `Mods/Launcher` from repo title
     let last_line = repo
         .split('/')
-        .rev()
-        .next()
+        .next_back()
         .unwrap()
         .trim_start_matches("Northstar");
     // Extract PR number

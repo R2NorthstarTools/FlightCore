@@ -174,7 +174,7 @@ export const store = createStore<FlightCoreStore>({
             } as GameInstall;
 
             if (no_checks) {
-                await invoke("launch_northstar_caller", { gameInstall: game_install, bypassChecks: no_checks })
+                await invoke("launch_northstar", { gameInstall: game_install, bypassChecks: no_checks })
                     .then((message) => {
                         console.log("Launched with bypassed checks");
                         console.log(message);
@@ -224,7 +224,7 @@ export const store = createStore<FlightCoreStore>({
 
                 // Game is ready to play.
                 case NorthstarState.READY_TO_PLAY:
-                    await invoke("launch_northstar_caller", { gameInstall: game_install })
+                    await invoke("launch_northstar", { gameInstall: game_install })
                         .then((message) => {
                             console.log(message);
                             // NorthstarState.RUNNING
@@ -246,7 +246,7 @@ export const store = createStore<FlightCoreStore>({
                 install_type: state.install_type
             } as GameInstall;
 
-            await invoke("launch_northstar_steam_caller", { gameInstall: game_install, bypassChecks: no_checks })
+            await invoke("launch_northstar_steam", { gameInstall: game_install, bypassChecks: no_checks })
                 .then((message) => {
                     showNotification('Success');
                 })
@@ -272,6 +272,7 @@ export const store = createStore<FlightCoreStore>({
                     mods = message;
                 })
                 .catch((error) => {
+                    showErrorNotification(error);
                     console.error(error);
                     return;
                 });
@@ -402,7 +403,7 @@ async function _initializeApp(state: any) {
     }
 
     if (result === undefined) { // No (valid) value found in persistent store
-        result = await invoke("find_game_install_location_caller")
+        result = await invoke("find_game_install_location")
             .catch((err) => {
                 // Gamepath not found or other error
                 console.error(err);
@@ -444,7 +445,7 @@ async function _initializeApp(state: any) {
 
 async function _checkForFlightCoreUpdates(state: FlightCoreStore) {
     // Check if FlightCore up-to-date
-    let flightcore_is_outdated = await invoke("check_is_flightcore_outdated_caller") as boolean;
+    let flightcore_is_outdated = await invoke("check_is_flightcore_outdated") as boolean;
 
     if (flightcore_is_outdated) {
         let newest_flightcore_version = await invoke("get_newest_flightcore_version") as FlightCoreVersion;
@@ -462,7 +463,7 @@ async function _checkForFlightCoreUpdates(state: FlightCoreStore) {
  * Those events include Origin and Northstar running state.
  */
 function _initializeListeners(state: any) {
-    listen("origin-running-ping", function (evt: TauriEvent<any>) {
+    listen("ea-app-running-ping", function (evt: TauriEvent<any>) {
         state.origin_is_running = evt.payload as boolean;
     });
 
@@ -481,7 +482,7 @@ function _initializeListeners(state: any) {
  * state, for it to be displayed in UI.
  */
 async function _get_northstar_version_number(state: any) {
-    await invoke("get_northstar_version_number_caller", { gamePath: state.game_path })
+    await invoke("get_northstar_version_number", { gamePath: state.game_path })
         .then((message) => {
             let northstar_version_number: string = message as string;
             state.installed_northstar_version = northstar_version_number;

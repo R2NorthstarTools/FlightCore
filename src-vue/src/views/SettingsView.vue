@@ -40,6 +40,18 @@
                     </el-input>
                 </div>
 
+                <div class="fc_parameter__panel">
+                    <h3>{{ $t('settings.show_deprecated_mods') }}</h3>
+                    <h6>
+                        {{ $t('settings.show_deprecated_mods_desc1') }}<br/>
+                        {{ $t('settings.show_deprecated_mods_desc2') }}
+                    </h6>
+                    <span>
+                        {{ $t('settings.show_deprecated_mods') }}
+                        <el-switch v-model="showDeprecatedMods"></el-switch>
+                    </span>
+                </div>
+
                 <!-- Interface localization -->
                 <div class="fc_parameter__panel">
                     <h3>{{ $t('settings.language') }}</h3>
@@ -96,6 +108,14 @@ export default defineComponent({
         }
     },
     computed: {
+        showDeprecatedMods: {
+            get(): boolean {
+                return this.$store.state.search.showDeprecatedMods;
+            },
+            set(value: boolean) {
+                this.$store.state.search.showDeprecatedMods = value;
+            }
+        },
         flightcoreVersion(): string {
             return this.$store.state.flightcore_version;
         },

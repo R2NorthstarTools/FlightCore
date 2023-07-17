@@ -80,6 +80,7 @@
 import { defineComponent } from 'vue'
 import { PullRequestType } from '../../../src-tauri/bindings/PullRequestType';
 import { PullsApiResponseElement } from '../../../src-tauri/bindings/PullsApiResponseElement';
+import { fuzzy_filter } from "../utils/filter";
 
 export default defineComponent({
     name: 'PullRequestsSelector',
@@ -101,10 +102,8 @@ export default defineComponent({
             }
 
             return this.pull_requests_launcher.filter(pr =>
-                // Check PR id
-                pr.number.toString().indexOf(this.launcherSearch) !== -1
-                // Check PR title
-                || pr.title.toLowerCase().indexOf(this.launcherSearch.toLowerCase()) !== -1);
+                // Check PR id and title
+                fuzzy_filter(pr.number.toString(), this.launcherSearch) || fuzzy_filter(pr.title, this.launcherSearch));
         },
         filtered_mods_pull_requests(): PullsApiResponseElement[] {
             if (this.modsSearch.length === 0) {
@@ -112,10 +111,8 @@ export default defineComponent({
             }
 
             return this.pull_requests_mods.filter(pr =>
-                // Check PR id
-                pr.number.toString().indexOf(this.modsSearch) !== -1
-                // Check PR title
-                || pr.title.toLowerCase().indexOf(this.modsSearch.toLowerCase()) !== -1);
+                // Check PR id and title
+                fuzzy_filter(pr.number.toString(), this.modsSearch) || fuzzy_filter(pr.title, this.modsSearch));
         },
     },
     methods: {

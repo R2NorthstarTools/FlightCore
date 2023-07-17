@@ -74,7 +74,7 @@ pub async fn get_pull_requests(url: String) -> Result<Vec<PullsApiResponseElemen
 
         let json_response = match fetch_github_releases_api(&paginated_url).await {
             Ok(result) => result,
-            Err(err) => return Err(err),
+            Err(err) => return Err(format!("Failed fetching GitHub API {err}")),
         };
 
         let pulls_response: Vec<PullsApiResponseElement> =
@@ -127,7 +127,7 @@ pub async fn check_github_api(url: &str) -> Result<serde_json::Value, Box<dyn st
 }
 
 /// Downloads a file from given URL into an array in memory
-async fn download_zip_into_memory(download_url: String) -> Result<Vec<u8>, anyhow::Error> {
+pub async fn download_zip_into_memory(download_url: String) -> Result<Vec<u8>, anyhow::Error> {
     let client = reqwest::Client::builder()
         .user_agent(APP_USER_AGENT)
         .build()?;

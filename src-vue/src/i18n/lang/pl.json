@@ -32,7 +32,7 @@
         "players": "gracze",
         "servers": "serwery",
         "northstar_running": "Northstar jest uruchomiony:",
-        "origin_running": "Origin jest uruchomiony:",
+        "ea_app_running": "EA App jest uruchomiony:",
         "unable_to_load_playercount": "Nie można załadować liczby graczy"
     },
     "mods": {

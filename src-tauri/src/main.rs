@@ -16,21 +16,12 @@ use winapi::um::winuser::{MessageBoxW, MB_ICONERROR, MB_OK, MB_USERICON};
 
 use crate::constants::REFRESH_DELAY;
 
+mod development;
 mod github;
-use github::release_notes::check_is_flightcore_outdated;
-
-mod repair_and_verify;
-use repair_and_verify::clean_up_download_folder;
-
 mod mod_management;
-use mod_management::fc_download_mod_and_install;
-
 mod northstar;
-use northstar::get_northstar_version_number;
-
+mod repair_and_verify;
 mod thunderstore;
-use thunderstore::query_thunderstore_packages_api;
-
 mod util;
 
 use semver::Version;
@@ -92,7 +83,10 @@ fn main() {
                 loop {
                     sleep(Duration::from_millis(2000)).await;
                     app_handle
-                        .emit_all("origin-running-ping", util::check_origin_running())
+                        .emit_all(
+                            "ea-app-running-ping",
+                            util::check_ea_app_or_origin_running(),
+                        )
                         .unwrap();
                 }
             });
@@ -125,17 +119,17 @@ fn main() {
         .manage(Counter(Default::default()))
         .invoke_handler(tauri::generate_handler![
             util::force_panic,
-            find_game_install_location_caller,
+            northstar::install::find_game_install_location,
             get_flightcore_version_number,
-            get_northstar_version_number_caller,
+            northstar::get_northstar_version_number,
             check_is_northstar_outdated,
             verify_install_location,
-            get_host_os_caller,
+            get_host_os,
             install_northstar_caller,
-            update_northstar_caller,
-            launch_northstar_caller,
-            launch_northstar_steam_caller,
-            check_is_flightcore_outdated_caller,
+            update_northstar,
+            northstar::launch_northstar,
+            northstar::launch_northstar_steam,
+            github::release_notes::check_is_flightcore_outdated,
             repair_and_verify::get_log_list,
             repair_and_verify::verify_game_files,
             mod_management::set_mod_enabled_status,
@@ -151,7 +145,7 @@ fn main() {
             util::get_server_player_count,
             mod_management::delete_thunderstore_mod,
             open_repair_window,
-            query_thunderstore_packages_api,
+            thunderstore::query_thunderstore_packages_api,
             github::get_list_of_tags,
             github::compare_tags,
             github::pull_requests::get_pull_requests_wrapper,
@@ -159,6 +153,7 @@ fn main() {
             github::pull_requests::apply_mods_pr,
             github::pull_requests::get_launcher_download_link,
             close_application,
+            development::install_git_main,
             get_available_northstar_versions,
         ])
         .run(tauri::generate_context!())
@@ -200,12 +195,6 @@ fn main() {
     };
 }
 
-/// Wrapper for `find_game_install_location` as tauri doesn't allow passing `Result<>` types to front-end
-#[tauri::command]
-async fn find_game_install_location_caller() -> Result<GameInstall, String> {
-    northstar::install::find_game_install_location()
-}
-
 /// Returns true if linux compatible
 #[tauri::command]
 async fn linux_checks() -> Result<(), String> {
@@ -233,14 +222,6 @@ async fn get_flightcore_version_number() -> String {
     } else {
         // Debugging disabled
         format!("v{}", version)
-    }
-}
-
-#[tauri::command]
-async fn get_northstar_version_number_caller(game_path: String) -> Result<String, String> {
-    match get_northstar_version_number(&game_path) {
-        Ok(version_number) => Ok(version_number),
-        Err(err) => Err(err.to_string()),
     }
 }
 
@@ -272,19 +253,22 @@ async fn check_is_northstar_outdated(
         None => "Northstar".to_string(),
     };
 
-    let index = thermite::api::get_package_index().unwrap().to_vec();
+    let index = match thermite::api::get_package_index() {
+        Ok(res) => res.to_vec(),
+        Err(err) => return Err(format!("Couldn't check if Northstar up-to-date: {err}")),
+    };
     let nmod = index
         .iter()
         .find(|f| f.name.to_lowercase() == northstar_package_name.to_lowercase())
         .expect("Couldn't find Northstar on thunderstore???");
     // .ok_or_else(|| anyhow!("Couldn't find Northstar on thunderstore???"))?;
 
-    let version_number = match get_northstar_version_number(&game_path) {
+    let version_number = match northstar::get_northstar_version_number(&game_path) {
         Ok(version_number) => version_number,
         Err(err) => {
             log::warn!("{}", err);
             // If we fail to get new version just assume we are up-to-date
-            return Err(err.to_string());
+            return Err(err);
         }
     };
 
@@ -300,14 +284,6 @@ async fn check_is_northstar_outdated(
     }
 }
 
-/// Checks if installed FlightCore version is up-to-date
-/// false -> FlightCore install is up-to-date
-/// true  -> FlightCore install is outdated
-#[tauri::command]
-async fn check_is_flightcore_outdated_caller() -> Result<bool, String> {
-    check_is_flightcore_outdated().await
-}
-
 /// Checks if is valid Titanfall2 install based on certain conditions
 #[tauri::command]
 async fn verify_install_location(game_path: String) -> bool {
@@ -320,12 +296,6 @@ async fn verify_install_location(game_path: String) -> bool {
     }
 }
 
-/// Returns identifier of host OS FlightCore is running on
-#[tauri::command]
-async fn get_host_os_caller() -> String {
-    get_host_os()
-}
-
 /// Installs Northstar to the given path
 #[tauri::command]
 async fn install_northstar_caller(
@@ -334,7 +304,7 @@ async fn install_northstar_caller(
     northstar_package_name: Option<String>,
     version_number: Option<String>,
 ) -> Result<bool, String> {
-    log::info!("Running");
+    log::info!("Running Northstar install");
 
     // Get Northstar package name (`Northstar` vs `NorthstarReleaseCandidate`)
     let northstar_package_name = northstar_package_name
@@ -365,7 +335,7 @@ async fn install_northstar_caller(
 
 /// Update Northstar install in the given path
 #[tauri::command]
-async fn update_northstar_caller(
+async fn update_northstar(
     window: tauri::Window,
     game_path: String,
     northstar_package_name: Option<String>,
@@ -376,32 +346,21 @@ async fn update_northstar_caller(
     install_northstar_caller(window, game_path, northstar_package_name, None).await
 }
 
-/// Launches Northstar
-#[tauri::command]
-async fn launch_northstar_caller(
-    game_install: GameInstall,
-    bypass_checks: Option<bool>,
-) -> Result<String, String> {
-    northstar::launch_northstar(&game_install, bypass_checks)
-}
-
-/// Launches Northstar
-#[tauri::command]
-async fn launch_northstar_steam_caller(
-    game_install: GameInstall,
-    bypass_checks: Option<bool>,
-) -> Result<String, String> {
-    launch_northstar_steam(&game_install, bypass_checks)
-}
-
 /// Installs the specified mod
 #[tauri::command]
 async fn install_mod_caller(
     game_install: GameInstall,
     thunderstore_mod_string: String,
 ) -> Result<(), String> {
-    fc_download_mod_and_install(&game_install, &thunderstore_mod_string).await?;
-    match clean_up_download_folder(&game_install, false) {
+    match mod_management::fc_download_mod_and_install(&game_install, &thunderstore_mod_string).await
+    {
+        Ok(()) => (),
+        Err(err) => {
+            log::warn!("{err}");
+            return Err(err);
+        }
+    };
+    match repair_and_verify::clean_up_download_folder(&game_install, false) {
         Ok(()) => Ok(()),
         Err(err) => {
             log::info!("Failed to delete download folder due to {}", err);
@@ -418,7 +377,7 @@ async fn clean_up_download_folder_caller(
     game_install: GameInstall,
     force: bool,
 ) -> Result<(), String> {
-    match clean_up_download_folder(&game_install, force) {
+    match repair_and_verify::clean_up_download_folder(&game_install, force) {
         Ok(()) => Ok(()),
         Err(err) => Err(err.to_string()),
     }
@@ -494,10 +453,6 @@ async fn get_available_northstar_versions() -> Result<Vec<NorthstarThunderstoreR
     Ok(releases)
 }
 
-// The remaining below was originally in `lib.rs`.
-// As this was causing issues it was moved into `main.rs` until being later moved into dedicated modules
-use std::{fs, path::Path};
-
 use anyhow::Result;
 
 pub mod constants;
@@ -505,8 +460,6 @@ mod platform_specific;
 
 #[cfg(target_os = "linux")]
 use platform_specific::linux;
-
-use crate::constants::TITANFALL2_STEAM_ID;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum InstallType {
@@ -568,93 +521,7 @@ pub fn check_is_valid_game_path(game_install_path: &str) -> Result<(), String> {
 }
 
 /// Returns identifier of host OS FlightCore is running on
-pub fn get_host_os() -> String {
+#[tauri::command]
+fn get_host_os() -> String {
     env::consts::OS.to_string()
-}
-
-/// Prepare Northstar and Launch through Steam using the Browser Protocol
-pub fn launch_northstar_steam(
-    game_install: &GameInstall,
-    _bypass_checks: Option<bool>,
-) -> Result<String, String> {
-    if !matches!(game_install.install_type, InstallType::STEAM) {
-        return Err("Titanfall2 was not installed via Steam".to_string());
-    }
-
-    match steamlocate::SteamDir::locate() {
-        Some(mut steamdir) => {
-            if get_host_os() != "windows" {
-                let titanfall2_steamid: u32 = TITANFALL2_STEAM_ID.parse().unwrap();
-                match steamdir.compat_tool(&titanfall2_steamid) {
-                    Some(compat) => {
-                        if !compat
-                            .name
-                            .clone()
-                            .unwrap()
-                            .to_ascii_lowercase()
-                            .contains("northstarproton")
-                        {
-                            return Err(
-                                "Titanfall2 was not configured to use NorthstarProton".to_string()
-                            );
-                        }
-                    }
-                    None => {
-                        return Err(
-                            "Titanfall2 was not configured to use a compatibility tool".to_string()
-                        );
-                    }
-                }
-            }
-        }
-        None => {
-            return Err("Couldn't access Titanfall2 directory".to_string());
-        }
-    }
-
-    // Switch to Titanfall2 directory to set everything up
-    if std::env::set_current_dir(game_install.game_path.clone()).is_err() {
-        // We failed to get to Titanfall2 directory
-        return Err("Couldn't access Titanfall2 directory".to_string());
-    }
-
-    let run_northstar = "run_northstar.txt";
-    let run_northstar_bak = "run_northstar.txt.bak";
-
-    if Path::new(run_northstar).exists() {
-        // rename should ovewrite existing files
-        fs::rename(run_northstar, run_northstar_bak).unwrap();
-    }
-
-    // Passing arguments gives users a prompt, so we use run_northstar.txt
-    fs::write(run_northstar, b"1").unwrap();
-
-    let retval = match open::that(format!("steam://run/{}/", TITANFALL2_STEAM_ID)) {
-        Ok(()) => Ok("Started game".to_string()),
-        Err(_err) => Err("Failed to launch Titanfall 2 via Steam".to_string()),
-    };
-
-    let is_err = retval.is_err();
-
-    // Handle the rest in the backround
-    tauri::async_runtime::spawn(async move {
-        // Starting the EA app and Titanfall might take a good minute or three
-        let mut wait_countdown = 60 * 3;
-        while wait_countdown > 0 && !util::check_northstar_running() && !is_err {
-            sleep(Duration::from_millis(1000)).await;
-            wait_countdown -= 1;
-        }
-
-        // Northstar may be running, but it may not have loaded the file yet
-        sleep(Duration::from_millis(2000)).await;
-
-        // intentionally ignore Result
-        let _ = fs::remove_file(run_northstar);
-
-        if Path::new(run_northstar_bak).exists() {
-            fs::rename(run_northstar_bak, run_northstar).unwrap();
-        }
-    });
-
-    retval
 }

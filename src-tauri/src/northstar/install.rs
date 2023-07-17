@@ -38,15 +38,25 @@ async fn do_install(
     let filename = format!("northstar-{}.zip", nmod.version);
     let download_directory = format!("{}/___flightcore-temp-download-dir/", game_path.display());
 
+    log::info!(
+        "Attempting to create temporary directory {}",
+        download_directory
+    );
     std::fs::create_dir_all(download_directory.clone())?;
 
     let download_path = format!("{}/{}", download_directory, filename);
     log::info!("Download path: {download_path}");
 
     let last_emit = RefCell::new(Instant::now()); // Keep track of the last time a signal was emitted
-    let nfile = thermite::core::manage::download_file_with_progress(
+    let mut nfile = std::fs::File::options()
+        .read(true)
+        .write(true)
+        .truncate(true)
+        .create(true)
+        .open(download_path)?;
+    thermite::core::manage::download_with_progress(
+        &mut nfile,
         &nmod.url,
-        download_path,
         |delta, current, total| {
             if delta != 0 {
                 // Only emit a signal once every 100ms
@@ -67,8 +77,7 @@ async fn do_install(
                 }
             }
         },
-    )
-    .unwrap();
+    )?;
 
     window
         .emit(
@@ -109,7 +118,13 @@ pub async fn install_northstar(
     northstar_package_name: String,
     version_number: Option<String>,
 ) -> Result<String, String> {
-    let index = thermite::api::get_package_index().unwrap().to_vec();
+    let index = match thermite::api::get_package_index() {
+        Ok(res) => res.to_vec(),
+        Err(err) => {
+            log::warn!("Failed fetching package index due to: {err}");
+            return Err("Failed to connect to Thunderstore.".to_string());
+        }
+    };
     let nmod = index
         .iter()
         .find(|f| f.name.to_lowercase() == northstar_package_name.to_lowercase())
@@ -148,6 +163,7 @@ pub async fn install_northstar(
 }
 
 /// Attempts to find the game install location
+#[tauri::command]
 pub fn find_game_install_location() -> Result<GameInstall, String> {
     // Attempt parsing Steam library directly
     match steamlocate::SteamDir::locate() {
