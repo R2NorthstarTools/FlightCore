@@ -3,7 +3,10 @@
 pub mod install;
 
 use crate::util::check_ea_app_or_origin_running;
-use crate::{constants::{CORE_MODS, TITANFALL2_STEAM_ID}, get_host_os, GameInstall, InstallType};
+use crate::{
+    constants::{CORE_MODS, TITANFALL2_STEAM_ID},
+    get_host_os, GameInstall, InstallType,
+};
 use anyhow::anyhow;
 
 /// Check version number of a mod
@@ -65,10 +68,8 @@ pub fn launch_northstar(
     let host_os = get_host_os();
 
     // Explicitly fail early certain (currently) unsupported install setups
-    if host_os != "windows"
-    {
-        if !matches!(game_install.install_type, InstallType::STEAM)
-        {
+    if host_os != "windows" {
+        if !matches!(game_install.install_type, InstallType::STEAM) {
             return Err(format!(
                 "Not yet implemented for \"{}\" with Titanfall2 installed via \"{:?}\"",
                 get_host_os(),
