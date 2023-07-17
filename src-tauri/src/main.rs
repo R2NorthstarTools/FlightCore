@@ -128,7 +128,7 @@ fn main() {
             install_northstar_caller,
             update_northstar,
             northstar::launch_northstar,
-            launch_northstar_steam,
+            northstar::launch_northstar_steam,
             github::release_notes::check_is_flightcore_outdated,
             repair_and_verify::get_log_list,
             repair_and_verify::verify_game_files,
@@ -461,8 +461,6 @@ mod platform_specific;
 #[cfg(target_os = "linux")]
 use platform_specific::linux;
 
-use crate::constants::TITANFALL2_STEAM_ID;
-
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum InstallType {
     STEAM,
@@ -526,57 +524,4 @@ pub fn check_is_valid_game_path(game_install_path: &str) -> Result<(), String> {
 #[tauri::command]
 fn get_host_os() -> String {
     env::consts::OS.to_string()
-}
-
-/// Prepare Northstar and Launch through Steam using the Browser Protocol
-#[tauri::command]
-fn launch_northstar_steam(
-    game_install: GameInstall,
-    _bypass_checks: Option<bool>,
-) -> Result<String, String> {
-    if !matches!(game_install.install_type, InstallType::STEAM) {
-        return Err("Titanfall2 was not installed via Steam".to_string());
-    }
-
-    match steamlocate::SteamDir::locate() {
-        Some(mut steamdir) => {
-            if get_host_os() != "windows" {
-                let titanfall2_steamid: u32 = TITANFALL2_STEAM_ID.parse().unwrap();
-                match steamdir.compat_tool(&titanfall2_steamid) {
-                    Some(compat) => {
-                        if !compat
-                            .name
-                            .clone()
-                            .unwrap()
-                            .to_ascii_lowercase()
-                            .contains("northstarproton")
-                        {
-                            return Err(
-                                "Titanfall2 was not configured to use NorthstarProton".to_string()
-                            );
-                        }
-                    }
-                    None => {
-                        return Err(
-                            "Titanfall2 was not configured to use a compatibility tool".to_string()
-                        );
-                    }
-                }
-            }
-        }
-        None => {
-            return Err("Couldn't access Titanfall2 directory".to_string());
-        }
-    }
-
-    // Switch to Titanfall2 directory to set everything up
-    if std::env::set_current_dir(game_install.game_path).is_err() {
-        // We failed to get to Titanfall2 directory
-        return Err("Couldn't access Titanfall2 directory".to_string());
-    }
-
-    match open::that(format!("steam://run/{}//--northstar/", TITANFALL2_STEAM_ID)) {
-        Ok(()) => Ok("Started game".to_string()),
-        Err(_err) => Err("Failed to launch Titanfall 2 via Steam".to_string()),
-    }
 }
