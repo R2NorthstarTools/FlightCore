@@ -21,6 +21,15 @@
                     </el-input>
                 </div>
 
+                <!-- Extra Launch parameters when starting Northtsar -->
+                <div class="fc_parameter__panel">
+                    <h3>{{ $t('settings.launch_parameters') }}</h3>
+                    <el-input
+                        v-model="launchParameters"
+                    >
+                    </el-input>
+                </div>
+
                 <!-- Thunderstore mods per page configuration -->
                 <div class="fc_parameter__panel">
                     <h3>{{ $t('settings.nb_ts_mods_per_page') }}</h3>
@@ -133,6 +142,16 @@ export default defineComponent({
                 if (!value && this.$store.state.northstar_release_canal !== ReleaseCanal.RELEASE) {
                     this.$store.commit('toggleReleaseCandidate');
                 }
+            }
+        },
+        launchParameters: {
+            get(): string {
+                return this.$store.state.launch_parameters
+            },
+            async set(value: string) {
+                this.$store.state.launch_parameters = value;
+                persistentStore.set('northstar-launch-parameters', { value });
+                await persistentStore.save(); // explicit save to disk
             }
         },
         modsPerPage: {

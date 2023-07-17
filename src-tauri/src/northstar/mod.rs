@@ -109,8 +109,14 @@ pub fn launch_northstar(
             || matches!(game_install.install_type, InstallType::UNKNOWN))
     {
         let ns_exe_path = format!("{}/NorthstarLauncher.exe", game_install.game_path);
+        let ns_params: Vec<&str> = game_install.launch_parameters.split_whitespace().collect();
+
+        let mut args = vec!["/C", "start", "", &ns_exe_path];
+        // We cannot add the params directly because of limitations with cmd.exe
+        // https://stackoverflow.com/questions/9964865/c-system-not-working-when-there-are-spaces-in-two-different-parameters/9965141#9965141
+        args.extend(ns_params);
         let _output = std::process::Command::new("C:\\Windows\\System32\\cmd.exe")
-            .args(["/C", "start", "", &ns_exe_path])
+            .args(args)
             .spawn()
             .expect("failed to execute process");
         return Ok("Launched game".to_string());

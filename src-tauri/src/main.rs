@@ -474,6 +474,7 @@ pub enum InstallType {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct GameInstall {
     pub game_path: String,
+    pub launch_parameters: String,
     pub install_type: InstallType,
 }
 
@@ -575,7 +576,7 @@ fn launch_northstar_steam(
         return Err("Couldn't access Titanfall2 directory".to_string());
     }
 
-    match open::that(format!("steam://run/{}//--northstar/", TITANFALL2_STEAM_ID)) {
+    match open::that(format!("steam://run/{}//--northstar {}/", TITANFALL2_STEAM_ID, game_install.launch_parameters)) {
         Ok(()) => Ok("Started game".to_string()),
         Err(_err) => Err("Failed to launch Titanfall 2 via Steam".to_string()),
     }

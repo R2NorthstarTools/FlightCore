@@ -92,6 +92,7 @@
 
     "settings": {
         "manage_install": "Manage installation",
+        "launch_parameters": "Launch parameters",
         "choose_folder": "Choose installation folder",
         "open_game_folder": "Open Folder",
         "nb_ts_mods_per_page": "Number of Thunderstore mods per page",
