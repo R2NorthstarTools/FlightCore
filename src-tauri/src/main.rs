@@ -22,7 +22,9 @@ mod util;
 use semver::Version;
 use serde::{Deserialize, Serialize};
 #[cfg(target_os = "windows")]
-use tauri::api::dialog::{MessageDialogBuilder, MessageDialogButtons, MessageDialogKind};
+use tauri::api::dialog::blocking::MessageDialogBuilder;
+#[cfg(target_os = "windows")]
+use tauri::api::dialog::{MessageDialogButtons, MessageDialogKind};
 use tauri::{Manager, Runtime};
 use tokio::time::sleep;
 use ts_rs::TS;
@@ -169,18 +171,17 @@ fn main() {
             #[cfg(target_os = "windows")]
             {
                 log::error!("WebView2 not installed: {err}");
-                MessageDialogBuilder::new(
+                let dialog = MessageDialogBuilder::new(
                     "WebView2 not found",
                     "FlightCore requires WebView2 to run.\n\nClick OK to open installation instructions."
                 )
                 .kind(MessageDialogKind::Error)
-                .buttons(MessageDialogButtons::Ok)
-                .show(|answer| {
-                    if answer {
-                        // Open the installation instructions URL in the user's default web browser
-                        open::that("https://github.com/R2NorthstarTools/FlightCore/blob/main/docs/TROUBLESHOOTING.md#flightcore-wont-launch").unwrap();
-                    }
-                });
+                .buttons(MessageDialogButtons::Ok);
+
+                if dialog.show() {
+                    // Open the installation instructions URL in the user's default web browser
+                    open::that("https://github.com/R2NorthstarTools/FlightCore/blob/main/docs/TROUBLESHOOTING.md#flightcore-wont-launch").unwrap();
+                }
             }
         }
     };
