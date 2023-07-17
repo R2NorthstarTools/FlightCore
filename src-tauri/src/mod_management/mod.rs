@@ -22,6 +22,12 @@ impl std::str::FromStr for ParsedThunderstoreModString {
     type Err = &'static str; // todo use an better error management
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
+        // Check whether Thunderstore string passse reges
+        let re = regex::Regex::new(r"^[a-zA-Z0-9_]+-[a-zA-Z0-9_]+-\d+\.\d+\.\d++$").unwrap();
+        if !re.is_match(s) {
+            return Err("Incorrect format");
+        }
+
         let mut parts = s.split('-');
 
         let author_name = parts.next().ok_or("None value on author_name")?.to_string();
