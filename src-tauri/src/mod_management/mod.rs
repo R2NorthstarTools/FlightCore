@@ -36,6 +36,12 @@ impl std::str::FromStr for ParsedThunderstoreModString {
     }
 }
 
+impl ToString for ParsedThunderstoreModString {
+    fn to_string(&self) -> String {
+        format!("{}-{}-{}", self.author_name, self.mod_name, self.version)
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ThunderstoreManifest {
     name: String,
