@@ -184,6 +184,7 @@ pub fn set_mod_enabled_status(
     Ok(())
 }
 
+/// Resembles the bare minimum keys in Northstar `mods.json`
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ModJson {
     #[serde(rename = "Name")]
@@ -197,7 +198,6 @@ pub fn parse_mods_in_package(
     package_mods_path: PathBuf,
     thunderstore_mod_string: ParsedThunderstoreModString,
 ) -> Result<Vec<NorthstarMod>, anyhow::Error> {
-    dbg!(package_mods_path.clone());
     let paths = match std::fs::read_dir(package_mods_path) {
         Ok(paths) => paths,
         Err(_err) => return Err(anyhow!("No mods folder found")),
@@ -206,23 +206,15 @@ pub fn parse_mods_in_package(
     let mut directories: Vec<PathBuf> = Vec::new();
     let mut mods: Vec<NorthstarMod> = Vec::new();
 
-    log::info!("----------- {paths:?}");
-
     // Get list of folders in `mods` directory
     for path in paths {
-        // dbg!(path);
-        log::info!("{path:?}");
         let my_path = path.unwrap().path();
-        log::info!("{my_path:?}");
-
         let md = std::fs::metadata(my_path.clone()).unwrap();
         if md.is_dir() {
             directories.push(my_path);
         }
     }
 
-    dbg!(directories.clone());
-    // todo!();
     // Iterate over folders and check if they are Northstar mods
     for directory in directories {
         let directory_str = directory.to_str().unwrap().to_string();
@@ -231,8 +223,6 @@ pub fn parse_mods_in_package(
         if !std::path::Path::new(&mod_json_path).exists() {
             continue;
         }
-
-        // Parse mod.json and get mod name
 
         // Read file into string and parse it
         let data = std::fs::read_to_string(mod_json_path.clone())?;
@@ -282,10 +272,8 @@ pub fn parse_installed_package_mods(
 
     // Iteratore over folders in `packages` dir
     for entry in packages_dir {
-        let entry = entry?;
-        let entry_path = entry.path();
+        let entry_path = entry?.path();
         let entry_str = entry_path.file_name().unwrap().to_str().unwrap();
-        log::warn!("Trying: {entry_str}");
 
         // Use the struct's from_str function to verify format
         if entry_path.is_dir() {
@@ -306,27 +294,6 @@ pub fn parse_installed_package_mods(
 
             // Ensure `manifest.json` and `mods/` dir exist
             if manifest_path.exists() && mods_path.is_dir() {
-                dbg!(mods_path.clone());
-
-                // Do something with mod path here
-                log::warn!("{}", mods_path.to_string_lossy());
-
-                // let paths = match std::fs::read_dir(mods_path) {
-                //     Ok(paths) => paths,
-                //     Err(_err) => todo!(),
-                // };
-
-                // // Get list of folders in `mods` directory
-                // for path in paths {
-                // log::info!("{path:?}");
-                // let my_path = path.unwrap().path();
-                // log::info!("{my_path:?}");
-
-                // let md = std::fs::metadata(my_path.clone()).unwrap();
-                // if !md.is_dir() {
-                //     continue;
-                // }
-                log::warn!("Found: {}", mods_path.display());
                 let mods =
                     match parse_mods_in_package(mods_path, package_thunderstore_string.clone()) {
                         Ok(res) => res,
@@ -335,17 +302,7 @@ pub fn parse_installed_package_mods(
                             continue;
                         }
                     };
-                dbg!(mods.clone());
                 collected_mods.extend(mods);
-                // }
-
-                // let ns_mod = NorthstarMod {
-                //     name: parsed_mod_json.name,
-                //     version: parsed_mod_json.version,
-                //     thunderstore_mod_string,
-                //     enabled: false, // Placeholder
-                //     directory: mod_directory,
-                // };
             }
         }
     }
@@ -360,7 +317,6 @@ pub fn parse_installed_package_mods(
 pub fn get_installed_mods_and_properties(
     game_install: GameInstall,
 ) -> Result<Vec<NorthstarMod>, String> {
-    log::info!("{game_install:?}");
     // Get installed mods from packages
     let mut found_installed_mods = match parse_installed_package_mods(&game_install) {
         Ok(res) => res,
