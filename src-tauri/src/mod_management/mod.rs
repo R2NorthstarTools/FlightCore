@@ -557,7 +557,10 @@ fn delete_package_folder(ts_package_directory: &str) -> Result<(), String> {
     let mod_json_path = ns_mod_dir_path.join("manifest.json");
     if !mod_json_path.exists() {
         // If it doesn't exist, return an error
-        return Err(format!("manifest.json does not exist in {}", ts_package_directory));
+        return Err(format!(
+            "manifest.json does not exist in {}",
+            ts_package_directory
+        ));
     }
 
     match std::fs::remove_dir_all(ts_package_directory) {
@@ -575,14 +578,17 @@ pub fn delete_thunderstore_mod(
     // Check packages
     let packages_folder = format!("{}/R2Northstar/packages", game_install.game_path);
     if std::path::Path::new(&packages_folder).exists() {
-        println!("Directory {} exists. Listing subdirectories...", packages_folder);
+        println!(
+            "Directory {} exists. Listing subdirectories...",
+            packages_folder
+        );
         for entry in fs::read_dir(packages_folder).unwrap() {
             let entry = entry.unwrap();
-            
+
             // Check if it's a folder and skip if otherwise
             if !entry.file_type().unwrap().is_dir() {
                 log::warn!("Skipping \"{}\", not a file", entry.path().display());
-                continue;    
+                continue;
             }
 
             let entry_path = entry.path();
@@ -593,7 +599,7 @@ pub fn delete_thunderstore_mod(
                 // Not the mod folder we are looking for, try the next one\
                 continue;
             }
-            
+
             // All checks passed, this is the matching mod
             return delete_package_folder(&entry.path().display().to_string());
         }
