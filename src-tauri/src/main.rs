@@ -21,9 +21,9 @@ mod util;
 
 use semver::Version;
 use serde::{Deserialize, Serialize};
-use tauri::{Manager, Runtime};
 #[cfg(target_os = "windows")]
-use tauri::api::dialog::{MessageDialogBuilder,MessageDialogKind,MessageDialogButtons};
+use tauri::api::dialog::{MessageDialogBuilder, MessageDialogButtons, MessageDialogKind};
+use tauri::{Manager, Runtime};
 use tokio::time::sleep;
 use ts_rs::TS;
 
