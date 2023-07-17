@@ -3,7 +3,7 @@
 pub mod install;
 
 use crate::util::check_ea_app_or_origin_running;
-use crate::{constants::CORE_MODS, get_host_os, GameInstall, InstallType};
+use crate::{constants::{CORE_MODS, TITANFALL2_STEAM_ID}, get_host_os, GameInstall, InstallType};
 use anyhow::anyhow;
 
 /// Check version number of a mod
@@ -66,15 +66,17 @@ pub fn launch_northstar(
 
     // Explicitly fail early certain (currently) unsupported install setups
     if host_os != "windows"
-        || !(matches!(game_install.install_type, InstallType::STEAM)
-            || matches!(game_install.install_type, InstallType::ORIGIN)
-            || matches!(game_install.install_type, InstallType::UNKNOWN))
     {
-        return Err(format!(
-            "Not yet implemented for \"{}\" with Titanfall2 installed via \"{:?}\"",
-            get_host_os(),
-            game_install.install_type
-        ));
+        if !matches!(game_install.install_type, InstallType::STEAM)
+        {
+            return Err(format!(
+                "Not yet implemented for \"{}\" with Titanfall2 installed via \"{:?}\"",
+                get_host_os(),
+                game_install.install_type
+            ));
+        }
+
+        return launch_northstar_steam(game_install, bypass_checks);
     }
 
     let bypass_checks = bypass_checks.unwrap_or(false);
@@ -121,4 +123,57 @@ pub fn launch_northstar(
         game_install.install_type,
         get_host_os()
     ))
+}
+
+/// Prepare Northstar and Launch through Steam using the Browser Protocol
+#[tauri::command]
+pub fn launch_northstar_steam(
+    game_install: GameInstall,
+    _bypass_checks: Option<bool>,
+) -> Result<String, String> {
+    if !matches!(game_install.install_type, InstallType::STEAM) {
+        return Err("Titanfall2 was not installed via Steam".to_string());
+    }
+
+    match steamlocate::SteamDir::locate() {
+        Some(mut steamdir) => {
+            if get_host_os() != "windows" {
+                let titanfall2_steamid: u32 = TITANFALL2_STEAM_ID.parse().unwrap();
+                match steamdir.compat_tool(&titanfall2_steamid) {
+                    Some(compat) => {
+                        if !compat
+                            .name
+                            .clone()
+                            .unwrap()
+                            .to_ascii_lowercase()
+                            .contains("northstarproton")
+                        {
+                            return Err(
+                                "Titanfall2 was not configured to use NorthstarProton".to_string()
+                            );
+                        }
+                    }
+                    None => {
+                        return Err(
+                            "Titanfall2 was not configured to use a compatibility tool".to_string()
+                        );
+                    }
+                }
+            }
+        }
+        None => {
+            return Err("Couldn't access Titanfall2 directory".to_string());
+        }
+    }
+
+    // Switch to Titanfall2 directory to set everything up
+    if std::env::set_current_dir(game_install.game_path).is_err() {
+        // We failed to get to Titanfall2 directory
+        return Err("Couldn't access Titanfall2 directory".to_string());
+    }
+
+    match open::that(format!("steam://run/{}//--northstar/", TITANFALL2_STEAM_ID)) {
+        Ok(()) => Ok("Started game".to_string()),
+        Err(_err) => Err("Failed to launch Titanfall 2 via Steam".to_string()),
+    }
 }
