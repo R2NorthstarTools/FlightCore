@@ -21,9 +21,9 @@ pub fn install_ns_proton() -> Result<(), thermite::prelude::ThermiteError> {
     let archive = std::fs::File::create(path.clone())?;
 
     // Download the latest Proton release
-    log::info!("NorthstarProton download started");
+    log::info!("Downloading NorthstarProton to {}", path);
     thermite::core::download_ns_proton(latest, archive)?;
-    log::info!("NorthstarProton download finished");
+    log::info!("Finished Download");
 
     let compat_dir = get_proton_dir().unwrap();
     std::fs::create_dir_all(compat_dir.clone())?;
@@ -31,9 +31,9 @@ pub fn install_ns_proton() -> Result<(), thermite::prelude::ThermiteError> {
     let finished = std::fs::File::open(path.clone())?;
 
     // Extract to Proton dir
-    log::info!("NorthstarProton installation started");
+    log::info!("Installing NorthstarProton to {}", compat_dir);
     thermite::core::install_ns_proton(&finished, compat_dir)?;
-    log::info!("NorthstarProton installation finished");
+    log::info!("Finished Installation");
     drop(finished);
 
     std::fs::remove_file(path)?;
