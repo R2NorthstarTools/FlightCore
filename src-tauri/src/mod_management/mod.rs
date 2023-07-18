@@ -421,7 +421,6 @@ pub async fn fc_download_mod_and_install(
         "{}/___flightcore-temp-download-dir/",
         game_install.game_path
     );
-    let mods_directory = format!("{}/R2Northstar/mods/", game_install.game_path);
 
     // Early return on empty string
     if thunderstore_mod_string.is_empty() {
@@ -486,14 +485,16 @@ pub async fn fc_download_mod_and_install(
         Err(err) => return Err(err.to_string()),
     };
 
-    // Get Thunderstore mod author
-    let author = thunderstore_mod_string.split('-').next().unwrap();
+    // Get directory to install to made up of packages directory and Thunderstore mod string
+    let install_directory = format!(
+        "{}/R2Northstar/packages/{}",
+        game_install.game_path, thunderstore_mod_string
+    );
 
     // Extract the mod to the mods directory
     match thermite::core::manage::install_mod(
-        author,
         temp_file.file(),
-        std::path::Path::new(&mods_directory),
+        std::path::Path::new(&install_directory),
     ) {
         Ok(_) => (),
         Err(err) => {
