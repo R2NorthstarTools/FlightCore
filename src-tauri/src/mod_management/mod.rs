@@ -555,7 +555,7 @@ pub async fn fc_download_mod_and_install(
         }
     };
 
-    // Succesful package install
+    // Successful package install
     match delete_older_versions(thunderstore_mod_string, game_install) {
         Ok(()) => (),
         Err(err) => {
