@@ -134,7 +134,7 @@ pub fn delete_legacy_package_install(
 ) -> Result<(), String> {
     let thunderstore_mod_string: ParsedThunderstoreModString =
         thunderstore_mod_string.parse().unwrap();
-    let found_installed_legacy_mods = match parse_installed_mods(&game_install) {
+    let found_installed_legacy_mods = match parse_installed_mods(game_install) {
         Ok(res) => res,
         Err(err) => return Err(err.to_string()),
     };
