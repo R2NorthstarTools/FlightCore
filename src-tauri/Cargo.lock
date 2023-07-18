@@ -82,6 +82,7 @@ dependencies = [
  "async-recursion",
  "chrono",
  "const_format",
+ "dirs",
  "json5",
  "libthermite",
  "log",
