@@ -21,6 +21,18 @@
                 Check NSProton Compatibility
             </el-button>
 
+            <el-button type="primary" @click="installNSProton">
+                Install NSProton
+            </el-button>
+
+            <el-button type="primary" @click="uninstallNSProton">
+                Remove NSProton
+            </el-button>
+
+            <el-button type="primary" @click="getLocalNSProtonVersion">
+                Get local NSProton Version
+            </el-button>
+
             <h3>Testing:</h3>
 
             <el-button type="primary" @click="launchGameWithoutChecks">
@@ -307,6 +319,22 @@ export default defineComponent({
                     // Clear old notification
                     notification.close();
                 });
+        },
+        async installNSProton() {
+            showNotification(`Started NSProton install`);
+            await invoke("install_northstar_proton_wrapper")
+                .then((message) => { showNotification(`Done`); })
+                .catch((error) => { showNotification(`Error`, error, "error"); })
+        },
+        async uninstallNSProton() {
+            await invoke("uninstall_northstar_proton_wrapper")
+                .then((message) => { showNotification(`Done`); })
+                .catch((error) => { showNotification(`Error`, error, "error"); })
+        },
+        async getLocalNSProtonVersion() {
+            await invoke("get_local_northstar_proton_wrapper_version")
+                .then((message) => { showNotification(`NSProton Version`, message as string); })
+                .catch((error) => { showNotification(`Error`, error, "error"); })
         },
     }
 });
