@@ -83,6 +83,7 @@ dependencies = [
  "chrono",
  "const_format",
  "dirs",
+ "glob",
  "json5",
  "libthermite",
  "log",
@@ -1987,9 +1988,11 @@ version = "0.6.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "27cd844bbc25676cd14fa9ad04cc40e0f3c4d5c66107ef3a99896db1f81324c0"
 dependencies = [
+ "flate2",
  "json5",
  "serde",
  "serde_json",
+ "tar",
  "thiserror",
  "tracing",
  "ureq",

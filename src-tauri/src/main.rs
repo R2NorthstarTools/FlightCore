@@ -144,6 +144,9 @@ fn main() {
             mod_management::delete_northstar_mod,
             util::get_server_player_count,
             mod_management::delete_thunderstore_mod,
+            install_northstar_proton_wrapper,
+            uninstall_northstar_proton_wrapper,
+            get_local_northstar_proton_wrapper_version,
             open_repair_window,
             thunderstore::query_thunderstore_packages_api,
             github::get_list_of_tags,
@@ -524,4 +527,33 @@ pub fn check_is_valid_game_path(game_install_path: &str) -> Result<(), String> {
 #[tauri::command]
 fn get_host_os() -> String {
     env::consts::OS.to_string()
+}
+
+/// On Linux attempts to install NorthstarProton
+/// On Windows simply returns an error message
+#[tauri::command]
+async fn install_northstar_proton_wrapper() -> Result<(), String> {
+    #[cfg(target_os = "linux")]
+    return linux::install_ns_proton().map_err(|err| err.to_string());
+
+    #[cfg(target_os = "windows")]
+    Err("Not supported on Windows".to_string())
+}
+
+#[tauri::command]
+async fn uninstall_northstar_proton_wrapper() -> Result<(), String> {
+    #[cfg(target_os = "linux")]
+    return linux::uninstall_ns_proton();
+
+    #[cfg(target_os = "windows")]
+    Err("Not supported on Windows".to_string())
+}
+
+#[tauri::command]
+async fn get_local_northstar_proton_wrapper_version() -> Result<String, String> {
+    #[cfg(target_os = "linux")]
+    return linux::get_local_ns_proton_version();
+
+    #[cfg(target_os = "windows")]
+    Err("Not supported on Windows".to_string())
 }
