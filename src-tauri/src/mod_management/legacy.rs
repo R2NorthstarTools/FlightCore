@@ -1,3 +1,7 @@
+use crate::constants::BLACKLISTED_MODS;
+use crate::mod_management::{
+    delete_mod_folder, get_installed_mods_and_properties, ParsedThunderstoreModString,
+};
 use crate::GameInstall;
 use crate::NorthstarMod;
 use anyhow::{anyhow, Result};
@@ -109,4 +113,61 @@ pub fn parse_installed_mods(
 
     // Return found mod names
     Ok(mods)
+}
+
+/// Deletes all NorthstarMods related to a Thunderstore mod
+pub fn delete_thunderstore_mod(
+    game_install: GameInstall,
+    thunderstore_mod_string: String,
+) -> Result<(), String> {
+    // Prevent deleting core mod
+    for core_ts_mod in BLACKLISTED_MODS {
+        if thunderstore_mod_string == core_ts_mod {
+            return Err(format!("Cannot remove core mod {thunderstore_mod_string}"));
+        }
+    }
+
+    let parsed_ts_mod_string: ParsedThunderstoreModString =
+        thunderstore_mod_string.parse().unwrap();
+
+    // Get installed mods
+    let installed_ns_mods = get_installed_mods_and_properties(game_install)?;
+
+    // List of mod folders to remove
+    let mut mod_folders_to_remove: Vec<String> = Vec::new();
+
+    // Get folder name based on Thundestore mod string
+    for installed_ns_mod in installed_ns_mods {
+        if installed_ns_mod.thunderstore_mod_string.is_none() {
+            // Not a Thunderstore mod
+            continue;
+        }
+
+        let installed_ns_mod_ts_string: ParsedThunderstoreModString = installed_ns_mod
+            .thunderstore_mod_string
+            .unwrap()
+            .parse()
+            .unwrap();
+
+        // Installed mod matches specified Thunderstore mod string
+        if parsed_ts_mod_string.author_name == installed_ns_mod_ts_string.author_name
+            && parsed_ts_mod_string.mod_name == installed_ns_mod_ts_string.mod_name
+        {
+            // Add folder to list of folder to remove
+            mod_folders_to_remove.push(installed_ns_mod.directory);
+        }
+    }
+
+    if mod_folders_to_remove.is_empty() {
+        return Err(format!(
+            "No mods removed as no Northstar mods matching {thunderstore_mod_string} were found to be installed."
+        ));
+    }
+
+    // Delete given folders
+    for mod_folder in mod_folders_to_remove {
+        delete_mod_folder(&mod_folder)?;
+    }
+
+    Ok(())
 }

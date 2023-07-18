@@ -1,6 +1,6 @@
 [package]
 name = "app"
-version = "1.22.0"
+version = "1.23.0"
 description = "A Tauri App"
 authors = ["you"]
 license = ""
@@ -64,6 +64,7 @@ open = "3.2.0"
 semver = "1.0"
 # simplified filesystem access
 glob = "0.3.1"
+dirs = "5"
 
 [target.'cfg(windows)'.dependencies]
 # Windows API stuff
