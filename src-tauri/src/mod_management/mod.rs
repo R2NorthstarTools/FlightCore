@@ -562,7 +562,7 @@ pub async fn fc_download_mod_and_install(
             log::warn!("Failed deleting older versions due to: {}", err);
             todo!(); // should we do something on error or ignore?
         }
-    }
+    };
 
     Ok(())
 }
