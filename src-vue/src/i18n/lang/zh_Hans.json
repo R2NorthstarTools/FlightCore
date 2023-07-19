@@ -32,8 +32,8 @@
         "servers": "服务器",
         "players": "玩家",
         "unable_to_load_playercount": "加载玩家数量失败",
-        "ea_app_running": "EA App正在运行:",
-        "northstar_running": "Northstar正在运行:"
+        "ea_app_running": "EA App运行状态:",
+        "northstar_running": "Northstar运行状态:"
     },
     "mods": {
         "local": {
