@@ -9,11 +9,6 @@ use std::{
     time::Duration,
 };
 
-#[cfg(target_os = "windows")]
-use std::ptr::null_mut;
-#[cfg(target_os = "windows")]
-use winapi::um::winuser::{MessageBoxW, MB_ICONERROR, MB_OK, MB_USERICON};
-
 use crate::constants::REFRESH_DELAY;
 
 mod development;
@@ -26,6 +21,10 @@ mod util;
 
 use semver::Version;
 use serde::{Deserialize, Serialize};
+#[cfg(target_os = "windows")]
+use tauri::api::dialog::blocking::MessageDialogBuilder;
+#[cfg(target_os = "windows")]
+use tauri::api::dialog::{MessageDialogButtons, MessageDialogKind};
 use tauri::{Manager, Runtime};
 use tokio::time::sleep;
 use ts_rs::TS;
@@ -128,7 +127,7 @@ fn main() {
             install_northstar_caller,
             update_northstar,
             northstar::launch_northstar,
-            launch_northstar_steam,
+            northstar::launch_northstar_steam,
             github::release_notes::check_is_flightcore_outdated,
             repair_and_verify::get_log_list,
             repair_and_verify::verify_game_files,
@@ -144,6 +143,9 @@ fn main() {
             mod_management::delete_northstar_mod,
             util::get_server_player_count,
             mod_management::delete_thunderstore_mod,
+            install_northstar_proton_wrapper,
+            uninstall_northstar_proton_wrapper,
+            get_local_northstar_proton_wrapper_version,
             open_repair_window,
             thunderstore::query_thunderstore_packages_api,
             github::get_list_of_tags,
@@ -172,23 +174,16 @@ fn main() {
             #[cfg(target_os = "windows")]
             {
                 log::error!("WebView2 not installed: {err}");
-                // Display a message box to the user with a button to open the installation instructions
-                let title = "WebView2 not found"
-                    .encode_utf16()
-                    .chain(Some(0))
-                    .collect::<Vec<_>>();
-                let message = "FlightCore requires WebView2 to run.\n\nClick OK to open installation instructions.".encode_utf16().chain(Some(0)).collect::<Vec<_>>();
-                unsafe {
-                    let result = MessageBoxW(
-                        null_mut(),
-                        message.as_ptr(),
-                        title.as_ptr(),
-                        MB_OK | MB_ICONERROR | MB_USERICON,
-                    );
-                    if result == 1 {
-                        // Open the installation instructions URL in the user's default web browser
-                        open::that("https://github.com/R2NorthstarTools/FlightCore/blob/main/docs/TROUBLESHOOTING.md#flightcore-wont-launch").unwrap();
-                    }
+                let dialog = MessageDialogBuilder::new(
+                    "WebView2 not found",
+                    "FlightCore requires WebView2 to run.\n\nClick OK to open installation instructions."
+                )
+                .kind(MessageDialogKind::Error)
+                .buttons(MessageDialogButtons::Ok);
+
+                if dialog.show() {
+                    // Open the installation instructions URL in the user's default web browser
+                    open::that("https://github.com/R2NorthstarTools/FlightCore/blob/main/docs/TROUBLESHOOTING.md#flightcore-wont-launch").unwrap();
                 }
             }
         }
@@ -461,8 +456,6 @@ mod platform_specific;
 #[cfg(target_os = "linux")]
 use platform_specific::linux;
 
-use crate::constants::TITANFALL2_STEAM_ID;
-
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum InstallType {
     STEAM,
@@ -528,55 +521,31 @@ fn get_host_os() -> String {
     env::consts::OS.to_string()
 }
 
-/// Prepare Northstar and Launch through Steam using the Browser Protocol
+/// On Linux attempts to install NorthstarProton
+/// On Windows simply returns an error message
 #[tauri::command]
-fn launch_northstar_steam(
-    game_install: GameInstall,
-    _bypass_checks: Option<bool>,
-) -> Result<String, String> {
-    if !matches!(game_install.install_type, InstallType::STEAM) {
-        return Err("Titanfall2 was not installed via Steam".to_string());
-    }
+async fn install_northstar_proton_wrapper() -> Result<(), String> {
+    #[cfg(target_os = "linux")]
+    return linux::install_ns_proton().map_err(|err| err.to_string());
 
-    match steamlocate::SteamDir::locate() {
-        Some(mut steamdir) => {
-            if get_host_os() != "windows" {
-                let titanfall2_steamid: u32 = TITANFALL2_STEAM_ID.parse().unwrap();
-                match steamdir.compat_tool(&titanfall2_steamid) {
-                    Some(compat) => {
-                        if !compat
-                            .name
-                            .clone()
-                            .unwrap()
-                            .to_ascii_lowercase()
-                            .contains("northstarproton")
-                        {
-                            return Err(
-                                "Titanfall2 was not configured to use NorthstarProton".to_string()
-                            );
-                        }
-                    }
-                    None => {
-                        return Err(
-                            "Titanfall2 was not configured to use a compatibility tool".to_string()
-                        );
-                    }
-                }
-            }
-        }
-        None => {
-            return Err("Couldn't access Titanfall2 directory".to_string());
-        }
-    }
+    #[cfg(target_os = "windows")]
+    Err("Not supported on Windows".to_string())
+}
 
-    // Switch to Titanfall2 directory to set everything up
-    if std::env::set_current_dir(game_install.game_path).is_err() {
-        // We failed to get to Titanfall2 directory
-        return Err("Couldn't access Titanfall2 directory".to_string());
-    }
+#[tauri::command]
+async fn uninstall_northstar_proton_wrapper() -> Result<(), String> {
+    #[cfg(target_os = "linux")]
+    return linux::uninstall_ns_proton();
 
-    match open::that(format!("steam://run/{}//--northstar/", TITANFALL2_STEAM_ID)) {
-        Ok(()) => Ok("Started game".to_string()),
-        Err(_err) => Err("Failed to launch Titanfall 2 via Steam".to_string()),
-    }
+    #[cfg(target_os = "windows")]
+    Err("Not supported on Windows".to_string())
+}
+
+#[tauri::command]
+async fn get_local_northstar_proton_wrapper_version() -> Result<String, String> {
+    #[cfg(target_os = "linux")]
+    return linux::get_local_ns_proton_version();
+
+    #[cfg(target_os = "windows")]
+    Err("Not supported on Windows".to_string())
 }

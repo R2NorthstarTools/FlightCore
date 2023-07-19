@@ -1,6 +1,6 @@
 [package]
 name = "app"
-version = "1.22.1"
+version = "1.24.0"
 description = "A Tauri App"
 authors = ["you"]
 license = ""
@@ -23,7 +23,7 @@ tauri-build = { version = "1.4", features = [] }
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.4", features = ["api-all", "updater"] }
+tauri = { version = "1.4", features = ["api-all", "dialog", "updater"] }
 tokio = { version = "1", features = ["full"] }
 # Sentry (crash) logging
 sentry = "0.30"
@@ -33,7 +33,7 @@ steamlocate = "1.2"
 # Error messages
 anyhow = "1.0"
 # libthermite for Northstar/mod install handling
-libthermite = "0.6.5"
+libthermite = { version = "0.6.5", features = ["proton"] }
 # zip stuff
 zip = "0.6.2"
 # Regex
@@ -62,6 +62,9 @@ zip-extract = "0.1.2"
 # open urls
 open = "3.2.0"
 semver = "1.0"
+# simplified filesystem access
+glob = "0.3.1"
+dirs = "5"
 
 [target.'cfg(windows)'.dependencies]
 # Windows API stuff
