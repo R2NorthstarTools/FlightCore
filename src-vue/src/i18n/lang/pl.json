@@ -107,11 +107,16 @@
                 "reinstall_text": "Proszę czekać",
                 "reinstall_success": "Pomyślnie przeinstalowano Northstar",
                 "title": "Okno naprawy FlightCore",
-                "warning": "To okno zawiera różne funkcje do naprawy typowych problemów z Northstar i FlightCore."
+                "warning": "To okno zawiera różne funkcje do naprawy typowych problemów z Northstar i FlightCore.",
+                "disable_modsettings": "Wyłącz moda ModSettings",
+                "disable_modsettings_success": "Wyłączono moda ModSettings"
             }
         },
         "nb_ts_mods_per_page_desc1": "Ma to wpływ na wydajność wyświetlania podczas przeglądania modów Thunderstore.",
-        "open_game_folder": "Otwórz folder"
+        "open_game_folder": "Otwórz folder",
+        "show_deprecated_mods_desc2": "Ostrożnie, mody są zazwyczaj oznaczone jako przestarzałe nie bez powodu.",
+        "show_deprecated_mods": "Pokaż przestarzałe mody Thunderstore",
+        "show_deprecated_mods_desc1": "Pozwala to zobaczyć przestarzałe mody w kolekcji modów online."
     },
     "notification": {
         "game_folder": {
