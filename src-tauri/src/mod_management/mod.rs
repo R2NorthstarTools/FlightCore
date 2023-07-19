@@ -460,7 +460,7 @@ fn delete_older_versions(
 }
 
 // Copied from `libtermite` source code and modified
-// Should be replaced with a library call to >libthermite in the future
+// Should be replaced with a library call to libthermite in the future
 /// Download and install mod to the specified target.
 #[async_recursion]
 pub async fn fc_download_mod_and_install(
