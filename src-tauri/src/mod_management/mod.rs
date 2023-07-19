@@ -407,6 +407,58 @@ async fn get_mod_dependencies(thunderstore_mod_string: &str) -> Result<Vec<Strin
     Ok(Vec::<String>::new())
 }
 
+/// Deletes all versions of Thunderstore package except the specified one
+fn delete_older_versions(
+    thunderstore_mod_string: &str,
+    game_install: &GameInstall,
+) -> Result<(), String> {
+    let thunderstore_mod_string: ParsedThunderstoreModString =
+        thunderstore_mod_string.parse().unwrap();
+    log::info!(
+        "Deleting other versions of {}",
+        thunderstore_mod_string.to_string()
+    );
+    let packages_folder = format!("{}/R2Northstar/packages", game_install.game_path);
+
+    // Get folders in packages dir
+    let paths = match std::fs::read_dir(&packages_folder) {
+        Ok(paths) => paths,
+        Err(_err) => return Err(format!("Failed to read directory {}", &packages_folder)),
+    };
+
+    let mut directories: Vec<PathBuf> = Vec::new();
+
+    // Get list of folders in `mods` directory
+    for path in paths {
+        let my_path = path.unwrap().path();
+
+        let md = std::fs::metadata(my_path.clone()).unwrap();
+        if md.is_dir() {
+            directories.push(my_path);
+        }
+    }
+
+    for directory in directories {
+        let folder_name = directory.file_name().unwrap().to_str().unwrap();
+        let ts_mod_string_from_folder: ParsedThunderstoreModString = match folder_name.parse() {
+            Ok(res) => res,
+            Err(err) => {
+                log::warn!("{err}");
+                continue;
+            }
+        };
+        // Check which match `AUTHOR-MOD` and do NOT match `AUTHOR-MOD-VERSION`
+        if ts_mod_string_from_folder.author_name == thunderstore_mod_string.author_name
+            && ts_mod_string_from_folder.mod_name == thunderstore_mod_string.mod_name
+            && ts_mod_string_from_folder.version != thunderstore_mod_string.version
+        {
+            delete_package_folder(&directory.display().to_string())?;
+        }
+    }
+
+    Ok(())
+}
+
 // Copied from `libtermite` source code and modified
 // Should be replaced with a library call to libthermite in the future
 /// Download and install mod to the specified target.
@@ -500,6 +552,23 @@ pub async fn fc_download_mod_and_install(
         Err(err) => {
             log::warn!("libthermite couldn't install mod {thunderstore_mod_string} due to {err:?}",);
             return Err(err.to_string());
+        }
+    };
+
+    // Successful package install
+    match legacy::delete_legacy_package_install(thunderstore_mod_string, game_install) {
+        Ok(()) => (),
+        Err(err) => {
+            // Catch error but ignore
+            log::warn!("Failed deleting legacy versions due to: {}", err);
+        }
+    };
+
+    match delete_older_versions(thunderstore_mod_string, game_install) {
+        Ok(()) => (),
+        Err(err) => {
+            // Catch error but ignore
+            log::warn!("Failed deleting older versions due to: {}", err);
         }
     };
 

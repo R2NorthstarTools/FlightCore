@@ -115,6 +115,42 @@ pub fn parse_installed_mods(
     Ok(mods)
 }
 
+/// Deletes all legacy packages that match in author and mod name
+/// regardless of version
+pub fn delete_legacy_package_install(
+    thunderstore_mod_string: &str,
+    game_install: &GameInstall,
+) -> Result<(), String> {
+    let thunderstore_mod_string: ParsedThunderstoreModString =
+        thunderstore_mod_string.parse().unwrap();
+    let found_installed_legacy_mods = match parse_installed_mods(game_install) {
+        Ok(res) => res,
+        Err(err) => return Err(err.to_string()),
+    };
+
+    for legacy_mod in found_installed_legacy_mods {
+        if legacy_mod.thunderstore_mod_string.is_none() {
+            continue; // Not a thunderstore mod
+        }
+
+        let current_mod_ts_string: ParsedThunderstoreModString = legacy_mod
+            .clone()
+            .thunderstore_mod_string
+            .unwrap()
+            .parse()
+            .unwrap();
+
+        if thunderstore_mod_string.author_name == current_mod_ts_string.author_name
+            && thunderstore_mod_string.mod_name == current_mod_ts_string.mod_name
+        {
+            // They match, delete
+            delete_mod_folder(&legacy_mod.directory)?;
+        }
+    }
+
+    Ok(())
+}
+
 /// Deletes all NorthstarMods related to a Thunderstore mod
 pub fn delete_thunderstore_mod(
     game_install: GameInstall,
