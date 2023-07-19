@@ -71,6 +71,7 @@ export default {
         <el-menu-item index="/changelog">{{ $t('menu.changelog') }}</el-menu-item>
         <el-menu-item index="/mods">{{ $t('menu.mods') }}</el-menu-item>
         <el-menu-item index="/settings">{{ $t('menu.settings') }}</el-menu-item>
+        <el-menu-item index="/logs">{{ $t('menu.logs') }}</el-menu-item>
         <el-menu-item index="/dev" v-if="$store.state.developer_mode">{{ $t('menu.dev') }}</el-menu-item>
       </el-menu>
 

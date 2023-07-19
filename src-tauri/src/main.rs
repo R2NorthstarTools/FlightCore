@@ -157,6 +157,8 @@ fn main() {
             close_application,
             development::install_git_main,
             get_available_northstar_versions,
+            northstar::nslog::fetch_northstar_logs,
+            northstar::nslog::load_northstar_log,
         ])
         .run(tauri::generate_context!())
     {
@@ -478,6 +480,13 @@ pub struct NorthstarMod {
     pub thunderstore_mod_string: Option<String>,
     pub enabled: bool,
     pub directory: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
+pub struct NorthstarLog {
+    pub filename: String,
+    pub path: String,
 }
 
 // I intend to add more linux related stuff to check here, so making a func

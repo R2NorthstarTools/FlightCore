@@ -3,6 +3,7 @@
         "play": "Play",
         "changelog": "Changelog",
         "mods": "Mods",
+        "logs": "Logs",
         "settings": "Settings",
         "dev": "Dev"
     },
@@ -88,6 +89,11 @@
             "remove_success": "Removed {modName}",
             "install_success": "Installed {modName}"
         }
+    },
+
+    "logs": {
+        "no_logs": "No logs were found.",
+        "open": "Open Log"
     },
 
     "settings": {

@@ -316,6 +316,39 @@ export const store = createStore<FlightCoreStore>({
                     showErrorNotification(error);
                 });
         },
+        async fetchNorthstarLogs(state: FlightCoreStore) {
+            let game_install = {
+                game_path: state.game_path,
+                install_type: state.install_type
+            } as GameInstall;
+
+            // If there's no game path, prevent looking for installed mods.
+            if (state.game_path === undefined) {
+                console.warn('Cannot fetch Northstar logs since so game path is selected.');
+                return;
+            }
+
+            await invoke("fetch_northstar_logs", { gameInstall: game_install })
+                .then((message) => {
+                    state.northstar_logs = (message as NorthstarLog[]);
+                })
+                .catch((error) => {
+                    console.error(error);
+                    showErrorNotification(error);
+                });
+        },
+        async loadNorthstarLog(state: any, log: NorthstarLog) {
+            await invoke("load_northstar_log", { log: log })
+                .then((message) => {
+                    state.northstar_log_content = (message as string);
+                })
+                .catch((error) => {
+                    console.error(error);
+                    showErrorNotification(error);
+                });
+
+            return;
+        },
         async toggleReleaseCandidate(state: FlightCoreStore) {
             // Flip between RELEASE and RELEASE_CANDIDATE
             state.northstar_release_canal = state.northstar_release_canal === ReleaseCanal.RELEASE

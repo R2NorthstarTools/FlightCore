@@ -1,6 +1,7 @@
 //! This module deals with handling things around Northstar such as
 //! - getting version number
 pub mod install;
+pub mod nslog;
 
 use crate::util::check_ea_app_or_origin_running;
 use crate::{
