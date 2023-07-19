@@ -559,16 +559,16 @@ pub async fn fc_download_mod_and_install(
     match legacy::delete_legacy_package_install(thunderstore_mod_string, game_install) {
         Ok(()) => (),
         Err(err) => {
+            // Catch error but ignore
             log::warn!("Failed deleting legacy versions due to: {}", err);
-            todo!(); // should we do something on error or ignore?
         }
     };
 
     match delete_older_versions(thunderstore_mod_string, game_install) {
         Ok(()) => (),
         Err(err) => {
+            // Catch error but ignore
             log::warn!("Failed deleting older versions due to: {}", err);
-            todo!(); // should we do something on error or ignore?
         }
     };
 
