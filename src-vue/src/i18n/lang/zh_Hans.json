@@ -1,1 +1,152 @@
-{}
+{
+    "menu": {
+        "mods": "模组",
+        "settings": "设置",
+        "dev": "开发者模式",
+        "play": "开始游玩",
+        "changelog": "更新日志"
+    },
+    "generic": {
+        "error": "错误",
+        "cancel": "取消",
+        "yes": "是",
+        "no": "否",
+        "informationShort": "信息",
+        "downloading": "下载中",
+        "extracting": "解压中",
+        "done": "完成",
+        "success": "成功"
+    },
+    "play": {
+        "button": {
+            "northstar_is_running": "游戏正在运行",
+            "select_game_dir": "选择Titanfall 2游戏目录",
+            "install": "安装",
+            "installing": "安装中...",
+            "update": "升级",
+            "ready_to_play": "启动游戏",
+            "updating": "升级中..."
+        },
+        "unknown_version": "未知版本",
+        "see_patch_notes": "参阅相关补丁说明",
+        "servers": "服务器",
+        "players": "玩家",
+        "unable_to_load_playercount": "加载玩家数量失败",
+        "ea_app_running": "EA App正在运行:",
+        "northstar_running": "Northstar正在运行:"
+    },
+    "mods": {
+        "local": {
+            "no_mods": "未找到模组。",
+            "delete_confirm": "你确定要删除该模组吗?",
+            "delete": "删除",
+            "part_of_ts_mod": "该Northstar模组来源于Thunderstore",
+            "success_deleting": "成功删除 {modName}"
+        },
+        "online": {
+            "try_another_search": "尝试其他搜索方式！",
+            "no_match": "未找到相匹配的模组。"
+        },
+        "menu": {
+            "local": "本地",
+            "search": "搜索",
+            "sort_mods": "模组排序",
+            "select_categories": "标签选择",
+            "sort": {
+                "date_desc": "日期降序",
+                "date_asc": "日期升序",
+                "name_desc": "按名称(Z到A)",
+                "most_downloaded": "最多下载",
+                "top_rated": "最高评分",
+                "name_asc": "按名称(A到Z)"
+            },
+            "online": "线上",
+            "filter": "筛选"
+        },
+        "card": {
+            "button": {
+                "being_installed": "安装中...",
+                "being_updated": "升级中...",
+                "installed": "已安装",
+                "install": "安装",
+                "outdated": "升级"
+            },
+            "by": "作者:",
+            "remove": "移除模组",
+            "remove_dialog_title": "警告",
+            "remove_success": "已移除{modName}",
+            "install_success": "已安装 {modName}",
+            "more_info": "更多信息",
+            "remove_dialog_text": "删除该来自Thunderstore的模组？"
+        }
+    },
+    "settings": {
+        "manage_install": "安装管理",
+        "choose_folder": "选择安装目录",
+        "open_game_folder": "打开文件夹",
+        "nb_ts_mods_per_page": "Thunderstore每页显示多少个模组",
+        "nb_ts_mods_per_page_desc2": "该值设为0时将不再显示页码。",
+        "nb_ts_mods_reset": "重置为默认值",
+        "language": "语言",
+        "language_select": "请选择你需要的语言",
+        "about": "关于:",
+        "flightcore_version": "FlightCore 版本：",
+        "testing": "测试选项：",
+        "enable_test_channels": "开启测试版本选项",
+        "nb_ts_mods_per_page_desc1": "该数值对加载Thunderstore页面时的速度有影响。",
+        "dev_mode_enabled_title": "看上面！",
+        "dev_mode_enabled_text": "开发者模式已启用。",
+        "show_deprecated_mods": "显示已弃用的Thunderstore模组",
+        "show_deprecated_mods_desc1": "该选项会使您可以在线上模组合集中看到已弃用的模组。",
+        "show_deprecated_mods_desc2": "请注意，这类模组被弃用一般是有原因的。",
+        "repair": {
+            "title": "修复",
+            "window": {
+                "title": "FlightCore 修复工具",
+                "warning": "此工具包含修复Northstar和FlightCore各种常见问题的功能。",
+                "disable_all_but_core": "除了核心模组以外禁用其他模组",
+                "disable_all_but_core_success": "已禁用除核心模组以外的所有模组",
+                "disable_modsettings": "禁用ModSettings模组",
+                "disable_modsettings_success": "已禁用ModSettings模组",
+                "force_delete_temp_dl": "强制删除临时下载目录",
+                "delete_persistent_store": "删除FlightCore永久存储文件",
+                "reinstall_text": "请耐心等待",
+                "reinstall_success": "成功重装Northstar",
+                "force_reinstall_ns": "强制重装Northstar",
+                "reinstall_title": "正在强制重装Northstar"
+            },
+            "open_window": "打开修复工具"
+        }
+    },
+    "notification": {
+        "game_folder": {
+            "new": {
+                "title": "新的游戏目录",
+                "text": "已成功更新游戏目录。"
+            },
+            "wrong": {
+                "title": "错误的文件夹",
+                "text": "所选文件夹不是有效的Titanfall2安装目录。"
+            },
+            "not_found": {
+                "title": "未找到Titanfall2!",
+                "text": "请手动选择安装目录"
+            }
+        },
+        "flightcore_outdated": {
+            "title": "FlightCore需要更新!",
+            "text": "请更新FlightCore.\n正在运行旧版本 {oldVersion}.\n最新版本为 {newVersion}!"
+        }
+    },
+    "channels": {
+        "release": {
+            "switch": {
+                "text": "将资源版本切换至 \"{canal}\"."
+            }
+        },
+        "names": {
+            "NorthstarReleaseCandidate": "Northstar测试版本",
+            "Northstar": "Northstar"
+        }
+    }
+}
