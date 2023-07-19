@@ -648,10 +648,6 @@ pub fn delete_thunderstore_mod(
     // Check packages
     let packages_folder = format!("{}/R2Northstar/packages", game_install.game_path);
     if std::path::Path::new(&packages_folder).exists() {
-        println!(
-            "Directory {} exists. Listing subdirectories...",
-            packages_folder
-        );
         for entry in fs::read_dir(packages_folder).unwrap() {
             let entry = entry.unwrap();
 
@@ -663,7 +659,6 @@ pub fn delete_thunderstore_mod(
 
             let entry_path = entry.path();
             let package_folder_ts_string = entry_path.file_name().unwrap().to_string_lossy();
-            dbg!(package_folder_ts_string.clone());
 
             if package_folder_ts_string != thunderstore_mod_string {
                 // Not the mod folder we are looking for, try the next one\
