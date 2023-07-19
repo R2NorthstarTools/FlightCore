@@ -76,13 +76,14 @@ checksum = "224afbd727c3d6e4b90103ece64b8d1b67fbb1973b1046c2281eed3f3803f800"
 
 [[package]]
 name = "app"
-version = "1.23.0"
+version = "1.24.0"
 dependencies = [
  "anyhow",
  "async-recursion",
  "chrono",
  "const_format",
  "dirs",
+ "glob",
  "json5",
  "libthermite",
  "log",
@@ -1987,9 +1988,11 @@ version = "0.6.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "27cd844bbc25676cd14fa9ad04cc40e0f3c4d5c66107ef3a99896db1f81324c0"
 dependencies = [
+ "flate2",
  "json5",
  "serde",
  "serde_json",
+ "tar",
  "thiserror",
  "tracing",
  "ureq",

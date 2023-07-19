@@ -9,11 +9,6 @@ use std::{
     time::Duration,
 };
 
-#[cfg(target_os = "windows")]
-use std::ptr::null_mut;
-#[cfg(target_os = "windows")]
-use winapi::um::winuser::{MessageBoxW, MB_ICONERROR, MB_OK, MB_USERICON};
-
 use crate::constants::REFRESH_DELAY;
 
 mod development;
@@ -26,6 +21,10 @@ mod util;
 
 use semver::Version;
 use serde::{Deserialize, Serialize};
+#[cfg(target_os = "windows")]
+use tauri::api::dialog::blocking::MessageDialogBuilder;
+#[cfg(target_os = "windows")]
+use tauri::api::dialog::{MessageDialogButtons, MessageDialogKind};
 use tauri::{Manager, Runtime};
 use tokio::time::sleep;
 use ts_rs::TS;
@@ -144,6 +143,9 @@ fn main() {
             mod_management::delete_northstar_mod,
             util::get_server_player_count,
             mod_management::delete_thunderstore_mod,
+            install_northstar_proton_wrapper,
+            uninstall_northstar_proton_wrapper,
+            get_local_northstar_proton_wrapper_version,
             open_repair_window,
             thunderstore::query_thunderstore_packages_api,
             github::get_list_of_tags,
@@ -172,23 +174,16 @@ fn main() {
             #[cfg(target_os = "windows")]
             {
                 log::error!("WebView2 not installed: {err}");
-                // Display a message box to the user with a button to open the installation instructions
-                let title = "WebView2 not found"
-                    .encode_utf16()
-                    .chain(Some(0))
-                    .collect::<Vec<_>>();
-                let message = "FlightCore requires WebView2 to run.\n\nClick OK to open installation instructions.".encode_utf16().chain(Some(0)).collect::<Vec<_>>();
-                unsafe {
-                    let result = MessageBoxW(
-                        null_mut(),
-                        message.as_ptr(),
-                        title.as_ptr(),
-                        MB_OK | MB_ICONERROR | MB_USERICON,
-                    );
-                    if result == 1 {
-                        // Open the installation instructions URL in the user's default web browser
-                        open::that("https://github.com/R2NorthstarTools/FlightCore/blob/main/docs/TROUBLESHOOTING.md#flightcore-wont-launch").unwrap();
-                    }
+                let dialog = MessageDialogBuilder::new(
+                    "WebView2 not found",
+                    "FlightCore requires WebView2 to run.\n\nClick OK to open installation instructions."
+                )
+                .kind(MessageDialogKind::Error)
+                .buttons(MessageDialogButtons::Ok);
+
+                if dialog.show() {
+                    // Open the installation instructions URL in the user's default web browser
+                    open::that("https://github.com/R2NorthstarTools/FlightCore/blob/main/docs/TROUBLESHOOTING.md#flightcore-wont-launch").unwrap();
                 }
             }
         }
@@ -524,4 +519,33 @@ pub fn check_is_valid_game_path(game_install_path: &str) -> Result<(), String> {
 #[tauri::command]
 fn get_host_os() -> String {
     env::consts::OS.to_string()
+}
+
+/// On Linux attempts to install NorthstarProton
+/// On Windows simply returns an error message
+#[tauri::command]
+async fn install_northstar_proton_wrapper() -> Result<(), String> {
+    #[cfg(target_os = "linux")]
+    return linux::install_ns_proton().map_err(|err| err.to_string());
+
+    #[cfg(target_os = "windows")]
+    Err("Not supported on Windows".to_string())
+}
+
+#[tauri::command]
+async fn uninstall_northstar_proton_wrapper() -> Result<(), String> {
+    #[cfg(target_os = "linux")]
+    return linux::uninstall_ns_proton();
+
+    #[cfg(target_os = "windows")]
+    Err("Not supported on Windows".to_string())
+}
+
+#[tauri::command]
+async fn get_local_northstar_proton_wrapper_version() -> Result<String, String> {
+    #[cfg(target_os = "linux")]
+    return linux::get_local_ns_proton_version();
+
+    #[cfg(target_os = "windows")]
+    Err("Not supported on Windows".to_string())
 }
