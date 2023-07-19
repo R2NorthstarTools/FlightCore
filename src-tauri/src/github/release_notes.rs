@@ -65,7 +65,10 @@ pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
     let current_version = env!("CARGO_PKG_VERSION");
     let current_version = Version::parse(current_version).unwrap();
 
+    #[cfg(dev)]
     let is_outdated = current_version < newest_version;
+    #[cfg(not(dev))]
+    let is_outdated = current_version != newest_version;
 
     // If outdated, check how new the update is
     if is_outdated {
