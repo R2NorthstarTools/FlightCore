@@ -548,11 +548,58 @@ pub fn delete_northstar_mod(game_install: GameInstall, nsmod_name: String) -> Re
     Err(format!("Mod {nsmod_name} not found to be installed"))
 }
 
+/// Deletes a given Thunderstore package
+fn delete_package_folder(ts_package_directory: &str) -> Result<(), String> {
+    let ns_mod_dir_path = std::path::Path::new(&ts_package_directory);
+
+    // Safety check: Check whether `manifest.json` exists and exit early if not
+    // If it does not exist, we might not be dealing with a Thunderstore package
+    let mod_json_path = ns_mod_dir_path.join("manifest.json");
+    if !mod_json_path.exists() {
+        // If it doesn't exist, return an error
+        return Err(format!(
+            "manifest.json does not exist in {}",
+            ts_package_directory
+        ));
+    }
+
+    match std::fs::remove_dir_all(ts_package_directory) {
+        Ok(()) => Ok(()),
+        Err(err) => Err(format!("Failed deleting package: {err}")),
+    }
+}
+
 /// Deletes all NorthstarMods related to a Thunderstore mod
 #[tauri::command]
 pub fn delete_thunderstore_mod(
     game_install: GameInstall,
     thunderstore_mod_string: String,
 ) -> Result<(), String> {
+    // Check packages
+    let packages_folder = format!("{}/R2Northstar/packages", game_install.game_path);
+    if std::path::Path::new(&packages_folder).exists() {
+        for entry in fs::read_dir(packages_folder).unwrap() {
+            let entry = entry.unwrap();
+
+            // Check if it's a folder and skip if otherwise
+            if !entry.file_type().unwrap().is_dir() {
+                log::warn!("Skipping \"{}\", not a file", entry.path().display());
+                continue;
+            }
+
+            let entry_path = entry.path();
+            let package_folder_ts_string = entry_path.file_name().unwrap().to_string_lossy();
+
+            if package_folder_ts_string != thunderstore_mod_string {
+                // Not the mod folder we are looking for, try the next one\
+                continue;
+            }
+
+            // All checks passed, this is the matching mod
+            return delete_package_folder(&entry.path().display().to_string());
+        }
+    }
+
+    // Try legacy mod installs as fallback
     legacy::delete_thunderstore_mod(game_install, thunderstore_mod_string)
 }
