@@ -93,6 +93,60 @@
         "flightcore_version": "FlightCore 版本：",
         "testing": "测试选项：",
         "enable_test_channels": "开启测试版本选项",
-        "nb_ts_mods_per_page_desc1": "该数值对加载Thunderstore页面时的速度有影响。"
+        "nb_ts_mods_per_page_desc1": "该数值对加载Thunderstore页面时的速度有影响。",
+        "dev_mode_enabled_title": "看上面！",
+        "dev_mode_enabled_text": "开发者模式已启用。",
+        "show_deprecated_mods": "显示已弃用的Thunderstore模组",
+        "show_deprecated_mods_desc1": "该选项会使您可以在线上模组合集中看到已弃用的模组。",
+        "show_deprecated_mods_desc2": "请注意，这类模组被弃用一般是有原因的。",
+        "repair": {
+            "title": "修复",
+            "window": {
+                "title": "FlightCore 修复工具",
+                "warning": "此工具包含修复Northstar和FlightCore各种常见问题的功能。",
+                "disable_all_but_core": "除了核心模组以外禁用其他模组",
+                "disable_all_but_core_success": "已禁用除核心模组以外的所有模组",
+                "disable_modsettings": "禁用ModSettings模组",
+                "disable_modsettings_success": "已禁用ModSettings模组",
+                "force_delete_temp_dl": "强制删除临时下载目录",
+                "delete_persistent_store": "删除FlightCore永久存储文件",
+                "reinstall_text": "请耐心等待",
+                "reinstall_success": "成功重装Northstar",
+                "force_reinstall_ns": "强制重装Northstar",
+                "reinstall_title": "正在强制重装Northstar"
+            },
+            "open_window": "打开修复工具"
+        }
+    },
+    "notification": {
+        "game_folder": {
+            "new": {
+                "title": "新的游戏目录",
+                "text": "已成功更新游戏目录。"
+            },
+            "wrong": {
+                "title": "错误的文件夹",
+                "text": "所选文件夹不是有效的Titanfall2安装目录。"
+            },
+            "not_found": {
+                "title": "未找到Titanfall2!",
+                "text": "请手动选择安装目录"
+            }
+        },
+        "flightcore_outdated": {
+            "title": "FlightCore需要更新!",
+            "text": "请更新FlightCore.\n正在运行旧版本 {oldVersion}.\n最新版本为 {newVersion}!"
+        }
+    },
+    "channels": {
+        "release": {
+            "switch": {
+                "text": "将资源版本切换至 \"{canal}\"."
+            }
+        },
+        "names": {
+            "NorthstarReleaseCandidate": "Northstar测试版本",
+            "Northstar": "Northstar"
+        }
     }
 }
