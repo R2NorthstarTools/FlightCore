@@ -2,6 +2,7 @@
 
 use crate::constants::{BLACKLISTED_MODS, CORE_MODS};
 use async_recursion::async_recursion;
+use thermite::prelude::ThermiteError;
 
 use crate::NorthstarMod;
 use anyhow::{anyhow, Result};
@@ -459,6 +460,41 @@ fn delete_older_versions(
     Ok(())
 }
 
+/// Checks whether some mod is correctly formatted
+/// Currently checks whether
+/// - Some `mod.json` exists under `mods/*/mod.json`
+fn fc_sanity_check(input: &&fs::File) -> bool {
+    let mut archive = match zip::read::ZipArchive::new(*input) {
+        Ok(archive) => archive,
+        Err(_) => return false,
+    };
+
+    let mut has_mods = false;
+    let mut mod_json_exists = false;
+
+    // Checks for `mods/*/mod.json`
+    for i in 0..archive.len() {
+        let file = match archive.by_index(i) {
+            Ok(file) => file,
+            Err(_) => continue,
+        };
+        let file_path = file.mangled_name();
+        if file_path.starts_with("mods/") {
+            has_mods = true;
+            if let Some(name) = file_path.file_name() {
+                if name == "mod.json" {
+                    let parent_path = file_path.parent().unwrap();
+                    if parent_path.parent().unwrap().to_str().unwrap() == "mods" {
+                        mod_json_exists = true;
+                    }
+                }
+            }
+        }
+    }
+
+    has_mods && mod_json_exists
+}
+
 // Copied from `libtermite` source code and modified
 // Should be replaced with a library call to libthermite in the future
 /// Download and install mod to the specified target.
@@ -544,14 +580,38 @@ pub async fn fc_download_mod_and_install(
     );
 
     // Extract the mod to the mods directory
-    match thermite::core::manage::install_mod(
+    match thermite::core::manage::install_with_sanity(
         temp_file.file(),
         std::path::Path::new(&install_directory),
+        fc_sanity_check,
     ) {
         Ok(_) => (),
         Err(err) => {
             log::warn!("libthermite couldn't install mod {thunderstore_mod_string} due to {err:?}",);
-            return Err(err.to_string());
+            return match err {
+                ThermiteError::SanityError => Err(
+                    "Mod failed sanity check during install. It's probably not correctly formatted"
+                        .to_string(),
+                ),
+                _ => Err(err.to_string()),
+            };
+        }
+    };
+
+    // Successful package install
+    match legacy::delete_legacy_package_install(thunderstore_mod_string, game_install) {
+        Ok(()) => (),
+        Err(err) => {
+            // Catch error but ignore
+            log::warn!("Failed deleting legacy versions due to: {}", err);
+        }
+    };
+
+    match delete_older_versions(thunderstore_mod_string, game_install) {
+        Ok(()) => (),
+        Err(err) => {
+            // Catch error but ignore
+            log::warn!("Failed deleting older versions due to: {}", err);
         }
     };
 
