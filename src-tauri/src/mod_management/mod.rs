@@ -615,23 +615,6 @@ pub async fn fc_download_mod_and_install(
         }
     };
 
-    // Successful package install
-    match legacy::delete_legacy_package_install(thunderstore_mod_string, game_install) {
-        Ok(()) => (),
-        Err(err) => {
-            // Catch error but ignore
-            log::warn!("Failed deleting legacy versions due to: {}", err);
-        }
-    };
-
-    match delete_older_versions(thunderstore_mod_string, game_install) {
-        Ok(()) => (),
-        Err(err) => {
-            // Catch error but ignore
-            log::warn!("Failed deleting older versions due to: {}", err);
-        }
-    };
-
     Ok(())
 }
 
