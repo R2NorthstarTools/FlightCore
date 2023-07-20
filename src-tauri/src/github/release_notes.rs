@@ -58,14 +58,17 @@ pub async fn get_newest_flightcore_version() -> Result<FlightCoreVersion, String
 #[tauri::command]
 pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
     let newest_flightcore_release = get_newest_flightcore_version().await?;
+    // Parse version number excluding leading `v`
+    let newest_version = semver::Version::parse(&newest_flightcore_release.tag_name[1..]).unwrap();
 
-    // Get version of installed FlightCore...
-    let version = env!("CARGO_PKG_VERSION");
-    // ...and format it
-    let version = format!("v{}", version);
+    // Get version of installed FlightCore
+    let current_version = env!("CARGO_PKG_VERSION");
+    let current_version = semver::Version::parse(current_version).unwrap();
 
-    // TODO: This shouldn't be a string compare but promper semver compare
-    let is_outdated = version != newest_flightcore_release.tag_name;
+    #[cfg(debug_assertions)]
+    let is_outdated = current_version < newest_version;
+    #[cfg(not(debug_assertions))]
+    let is_outdated = current_version != newest_version;
 
     // If outdated, check how new the update is
     if is_outdated {
