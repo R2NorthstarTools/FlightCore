@@ -58,6 +58,7 @@ pub async fn get_newest_flightcore_version() -> Result<FlightCoreVersion, String
 #[tauri::command]
 pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
     let newest_flightcore_release = get_newest_flightcore_version().await?;
+    // Parse version number excluding leading `v`
     let newest_version = semver::Version::parse(&newest_flightcore_release.tag_name[1..]).unwrap();
 
     // Get version of installed FlightCore
