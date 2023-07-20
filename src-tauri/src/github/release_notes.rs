@@ -1,5 +1,4 @@
 use crate::constants::APP_USER_AGENT;
-use semver::Version;
 use serde::{Deserialize, Serialize};
 use std::vec::Vec;
 use ts_rs::TS;
@@ -59,11 +58,11 @@ pub async fn get_newest_flightcore_version() -> Result<FlightCoreVersion, String
 #[tauri::command]
 pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
     let newest_flightcore_release = get_newest_flightcore_version().await?;
-    let newest_version = Version::parse(&newest_flightcore_release.tag_name[1..]).unwrap();
+    let newest_version = semver::Version::parse(&newest_flightcore_release.tag_name[1..]).unwrap();
 
     // Get version of installed FlightCore
     let current_version = env!("CARGO_PKG_VERSION");
-    let current_version = Version::parse(current_version).unwrap();
+    let current_version = semver::Version::parse(current_version).unwrap();
 
     #[cfg(debug_assertions)]
     let is_outdated = current_version < newest_version;
