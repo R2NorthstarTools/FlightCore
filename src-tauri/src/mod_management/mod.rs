@@ -575,12 +575,13 @@ pub async fn fc_download_mod_and_install(
 
     // Get directory to install to made up of packages directory and Thunderstore mod string
     let install_directory = format!(
-        "{}/R2Northstar/packages/{}",
-        game_install.game_path, thunderstore_mod_string
+        "{}/R2Northstar/packages/",
+        game_install.game_path
     );
 
     // Extract the mod to the mods directory
     match thermite::core::manage::install_with_sanity(
+        thunderstore_mod_string,
         temp_file.file(),
         std::path::Path::new(&install_directory),
         fc_sanity_check,
