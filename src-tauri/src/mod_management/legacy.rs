@@ -117,6 +117,10 @@ pub fn parse_installed_mods(
 
 /// Deletes all legacy packages that match in author and mod name
 /// regardless of version
+/// 
+/// "legacy package" refers to a Thunderstore package installed into the `mods` folder
+/// by extracting Northstar mods contained inside and then adding `manifest.json` and `thunderstore_author.txt`
+/// to indicate which Thunderstore package they are part of
 pub fn delete_legacy_package_install(
     thunderstore_mod_string: &str,
     game_install: &GameInstall,
