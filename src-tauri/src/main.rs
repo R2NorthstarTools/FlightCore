@@ -9,11 +9,6 @@ use std::{
     time::Duration,
 };
 
-#[cfg(target_os = "windows")]
-use std::ptr::null_mut;
-#[cfg(target_os = "windows")]
-use winapi::um::winuser::{MessageBoxW, MB_ICONERROR, MB_OK, MB_USERICON};
-
 use crate::constants::REFRESH_DELAY;
 
 mod development;
@@ -26,6 +21,10 @@ mod util;
 
 use semver::Version;
 use serde::{Deserialize, Serialize};
+#[cfg(target_os = "windows")]
+use tauri::api::dialog::blocking::MessageDialogBuilder;
+#[cfg(target_os = "windows")]
+use tauri::api::dialog::{MessageDialogButtons, MessageDialogKind};
 use tauri::{Manager, Runtime};
 use tokio::time::sleep;
 use ts_rs::TS;
@@ -175,23 +174,16 @@ fn main() {
             #[cfg(target_os = "windows")]
             {
                 log::error!("WebView2 not installed: {err}");
-                // Display a message box to the user with a button to open the installation instructions
-                let title = "WebView2 not found"
-                    .encode_utf16()
-                    .chain(Some(0))
-                    .collect::<Vec<_>>();
-                let message = "FlightCore requires WebView2 to run.\n\nClick OK to open installation instructions.".encode_utf16().chain(Some(0)).collect::<Vec<_>>();
-                unsafe {
-                    let result = MessageBoxW(
-                        null_mut(),
-                        message.as_ptr(),
-                        title.as_ptr(),
-                        MB_OK | MB_ICONERROR | MB_USERICON,
-                    );
-                    if result == 1 {
-                        // Open the installation instructions URL in the user's default web browser
-                        open::that("https://github.com/R2NorthstarTools/FlightCore/blob/main/docs/TROUBLESHOOTING.md#flightcore-wont-launch").unwrap();
-                    }
+                let dialog = MessageDialogBuilder::new(
+                    "WebView2 not found",
+                    "FlightCore requires WebView2 to run.\n\nClick OK to open installation instructions."
+                )
+                .kind(MessageDialogKind::Error)
+                .buttons(MessageDialogButtons::Ok);
+
+                if dialog.show() {
+                    // Open the installation instructions URL in the user's default web browser
+                    open::that("https://github.com/R2NorthstarTools/FlightCore/blob/main/docs/TROUBLESHOOTING.md#flightcore-wont-launch").unwrap();
                 }
             }
         }
