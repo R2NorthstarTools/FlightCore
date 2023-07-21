@@ -2,6 +2,7 @@
 
 use crate::constants::{BLACKLISTED_MODS, CORE_MODS};
 use async_recursion::async_recursion;
+use thermite::prelude::ThermiteError;
 
 use crate::NorthstarMod;
 use anyhow::{anyhow, Result};
@@ -407,6 +408,97 @@ async fn get_mod_dependencies(thunderstore_mod_string: &str) -> Result<Vec<Strin
     Ok(Vec::<String>::new())
 }
 
+/// Deletes all versions of Thunderstore package except the specified one
+fn delete_older_versions(
+    thunderstore_mod_string: &str,
+    game_install: &GameInstall,
+) -> Result<(), String> {
+    let thunderstore_mod_string: ParsedThunderstoreModString =
+        thunderstore_mod_string.parse().unwrap();
+    log::info!(
+        "Deleting other versions of {}",
+        thunderstore_mod_string.to_string()
+    );
+    let packages_folder = format!("{}/R2Northstar/packages", game_install.game_path);
+
+    // Get folders in packages dir
+    let paths = match std::fs::read_dir(&packages_folder) {
+        Ok(paths) => paths,
+        Err(_err) => return Err(format!("Failed to read directory {}", &packages_folder)),
+    };
+
+    let mut directories: Vec<PathBuf> = Vec::new();
+
+    // Get list of folders in `mods` directory
+    for path in paths {
+        let my_path = path.unwrap().path();
+
+        let md = std::fs::metadata(my_path.clone()).unwrap();
+        if md.is_dir() {
+            directories.push(my_path);
+        }
+    }
+
+    for directory in directories {
+        let folder_name = directory.file_name().unwrap().to_str().unwrap();
+        let ts_mod_string_from_folder: ParsedThunderstoreModString = match folder_name.parse() {
+            Ok(res) => res,
+            Err(err) => {
+                // Failed parsing folder name as Thunderstore mod string
+                // This means it doesn't follow the `AUTHOR-MOD-VERSION` naming structure
+                // This folder could've been manually created by the user or another application
+                // As parsing failed we cannot determine the Thunderstore package it is part of hence we skip it
+                log::warn!("{err}");
+                continue;
+            }
+        };
+        // Check which match `AUTHOR-MOD` and do NOT match `AUTHOR-MOD-VERSION`
+        if ts_mod_string_from_folder.author_name == thunderstore_mod_string.author_name
+            && ts_mod_string_from_folder.mod_name == thunderstore_mod_string.mod_name
+            && ts_mod_string_from_folder.version != thunderstore_mod_string.version
+        {
+            delete_package_folder(&directory.display().to_string())?;
+        }
+    }
+
+    Ok(())
+}
+
+/// Checks whether some mod is correctly formatted
+/// Currently checks whether
+/// - Some `mod.json` exists under `mods/*/mod.json`
+fn fc_sanity_check(input: &&fs::File) -> bool {
+    let mut archive = match zip::read::ZipArchive::new(*input) {
+        Ok(archive) => archive,
+        Err(_) => return false,
+    };
+
+    let mut has_mods = false;
+    let mut mod_json_exists = false;
+
+    // Checks for `mods/*/mod.json`
+    for i in 0..archive.len() {
+        let file = match archive.by_index(i) {
+            Ok(file) => file,
+            Err(_) => continue,
+        };
+        let file_path = file.mangled_name();
+        if file_path.starts_with("mods/") {
+            has_mods = true;
+            if let Some(name) = file_path.file_name() {
+                if name == "mod.json" {
+                    let parent_path = file_path.parent().unwrap();
+                    if parent_path.parent().unwrap().to_str().unwrap() == "mods" {
+                        mod_json_exists = true;
+                    }
+                }
+            }
+        }
+    }
+
+    has_mods && mod_json_exists
+}
+
 // Copied from `libtermite` source code and modified
 // Should be replaced with a library call to libthermite in the future
 /// Download and install mod to the specified target.
@@ -421,7 +513,6 @@ pub async fn fc_download_mod_and_install(
         "{}/___flightcore-temp-download-dir/",
         game_install.game_path
     );
-    let mods_directory = format!("{}/R2Northstar/mods/", game_install.game_path);
 
     // Early return on empty string
     if thunderstore_mod_string.is_empty() {
@@ -486,19 +577,43 @@ pub async fn fc_download_mod_and_install(
         Err(err) => return Err(err.to_string()),
     };
 
-    // Get Thunderstore mod author
-    let author = thunderstore_mod_string.split('-').next().unwrap();
+    // Get directory to install to made up of packages directory and Thunderstore mod string
+    let install_directory = format!("{}/R2Northstar/packages/", game_install.game_path);
 
     // Extract the mod to the mods directory
-    match thermite::core::manage::install_mod(
-        author,
+    match thermite::core::manage::install_with_sanity(
+        thunderstore_mod_string,
         temp_file.file(),
-        std::path::Path::new(&mods_directory),
+        std::path::Path::new(&install_directory),
+        fc_sanity_check,
     ) {
         Ok(_) => (),
         Err(err) => {
             log::warn!("libthermite couldn't install mod {thunderstore_mod_string} due to {err:?}",);
-            return Err(err.to_string());
+            return match err {
+                ThermiteError::SanityError => Err(
+                    "Mod failed sanity check during install. It's probably not correctly formatted"
+                        .to_string(),
+                ),
+                _ => Err(err.to_string()),
+            };
+        }
+    };
+
+    // Successful package install
+    match legacy::delete_legacy_package_install(thunderstore_mod_string, game_install) {
+        Ok(()) => (),
+        Err(err) => {
+            // Catch error but ignore
+            log::warn!("Failed deleting legacy versions due to: {}", err);
+        }
+    };
+
+    match delete_older_versions(thunderstore_mod_string, game_install) {
+        Ok(()) => (),
+        Err(err) => {
+            // Catch error but ignore
+            log::warn!("Failed deleting older versions due to: {}", err);
         }
     };
 
