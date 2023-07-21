@@ -155,6 +155,11 @@ export default {
 }
 
 /* Header menu */
+#fc_menu-bar {
+  backdrop-filter: saturate(50%) blur(10px);
+  background-color: rgba(59, 59, 59, 0.8);
+  height: var(--fc-menu_height);
+}
 .developer_build {
   background: repeating-linear-gradient(
     45deg,
