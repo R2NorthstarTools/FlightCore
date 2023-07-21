@@ -1993,12 +1993,13 @@ checksum = "201de327520df007757c1f0adce6e827fe8562fbc28bfd9c15571c66ca1f5f79"
 
 [[package]]
 name = "libthermite"
-version = "0.7.0-alpha"
+version = "0.7.0-beta"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b3927ebe9945316ba6a70f4384045fba7da9261e23b44faa7fddf9238f8916fa"
+checksum = "07d01e44ad3cd57ad026987a2d69a71d7a6d49e5ecdbbe64c2f940477b2a3a2d"
 dependencies = [
  "flate2",
  "json5",
+ "lazy_static",
  "regex",
  "serde",
  "serde_json",

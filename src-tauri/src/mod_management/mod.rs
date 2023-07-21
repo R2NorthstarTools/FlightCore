@@ -444,6 +444,10 @@ fn delete_older_versions(
         let ts_mod_string_from_folder: ParsedThunderstoreModString = match folder_name.parse() {
             Ok(res) => res,
             Err(err) => {
+                // Failed parsing folder name as Thunderstore mod string
+                // This means it doesn't follow the `AUTHOR-MOD-VERSION` naming structure
+                // This folder could've been manually created by the user or another application
+                // As parsing failed we cannot determine the Thunderstore package it is part of hence we skip it
                 log::warn!("{err}");
                 continue;
             }
@@ -574,13 +578,11 @@ pub async fn fc_download_mod_and_install(
     };
 
     // Get directory to install to made up of packages directory and Thunderstore mod string
-    let install_directory = format!(
-        "{}/R2Northstar/packages/{}",
-        game_install.game_path, thunderstore_mod_string
-    );
+    let install_directory = format!("{}/R2Northstar/packages/", game_install.game_path);
 
     // Extract the mod to the mods directory
     match thermite::core::manage::install_with_sanity(
+        thunderstore_mod_string,
         temp_file.file(),
         std::path::Path::new(&install_directory),
         fc_sanity_check,
