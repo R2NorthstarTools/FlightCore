@@ -472,6 +472,7 @@ fn fc_sanity_check(input: &&fs::File) -> bool {
         Ok(archive) => archive,
         Err(_) => return false,
     };
+    dbg!();
 
     let mut has_mods = false;
     let mut mod_json_exists = false;
@@ -491,6 +492,15 @@ fn fc_sanity_check(input: &&fs::File) -> bool {
                     if parent_path.parent().unwrap().to_str().unwrap() == "mods" {
                         mod_json_exists = true;
                     }
+                }
+            }
+        }
+
+        if file_path.starts_with("plugins/") {
+            if let Some(name) = file_path.file_name() {
+                if name.to_str().unwrap().contains(".dll") {
+                    log::warn!("Plugin detected, skipping");
+                    return false; // We disallow plugins for now
                 }
             }
         }
