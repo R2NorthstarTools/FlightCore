@@ -444,6 +444,10 @@ fn delete_older_versions(
         let ts_mod_string_from_folder: ParsedThunderstoreModString = match folder_name.parse() {
             Ok(res) => res,
             Err(err) => {
+                // Failed parsing folder name as Thunderstore mod string
+                // This means it doesn't follow the `AUTHOR-MOD-VERSION` naming structure
+                // This folder could've been manually created by the user or another application
+                // As parsing failed we cannot determine the Thunderstore package it is part of hence we skip it
                 log::warn!("{err}");
                 continue;
             }
