@@ -472,7 +472,6 @@ fn fc_sanity_check(input: &&fs::File) -> bool {
         Ok(archive) => archive,
         Err(_) => return false,
     };
-    dbg!();
 
     let mut has_mods = false;
     let mut mod_json_exists = false;
