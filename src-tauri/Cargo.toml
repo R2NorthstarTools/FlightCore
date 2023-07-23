@@ -65,6 +65,10 @@ semver = "1.0"
 # simplified filesystem access
 glob = "0.3.1"
 dirs = "5"
+# Walk directories
+walkdir = "2.3"
+# Crypto stuff like checksum calculation
+crypto-hash = "0.3"
 
 [target.'cfg(windows)'.dependencies]
 # Windows API stuff

@@ -3,6 +3,9 @@ use crate::github::{
     pull_requests::{check_github_api, download_zip_into_memory, get_launcher_download_link},
     CommitInfo,
 };
+use crate::GameInstall;
+use serde::{Deserialize, Serialize};
+use std::io::Read;
 
 #[tauri::command]
 pub async fn install_git_main(game_install_path: &str) -> Result<String, String> {
@@ -81,4 +84,79 @@ pub async fn install_git_main(game_install_path: &str) -> Result<String, String>
         latest_commit_sha
     );
     Ok(latest_commit_sha)
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Checksum {
+    path: String,
+    checksum: String,
+}
+
+impl ToString for Checksum {
+    fn to_string(&self) -> String {
+        format!("{} {}", self.checksum, self.path)
+    }
+}
+
+/// Computes the checksum of a given file
+fn compute_checksum<P: AsRef<std::path::Path>>(
+    path: P,
+) -> Result<Checksum, Box<dyn std::error::Error>> {
+    dbg!(path.as_ref().to_string_lossy().into_owned());
+    let mut file = std::fs::File::open(&path)?;
+    let mut buffer = Vec::new();
+    file.read_to_end(&mut buffer)?;
+
+    let checksum = crypto_hash::hex_digest(crypto_hash::Algorithm::SHA256, &buffer);
+    Ok(Checksum {
+        path: path.as_ref().to_string_lossy().into_owned(),
+        checksum,
+    })
+}
+
+fn convert_to_string(checksums: Vec<Checksum>) -> String {
+    let mut result = String::new();
+
+    for entry in checksums {
+        result.push_str(&entry.to_string());
+        result.push('\n');
+    }
+    result
+}
+
+#[tauri::command]
+/// Calculates checksums over the passed game_install folder and returns results
+pub async fn calculate_checksums_gameinstall(game_install: GameInstall) -> Result<String, String> {
+    log::info!("Computing checksums");
+
+    let path = game_install.game_path;
+    let mut checksums = Vec::new();
+
+    // Iterate over folder
+    for entry in walkdir::WalkDir::new(path.clone()) {
+        let entry = entry.unwrap();
+        if !entry.file_type().is_file() {
+            continue;
+        }
+
+        match compute_checksum(entry.path()) {
+            Ok(mut checksum) => {
+                checksum.path = checksum
+                    .path
+                    .strip_prefix(&path.clone())
+                    .unwrap()
+                    .to_string();
+                checksums.push(checksum)
+            }
+            Err(err) => log::warn!("Failed to compute checksum for {:?}: {:?}", entry, err),
+        }
+    }
+
+    for checksum in &checksums {
+        println!("{:?}", checksum);
+    }
+
+    log::info!("Done calculating");
+    let s = convert_to_string(checksums);
+    Ok(s)
 }
