@@ -494,6 +494,15 @@ fn fc_sanity_check(input: &&fs::File) -> bool {
                 }
             }
         }
+
+        if file_path.starts_with("plugins/") {
+            if let Some(name) = file_path.file_name() {
+                if name.to_str().unwrap().contains(".dll") {
+                    log::warn!("Plugin detected, skipping");
+                    return false; // We disallow plugins for now
+                }
+            }
+        }
     }
 
     has_mods && mod_json_exists
