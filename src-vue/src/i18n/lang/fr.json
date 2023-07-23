@@ -109,9 +109,14 @@
                 "delete_persistent_store": "Supprimer l'espace de stockage local de FlightCore",
                 "reinstall_title": "Forcer la réinstallation de Northstar",
                 "reinstall_text": "Veuillez patienter",
-                "reinstall_success": "Northstar réinstallé avec succès"
+                "reinstall_success": "Northstar réinstallé avec succès",
+                "disable_modsettings": "Désactiver le mod ModSettings",
+                "disable_modsettings_success": "Mod ModSettings désactivé"
             }
-        }
+        },
+        "show_deprecated_mods": "Montrer les mods Thunderstore dépréciés",
+        "show_deprecated_mods_desc1": "Ce paramètre vous permet d'afficher les mods Thunderstore dépréciés dans la collection de mods.",
+        "show_deprecated_mods_desc2": "Attention, les mods dépréciés le sont généralement pour une bonne raison."
     },
     "notification": {
         "game_folder": {
