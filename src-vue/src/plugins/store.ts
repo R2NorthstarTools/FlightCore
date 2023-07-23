@@ -26,7 +26,6 @@ const persistentStore = new Store('flight-core-settings.json');
 export interface FlightCoreStore {
     developer_mode: boolean,
     game_path: string,
-    launch_parameters: string,
     install_type: InstallType,
 
     flightcore_version: string,
@@ -63,7 +62,6 @@ export const store = createStore<FlightCoreStore>({
         return {
             developer_mode: false,
             game_path: undefined as unknown as string,
-            launch_parameters: undefined as unknown as string,
             install_type: undefined as unknown as InstallType,
 
             flightcore_version: "",
@@ -245,8 +243,7 @@ export const store = createStore<FlightCoreStore>({
         async launchGameSteam(state: any, no_checks = false) {
             let game_install = {
                 game_path: state.game_path,
-                install_type: state.install_type,
-                launch_parameters: state.launch_parameters
+                install_type: state.install_type
             } as GameInstall;
 
             await invoke("launch_northstar_steam", { gameInstall: game_install, bypassChecks: no_checks })
@@ -375,11 +372,6 @@ async function _initializeApp(state: any) {
     const valueFromStore: { value: boolean } | null = await persistentStore.get('northstar-releases-switching');
     if (valueFromStore) {
         state.enableReleasesSwitch = valueFromStore.value;
-    }
-
-    const paramsFromStore: { value: boolean } | null = await persistentStore.get('northstar-launch-parameters');
-    if (paramsFromStore) {
-        state.launch_parameters = paramsFromStore.value;
     }
 
     // Grab "Thunderstore mods per page" setting from store if possible

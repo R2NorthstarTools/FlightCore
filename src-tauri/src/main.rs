@@ -467,7 +467,6 @@ pub enum InstallType {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct GameInstall {
     pub game_path: String,
-    pub launch_parameters: String,
     pub install_type: InstallType,
 }
 

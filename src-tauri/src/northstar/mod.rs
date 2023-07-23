@@ -62,6 +62,7 @@ pub fn get_northstar_version_number(game_path: &str) -> Result<String, String> {
 pub fn launch_northstar(
     game_install: GameInstall,
     bypass_checks: Option<bool>,
+    launch_parameters: Option<String>,
 ) -> Result<String, String> {
     dbg!(game_install.clone());
 
@@ -77,7 +78,7 @@ pub fn launch_northstar(
             ));
         }
 
-        return launch_northstar_steam(game_install, bypass_checks);
+        return launch_northstar_steam(game_install, bypass_checks, launch_parameters);
     }
 
     let bypass_checks = bypass_checks.unwrap_or(false);
@@ -112,11 +113,14 @@ pub fn launch_northstar(
             || matches!(game_install.install_type, InstallType::UNKNOWN))
     {
         let ns_exe_path = format!("{}/NorthstarLauncher.exe", game_install.game_path);
-        let ns_params: Vec<&str> = game_install.launch_parameters.split_whitespace().collect();
-
+        
         let mut args = vec!["/C", "start", "", &ns_exe_path];
         // We cannot add the params directly because of limitations with cmd.exe
         // https://stackoverflow.com/questions/9964865/c-system-not-working-when-there-are-spaces-in-two-different-parameters/9965141#9965141
+
+        let launch_parameters = launch_parameters.unwrap_or_else(|| "".to_string());
+        let ns_params: Vec<&str> = launch_parameters.split_whitespace().collect();
+        dbg!(ns_params.clone());
         args.extend(ns_params);
         let _output = std::process::Command::new("C:\\Windows\\System32\\cmd.exe")
             .args(args)
@@ -137,6 +141,7 @@ pub fn launch_northstar(
 pub fn launch_northstar_steam(
     game_install: GameInstall,
     _bypass_checks: Option<bool>,
+    launch_parameters: Option<String>,
 ) -> Result<String, String> {
     if !matches!(game_install.install_type, InstallType::STEAM) {
         return Err("Titanfall2 was not installed via Steam".to_string());
@@ -179,7 +184,8 @@ pub fn launch_northstar_steam(
         return Err("Couldn't access Titanfall2 directory".to_string());
     }
 
-    match open::that(format!("steam://run/{}//--northstar {}/", TITANFALL2_STEAM_ID, game_install.launch_parameters)) {
+    let launch_parameters = launch_parameters.unwrap_or_else(|| "".to_string());
+    match open::that(format!("steam://run/{}//--northstar {}/", TITANFALL2_STEAM_ID, launch_parameters)) {
         Ok(()) => Ok("Started game".to_string()),
         Err(_err) => Err("Failed to launch Titanfall 2 via Steam".to_string()),
     }

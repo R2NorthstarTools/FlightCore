@@ -190,7 +190,6 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
                     // println!("{:#?}", app);
                     let game_install = GameInstall {
                         game_path: app.path.to_str().unwrap().to_string(),
-                        launch_parameters: "".to_string(),
                         install_type: InstallType::STEAM,
                     };
                     return Ok(game_install);
