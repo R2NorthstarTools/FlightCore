@@ -212,7 +212,7 @@ export const store = createStore<FlightCoreStore>({
 
                 // Game is ready to play.
                 case NorthstarState.READY_TO_PLAY:
-                    await invoke("launch_northstar", { gameInstall: game_install })
+                    await invoke("launch_northstar", { gameInstall: state.game_install })
                         .then((message) => {
                             console.log(message);
                             // NorthstarState.RUNNING
