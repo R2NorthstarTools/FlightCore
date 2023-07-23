@@ -6,7 +6,7 @@
                 <div class="fc_parameter__panel">
                     <h3>{{ $t('settings.manage_install') }}</h3>
                     <el-input
-                        v-model="$store.state.game_path"
+                        v-model="$store.state.game_install.game_path"
                         :placeholder="$t('settings.choose_folder')"
                         @click="updateGamePath"
                     >
