@@ -148,7 +148,6 @@
 </template>
 
 <script lang="ts">
-import { Checksum } from "../../../src-tauri/bindings/Checksum";
 import { defineComponent } from "vue";
 import { invoke } from "@tauri-apps/api";
 import { GameInstall } from "../utils/GameInstall";
