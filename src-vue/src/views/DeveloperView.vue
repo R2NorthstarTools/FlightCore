@@ -257,7 +257,7 @@ export default defineComponent({
 
             const notification = showNotification(`Installing git main`, 'Please wait', 'info', 0);
 
-            await invoke<string>("install_git_main", { gameInstallPath: this.$store.state.game_path })
+            await invoke<string>("install_git_main", { gameInstallPath: this.$store.state.game_install.game_path })
                 .then((message) => {
                     this.release_notes_text = message;
                     showNotification("Done", `Installed launcher build from ${message}`);
