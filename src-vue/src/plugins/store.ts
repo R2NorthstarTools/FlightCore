@@ -302,7 +302,7 @@ export const store = createStore<FlightCoreStore>({
 
             // If there's no game path, prevent looking for installed mods.
             if (state.game_path === undefined) {
-                console.warn('Cannot load installed mods since so game path is selected.');
+                console.warn('Cannot load installed mods since no game path is selected.');
                 return;
             }
 
