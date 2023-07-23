@@ -171,7 +171,7 @@ export default defineComponent({
         },
         async openGameInstallFolder() {
             // Opens the folder in default file explorer application
-            await open(`${this.$store.state.game_path}`);
+            await open(`${this.$store.state.game_install.game_path}`);
         }
     },
     mounted() {
