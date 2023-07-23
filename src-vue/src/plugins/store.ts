@@ -60,7 +60,7 @@ export const store = createStore<FlightCoreStore>({
     state(): FlightCoreStore {
         return {
             developer_mode: false,
-            game_install: undefined as unknown as GameInstall,
+            game_install: {} as unknown as GameInstall,
 
             flightcore_version: "",
 
