@@ -500,7 +500,7 @@ fn fc_sanity_check(input: &&fs::File) -> bool {
             if let Some(name) = file_path.file_name() {
                 if name.to_str().unwrap().contains(".dll") {
                     log::warn!("Plugin detected, prompting user");
-                    if plugins::plugin_prompt() == false {
+                    if !plugins::plugin_prompt() {
                         return false; // Plugin detected and user denied install
                     }
                 }

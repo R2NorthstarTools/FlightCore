@@ -18,9 +18,9 @@ pub fn plugin_prompt() -> bool {
 
     if dialog.show() {
         log::info!("Accepted plugin install");
-        return true;
+        true
     } else {
         log::warn!("Plugin install cancelled");
-        return false;
+        false
     }
 }
