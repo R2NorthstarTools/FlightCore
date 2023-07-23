@@ -168,6 +168,22 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
     // Attempt parsing Steam library directly
     match steamlocate::SteamDir::locate() {
         Some(mut steamdir) => {
+            #[cfg(target_os = "linux")]
+            {
+                let snap_dir = match std::env::var("SNAP_USER_DATA") {
+                    Ok(snap_dir) => std::path::PathBuf::from(snap_dir),
+                    Err(_) => match dirs::home_dir() {
+                        Some(path) => path,
+                        None => std::path::PathBuf::new(),
+                    }
+                    .join("snap"),
+                };
+
+                if steamdir.path.starts_with(snap_dir) {
+                    log::warn!("Found Steam installed via Snap, you may encounter issues");
+                }
+            }
+
             let titanfall2_steamid = TITANFALL2_STEAM_ID.parse().unwrap();
             match steamdir.app(&titanfall2_steamid) {
                 Some(app) => {
