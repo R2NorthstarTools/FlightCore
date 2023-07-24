@@ -113,7 +113,7 @@ pub fn launch_northstar(
             || matches!(game_install.install_type, InstallType::UNKNOWN))
     {
         let ns_exe_path = format!("{}/NorthstarLauncher.exe", game_install.game_path);
-        
+
         let mut args = vec!["/C", "start", "", &ns_exe_path];
         // We cannot add the params directly because of limitations with cmd.exe
         // https://stackoverflow.com/questions/9964865/c-system-not-working-when-there-are-spaces-in-two-different-parameters/9965141#9965141
@@ -185,7 +185,10 @@ pub fn launch_northstar_steam(
     }
 
     let launch_parameters = launch_parameters.unwrap_or_else(|| "".to_string());
-    match open::that(format!("steam://run/{}//--northstar {}/", TITANFALL2_STEAM_ID, launch_parameters)) {
+    match open::that(format!(
+        "steam://run/{}//--northstar {}/",
+        TITANFALL2_STEAM_ID, launch_parameters
+    )) {
         Ok(()) => Ok("Started game".to_string()),
         Err(_err) => Err("Failed to launch Titanfall 2 via Steam".to_string()),
     }
