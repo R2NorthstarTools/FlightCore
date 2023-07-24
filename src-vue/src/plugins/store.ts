@@ -26,8 +26,7 @@ const persistentStore = new Store('flight-core-settings.json');
 
 export interface FlightCoreStore {
     developer_mode: boolean,
-    game_path: string,
-    install_type: InstallType,
+    game_install: GameInstall,
 
     flightcore_version: string,
 
@@ -62,8 +61,7 @@ export const store = createStore<FlightCoreStore>({
     state(): FlightCoreStore {
         return {
             developer_mode: false,
-            game_path: undefined as unknown as string,
-            install_type: undefined as unknown as InstallType,
+            game_install: {} as unknown as GameInstall,
 
             flightcore_version: "",
 
@@ -134,7 +132,7 @@ export const store = createStore<FlightCoreStore>({
                 // Verify if valid Titanfall2 install location
                 let is_valid_titanfall2_install = await invoke("verify_install_location", { gamePath: selected }) as boolean;
                 if (is_valid_titanfall2_install) {
-                    state.game_path = selected;
+                    state.game_install.game_path = selected;
                     showNotification(
                         i18n.global.tc('notification.game_folder.new.title'),
                         i18n.global.tc('notification.game_folder.new.text')
@@ -145,15 +143,10 @@ export const store = createStore<FlightCoreStore>({
                     catch {
                         console.warn("Nothing to close");
                     }
-                    state.install_type = InstallType.UNKNOWN;
-
-                    let game_install = {
-                        game_path: selected,
-                        install_type: InstallType.UNKNOWN
-                    } as GameInstall;
+                    state.game_install.install_type = InstallType.UNKNOWN;
 
                     // Save change in persistent store
-                    await persistentStore.set('game-install', { value: game_install });
+                    await persistentStore.set('game-install', { value: state.game_install });
                     await persistentStore.save(); // explicit save to disk
 
                     // Check for Northstar install
@@ -170,13 +163,8 @@ export const store = createStore<FlightCoreStore>({
         },
         async launchGame(state: any, payload: LaunchObject) {
             const { no_checks = false, launch_args = undefined } = payload;
-            let game_install = {
-                game_path: state.game_path,
-                install_type: state.install_type
-            } as GameInstall;
-
             if (no_checks) {
-                await invoke("launch_northstar", {gameInstall: game_install, bypassChecks: no_checks, launchParameters: launch_args})
+                await invoke("launch_northstar", {gameInstall: state.game_install, bypassChecks: no_checks, launchParameters: launch_args})
                     .then((message) => {
                         console.log("Launched with bypassed checks");
                         console.log(message);
@@ -193,7 +181,7 @@ export const store = createStore<FlightCoreStore>({
             switch (state.northstar_state) {
                 // Install northstar if it wasn't detected.
                 case NorthstarState.INSTALL:
-                    let install_northstar_result = invoke("install_northstar_caller", { gamePath: state.game_path, northstarPackageName: state.northstar_release_canal });
+                    let install_northstar_result = invoke("install_northstar_caller", { gamePath: state.game_install.game_path, northstarPackageName: state.northstar_release_canal });
                     state.northstar_state = NorthstarState.INSTALLING;
 
                     await install_northstar_result.then((message) => {
@@ -210,7 +198,7 @@ export const store = createStore<FlightCoreStore>({
                 // Update northstar if it is outdated.
                 case NorthstarState.MUST_UPDATE:
                     // Updating is the same as installing, simply overwrites the existing files
-                    let reinstall_northstar_result = invoke("install_northstar_caller", { gamePath: state.game_path, northstarPackageName: state.northstar_release_canal });
+                    let reinstall_northstar_result = invoke("install_northstar_caller", { gamePath: state.game_install.game_path, northstarPackageName: state.northstar_release_canal });
                     state.northstar_state = NorthstarState.UPDATING;
 
                     await reinstall_northstar_result.then((message) => {
@@ -226,7 +214,7 @@ export const store = createStore<FlightCoreStore>({
 
                 // Game is ready to play.
                 case NorthstarState.READY_TO_PLAY:
-                    await invoke("launch_northstar", { gameInstall: game_install, launchParameters: launch_args })
+                    await invoke("launch_northstar", { gameInstall: state.game_install, launchParameters: launch_args })
                         .then((message) => {
                             console.log(message);
                             // NorthstarState.RUNNING
@@ -244,12 +232,7 @@ export const store = createStore<FlightCoreStore>({
         },
         async launchGameSteam(state: any, payload: LaunchObject) {
             const { no_checks = false, launch_args = undefined } = payload;
-            let game_install = {
-                game_path: state.game_path,
-                install_type: state.install_type
-            } as GameInstall;
-
-            await invoke("launch_northstar_steam", { gameInstall: game_install, bypassChecks: no_checks, launchParametres: launch_args })
+            await invoke("launch_northstar_steam", { gameInstall: state.game_install, bypassChecks: no_checks, launchParametres: launch_args })
                 .then((message) => {
                     showNotification('Success');
                 })
@@ -298,19 +281,14 @@ export const store = createStore<FlightCoreStore>({
                 .sort();
         },
         async loadInstalledMods(state: FlightCoreStore) {
-            let game_install = {
-                game_path: state.game_path,
-                install_type: state.install_type
-            } as GameInstall;
-
             // If there's no game path, prevent looking for installed mods.
-            if (state.game_path === undefined) {
-                console.warn('Cannot load installed mods since so game path is selected.');
+            if (state.game_install.game_path === undefined) {
+                console.warn('Cannot load installed mods since no game path is selected.');
                 return;
             }
 
             // Call back-end for installed mods
-            await invoke("get_installed_mods_and_properties", { gameInstall: game_install })
+            await invoke("get_installed_mods_and_properties", { gameInstall: state.game_install })
                 .then((message) => {
                     state.installed_mods = (message as NorthstarMod[]);
                 })
@@ -428,8 +406,7 @@ async function _initializeApp(state: any) {
         await persistentStore.save(); // explicit save to disk
 
         // Update UI store
-        state.game_path = typedResult.game_path;
-        state.install_type = typedResult.install_type;
+        state.game_install = typedResult;
 
         // Check installed Northstar version if found
         await _get_northstar_version_number(state);
@@ -485,13 +462,13 @@ function _initializeListeners(state: any) {
  * state, for it to be displayed in UI.
  */
 async function _get_northstar_version_number(state: any) {
-    await invoke("get_northstar_version_number", { gamePath: state.game_path })
+    await invoke("get_northstar_version_number", { gamePath: state.game_install.game_path })
         .then((message) => {
             let northstar_version_number: string = message as string;
             state.installed_northstar_version = northstar_version_number;
             state.northstar_state = NorthstarState.READY_TO_PLAY;
 
-            invoke("check_is_northstar_outdated", { gamePath: state.game_path, northstarPackageName: state.northstar_release_canal })
+            invoke("check_is_northstar_outdated", { gamePath: state.game_install.game_path, northstarPackageName: state.northstar_release_canal })
                 .then((message) => {
                     if (message) {
                         state.northstar_state = NorthstarState.MUST_UPDATE;
