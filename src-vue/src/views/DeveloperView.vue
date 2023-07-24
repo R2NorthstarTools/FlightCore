@@ -342,11 +342,6 @@ export default defineComponent({
                 .catch((error) => { showNotification(`Error`, error, "error"); })
         },
         async computeChecksumsGameInstallFolder() {
-            let game_install = {
-                game_path: this.$store.state.game_path,
-                install_type: this.$store.state.install_type
-            } as GameInstall;
-
             // Send notification telling the user to wait for the process to finish
             const notification = showNotification(
                 "Calculating checksums",
@@ -355,7 +350,7 @@ export default defineComponent({
                 0
             );
 
-            let checksum_calc_result = invoke<string>("calculate_checksums_gameinstall", { gameInstall: game_install });
+            let checksum_calc_result = invoke<string>("calculate_checksums_gameinstall", { gameInstall: this.$store.state.game_install });
             await checksum_calc_result
                 .then((message) => {
                     // Send notification
