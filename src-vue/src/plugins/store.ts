@@ -164,7 +164,7 @@ export const store = createStore<FlightCoreStore>({
         async launchGame(state: any, payload: LaunchObject) {
             const { no_checks = false, launch_args = undefined } = payload;
             if (no_checks) {
-                await invoke("launch_northstar", {gameInstall: state.game_install, bypassChecks: no_checks, launchParameters: launch_args})
+                await invoke("launch_northstar", { gameInstall: state.game_install, bypassChecks: no_checks, launchParameters: launch_args })
                     .then((message) => {
                         console.log("Launched with bypassed checks");
                         console.log(message);
@@ -232,6 +232,7 @@ export const store = createStore<FlightCoreStore>({
         },
         async launchGameSteam(state: any, payload: LaunchObject) {
             const { no_checks = false, launch_args = undefined } = payload;
+
             await invoke("launch_northstar_steam", { gameInstall: state.game_install, bypassChecks: no_checks, launchParametres: launch_args })
                 .then((message) => {
                     showNotification('Success');
