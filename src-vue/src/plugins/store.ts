@@ -4,6 +4,7 @@ import { Tabs } from "../utils/Tabs";
 import { InstallType } from "../utils/InstallType";
 import { invoke } from "@tauri-apps/api";
 import { GameInstall } from "../utils/GameInstall";
+import { LaunchObject } from "../utils/LaunchObject.d";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { FlightCoreVersion } from "../../../src-tauri/bindings/FlightCoreVersion";
 import { NotificationHandle } from 'element-plus';
@@ -167,14 +168,15 @@ export const store = createStore<FlightCoreStore>({
                 }
             }
         },
-        async launchGame(state: any, no_checks = false) {
+        async launchGame(state: any, payload: LaunchObject) {
+            const { no_checks = false, launch_args = undefined } = payload;
             let game_install = {
                 game_path: state.game_path,
                 install_type: state.install_type
             } as GameInstall;
 
             if (no_checks) {
-                await invoke("launch_northstar", { gameInstall: game_install, bypassChecks: no_checks })
+                await invoke("launch_northstar", {gameInstall: game_install, bypassChecks: no_checks, launchParameters: launch_args})
                     .then((message) => {
                         console.log("Launched with bypassed checks");
                         console.log(message);
@@ -224,7 +226,7 @@ export const store = createStore<FlightCoreStore>({
 
                 // Game is ready to play.
                 case NorthstarState.READY_TO_PLAY:
-                    await invoke("launch_northstar", { gameInstall: game_install })
+                    await invoke("launch_northstar", { gameInstall: game_install, launchParameters: launch_args })
                         .then((message) => {
                             console.log(message);
                             // NorthstarState.RUNNING
@@ -240,13 +242,14 @@ export const store = createStore<FlightCoreStore>({
                     break;
             }
         },
-        async launchGameSteam(state: any, no_checks = false) {
+        async launchGameSteam(state: any, payload: LaunchObject) {
+            const { no_checks = false, launch_args = undefined } = payload;
             let game_install = {
                 game_path: state.game_path,
                 install_type: state.install_type
             } as GameInstall;
 
-            await invoke("launch_northstar_steam", { gameInstall: game_install, bypassChecks: no_checks })
+            await invoke("launch_northstar_steam", { gameInstall: game_install, bypassChecks: no_checks, launchParametres: launch_args })
                 .then((message) => {
                     showNotification('Success');
                 })
