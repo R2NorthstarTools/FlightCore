@@ -2,7 +2,7 @@
 
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
-use sysinfo::{SystemExt, ProcessExt};
+use sysinfo::{ProcessExt, SystemExt};
 use zip::ZipArchive;
 
 use crate::constants::{APP_USER_AGENT, MASTER_SERVER_URL, SERVER_BROWSER_ENDPOINT};
@@ -72,14 +72,13 @@ pub async fn kill_northstar() -> Result<(), String> {
 
     let s = sysinfo::System::new_all();
 
-
     for process in s.processes_by_exact_name("Titanfall2.exe") {
-        log::info!("Killing Process {}", process.pid())
+        log::info!("Killing Process {}", process.pid());
         process.kill();
     }
 
     for process in s.processes_by_exact_name("NorthstarLauncher.exe") {
-        log::info!("Killing Process {}", process.pid())
+        log::info!("Killing Process {}", process.pid());
         process.kill();
     }
 
