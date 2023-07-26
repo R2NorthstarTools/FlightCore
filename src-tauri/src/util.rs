@@ -74,10 +74,12 @@ pub async fn kill_northstar() -> Result<(), String> {
 
 
     for process in s.processes_by_exact_name("Titanfall2.exe") {
+        log::info!("Killing Process {}", process.pid())
         process.kill();
     }
 
     for process in s.processes_by_exact_name("NorthstarLauncher.exe") {
+        log::info!("Killing Process {}", process.pid())
         process.kill();
     }
 
