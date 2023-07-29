@@ -190,6 +190,7 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
                     // println!("{:#?}", app);
                     let game_install = GameInstall {
                         game_path: app.path.to_str().unwrap().to_string(),
+                        profile: "R2Northstar".to_string(),
                         install_type: InstallType::STEAM,
                     };
                     return Ok(game_install);
@@ -206,6 +207,7 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
         Ok(game_path) => {
             let game_install = GameInstall {
                 game_path,
+                profile: "R2Northstar".to_string(),
                 install_type: InstallType::ORIGIN,
             };
             return Ok(game_install);
