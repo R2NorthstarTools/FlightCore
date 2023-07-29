@@ -465,13 +465,13 @@ function _initializeListeners(state: any) {
  * state, for it to be displayed in UI.
  */
 async function _get_northstar_version_number(state: any) {
-    await invoke("get_northstar_version_number", { gamePath: state.game_install.game_path })
+    await invoke("get_northstar_version_number", { gameInstall: state.game_install })
         .then((message) => {
             let northstar_version_number: string = message as string;
             state.installed_northstar_version = northstar_version_number;
             state.northstar_state = NorthstarState.READY_TO_PLAY;
 
-            invoke("check_is_northstar_outdated", { gamePath: state.game_install.game_path, northstarPackageName: state.northstar_release_canal })
+            invoke("check_is_northstar_outdated", { gameInstall: state.game_install, northstarPackageName: state.northstar_release_canal })
                 .then((message) => {
                     if (message) {
                         state.northstar_state = NorthstarState.MUST_UPDATE;

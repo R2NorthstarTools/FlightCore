@@ -26,15 +26,12 @@ pub fn check_mod_version_number(path_to_mod_folder: &str) -> Result<String, anyh
 
 /// Returns the current Northstar version number as a string
 #[tauri::command]
-pub fn get_northstar_version_number(game_path: &str) -> Result<String, String> {
-    log::info!("{}", game_path);
-
+pub fn get_northstar_version_number(game_install: GameInstall) -> Result<String, String> {
     // TODO:
     // Check if NorthstarLauncher.exe exists and check its version number
-    let profile_folder = "R2Northstar";
     let initial_version_number = match check_mod_version_number(&format!(
-        "{game_path}/{profile_folder}/mods/{}",
-        CORE_MODS[0]
+        "{}/{}/mods/{}",
+        game_install.game_path, game_install.profile, CORE_MODS[0]
     )) {
         Ok(version_number) => version_number,
         Err(err) => return Err(err.to_string()),
@@ -42,7 +39,8 @@ pub fn get_northstar_version_number(game_path: &str) -> Result<String, String> {
 
     for core_mod in CORE_MODS {
         let current_version_number = match check_mod_version_number(&format!(
-            "{game_path}/{profile_folder}/mods/{core_mod}",
+            "{}/{}/mods/{}",
+            game_install.game_path, game_install.profile, core_mod
         )) {
             Ok(version_number) => version_number,
             Err(err) => return Err(err.to_string()),
@@ -85,7 +83,7 @@ pub fn launch_northstar(
     // Only check guards if bypassing checks is not enabled
     if !bypass_checks {
         // Some safety checks before, should have more in the future
-        if get_northstar_version_number(&game_install.game_path).is_err() {
+        if get_northstar_version_number(game_install.clone()).is_err() {
             return Err(anyhow!("Not all checks were met").to_string());
         }
 

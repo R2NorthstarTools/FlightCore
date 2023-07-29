@@ -234,7 +234,7 @@ pub fn convert_release_candidate_number(version_number: String) -> String {
 /// true  -> Northstar install is outdated
 #[tauri::command]
 async fn check_is_northstar_outdated(
-    game_path: String,
+    game_install: GameInstall,
     northstar_package_name: Option<String>,
 ) -> Result<bool, String> {
     let northstar_package_name = match northstar_package_name {
@@ -258,7 +258,7 @@ async fn check_is_northstar_outdated(
         .expect("Couldn't find Northstar on thunderstore???");
     // .ok_or_else(|| anyhow!("Couldn't find Northstar on thunderstore???"))?;
 
-    let version_number = match northstar::get_northstar_version_number(&game_path) {
+    let version_number = match northstar::get_northstar_version_number(game_install) {
         Ok(version_number) => version_number,
         Err(err) => {
             log::warn!("{}", err);
