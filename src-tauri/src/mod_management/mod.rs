@@ -91,7 +91,10 @@ impl std::ops::Deref for TempFile {
 
 /// Returns a serde json object of the parsed `enabledmods.json` file
 pub fn get_enabled_mods(game_install: &GameInstall) -> Result<serde_json::value::Value, String> {
-    let enabledmods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
+    let enabledmods_json_path = format!(
+        "{}/{}/enabledmods.json",
+        game_install.game_path, game_install.profile
+    );
 
     // Check for JSON file
     if !std::path::Path::new(&enabledmods_json_path).exists() {

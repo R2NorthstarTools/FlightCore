@@ -45,7 +45,7 @@ fn parse_for_thunderstore_mod_string(nsmod_path: &str) -> Result<String, anyhow:
 pub fn parse_installed_mods(
     game_install: &GameInstall,
 ) -> Result<Vec<NorthstarMod>, anyhow::Error> {
-    let ns_mods_folder = format!("{}/R2Northstar/mods/", game_install.game_path);
+    let ns_mods_folder = format!("{}/{}/mods/", game_install.game_path, game_install.profile);
 
     let paths = match std::fs::read_dir(ns_mods_folder) {
         Ok(paths) => paths,

@@ -112,8 +112,10 @@ pub fn launch_northstar(
             || matches!(game_install.install_type, InstallType::UNKNOWN))
     {
         let ns_exe_path = format!("{}/NorthstarLauncher.exe", game_install.game_path);
+        let ns_profile_arg = format!("-profile={}", game_install.profile);
+
         let _output = std::process::Command::new("C:\\Windows\\System32\\cmd.exe")
-            .args(["/C", "start", "", &ns_exe_path])
+            .args(["/C", "start", "", &ns_exe_path, &ns_profile_arg])
             .spawn()
             .expect("failed to execute process");
         return Ok("Launched game".to_string());
@@ -173,7 +175,10 @@ pub fn launch_northstar_steam(
         return Err("Couldn't access Titanfall2 directory".to_string());
     }
 
-    match open::that(format!("steam://run/{}//--northstar/", TITANFALL2_STEAM_ID)) {
+    match open::that(format!(
+        "steam://run/{}//-profile={} --northstar/",
+        TITANFALL2_STEAM_ID, game_install.profile
+    )) {
         Ok(()) => Ok("Started game".to_string()),
         Err(_err) => Err("Failed to launch Titanfall 2 via Steam".to_string()),
     }

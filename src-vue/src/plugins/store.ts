@@ -370,6 +370,12 @@ async function _initializeApp(state: any) {
         && persistent_game_install.value.game_path !== undefined
         && persistent_game_install.value.install_type !== undefined
     ) { // For some reason, the plugin-store doesn't throw an eror but simply returns `null` when key not found
+
+        // Add profile to existing storage
+        if (persistent_game_install.value.profile === undefined) {
+            persistent_game_install.value.profile = "R2Northstar"
+        }
+
         let game_install = persistent_game_install.value as GameInstall;
         // check if valid path
         let is_valid_titanfall2_install = await invoke("verify_install_location", { gamePath: game_install.game_path }) as boolean;
