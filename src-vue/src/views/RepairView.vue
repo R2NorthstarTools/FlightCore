@@ -71,7 +71,7 @@ export default defineComponent({
                 0
             );
 
-            let install_northstar_result = invoke("install_northstar_caller", { gamePath: this.$store.state.game_install.game_path, northstarPackageName: ReleaseCanal.RELEASE });
+            let install_northstar_result = invoke("install_northstar_caller", { gameInstall: this.$store.state.game_install, northstarPackageName: ReleaseCanal.RELEASE });
 
             appWindow.listen<InstallProgress>(
                 'northstar-install-download-progress',
