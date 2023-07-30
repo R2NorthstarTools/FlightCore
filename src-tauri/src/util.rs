@@ -144,6 +144,7 @@ pub fn check_northstar_running() -> bool {
     x
 }
 
+/// Copies a folder and all its contents to a new location
 #[allow(dead_code)]
 pub fn copy_dir_all(
     src: impl AsRef<std::path::Path>,
@@ -162,6 +163,8 @@ pub fn copy_dir_all(
     Ok(())
 }
 
+/// Moves a folders file structure to a new location
+/// Old folders are not removed
 pub fn move_dir_all(
     src: impl AsRef<std::path::Path>,
     dst: impl AsRef<std::path::Path>,
