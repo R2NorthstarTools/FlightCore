@@ -36,13 +36,16 @@ async fn do_install(
     game_path: &std::path::Path,
 ) -> Result<()> {
     let filename = format!("northstar-{}.zip", nmod.version);
-    let download_directory = format!("{}/___flightcore-temp-download-dir/", game_path.display());
+    let temp_dir = format!("{}/___flightcore-temp-dir", game_path.display());
+    let download_directory = format!("{}/download-dir", temp_dir);
+    let extract_directory = format!("{}/extract-dir", temp_dir);
 
     log::info!(
         "Attempting to create temporary directory {}",
-        download_directory
+        temp_dir
     );
     std::fs::create_dir_all(download_directory.clone())?;
+    std::fs::create_dir_all(extract_directory.clone())?;
 
     let download_path = format!("{}/{}", download_directory, filename);
     log::info!("Download path: {download_path}");
@@ -91,11 +94,25 @@ async fn do_install(
         .unwrap();
 
     log::info!("Extracting Northstar...");
-    extract(nfile, game_path)?;
+    extract(nfile, std::path::Path::new(&extract_directory))?;
+
+    log::info!("Installing Northstar...");
+
+    for entry in std::fs::read_dir(extract_directory).unwrap() {
+        let entry = entry.unwrap();
+        let destination = format!("{}/{}", game_path, entry.path().file_name().unwrap().to_str().unwrap().to_string());
+
+        log::info!("Installing {}", entry.path().display());
+        if !entry.file_type().unwrap().is_dir() {
+            std::fs::rename(entry.path(), destination)?;
+        } else {
+            move_dir_all(entry.path(), destination)?;
+        }
+    }
 
     // Delete old copy
-    log::info!("Delete temp folder again");
-    std::fs::remove_dir_all(download_directory).unwrap();
+    log::info!("Delete temporary directory");
+    std::fs::remove_dir_all(temp_dir).unwrap();
 
     log::info!("Done installing Northstar!");
     window
