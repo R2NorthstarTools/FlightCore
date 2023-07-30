@@ -27,6 +27,8 @@ pub fn check_mod_version_number(path_to_mod_folder: &str) -> Result<String, anyh
 /// Returns the current Northstar version number as a string
 #[tauri::command]
 pub fn get_northstar_version_number(game_install: GameInstall) -> Result<String, String> {
+    log::info!("{}", game_install.game_path);
+
     // TODO:
     // Check if NorthstarLauncher.exe exists and check its version number
     let initial_version_number = match check_mod_version_number(&format!(
