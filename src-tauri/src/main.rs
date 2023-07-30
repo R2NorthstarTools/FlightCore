@@ -142,6 +142,7 @@ fn main() {
             github::release_notes::get_newest_flightcore_version,
             mod_management::delete_northstar_mod,
             util::get_server_player_count,
+            util::kill_northstar,
             mod_management::delete_thunderstore_mod,
             install_northstar_proton_wrapper,
             uninstall_northstar_proton_wrapper,

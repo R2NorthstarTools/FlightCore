@@ -2,7 +2,7 @@
 
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
-use sysinfo::SystemExt;
+use sysinfo::{ProcessExt, SystemExt};
 use zip::ZipArchive;
 
 use crate::constants::{APP_USER_AGENT, MASTER_SERVER_URL, SERVER_BROWSER_ENDPOINT};
@@ -62,6 +62,27 @@ pub async fn get_server_player_count() -> Result<(i32, usize), String> {
     log::info!("server_count:       {}", server_count);
 
     Ok((total_player_count, server_count))
+}
+
+#[tauri::command]
+pub async fn kill_northstar() -> Result<(), String> {
+    if !check_northstar_running() {
+        return Err("Northstar is not running".to_string());
+    }
+
+    let s = sysinfo::System::new_all();
+
+    for process in s.processes_by_exact_name("Titanfall2.exe") {
+        log::info!("Killing Process {}", process.pid());
+        process.kill();
+    }
+
+    for process in s.processes_by_exact_name("NorthstarLauncher.exe") {
+        log::info!("Killing Process {}", process.pid());
+        process.kill();
+    }
+
+    Ok(())
 }
 
 /// Copied from `papa` source code and modified
