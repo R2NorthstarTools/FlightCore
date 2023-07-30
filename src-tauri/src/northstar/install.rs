@@ -5,7 +5,10 @@ use std::{cell::RefCell, time::Instant};
 use ts_rs::TS;
 
 use crate::constants::TITANFALL2_STEAM_ID;
-use crate::{util::{extract,move_dir_all}, GameInstall, InstallType};
+use crate::{
+    util::{extract, move_dir_all},
+    GameInstall, InstallType,
+};
 
 #[cfg(target_os = "windows")]
 use crate::platform_specific::windows;
@@ -100,12 +103,7 @@ async fn do_install(
         let destination = format!(
             "{}/{}",
             game_path.display(),
-            entry
-                .path()
-                .file_name()
-                .unwrap()
-                .to_str()
-                .unwrap()
+            entry.path().file_name().unwrap().to_str().unwrap()
         );
 
         log::info!("Installing {}", entry.path().display());
