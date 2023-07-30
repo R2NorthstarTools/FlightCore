@@ -42,7 +42,7 @@ pub fn clean_up_download_folder(
 ) -> Result<(), anyhow::Error> {
     // Get download directory
     let download_directory = format!(
-        "{}/___flightcore-temp-download-dir/",
+        "{}/___flightcore-temp/download-dir/",
         game_install.game_path
     );
 

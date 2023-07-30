@@ -36,7 +36,7 @@ async fn do_install(
     game_path: &std::path::Path,
 ) -> Result<()> {
     let filename = format!("northstar-{}.zip", nmod.version);
-    let download_directory = format!("{}/___flightcore-temp-download-dir/", game_path.display());
+    let download_directory = format!("{}/___flightcore-temp/download-dir/", game_path.display());
 
     log::info!(
         "Attempting to create temporary directory {}",
