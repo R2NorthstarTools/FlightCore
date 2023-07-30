@@ -5,7 +5,7 @@ use std::{cell::RefCell, time::Instant};
 use ts_rs::TS;
 
 use crate::constants::TITANFALL2_STEAM_ID;
-use crate::{util::extract, GameInstall, InstallType};
+use crate::{util::{extract,move_dir_all}, GameInstall, InstallType};
 
 #[cfg(target_os = "windows")]
 use crate::platform_specific::windows;
@@ -40,10 +40,7 @@ async fn do_install(
     let download_directory = format!("{}/download-dir", temp_dir);
     let extract_directory = format!("{}/extract-dir", temp_dir);
 
-    log::info!(
-        "Attempting to create temporary directory {}",
-        temp_dir
-    );
+    log::info!("Attempting to create temporary directory {}", temp_dir);
     std::fs::create_dir_all(download_directory.clone())?;
     std::fs::create_dir_all(extract_directory.clone())?;
 
@@ -100,7 +97,16 @@ async fn do_install(
 
     for entry in std::fs::read_dir(extract_directory).unwrap() {
         let entry = entry.unwrap();
-        let destination = format!("{}/{}", game_path, entry.path().file_name().unwrap().to_str().unwrap().to_string());
+        let destination = format!(
+            "{}/{}",
+            game_path.display(),
+            entry
+                .path()
+                .file_name()
+                .unwrap()
+                .to_str()
+                .unwrap()
+        );
 
         log::info!("Installing {}", entry.path().display());
         if !entry.file_type().unwrap().is_dir() {

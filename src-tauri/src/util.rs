@@ -144,6 +144,7 @@ pub fn check_northstar_running() -> bool {
     x
 }
 
+#[allow(dead_code)]
 pub fn copy_dir_all(
     src: impl AsRef<std::path::Path>,
     dst: impl AsRef<std::path::Path>,
