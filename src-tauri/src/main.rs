@@ -333,13 +333,13 @@ async fn install_northstar_caller(
 #[tauri::command]
 async fn update_northstar(
     window: tauri::Window,
-    game_path: String,
+    game_install: GameInstall,
     northstar_package_name: Option<String>,
 ) -> Result<bool, String> {
     log::info!("Updating Northstar");
 
     // Simply re-run install with up-to-date version for upate
-    install_northstar_caller(window, game_path, northstar_package_name, None).await
+    install_northstar_caller(window, game_install, northstar_package_name, None).await
 }
 
 /// Installs the specified mod
