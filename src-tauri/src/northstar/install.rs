@@ -37,7 +37,7 @@ async fn do_install(
 ) -> Result<()> {
     let filename = format!("northstar-{}.zip", nmod.version);
     let download_directory = format!(
-        "{}/___flightcore-temp-download-dir/",
+        "{}/___flightcore-temp/download-dir/",
         game_install.game_path
     );
 
