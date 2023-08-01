@@ -253,7 +253,7 @@ pub async fn apply_launcher_pr(
     };
 
     let extract_directory = format!(
-        "{}/___flightcore-temp-download-dir/launcher-pr-{}",
+        "{}/___flightcore-temp/download-dir/launcher-pr-{}",
         game_install_path, pull_request.number
     );
     match std::fs::create_dir_all(extract_directory.clone()) {

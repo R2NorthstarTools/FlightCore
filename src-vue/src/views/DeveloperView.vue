@@ -303,7 +303,7 @@ export default defineComponent({
                 0
             );
 
-            let install_northstar_result = invoke("install_northstar_caller", { gamePath: this.$store.state.game_install.game_path, northstarPackageName: this.selected_ns_version.value.package, versionNumber: this.selected_ns_version.value.version });
+            let install_northstar_result = invoke("install_northstar_caller", { gameInstall: this.$store.state.game_install, northstarPackageName: this.selected_ns_version.value.package, versionNumber: this.selected_ns_version.value.version });
 
             await install_northstar_result
                 .then((message) => {

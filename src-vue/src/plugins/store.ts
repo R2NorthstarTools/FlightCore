@@ -179,7 +179,7 @@ export const store = createStore<FlightCoreStore>({
             switch (state.northstar_state) {
                 // Install northstar if it wasn't detected.
                 case NorthstarState.INSTALL:
-                    let install_northstar_result = invoke("install_northstar_caller", { gamePath: state.game_install.game_path, northstarPackageName: state.northstar_release_canal });
+                    let install_northstar_result = invoke("install_northstar_caller", { gameInstall: state.game_install, northstarPackageName: state.northstar_release_canal });
                     state.northstar_state = NorthstarState.INSTALLING;
 
                     await install_northstar_result.then((message) => {
@@ -196,7 +196,7 @@ export const store = createStore<FlightCoreStore>({
                 // Update northstar if it is outdated.
                 case NorthstarState.MUST_UPDATE:
                     // Updating is the same as installing, simply overwrites the existing files
-                    let reinstall_northstar_result = invoke("install_northstar_caller", { gamePath: state.game_install.game_path, northstarPackageName: state.northstar_release_canal });
+                    let reinstall_northstar_result = invoke("install_northstar_caller", { gameInstall: state.game_install, northstarPackageName: state.northstar_release_canal });
                     state.northstar_state = NorthstarState.UPDATING;
 
                     await reinstall_northstar_result.then((message) => {

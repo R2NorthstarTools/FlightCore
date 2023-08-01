@@ -36,10 +36,10 @@ struct InstallProgress {
 async fn do_install(
     window: tauri::Window,
     nmod: &thermite::model::ModVersion,
-    game_path: &std::path::Path,
+    game_install: GameInstall,
 ) -> Result<()> {
     let filename = format!("northstar-{}.zip", nmod.version);
-    let temp_dir = format!("{}/___flightcore-temp-download-dir", game_path.display());
+    let temp_dir = format!("{}/___flightcore-temp", game_path.display());
     let download_directory = format!("{}/download-dir", temp_dir);
     let extract_directory = format!("{}/extract-dir", temp_dir);
 
@@ -102,7 +102,7 @@ async fn do_install(
         let entry = entry.unwrap();
         let destination = format!(
             "{}/{}",
-            game_path.display(),
+            game_install.game_path.display(),
             entry.path().file_name().unwrap().to_str().unwrap()
         );
 
@@ -135,7 +135,7 @@ async fn do_install(
 
 pub async fn install_northstar(
     window: tauri::Window,
-    game_path: &str,
+    game_install: GameInstall,
     northstar_package_name: String,
     version_number: Option<String>,
 ) -> Result<String, String> {
@@ -155,15 +155,10 @@ pub async fn install_northstar(
     // Use passed version or latest if no version was passed
     let version = version_number.as_ref().unwrap_or(&nmod.latest);
 
+    let game_path = game_install.game_path.clone();
     log::info!("Install path \"{}\"", game_path);
 
-    match do_install(
-        window,
-        nmod.versions.get(version).unwrap(),
-        std::path::Path::new(game_path),
-    )
-    .await
-    {
+    match do_install(window, nmod.versions.get(version).unwrap(), game_install).await {
         Ok(_) => (),
         Err(err) => {
             if game_path
