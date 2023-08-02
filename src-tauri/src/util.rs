@@ -143,3 +143,42 @@ pub fn check_northstar_running() -> bool {
         || s.processes_by_name("Titanfall2.exe").next().is_some();
     x
 }
+
+/// Copies a folder and all its contents to a new location
+#[allow(dead_code)]
+pub fn copy_dir_all(
+    src: impl AsRef<std::path::Path>,
+    dst: impl AsRef<std::path::Path>,
+) -> std::io::Result<()> {
+    std::fs::create_dir_all(&dst)?;
+    for entry in std::fs::read_dir(src)? {
+        let entry = entry?;
+        let ty = entry.file_type()?;
+        if ty.is_dir() {
+            copy_dir_all(entry.path(), dst.as_ref().join(entry.file_name()))?;
+        } else {
+            std::fs::copy(entry.path(), dst.as_ref().join(entry.file_name()))?;
+        }
+    }
+    Ok(())
+}
+
+/// Moves a folders file structure to a new location
+/// Old folders are not removed
+pub fn move_dir_all(
+    src: impl AsRef<std::path::Path>,
+    dst: impl AsRef<std::path::Path>,
+) -> std::io::Result<()> {
+    std::fs::create_dir_all(&dst)?;
+    for entry in std::fs::read_dir(src)? {
+        let entry = entry?;
+        let ty = entry.file_type()?;
+        if ty.is_dir() {
+            move_dir_all(entry.path(), dst.as_ref().join(entry.file_name()))?;
+            std::fs::remove_dir(entry.path())?;
+        } else {
+            std::fs::rename(entry.path(), dst.as_ref().join(entry.file_name()))?;
+        }
+    }
+    Ok(())
+}
