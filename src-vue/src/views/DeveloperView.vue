@@ -122,9 +122,11 @@
             <el-button type="primary" @click="compareTags">
                 Compare Tags
             </el-button>
+
             <el-button type="primary" @click="copyReleaseNotesToClipboard">
                 Copy to clipboard
             </el-button>
+
             <el-input
                 v-model="release_notes_text"
                 type="textarea"
