@@ -122,7 +122,9 @@
             <el-button type="primary" @click="compareTags">
                 Compare Tags
             </el-button>
-
+            <el-button type="primary" @click="copyReleaseNotesToClipboard">
+                Copy to clipboard
+            </el-button>
             <el-input
                 v-model="release_notes_text"
                 type="textarea"
@@ -335,6 +337,15 @@ export default defineComponent({
             await invoke("get_local_northstar_proton_wrapper_version")
                 .then((message) => { showNotification(`NSProton Version`, message as string); })
                 .catch((error) => { showNotification(`Error`, error, "error"); })
+        },
+        async copyReleaseNotesToClipboard() {
+            navigator.clipboard.writeText(this.release_notes_text)
+                .then(() => {
+                    showNotification("Copied to clipboard");
+                })
+                .catch(() => {
+                    showErrorNotification("Failed copying to clipboard");
+                });
         },
     }
 });
