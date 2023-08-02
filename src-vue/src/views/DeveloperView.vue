@@ -50,6 +50,24 @@
             <br />
             <br />
 
+            <el-button type="primary" @click="computeChecksumsGameInstallFolder">
+                Compute checksums
+            </el-button>
+            <el-button type="primary" @click="copyToClipboard">
+                Copy to clipboard
+            </el-button>
+
+
+            <el-input
+                v-model="checksum_results"
+                type="textarea"
+                :rows="1"
+                placeholder="Output"
+            />
+
+            <br />
+            <br />
+
             <el-button type="primary" @click="getAvailableNorthstarVersions">
                 Get available versions
             </el-button>
@@ -151,6 +169,7 @@ export default defineComponent({
         return {
             mod_to_install_field_string: "",
             release_notes_text: "",
+            checksum_results: "",
             first_tag: { label: '', value: { name: '' } },
             second_tag: { label: '', value: { name: '' } },
             ns_release_tags: [] as TagWrapper[],
@@ -336,6 +355,40 @@ export default defineComponent({
                 .then((message) => { showNotification(`NSProton Version`, message as string); })
                 .catch((error) => { showNotification(`Error`, error, "error"); })
         },
+        async computeChecksumsGameInstallFolder() {
+            // Send notification telling the user to wait for the process to finish
+            const notification = showNotification(
+                "Calculating checksums",
+                "Please wait",
+                'info',
+                0
+            );
+
+            let checksum_calc_result = invoke<string>("calculate_checksums_gameinstall", { gameInstall: this.$store.state.game_install });
+            await checksum_calc_result
+                .then((message) => {
+                    // Send notification
+                    this.checksum_results = message;
+                    showNotification("Done calculating checksums");
+                })
+                .catch((error) => {
+                    showErrorNotification(error);
+                    console.error(error);
+                })
+                .finally(() => {
+                    // Clear old notification
+                    notification.close();
+                });
+        },
+        async copyToClipboard() {
+            navigator.clipboard.writeText(this.checksum_results)
+                .then(() => {
+                    showNotification("Copied to clipboard");
+                })
+                .catch(() => {
+                    showErrorNotification("Failed copying to clipboard");
+                });
+        }
     }
 });
 </script>

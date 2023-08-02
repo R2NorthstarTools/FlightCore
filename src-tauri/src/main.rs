@@ -157,6 +157,7 @@ fn main() {
             github::pull_requests::get_launcher_download_link,
             close_application,
             development::install_git_main,
+            development::calculate_checksums_gameinstall,
             get_available_northstar_versions,
         ])
         .run(tauri::generate_context!())
