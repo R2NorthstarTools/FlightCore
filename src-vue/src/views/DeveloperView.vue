@@ -264,6 +264,7 @@ export default defineComponent({
                 .then((message) => {
                     this.release_notes_text = message;
                     showNotification("Done", "Generated release notes");
+                    this.copyReleaseNotesToClipboard();
                 })
                 .catch((error) => {
                     showErrorNotification(error);
