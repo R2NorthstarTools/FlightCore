@@ -96,7 +96,8 @@ async fn do_install(
     log::info!("Extracting Northstar...");
     extract(nfile, std::path::Path::new(&extract_directory))?;
 
-
+    // Prepare Northstar for Installation
+    log::info!("Preparing Northstar...");
     if game_install.profile != NORTHSTAR_DEFAULT_PROFILE {
         // We are using a non standard Profile, we must:
         // - move the DLL
