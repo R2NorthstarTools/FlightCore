@@ -59,7 +59,9 @@ pub fn clean_up_download_folder(
         download_dir_contents.for_each(|_| count += 1);
 
         if count > 0 && !force {
-            return Err(anyhow!("Folder not empty, not deleting"));
+            // Skip folder if not empty
+            log::warn!("Folder not empty, not deleting: {directory}");
+            continue;
         }
 
         // Delete folder
