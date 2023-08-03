@@ -1,7 +1,6 @@
 use crate::mod_management::{get_enabled_mods, rebuild_enabled_mods_json, set_mod_enabled_status};
 /// Contains various functions to repair common issues and verifying installation
 use crate::{constants::CORE_MODS, GameInstall};
-use anyhow::anyhow;
 
 /// Verifies Titanfall2 game files
 #[tauri::command]
@@ -59,7 +58,9 @@ pub fn clean_up_download_folder(
         download_dir_contents.for_each(|_| count += 1);
 
         if count > 0 && !force {
-            return Err(anyhow!("Folder not empty, not deleting"));
+            // Skip folder if not empty
+            log::warn!("Folder not empty, not deleting: {directory}");
+            continue;
         }
 
         // Delete folder
