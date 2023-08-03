@@ -40,9 +40,10 @@ pub fn clean_up_download_folder(
     game_install: &GameInstall,
     force: bool,
 ) -> Result<(), anyhow::Error> {
-    const TEMPORARY_DIRECTORIES: [&str; 3] = [
+    const TEMPORARY_DIRECTORIES: [&str; 4] = [
         "___flightcore-temp-download-dir",
         "___flightcore-temp/download-dir",
+        "___flightcore-temp/extract-dir",
         "___flightcore-temp",
     ];
 
