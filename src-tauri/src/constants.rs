@@ -52,3 +52,9 @@ pub const NORTHSTAR_RELEASE_REPO_NAME: &str = "R2Northstar/Northstar";
 // URL to launcher commits API URL
 pub const NS_LAUNCHER_COMMITS_API_URL: &str =
     "https://api.github.com/repos/R2Northstar/NorthstarLauncher/commits";
+
+// Filename of DLL that Northstar uses
+pub const NORTHSTAR_DLL: &str = "Northstar.dll";
+
+// Profile that Northstar defaults to and ships with
+pub const NORTHSTAR_DEFAULT_PROFILE: &str = "R2Northstar";
