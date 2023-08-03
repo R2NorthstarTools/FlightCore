@@ -312,4 +312,8 @@ export default defineComponent({
     margin-left: 10px;
     height: auto;
 }
+
+.image {
+    background-color: lightgray;
+}
 </style>
