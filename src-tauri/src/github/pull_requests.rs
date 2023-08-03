@@ -274,20 +274,31 @@ pub async fn apply_launcher_pr(
         }
     };
 
+    let profile_folder = "R2Northstar-PR-test-managed-folder";
+
+    match std::fs::create_dir_all(profile_folder.clone()) {
+        Ok(()) => (),
+        Err(err) => return Err(err.to_string()),
+    }
+
     // Copy only necessary files from temp dir
     // Copy:
     // - NorthstarLauncher.exe
     // - Northstar.dll
-    let files_to_copy = vec!["NorthstarLauncher.exe", "Northstar.dll"];
-    for file_name in files_to_copy {
-        let source_file_path = format!("{}/{}", extract_directory, file_name);
-        let destination_file_path = format!("{}/{}", game_install_path, file_name);
+    let profile_dll = format!("{}/Northstar.dll", profile_folder);
+    let files_to_copy = vec![
+        vec!["NorthstarLauncher.exe", "NorthstarLauncher.exe"],
+        vec!["Northstar.dll", &profile_dll],
+    ];
+    for file_path in files_to_copy {
+        let source_file_path = format!("{}/{}", extract_directory, file_path[0]);
+        let destination_file_path = format!("{}/{}", game_install_path, file_path[1]);
         match std::fs::copy(source_file_path, destination_file_path) {
             Ok(_result) => (),
             Err(err) => {
                 return Err(format!(
                     "Failed to copy necessary file {} from temp dir: {}",
-                    file_name, err
+                    file_path[0], err
                 ))
             }
         };
@@ -330,13 +341,15 @@ pub async fn apply_mods_pr(
     let profile_folder = format!("{}/R2Northstar-PR-test-managed-folder", game_install_path);
 
     // Delete previously managed folder
-    if std::fs::remove_dir_all(profile_folder.clone()).is_err() {
-        if std::path::Path::new(&profile_folder).exists() {
-            log::error!("Failed removing previous dir");
-        } else {
-            log::warn!("Failed removing folder that doesn't exist. Probably cause first run");
+    for entry in std::fs::read_dir(profile_folder.clone()).unwrap() {
+        let entry = entry.unwrap();
+        let ty = entry.file_type().unwrap();
+        if ty.is_dir() {
+            std::fs::remove_dir_all(entry.path()).unwrap()
+        } else if entry.file_name() != "Northstar.dll" {
+            std::fs::remove_file(entry.path()).unwrap();
         }
-    };
+    }
 
     // Create profile folder
     match std::fs::create_dir_all(profile_folder.clone()) {
