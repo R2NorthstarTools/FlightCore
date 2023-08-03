@@ -21,6 +21,18 @@
                 Check NSProton Compatibility
             </el-button>
 
+            <el-button type="primary" @click="installNSProton">
+                Install NSProton
+            </el-button>
+
+            <el-button type="primary" @click="uninstallNSProton">
+                Remove NSProton
+            </el-button>
+
+            <el-button type="primary" @click="getLocalNSProtonVersion">
+                Get local NSProton Version
+            </el-button>
+
             <h3>Testing:</h3>
 
             <el-button type="primary" @click="launchGameWithoutChecks">
@@ -60,6 +72,10 @@
 
             <el-button type="primary" @click="getInstalledMods">
                 Get installed mods
+            </el-button>
+
+            <el-button type="primary" @click="killNorthstar">
+                Kill Northstar
             </el-button>
 
             <h3>Testing</h3>
@@ -107,6 +123,10 @@
                 Compare Tags
             </el-button>
 
+            <el-button type="primary" @click="copyReleaseNotesToClipboard">
+                Copy to clipboard
+            </el-button>
+
             <el-input
                 v-model="release_notes_text"
                 type="textarea"
@@ -120,7 +140,6 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { invoke } from "@tauri-apps/api";
-import { GameInstall } from "../utils/GameInstall";
 import { TagWrapper } from "../../../src-tauri/bindings/TagWrapper";
 import { NorthstarThunderstoreReleaseWrapper } from "../../../src-tauri/bindings/NorthstarThunderstoreReleaseWrapper";
 import PullRequestsSelector from "../components/PullRequestsSelector.vue";
@@ -197,11 +216,7 @@ export default defineComponent({
             this.$store.commit('launchGameSteam', true);
         },
         async getInstalledMods() {
-            let game_install = {
-                game_path: this.$store.state.game_path,
-                install_type: this.$store.state.install_type
-            } as GameInstall;
-            await invoke("get_installed_mods_and_properties", { gameInstall: game_install }).then((message) => {
+            await invoke("get_installed_mods_and_properties", { gameInstall: this.$store.state.game_install }).then((message) => {
                 // Simply console logging for now
                 // In the future we should display the installed mods somewhere
                 console.log(message);
@@ -213,13 +228,19 @@ export default defineComponent({
                     showErrorNotification(error);
                 });
         },
+        async killNorthstar() {
+            await invoke("kill_northstar")
+                .then((message) => {
+                    // Just a visual indicator that it worked
+                    showNotification('Success');
+                })
+                .catch((error) => {
+                    showErrorNotification(error);
+                });
+        },
         async installMod() {
-            let game_install = {
-                game_path: this.$store.state.game_path,
-                install_type: this.$store.state.install_type
-            } as GameInstall;
             let mod_to_install = this.mod_to_install_field_string;
-            await invoke<string>("install_mod_caller", { gameInstall: game_install, thunderstoreModString: mod_to_install }).then((message) => {
+            await invoke<string>("install_mod_caller", { gameInstall: this.$store.state.game_install, thunderstoreModString: mod_to_install }).then((message) => {
                 // Show user notification if mod install completed.
                 showNotification(`Installed ${mod_to_install}`, message);
             })
@@ -245,6 +266,7 @@ export default defineComponent({
                 .then((message) => {
                     this.release_notes_text = message;
                     showNotification("Done", "Generated release notes");
+                    this.copyReleaseNotesToClipboard();
                 })
                 .catch((error) => {
                     showErrorNotification(error);
@@ -254,7 +276,7 @@ export default defineComponent({
 
             const notification = showNotification(`Installing git main`, 'Please wait', 'info', 0);
 
-            await invoke<string>("install_git_main", { gameInstallPath: this.$store.state.game_path })
+            await invoke<string>("install_git_main", { gameInstallPath: this.$store.state.game_install.game_path })
                 .then((message) => {
                     this.release_notes_text = message;
                     showNotification("Done", `Installed launcher build from ${message}`);
@@ -278,11 +300,6 @@ export default defineComponent({
                 });
         },
         async installNorthstarVersion() {
-            let game_install = {
-                game_path: this.$store.state.game_path,
-                install_type: this.$store.state.install_type
-            } as GameInstall;
-
             // Send notification telling the user to wait for the process to finish
             const notification = showNotification(
                 `Installing Northstar version v${this.selected_ns_version.value.version}`,
@@ -291,7 +308,7 @@ export default defineComponent({
                 0
             );
 
-            let install_northstar_result = invoke("install_northstar_caller", { gamePath: game_install.game_path, northstarPackageName: this.selected_ns_version.value.package, versionNumber: this.selected_ns_version.value.version });
+            let install_northstar_result = invoke("install_northstar_caller", { gameInstall: this.$store.state.game_install, northstarPackageName: this.selected_ns_version.value.package, versionNumber: this.selected_ns_version.value.version });
 
             await install_northstar_result
                 .then((message) => {
@@ -306,6 +323,31 @@ export default defineComponent({
                 .finally(() => {
                     // Clear old notification
                     notification.close();
+                });
+        },
+        async installNSProton() {
+            showNotification(`Started NSProton install`);
+            await invoke("install_northstar_proton_wrapper")
+                .then((message) => { showNotification(`Done`); })
+                .catch((error) => { showNotification(`Error`, error, "error"); })
+        },
+        async uninstallNSProton() {
+            await invoke("uninstall_northstar_proton_wrapper")
+                .then((message) => { showNotification(`Done`); })
+                .catch((error) => { showNotification(`Error`, error, "error"); })
+        },
+        async getLocalNSProtonVersion() {
+            await invoke("get_local_northstar_proton_wrapper_version")
+                .then((message) => { showNotification(`NSProton Version`, message as string); })
+                .catch((error) => { showNotification(`Error`, error, "error"); })
+        },
+        async copyReleaseNotesToClipboard() {
+            navigator.clipboard.writeText(this.release_notes_text)
+                .then(() => {
+                    showNotification("Copied to clipboard");
+                })
+                .catch(() => {
+                    showErrorNotification("Failed copying to clipboard");
                 });
         },
     }

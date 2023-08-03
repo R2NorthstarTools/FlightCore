@@ -54,7 +54,7 @@ export const pullRequestModule = {
             // Send notification telling the user to wait for the process to finish
             const notification = showNotification(`Installing launcher PR ${pull_request.number}`, 'Please wait', 'info', 0);
 
-            await invoke("apply_launcher_pr", { pullRequest: pull_request, gameInstallPath: store.state.game_path })
+            await invoke("apply_launcher_pr", { pullRequest: pull_request, gameInstall: store.state.game_install })
                 .then((message) => {
                     console.log(message);
                     // Show user notification if mod install completed.
@@ -72,7 +72,7 @@ export const pullRequestModule = {
             // Send notification telling the user to wait for the process to finish
             const notification = showNotification(`Installing mods PR ${pull_request.number}`, 'Please wait', 'info', 0);
 
-            await invoke("apply_mods_pr", { pullRequest: pull_request, gameInstallPath: store.state.game_path })
+            await invoke("apply_mods_pr", { pullRequest: pull_request, gameInstall: store.state.game_install })
                 .then((message) => {
                     // Show user notification if mod install completed.
                     showNotification(

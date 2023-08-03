@@ -1,7 +1,6 @@
 use crate::mod_management::{get_enabled_mods, rebuild_enabled_mods_json, set_mod_enabled_status};
 /// Contains various functions to repair common issues and verifying installation
 use crate::{constants::CORE_MODS, GameInstall};
-use anyhow::anyhow;
 
 /// Verifies Titanfall2 game files
 #[tauri::command]
@@ -40,33 +39,40 @@ pub fn clean_up_download_folder(
     game_install: &GameInstall,
     force: bool,
 ) -> Result<(), anyhow::Error> {
-    // Get download directory
-    let download_directory = format!(
-        "{}/___flightcore-temp-download-dir/",
-        game_install.game_path
-    );
+    const TEMPORARY_DIRECTORIES: [&str; 4] = [
+        "___flightcore-temp-download-dir",
+        "___flightcore-temp/download-dir",
+        "___flightcore-temp/extract-dir",
+        "___flightcore-temp",
+    ];
 
-    // Check if files in folder
-    let download_dir_contents = std::fs::read_dir(download_directory.clone())?;
-    // dbg!(download_dir_contents);
+    for directory in TEMPORARY_DIRECTORIES {
+        // Get download directory
+        let download_directory = format!("{}/{}/", game_install.game_path, directory);
 
-    let mut count = 0;
-    download_dir_contents.for_each(|_| count += 1);
+        // Check if files in folder
+        let download_dir_contents = std::fs::read_dir(download_directory.clone())?;
+        // dbg!(download_dir_contents);
 
-    if count > 0 && !force {
-        return Err(anyhow!("Folder not empty, not deleting"));
+        let mut count = 0;
+        download_dir_contents.for_each(|_| count += 1);
+
+        if count > 0 && !force {
+            // Skip folder if not empty
+            log::warn!("Folder not empty, not deleting: {directory}");
+            continue;
+        }
+
+        // Delete folder
+        std::fs::remove_dir_all(download_directory)?;
     }
-
-    // Delete folder
-    std::fs::remove_dir_all(download_directory)?;
-
     Ok(())
 }
 
 /// Get list of Northstar logs
 #[tauri::command]
 pub fn get_log_list(game_install: GameInstall) -> Result<Vec<std::path::PathBuf>, String> {
-    let ns_log_folder = format!("{}/R2Northstar/logs", game_install.game_path);
+    let ns_log_folder = format!("{}/{}/logs", game_install.game_path, game_install.profile);
 
     // List files in logs folder
     let paths = match std::fs::read_dir(ns_log_folder) {

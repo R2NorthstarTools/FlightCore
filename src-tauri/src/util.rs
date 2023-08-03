@@ -2,7 +2,7 @@
 
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
-use sysinfo::SystemExt;
+use sysinfo::{ProcessExt, SystemExt};
 use zip::ZipArchive;
 
 use crate::constants::{APP_USER_AGENT, MASTER_SERVER_URL, SERVER_BROWSER_ENDPOINT};
@@ -64,6 +64,27 @@ pub async fn get_server_player_count() -> Result<(i32, usize), String> {
     Ok((total_player_count, server_count))
 }
 
+#[tauri::command]
+pub async fn kill_northstar() -> Result<(), String> {
+    if !check_northstar_running() {
+        return Err("Northstar is not running".to_string());
+    }
+
+    let s = sysinfo::System::new_all();
+
+    for process in s.processes_by_exact_name("Titanfall2.exe") {
+        log::info!("Killing Process {}", process.pid());
+        process.kill();
+    }
+
+    for process in s.processes_by_exact_name("NorthstarLauncher.exe") {
+        log::info!("Killing Process {}", process.pid());
+        process.kill();
+    }
+
+    Ok(())
+}
+
 /// Copied from `papa` source code and modified
 ///Extract N* zip file to target game path
 // fn extract(ctx: &Ctx, zip_file: File, target: &Path) -> Result<()> {
@@ -121,4 +142,43 @@ pub fn check_northstar_running() -> bool {
         .is_some()
         || s.processes_by_name("Titanfall2.exe").next().is_some();
     x
+}
+
+/// Copies a folder and all its contents to a new location
+#[allow(dead_code)]
+pub fn copy_dir_all(
+    src: impl AsRef<std::path::Path>,
+    dst: impl AsRef<std::path::Path>,
+) -> std::io::Result<()> {
+    std::fs::create_dir_all(&dst)?;
+    for entry in std::fs::read_dir(src)? {
+        let entry = entry?;
+        let ty = entry.file_type()?;
+        if ty.is_dir() {
+            copy_dir_all(entry.path(), dst.as_ref().join(entry.file_name()))?;
+        } else {
+            std::fs::copy(entry.path(), dst.as_ref().join(entry.file_name()))?;
+        }
+    }
+    Ok(())
+}
+
+/// Moves a folders file structure to a new location
+/// Old folders are not removed
+pub fn move_dir_all(
+    src: impl AsRef<std::path::Path>,
+    dst: impl AsRef<std::path::Path>,
+) -> std::io::Result<()> {
+    std::fs::create_dir_all(&dst)?;
+    for entry in std::fs::read_dir(src)? {
+        let entry = entry?;
+        let ty = entry.file_type()?;
+        if ty.is_dir() {
+            move_dir_all(entry.path(), dst.as_ref().join(entry.file_name()))?;
+            std::fs::remove_dir(entry.path())?;
+        } else {
+            std::fs::rename(entry.path(), dst.as_ref().join(entry.file_name()))?;
+        }
+    }
+    Ok(())
 }
