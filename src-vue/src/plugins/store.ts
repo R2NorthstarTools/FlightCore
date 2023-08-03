@@ -1,7 +1,7 @@
 import { createStore } from 'vuex';
 import { listen, Event as TauriEvent } from "@tauri-apps/api/event";
 import { Tabs } from "../utils/Tabs";
-import { InstallType } from "../utils/InstallType";
+import { InstallType } from "../../../src-tauri/bindings/InstallType";
 import { invoke } from "@tauri-apps/api";
 import { GameInstall } from "../utils/GameInstall";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
@@ -142,7 +142,7 @@ export const store = createStore<FlightCoreStore>({
                     catch {
                         console.warn("Nothing to close");
                     }
-                    state.game_install.install_type = InstallType.UNKNOWN;
+                    state.game_install.install_type = "UNKNOWN";
 
                     // Save change in persistent store
                     await persistentStore.set('game-install', { value: state.game_install });

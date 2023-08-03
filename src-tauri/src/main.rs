@@ -457,7 +457,8 @@ mod platform_specific;
 #[cfg(target_os = "linux")]
 use platform_specific::linux;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
 pub enum InstallType {
     STEAM,
     ORIGIN,
