@@ -119,7 +119,11 @@ pub fn launch_northstar(
         // We cannot add the params directly because of limitations with cmd.exe
         // https://stackoverflow.com/questions/9964865/c-system-not-working-when-there-are-spaces-in-two-different-parameters/9965141#9965141
 
-        let launch_parameters = format!("{} {}", ns_profile_arg, launch_parameters.unwrap_or_default());
+        let launch_parameters = format!(
+            "{} {}",
+            ns_profile_arg,
+            launch_parameters.unwrap_or_default()
+        );
         let ns_params: Vec<&str> = launch_parameters.split_whitespace().collect();
         dbg!(ns_params.clone());
         args.extend(ns_params);
