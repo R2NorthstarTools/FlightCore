@@ -103,12 +103,12 @@ async fn do_install(
         // - move the DLL
         // - rename the Profile
 
-        // Move DLL into default Profile
+        // Move DLL into the default R2Northstar Profile
         let old_dll_path = format!("{}/{}", extract_directory, NORTHSTAR_DLL);
-        let new_dll_path = format!("{}/R2Northstar/{}", extract_directory, NORTHSTAR_DLL);
+        let new_dll_path = format!("{}/{}/{}", extract_directory, NORTHSTAR_DEFAULT_PROFILE, NORTHSTAR_DLL);
         std::fs::rename(old_dll_path, new_dll_path)?;
 
-        // rename default Profile
+        // rename default R2Northstar Profile to the profile we want to use
         let old_profile_path = format!("{}/{}/", extract_directory, NORTHSTAR_DEFAULT_PROFILE);
         let new_profile_path = format!("{}/{}/", extract_directory, game_install.profile);
         std::fs::rename(old_profile_path, new_profile_path)?;
