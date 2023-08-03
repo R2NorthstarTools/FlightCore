@@ -181,7 +181,7 @@ export const store = createStore<FlightCoreStore>({
             switch (state.northstar_state) {
                 // Install northstar if it wasn't detected.
                 case NorthstarState.INSTALL:
-                    let install_northstar_result = invoke("install_northstar_caller", { gamePath: state.game_install.game_path, northstarPackageName: state.northstar_release_canal });
+                    let install_northstar_result = invoke("install_northstar_caller", { gameInstall: state.game_install, northstarPackageName: state.northstar_release_canal });
                     state.northstar_state = NorthstarState.INSTALLING;
 
                     await install_northstar_result.then((message) => {
@@ -198,7 +198,7 @@ export const store = createStore<FlightCoreStore>({
                 // Update northstar if it is outdated.
                 case NorthstarState.MUST_UPDATE:
                     // Updating is the same as installing, simply overwrites the existing files
-                    let reinstall_northstar_result = invoke("install_northstar_caller", { gamePath: state.game_install.game_path, northstarPackageName: state.northstar_release_canal });
+                    let reinstall_northstar_result = invoke("install_northstar_caller", { gameInstall: state.game_install, northstarPackageName: state.northstar_release_canal });
                     state.northstar_state = NorthstarState.UPDATING;
 
                     await reinstall_northstar_result.then((message) => {
@@ -374,6 +374,12 @@ async function _initializeApp(state: any) {
         && persistent_game_install.value.game_path !== undefined
         && persistent_game_install.value.install_type !== undefined
     ) { // For some reason, the plugin-store doesn't throw an eror but simply returns `null` when key not found
+
+        // Add profile to existing storage
+        if (persistent_game_install.value.profile === undefined) {
+            persistent_game_install.value.profile = "R2Northstar"
+        }
+
         let game_install = persistent_game_install.value as GameInstall;
         // check if valid path
         let is_valid_titanfall2_install = await invoke("verify_install_location", { gamePath: game_install.game_path }) as boolean;
@@ -463,13 +469,13 @@ function _initializeListeners(state: any) {
  * state, for it to be displayed in UI.
  */
 async function _get_northstar_version_number(state: any) {
-    await invoke("get_northstar_version_number", { gamePath: state.game_install.game_path })
+    await invoke("get_northstar_version_number", { gameInstall: state.game_install })
         .then((message) => {
             let northstar_version_number: string = message as string;
             state.installed_northstar_version = northstar_version_number;
             state.northstar_state = NorthstarState.READY_TO_PLAY;
 
-            invoke("check_is_northstar_outdated", { gamePath: state.game_install.game_path, northstarPackageName: state.northstar_release_canal })
+            invoke("check_is_northstar_outdated", { gameInstall: state.game_install, northstarPackageName: state.northstar_release_canal })
                 .then((message) => {
                     if (message) {
                         state.northstar_state = NorthstarState.MUST_UPDATE;

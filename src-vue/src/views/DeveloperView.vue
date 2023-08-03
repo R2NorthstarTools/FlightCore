@@ -89,6 +89,10 @@
                 Get installed mods
             </el-button>
 
+            <el-button type="primary" @click="killNorthstar">
+                Kill Northstar
+            </el-button>
+
             <h3>Testing</h3>
             <pull-requests-selector />
 
@@ -132,6 +136,10 @@
 
             <el-button type="primary" @click="compareTags">
                 Compare Tags
+            </el-button>
+
+            <el-button type="primary" @click="copyReleaseNotesToClipboard">
+                Copy to clipboard
             </el-button>
 
             <el-input
@@ -243,6 +251,16 @@ export default defineComponent({
                     showErrorNotification(error);
                 });
         },
+        async killNorthstar() {
+            await invoke("kill_northstar")
+                .then((message) => {
+                    // Just a visual indicator that it worked
+                    showNotification('Success');
+                })
+                .catch((error) => {
+                    showErrorNotification(error);
+                });
+        },
         async installMod() {
             let mod_to_install = this.mod_to_install_field_string;
             await invoke<string>("install_mod_caller", { gameInstall: this.$store.state.game_install, thunderstoreModString: mod_to_install }).then((message) => {
@@ -271,6 +289,7 @@ export default defineComponent({
                 .then((message) => {
                     this.release_notes_text = message;
                     showNotification("Done", "Generated release notes");
+                    this.copyReleaseNotesToClipboard();
                 })
                 .catch((error) => {
                     showErrorNotification(error);
@@ -312,7 +331,7 @@ export default defineComponent({
                 0
             );
 
-            let install_northstar_result = invoke("install_northstar_caller", { gamePath: this.$store.state.game_install.game_path, northstarPackageName: this.selected_ns_version.value.package, versionNumber: this.selected_ns_version.value.version });
+            let install_northstar_result = invoke("install_northstar_caller", { gameInstall: this.$store.state.game_install, northstarPackageName: this.selected_ns_version.value.package, versionNumber: this.selected_ns_version.value.version });
 
             await install_northstar_result
                 .then((message) => {
@@ -344,6 +363,15 @@ export default defineComponent({
             await invoke("get_local_northstar_proton_wrapper_version")
                 .then((message) => { showNotification(`NSProton Version`, message as string); })
                 .catch((error) => { showNotification(`Error`, error, "error"); })
+        },
+        async copyReleaseNotesToClipboard() {
+            navigator.clipboard.writeText(this.release_notes_text)
+                .then(() => {
+                    showNotification("Copied to clipboard");
+                })
+                .catch(() => {
+                    showErrorNotification("Failed copying to clipboard");
+                });
         },
     }
 });
