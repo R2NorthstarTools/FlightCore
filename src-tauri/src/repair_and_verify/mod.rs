@@ -40,33 +40,37 @@ pub fn clean_up_download_folder(
     game_install: &GameInstall,
     force: bool,
 ) -> Result<(), anyhow::Error> {
-    // Get download directory
-    let download_directory = format!(
-        "{}/___flightcore-temp-download-dir/",
-        game_install.game_path
-    );
+    const TEMPORARY_DIRECTORIES: [&str; 3] = [
+        "___flightcore-temp-download-dir",
+        "___flightcore-temp/download-dir",
+        "___flightcore-temp",
+    ];
 
-    // Check if files in folder
-    let download_dir_contents = std::fs::read_dir(download_directory.clone())?;
-    // dbg!(download_dir_contents);
+    for directory in TEMPORARY_DIRECTORIES {
+        // Get download directory
+        let download_directory = format!("{}/{}/", game_install.game_path, directory);
 
-    let mut count = 0;
-    download_dir_contents.for_each(|_| count += 1);
+        // Check if files in folder
+        let download_dir_contents = std::fs::read_dir(download_directory.clone())?;
+        // dbg!(download_dir_contents);
 
-    if count > 0 && !force {
-        return Err(anyhow!("Folder not empty, not deleting"));
+        let mut count = 0;
+        download_dir_contents.for_each(|_| count += 1);
+
+        if count > 0 && !force {
+            return Err(anyhow!("Folder not empty, not deleting"));
+        }
+
+        // Delete folder
+        std::fs::remove_dir_all(download_directory)?;
     }
-
-    // Delete folder
-    std::fs::remove_dir_all(download_directory)?;
-
     Ok(())
 }
 
 /// Get list of Northstar logs
 #[tauri::command]
 pub fn get_log_list(game_install: GameInstall) -> Result<Vec<std::path::PathBuf>, String> {
-    let ns_log_folder = format!("{}/R2Northstar/logs", game_install.game_path);
+    let ns_log_folder = format!("{}/{}/logs", game_install.game_path, game_install.profile);
 
     // List files in logs folder
     let paths = match std::fs::read_dir(ns_log_folder) {

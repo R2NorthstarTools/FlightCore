@@ -54,11 +54,7 @@ export default defineComponent({
     },
     methods: {
         async disableAllModsButCore() {
-            let game_install = {
-                game_path: this.$store.state.game_path,
-                install_type: this.$store.state.install_type
-            } as GameInstall;
-            await invoke("disable_all_but_core", { gameInstall: game_install })
+            await invoke("disable_all_but_core", { gameInstall: this.$store.state.game_install })
                 .then((message) => {
                     showNotification(this.$t('generic.success'), this.$t('settings.repair.window.disable_all_but_core_success'));
                 })
@@ -67,11 +63,6 @@ export default defineComponent({
                 });
         },
         async forceInstallNorthstar() {
-            let game_install = {
-                game_path: this.$store.state.game_path,
-                install_type: this.$store.state.install_type
-            } as GameInstall;
-
             // Send notification telling the user to wait for the process to finish
             const notification = showNotification(
                 this.$t('settings.repair.window.reinstall_title'),
@@ -80,7 +71,7 @@ export default defineComponent({
                 0
             );
 
-            let install_northstar_result = invoke("install_northstar_caller", { gamePath: game_install.game_path, northstarPackageName: ReleaseCanal.RELEASE });
+            let install_northstar_result = invoke("install_northstar_caller", { gameInstall: this.$store.state.game_install, northstarPackageName: ReleaseCanal.RELEASE });
 
             appWindow.listen<InstallProgress>(
                 'northstar-install-download-progress',
@@ -107,11 +98,7 @@ export default defineComponent({
                 });
         },
         async cleanUpDownloadFolder() {
-            let game_install = {
-                game_path: this.$store.state.game_path,
-                install_type: this.$store.state.install_type
-            } as GameInstall;
-            await invoke("clean_up_download_folder_caller", { gameInstall: game_install, force: true }).then((message) => {
+            await invoke("clean_up_download_folder_caller", { gameInstall: this.$store.state.game_install, force: true }).then((message) => {
                 // Show user notification if task completed.
                 showNotification(this.$t('generic.done'), this.$t('generic.done'));
             })
@@ -126,12 +113,7 @@ export default defineComponent({
             await persistentStore.save();
         },
         async disableModsettingsMod() {
-            let game_install = {
-                game_path: this.$store.state.game_path,
-                install_type: this.$store.state.install_type
-            } as GameInstall;
-
-            await invoke("set_mod_enabled_status", { gameInstall: game_install, modName: "Mod Settings", isEnabled: false })
+            await invoke("set_mod_enabled_status", { gameInstall: this.$store.state.game_install, modName: "Mod Settings", isEnabled: false })
                 .then((message) => {
                     showNotification(this.$t('generic.success'), this.$t('settings.repair.window.disable_modsettings_success'));
                 })
