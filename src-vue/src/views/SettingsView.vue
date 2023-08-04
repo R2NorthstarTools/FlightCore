@@ -104,7 +104,7 @@ export default defineComponent({
     },
     data() {
         return {
-            developerModeClicks: 0
+            developerModeClicks: 0,
         }
     },
     computed: {
