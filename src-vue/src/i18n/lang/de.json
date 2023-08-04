@@ -109,7 +109,9 @@
                 "delete_persistent_store": "FlightCore Einstellungen zurücksetzen",
                 "reinstall_title": "Northstar wird neu installiert",
                 "reinstall_text": "Bitte warten",
-                "reinstall_success": "Northstar erfolgreich neu installiert"
+                "reinstall_success": "Northstar erfolgreich neu installiert",
+                "disable_modsettings_success": "Der Mod ModSettings wurde deaktiviert",
+                "disable_modsettings": "Deaktiviere den ModSettings Mod"
             }
         },
         "show_deprecated_mods_desc1": "Damit werden veraltete Mods in der Online-Mods-Ansicht sichtbar.",
