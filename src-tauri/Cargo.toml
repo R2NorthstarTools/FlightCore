@@ -27,7 +27,7 @@ tauri = { version = "1.4", features = ["api-all", "dialog", "updater"] }
 tokio = { version = "1", features = ["full"] }
 # Sentry (crash) logging
 sentry = "0.31"
-sentry-log = "0.30"
+sentry-log = "0.31"
 # Find steam games
 steamlocate = "1.2"
 # Error messages
