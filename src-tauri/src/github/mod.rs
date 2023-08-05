@@ -180,7 +180,7 @@ fn generate_flightcore_release_notes(commits: Vec<String>) -> String {
         }
     }
 
-    let release_notes = release_notes.trim_end_matches("\n").to_string();
+    let release_notes = release_notes.trim_end_matches('\n').to_string();
     release_notes
 }
 
