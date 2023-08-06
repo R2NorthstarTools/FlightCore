@@ -74,10 +74,6 @@
                 Get installed mods
             </el-button>
 
-            <el-button type="primary" @click="killNorthstar">
-                Kill Northstar
-            </el-button>
-
             <h3>Testing</h3>
             <pull-requests-selector />
 
@@ -224,16 +220,6 @@ export default defineComponent({
                 // Just a visual indicator that it worked
                 showNotification('Success');
             })
-                .catch((error) => {
-                    showErrorNotification(error);
-                });
-        },
-        async killNorthstar() {
-            await invoke("kill_northstar")
-                .then((message) => {
-                    // Just a visual indicator that it worked
-                    showNotification('Success');
-                })
                 .catch((error) => {
                     showErrorNotification(error);
                 });
