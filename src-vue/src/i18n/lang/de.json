@@ -107,6 +107,7 @@
                 "force_reinstall_ns": "Northstar reinstallieren",
                 "force_delete_temp_dl": "Temporären FlightCore Downloadordner löschen",
                 "delete_persistent_store": "FlightCore Einstellungen zurücksetzen",
+                "kill_northstar_process": "Laufenden Northstar/Titanfall2 Prozess beenden",
                 "reinstall_title": "Northstar wird neu installiert",
                 "reinstall_text": "Bitte warten",
                 "reinstall_success": "Northstar erfolgreich neu installiert",
