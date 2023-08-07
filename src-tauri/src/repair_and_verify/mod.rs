@@ -51,7 +51,10 @@ pub fn clean_up_download_folder(
         let download_directory = format!("{}/{}/", game_install.game_path, directory);
 
         // Check if files in folder
-        let download_dir_contents = std::fs::read_dir(download_directory.clone())?;
+        let download_dir_contents = match std::fs::read_dir(download_directory.clone()) {
+            Ok(contents) => contents,
+            Err(_) => continue,
+        };
         // dbg!(download_dir_contents);
 
         let mut count = 0;
