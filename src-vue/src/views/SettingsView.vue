@@ -220,6 +220,10 @@ export default defineComponent({
                     }
 
                     state.game_install.profile = value;
+
+                    // Check for Northstar updates
+                    store.commit('checkNorthstarUpdates');
+
                     // Save change in persistent store
                     await persistentStore.set('game-install', { value: state.game_install });
                     await persistentStore.save(); // explicit save to disk
