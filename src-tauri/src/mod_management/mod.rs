@@ -679,14 +679,17 @@ pub fn delete_northstar_mod(game_install: GameInstall, nsmod_name: String) -> Re
     }
 
     // Get installed mods
-    let installed_ns_mods = get_installed_mods_and_properties(game_install)?;
+    let installed_ns_mods = get_installed_mods_and_properties(game_install.clone())?;
 
     // Get folder name based on northstarmods
     for installed_ns_mod in installed_ns_mods {
         // Installed mod matches specified mod
         if installed_ns_mod.name == nsmod_name {
             // Delete folder
-            return delete_mod_folder(&installed_ns_mod.directory);
+            return match delete_thunderstore_mod(game_install, installed_ns_mod.thunderstore_mod_string.or(Some("".to_string())).unwrap()) {
+                Ok(_) => Ok(()),
+                Err(_) => delete_mod_folder(&installed_ns_mod.directory),
+            };
         }
     }
 
