@@ -686,7 +686,12 @@ pub fn delete_northstar_mod(game_install: GameInstall, nsmod_name: String) -> Re
         // Installed mod matches specified mod
         if installed_ns_mod.name == nsmod_name {
             // Delete folder
-            return match delete_thunderstore_mod(game_install, installed_ns_mod.thunderstore_mod_string.or(Some("".to_string())).unwrap()) {
+            return match delete_thunderstore_mod(
+                game_install,
+                installed_ns_mod
+                    .thunderstore_mod_string
+                    .unwrap_or("".to_string()),
+            ) {
                 Ok(_) => Ok(()),
                 Err(_) => delete_mod_folder(&installed_ns_mod.directory),
             };
