@@ -1,4 +1,14 @@
 <template>
+    <el-dialog
+        v-model="showProfileDialog"
+        :title="$t('settings.profile.dialog.title')"
+        width="75%"
+    >
+        <el-table :data="availableProfiles" >
+            <el-table-column prop="name" label="Name" />
+        </el-table>
+    </el-dialog>
+
     <div class="fc-container">
         <el-scrollbar>
             <div class="fc_settings__container">
@@ -31,6 +41,7 @@
                         <template #dropdown>
                             <el-dropdown-menu>
                                 <el-dropdown-item v-for="profile in $store.state.available_profiles" @click="switchProfile(profile)">{{ profile }}</el-dropdown-item>
+                                <el-dropdown-item divided @click="showProfileDialog = true">{{ $t('settings.profile.edit') }}</el-dropdown-item>
                             </el-dropdown-menu>
                         </template>
                     </el-dropdown>
@@ -121,6 +132,7 @@ export default defineComponent({
     data() {
         return {
             developerModeClicks: 0,
+            showProfileDialog: false,
         }
     },
     computed: {
