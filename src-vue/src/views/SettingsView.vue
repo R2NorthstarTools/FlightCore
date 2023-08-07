@@ -21,6 +21,9 @@
                         </el-button>
                     </template>
                 </el-popconfirm>
+                <el-button @click="cloneProfileDialog(scope.row.name)">
+                    {{ $t('settings.profile.dialog.clone') }}
+                </el-button>
               </template>
           </el-table-column>
         </el-table>
@@ -140,6 +143,7 @@ import LanguageSelector from "../components/LanguageSelector.vue";
 const persistentStore = new Store('flight-core-settings.json');
 import { open } from '@tauri-apps/api/shell';
 import { i18n } from '../main';
+import { ElMessageBox } from 'element-plus'
 
 export default defineComponent({
     name: "SettingsView",
@@ -261,6 +265,34 @@ export default defineComponent({
                     console.error(error);
                     showErrorNotification(error);
                 });
+        },
+        async cloneProfileDialog(profile: string) {
+            ElMessageBox.prompt(
+                i18n.global.tc("settings.profile.dialog.new_profile_name"),
+                i18n.global.tc("settings.profile.dialog.title"),
+                {
+                    confirmButtonText: i18n.global.tc("generic.confirm"),
+                    cancelButtonText: i18n.global.tc("generic.cancel"),
+                }
+            ).then(async ({ value }) => {
+                await this.cloneProfile(profile, value);
+            }).catch(() => {
+                // Nothing to do here
+            })
+        },
+        async cloneProfile(old_profile: string, new_profile: string) {
+            let store = this.$store;
+            await invoke("clone_profile", {
+                gameInstall: store.state.game_install,
+                oldProfile: old_profile,
+                newProfile: new_profile
+            }).then(async (message) => {
+                store.commit('fetchProfiles');
+                showNotification('Success');
+            }).catch((error) => {
+                console.error(error);
+                showErrorNotification(error);
+            });
         },
         async deleteProfile(profile: string) {
             let store = this.$store;

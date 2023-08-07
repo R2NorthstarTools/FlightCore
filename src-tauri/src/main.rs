@@ -161,6 +161,7 @@ fn main() {
             northstar::profile::fetch_profiles,
             northstar::profile::validate_profile,
             northstar::profile::delete_profile,
+            northstar::profile::clone_profile,
         ])
         .run(tauri::generate_context!())
     {
