@@ -6,6 +6,23 @@
     >
         <el-table :data="availableProfiles" >
             <el-table-column prop="name" label="Name" />
+            <el-table-column align="right">
+              <template #default="scope">
+                <el-popconfirm
+                    v-if="scope.row.name != 'R2Northstar'"
+                    :title="$t('settings.profile.dialog.delete_confirm')"
+                    :confirm-button-text="$t('generic.yes')"
+                    :cancel-button-text="$t('generic.no')"
+                    @confirm="deleteProfile(scope.row.name)"
+                >
+                    <template #reference>
+                        <el-button type="danger">
+                            {{ $t('settings.profile.dialog.delete') }}
+                        </el-button>
+                    </template>
+                </el-popconfirm>
+              </template>
+          </el-table-column>
         </el-table>
     </el-dialog>
 
@@ -244,6 +261,24 @@ export default defineComponent({
                     console.error(error);
                     showErrorNotification(error);
                 });
+        },
+        async deleteProfile(profile: string) {
+            let store = this.$store;
+            await invoke("delete_profile", {
+                gameInstall: store.state.game_install,
+                profile: profile,
+            }).then(async (message) => {
+                if (profile == store.state.game_install.profile)
+                {
+                    // trying to delete the active profile, lets switch to the default profile
+                    await this.switchProfile("R2Northstar");
+                }
+                store.commit('fetchProfiles');
+                showNotification('Success');
+            }).catch((error) => {
+                console.error(error);
+                showErrorNotification(error);
+            });
         }
     },
     mounted() {
