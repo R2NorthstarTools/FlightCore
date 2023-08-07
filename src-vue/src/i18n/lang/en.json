@@ -11,6 +11,7 @@
         "yes": "Yes",
         "no": "No",
         "error": "Error",
+        "confirm": "Confirm",
         "cancel": "Cancel",
         "informationShort": "Info",
         "downloading": "Downloading",
@@ -111,7 +112,17 @@
         "show_deprecated_mods_desc2": "Watch out, such mods are usually deprecated for a good reason.",
 
         "profile": {
-            "active": "Active Profile"
+            "active": "Active Profile",
+            "edit": "Edit Profiles",
+
+            "dialog": {
+                "title": "Profiles",
+                "delete_confirm": "Are you sure to delete this profile?",
+                "delete": "Delete",
+                "clone": "Clone",
+                "new_profile_name": "Enter the new Profile name",
+                "create_empty": "New Profile"
+            }
         },
 
         "repair": {

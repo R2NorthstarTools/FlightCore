@@ -63,6 +63,10 @@ export default defineComponent({
     padding: 20px 30px;
 }
 
+.el-table .el-scrollbar__view {
+    padding: 0;
+}
+
 .fc__changelog__container {
     padding: 20px 30px;
 }
