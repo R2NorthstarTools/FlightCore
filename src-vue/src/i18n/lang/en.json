@@ -110,6 +110,10 @@
         "show_deprecated_mods_desc1": "This allows you to see deprecated mods in the online mods collection.",
         "show_deprecated_mods_desc2": "Watch out, such mods are usually deprecated for a good reason.",
 
+        "profile": {
+            "active": "Active Profile"
+        },
+
         "repair": {
             "title": "Repair",
             "open_window": "Open repair window",

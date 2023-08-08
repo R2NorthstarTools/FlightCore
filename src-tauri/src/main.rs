@@ -158,6 +158,8 @@ fn main() {
             close_application,
             development::install_git_main,
             get_available_northstar_versions,
+            northstar::profile::fetch_profiles,
+            northstar::profile::validate_profile,
         ])
         .run(tauri::generate_context!())
     {
