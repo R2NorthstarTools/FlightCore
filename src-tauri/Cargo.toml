@@ -37,7 +37,7 @@ libthermite = { version = "0.7.0-beta", features = ["proton"] }
 # zip stuff
 zip = "0.6.2"
 # Regex
-regex = "1.6.0"
+regex = "1.9"
 # Read out running application process names
 sysinfo = "0.29.7"
 # HTTP requests
