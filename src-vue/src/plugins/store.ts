@@ -320,14 +320,16 @@ export const store = createStore<FlightCoreStore>({
             );
         },
         async fetchProfiles(state: FlightCoreStore) {
-            await invoke("fetch_profiles", { gameInstall: state.game_install })
-                .then((message) => {
-                    state.available_profiles = message as string[];
-                })
-                .catch((error) => {
-                    console.error(error);
-                    showErrorNotification(error);
-                });
+            if ("game_path" in state.game_install) {
+                await invoke("fetch_profiles", { gameInstall: state.game_install })
+                    .then((message) => {
+                        state.available_profiles = message as string[];
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        showErrorNotification(error);
+                    });
+            }
         }
     }
 });
