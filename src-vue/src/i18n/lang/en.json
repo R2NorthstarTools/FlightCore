@@ -154,6 +154,13 @@
             }
         },
 
+        "profile": {
+            "invalid": {
+                "title": "Invalid Profile",
+                "text": "The profile you tried to switch to is no longer valid."
+            }
+        },
+
         "flightcore_outdated": {
             "title": "FlightCore outdated!",
             "text": "Please update FlightCore.\nRunning outdated version {oldVersion}.\nNewest is {newVersion}!"
