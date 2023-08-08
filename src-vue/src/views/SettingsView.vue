@@ -236,6 +236,7 @@ export default defineComponent({
     },
     mounted() {
         document.querySelector('input')!.disabled = true;
+        this.$store.commit('fetchProfiles');
     },
     unmounted() {
         if (('' + this.modsPerPage) === '') {
