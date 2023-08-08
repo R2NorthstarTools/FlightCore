@@ -151,6 +151,9 @@ export const store = createStore<FlightCoreStore>({
                     await persistentStore.set('game-install', { value: state.game_install });
                     await persistentStore.save(); // explicit save to disk
 
+                    // We can no longer be sure if our last profile is valid, lets reset to be sure
+                    store.game_install.profile = "R2Northstar";
+
                     // Check for Northstar install
                     store.commit('checkNorthstarUpdates');
                 }
