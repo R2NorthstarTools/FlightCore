@@ -156,6 +156,10 @@ export const store = createStore<FlightCoreStore>({
 
                     // Check for Northstar install
                     store.commit('checkNorthstarUpdates');
+
+                    // Since we are in a new game directory, lets see if there are any profiles
+                    store.commit('fetchProfiles');
+
                 }
                 else {
                     // Not valid Titanfall2 install
