@@ -151,8 +151,15 @@ export const store = createStore<FlightCoreStore>({
                     await persistentStore.set('game-install', { value: state.game_install });
                     await persistentStore.save(); // explicit save to disk
 
+                    // We can no longer be sure if our last profile is valid, lets reset to be sure
+                    state.game_install.profile = "R2Northstar";
+
                     // Check for Northstar install
                     store.commit('checkNorthstarUpdates');
+
+                    // Since we are in a new game directory, lets see if there are any profiles
+                    store.commit('fetchProfiles');
+
                 }
                 else {
                     // Not valid Titanfall2 install
