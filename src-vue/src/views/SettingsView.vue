@@ -22,7 +22,7 @@
                 </div>
 
                 <!-- Northstar Active Profile -->
-                <div class="fc_parameter__panel">
+                <div class="fc_parameter__panel" v-if="$store.state.developer_mode">
                     <h3>{{ $t('settings.profile.active') }}</h3>
                     <el-dropdown trigger="click">
                         <el-button>
