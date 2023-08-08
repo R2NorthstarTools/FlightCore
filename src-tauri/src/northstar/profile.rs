@@ -27,6 +27,8 @@ const MAY_CONTAIN: [&str; 10] = [
     "LEGAL.txt",
 ];
 
+/// Returns a list of Profile names
+/// All the returned Profiles can be found relative to the game path
 #[tauri::command]
 pub fn fetch_profiles(game_install: GameInstall) -> Result<Vec<String>, String> {
     let mut profiles: Vec<String> = Vec::new();
@@ -56,6 +58,7 @@ pub fn fetch_profiles(game_install: GameInstall) -> Result<Vec<String>, String> 
     Ok(profiles)
 }
 
+/// Validates if a given profile is actually a valid profile
 #[tauri::command]
 pub fn validate_profile(game_install: GameInstall, profile: String) -> bool {
     // Game files are never a valid profile
