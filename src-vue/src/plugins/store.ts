@@ -61,7 +61,7 @@ export const store = createStore<FlightCoreStore>({
     state(): FlightCoreStore {
         return {
             developer_mode: false,
-            game_install: {game_path: undefined, profile: undefined, install_type: "UNKNOWN"} as GameInstall,
+            game_install: {game_path: undefined, profile: undefined, install_type: "UNKNOWN"}  as unknown as GameInstall,
 
             available_profiles: [],
 
