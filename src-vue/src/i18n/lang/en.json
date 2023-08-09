@@ -11,7 +11,6 @@
         "yes": "Yes",
         "no": "No",
         "error": "Error",
-        "confirm": "Confirm",
         "cancel": "Cancel",
         "informationShort": "Info",
         "downloading": "Downloading",
@@ -116,12 +115,7 @@
             "edit": "Edit Profiles",
 
             "dialog": {
-                "title": "Profiles",
-                "delete_confirm": "Are you sure to delete this profile?",
-                "delete": "Delete",
-                "clone": "Clone",
-                "new_profile_name": "Enter the new Profile name",
-                "create_empty": "New Profile"
+                "title": "Profiles"
             }
         },
 
