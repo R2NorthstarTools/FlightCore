@@ -197,6 +197,15 @@ export default defineComponent({
                 });
         },
         async openGameInstallFolder() {
+            // Verify the game path is actually set
+            if (!this.$store.state.game_install.game_path) {
+                showErrorNotification(
+                    i18n.global.tc('notification.game_folder.not_found.text'),
+                    i18n.global.tc('notification.game_folder.not_found.title')
+                );
+                return;
+            }
+
             // Opens the folder in default file explorer application
             await open(`${this.$store.state.game_install.game_path}`);
         },
