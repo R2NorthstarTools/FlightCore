@@ -164,7 +164,7 @@ export default defineComponent({
         activeProfile(): String {
             return this.$store.state.game_install.profile || "None";
         },
-        availableProfiles(): Object {
+        availableProfiles(): Object[] {
             let profiles = this.$store.state.available_profiles
 
             // convert string array to object array so we can fill a table
