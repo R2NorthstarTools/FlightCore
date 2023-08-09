@@ -30,7 +30,7 @@
                         </el-button>
                         <template #dropdown>
                             <el-dropdown-menu>
-                                <el-dropdown-item v-for="profile in availableProfiles" @click="switchProfile(profile.name)">{{ profile.name }}</el-dropdown-item>
+                                <el-dropdown-item v-for="profile in $store.state.available_profiles" @click="switchProfile(profile)">{{ profile }}</el-dropdown-item>
                             </el-dropdown-menu>
                         </template>
                     </el-dropdown>
