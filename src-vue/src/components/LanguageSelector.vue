@@ -47,6 +47,10 @@ export default defineComponent({
                 label: 'Italiano'
             },
             {
+                value: 'da',
+                label: 'Dansk'
+            },
+            {
                 value: 'zh_Hans',
                 label: '简体中文'
             },
