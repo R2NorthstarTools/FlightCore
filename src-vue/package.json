@@ -11,7 +11,7 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.0.9",
     "element-plus": "^2.3.9",
-    "marked": "^7.0.3",
+    "marked": "^7.0.4",
     "tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store#9bd993aa67766596638bbfd91e79a1bf8f632014",
     "vue": "^3.2.37",
     "vue-i18n": "^9.2.2",
