@@ -150,10 +150,16 @@ pub fn launch_northstar_steam(
                             .clone()
                             .unwrap()
                             .to_ascii_lowercase()
-                            .contains("northstarproton")
+                            .contains("northstarproton") &&
+                            !compat
+                            .name
+                            .clone()
+                            .unwrap()
+                            .to_ascii_lowercase()
+                            .contains("ge-proton")
                         {
                             return Err(
-                                "Titanfall2 was not configured to use NorthstarProton".to_string()
+                                "Titanfall2 was not configured to use NorthstarProton or ProtonGE".to_string()
                             );
                         }
                     }
