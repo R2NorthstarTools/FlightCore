@@ -1,6 +1,6 @@
 {
     "menu": {
-        "mods": "Mods",
+        "mods": "Modificaciones",
         "settings": "Opciones",
         "dev": "Desarrollador",
         "play": "Jugar",
@@ -23,15 +23,15 @@
             "install": "Instalar",
             "update": "Actualizar",
             "select_game_dir": "Seleccione carpeta base de Titanfall 2",
-            "ready_to_play": "Jugar",
+            "ready_to_play": "Jugar ahora",
             "installing": "Instalando...",
             "updating": "Actualizando..."
         },
         "ea_app_running": "La aplicación de EA ya se está ejecutando:",
         "unknown_version": "Versión Desconocida",
         "see_patch_notes": "Ver las notas del parche",
-        "players": "Jugadores",
-        "servers": "Servidores",
+        "players": "jugadores",
+        "servers": "servidores",
         "northstar_running": "Northstar ya se está ejecutando:",
         "unable_to_load_playercount": "Cantidad de jugadores no disponible"
     },
