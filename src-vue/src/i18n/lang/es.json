@@ -29,7 +29,7 @@
         },
         "ea_app_running": "La aplicación de EA ya se está ejecutando:",
         "unknown_version": "Versión Desconocida",
-        "see_patch_notes": "Lea las notas del último parche",
+        "see_patch_notes": "Ver las notas del parche",
         "players": "Jugadores",
         "servers": "Servidores",
         "northstar_running": "Northstar ya se está ejecutando:",
@@ -38,7 +38,7 @@
     "mods": {
         "local": {
             "no_mods": "No hay mods encontrados.",
-            "delete_confirm": "Esta seguro de eliminar este mod?",
+            "delete_confirm": "¿Estás segur@ que quieres eliminar este mod?",
             "delete": "Eliminar",
             "success_deleting": "{modName} Ha sido eliminado correctamente",
             "part_of_ts_mod": "Este mod de Northstar es parte de un mod de la ThunderStore"
@@ -123,7 +123,7 @@
             },
             "open_window": "Abrir la ventana de reparación"
         },
-        "nb_ts_mods_per_page_desc1": "Esto puede tener impactos en fluidez al buscar mods en la ThunderStore",
+        "nb_ts_mods_per_page_desc1": "Esto puede tener impactos en fluidez al buscar mods en la ThunderStore.",
         "show_deprecated_mods": "Mostrar mods the ThunderStore obsoletos"
     },
     "notification": {
