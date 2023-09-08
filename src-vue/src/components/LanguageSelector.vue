@@ -35,6 +35,10 @@ export default defineComponent({
                 label: 'Deutsch'
             },
             {
+                value: 'es',
+                label: 'Español'
+            },
+            {
                 value: 'pl',
                 label: 'polski'
             },
