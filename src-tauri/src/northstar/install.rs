@@ -184,7 +184,7 @@ pub async fn install_northstar(
         Err(err) => {
             if game_path
                 .to_lowercase()
-                .contains(&r#"C:\Program Files\"#.to_lowercase())
+                .contains(&r"C:\Program Files\".to_lowercase())
             // default is `C:\Program Files\EA Games\Titanfall2`
             {
                 return Err(
