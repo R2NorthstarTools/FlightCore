@@ -145,7 +145,8 @@ pub fn launch_northstar_steam(
                 let titanfall2_steamid: u32 = TITANFALL2_STEAM_ID.parse().unwrap();
                 match steamdir.compat_tool(&titanfall2_steamid) {
                     Some(compat) => {
-                        if !VALID_NORTHSTAR_PROTON_BUILDS.contains(&compat.clone().name.unwrap().as_str())
+                        if !VALID_NORTHSTAR_PROTON_BUILDS
+                            .contains(&compat.clone().name.unwrap().as_str())
                         {
                             return Err(
                                 "Titanfall2 was not configured to use a valid version of NorthstarProton or GE-Proton".to_string(),
