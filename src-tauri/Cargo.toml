@@ -69,7 +69,7 @@ dirs = "5"
 [target.'cfg(windows)'.dependencies]
 # Windows API stuff
 winapi = "0.3.9"
-winreg = "0.50.0"
+winreg = "0.51.0"
 
 [features]
 # by default Tauri runs in production mode
