@@ -135,7 +135,7 @@ pub fn check_ea_app_or_origin_running() -> bool {
 
 /// Checks if Northstar process is running (ignores dedicated server)
 pub fn check_northstar_running() -> bool {
-    let s = sysinfo::System::new_all();
+    let mut s = sysinfo::System::new_all();
     s.refresh_all();
     for process in s.processes().values() {
         if (process.name().ends_with("Titanfall2.exe") || process.name().ends_with("Northstar.exe"))
