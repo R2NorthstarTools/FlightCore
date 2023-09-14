@@ -133,7 +133,7 @@ pub fn check_ea_app_or_origin_running() -> bool {
     x
 }
 
-/// Checks if Northstar process is running
+/// Checks if Northstar process is running (ignores dedicated server)
 pub fn check_northstar_running() -> bool {
     let s = sysinfo::System::new_all();
     s.refresh_all();
