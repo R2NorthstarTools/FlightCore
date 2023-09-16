@@ -59,6 +59,6 @@ pub const NORTHSTAR_DLL: &str = "Northstar.dll";
 // Profile that Northstar defaults to and ships with
 pub const NORTHSTAR_DEFAULT_PROFILE: &str = "R2Northstar";
 
-// List of valid compatibility tools that Northstar can be launched with
+/// List of valid compatibility tools that Northstar can be launched with
 pub const VALID_NORTHSTAR_PROTON_BUILDS: [&str; 3] =
     ["NorthstarProton-8.1-1", "GE-Proton8-13", "GE-Proton8-11"];
