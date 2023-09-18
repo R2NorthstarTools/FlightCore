@@ -18,3 +18,14 @@ https://developer.microsoft.com/en-us/microsoft-edge/webview2/#download-section
 (make sure to select _Evergreen Bootstrapper_ -> _Download_).
 
 
+## Linux
+
+### FlightCore launches, but the main window is blank
+This may be caused by tauri-apps/tauri#5143
+
+Try setting this environment variable when starting FlightCore:
+`WEBKIT_DISABLE_COMPOSITING_MODE=1`
+
+```bash
+WEBKIT_DISABLE_COMPOSITING_MODE=1 ~/Downloads/titanfall/flight-core_2.9.3_amd64.AppImage 
+```
