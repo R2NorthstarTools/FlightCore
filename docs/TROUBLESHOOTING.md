@@ -27,5 +27,5 @@ Try setting this environment variable when starting FlightCore:
 `WEBKIT_DISABLE_COMPOSITING_MODE=1`
 
 ```bash
-WEBKIT_DISABLE_COMPOSITING_MODE=1 ~/Downloads/titanfall/flight-core_2.9.3_amd64.AppImage 
+WEBKIT_DISABLE_COMPOSITING_MODE=1 ./flight-core.AppImage 
 ```
