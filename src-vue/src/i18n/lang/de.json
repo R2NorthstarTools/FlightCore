@@ -117,7 +117,12 @@
         },
         "show_deprecated_mods_desc1": "Damit werden veraltete Mods in der Online-Mods-Ansicht sichtbar.",
         "show_deprecated_mods_desc2": "Aber Vorsicht, solche Mods sind normalerweise aus gutem Grund als veraltet markiert.",
-        "show_deprecated_mods": "Veraltete Thunderstore mods anzeigen"
+        "show_deprecated_mods": "Veraltete Thunderstore mods anzeigen",
+        "profile": {
+            "dialog": {
+                "title": "Profile"
+            }
+        }
     },
     "notification": {
         "game_folder": {
