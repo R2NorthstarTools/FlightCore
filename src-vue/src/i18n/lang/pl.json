@@ -109,14 +109,22 @@
                 "title": "Okno naprawy FlightCore",
                 "warning": "To okno zawiera różne funkcje do naprawy typowych problemów z Northstar i FlightCore.",
                 "disable_modsettings": "Wyłącz moda ModSettings",
-                "disable_modsettings_success": "Wyłączono moda ModSettings"
+                "disable_modsettings_success": "Wyłączono moda ModSettings",
+                "kill_northstar_process": "Zamknij uruchomiony proces Northstar/Titanfall2"
             }
         },
         "nb_ts_mods_per_page_desc1": "Ma to wpływ na wydajność wyświetlania podczas przeglądania modów Thunderstore.",
         "open_game_folder": "Otwórz folder",
         "show_deprecated_mods_desc2": "Ostrożnie, mody są zazwyczaj oznaczone jako przestarzałe nie bez powodu.",
         "show_deprecated_mods": "Pokaż przestarzałe mody Thunderstore",
-        "show_deprecated_mods_desc1": "Pozwala to zobaczyć przestarzałe mody w kolekcji modów online."
+        "show_deprecated_mods_desc1": "Pozwala to zobaczyć przestarzałe mody w kolekcji modów online.",
+        "profile": {
+            "active": "Aktywny profil",
+            "dialog": {
+                "title": "Profile"
+            },
+            "edit": "Edytuj profile"
+        }
     },
     "notification": {
         "game_folder": {
@@ -136,6 +144,12 @@
         "flightcore_outdated": {
             "title": "FlightCore nieaktualny!",
             "text": "Proszę zaktualizować FlightCore.\nUruchomiono przestarzałą wersję {oldVersion}.\nNajnowsza to {newVersion}!"
+        },
+        "profile": {
+            "invalid": {
+                "title": "Nieprawidłowy profil",
+                "text": "Profil, na który próbowano się przełączyć, nie jest już prawidłowy."
+            }
         }
     },
     "channels": {

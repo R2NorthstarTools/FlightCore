@@ -1,10 +1,11 @@
 //! This module deals with handling things around Northstar such as
 //! - getting version number
 pub mod install;
+pub mod profile;
 
 use crate::util::check_ea_app_or_origin_running;
 use crate::{
-    constants::{CORE_MODS, TITANFALL2_STEAM_ID},
+    constants::{CORE_MODS, TITANFALL2_STEAM_ID, VALID_NORTHSTAR_PROTON_BUILDS},
     get_host_os, GameInstall, InstallType,
 };
 use anyhow::anyhow;
@@ -158,15 +159,11 @@ pub fn launch_northstar_steam(
                 let titanfall2_steamid: u32 = TITANFALL2_STEAM_ID.parse().unwrap();
                 match steamdir.compat_tool(&titanfall2_steamid) {
                     Some(compat) => {
-                        if !compat
-                            .name
-                            .clone()
-                            .unwrap()
-                            .to_ascii_lowercase()
-                            .contains("northstarproton")
+                        if !VALID_NORTHSTAR_PROTON_BUILDS
+                            .contains(&compat.clone().name.unwrap().as_str())
                         {
                             return Err(
-                                "Titanfall2 was not configured to use NorthstarProton".to_string()
+                                "Titanfall2 was not configured to use a valid version of NorthstarProton or GE-Proton".to_string(),
                             );
                         }
                     }

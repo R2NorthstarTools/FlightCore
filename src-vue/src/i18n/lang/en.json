@@ -110,6 +110,15 @@
         "show_deprecated_mods_desc1": "This allows you to see deprecated mods in the online mods collection.",
         "show_deprecated_mods_desc2": "Watch out, such mods are usually deprecated for a good reason.",
 
+        "profile": {
+            "active": "Active Profile",
+            "edit": "Edit Profiles",
+
+            "dialog": {
+                "title": "Profiles"
+            }
+        },
+
         "repair": {
             "title": "Repair",
             "open_window": "Open repair window",
@@ -124,6 +133,7 @@
                 "force_reinstall_ns": "Force reinstall Northstar",
                 "force_delete_temp_dl": "Force delete temp download folder",
                 "delete_persistent_store": "Delete FlightCore persistent store",
+                "kill_northstar_process": "Kill running Northstar/Titanfall2 process",
                 "reinstall_title": "Force reinstalling Northstar",
                 "reinstall_text": "Please wait",
                 "reinstall_success": "Successfully reinstalled Northstar"
@@ -146,6 +156,13 @@
             "not_found": {
                 "title": "Titanfall2 not found!",
                 "text": "Please manually select install location"
+            }
+        },
+
+        "profile": {
+            "invalid": {
+                "title": "Invalid Profile",
+                "text": "The profile you tried to switch to is no longer valid."
             }
         },
 

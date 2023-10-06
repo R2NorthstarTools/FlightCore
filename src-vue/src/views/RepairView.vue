@@ -17,6 +17,10 @@
                 {{ $t('settings.repair.window.force_reinstall_ns') }}
             </el-button>
 
+            <el-button type="primary" @click="killNorthstar">
+                {{ $t('settings.repair.window.kill_northstar_process') }}
+            </el-button>
+
             <el-button type="primary" @click="disableModsettingsMod">
                 {{ $t('settings.repair.window.disable_modsettings') }}
             </el-button>
@@ -116,6 +120,16 @@ export default defineComponent({
             await invoke("set_mod_enabled_status", { gameInstall: this.$store.state.game_install, modName: "Mod Settings", isEnabled: false })
                 .then((message) => {
                     showNotification(this.$t('generic.success'), this.$t('settings.repair.window.disable_modsettings_success'));
+                })
+                .catch((error) => {
+                    showErrorNotification(error);
+                });
+        },
+        async killNorthstar() {
+            await invoke("kill_northstar")
+                .then((message) => {
+                    // Just a visual indicator that it worked
+                    showNotification('Success');
                 })
                 .catch((error) => {
                     showErrorNotification(error);

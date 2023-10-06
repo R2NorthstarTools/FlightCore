@@ -4,7 +4,7 @@ use std::time::Duration;
 use std::{cell::RefCell, time::Instant};
 use ts_rs::TS;
 
-use crate::constants::TITANFALL2_STEAM_ID;
+use crate::constants::{NORTHSTAR_DEFAULT_PROFILE, NORTHSTAR_DLL, TITANFALL2_STEAM_ID};
 use crate::{
     util::{extract, move_dir_all},
     GameInstall, InstallType,
@@ -96,6 +96,27 @@ async fn do_install(
     log::info!("Extracting Northstar...");
     extract(nfile, std::path::Path::new(&extract_directory))?;
 
+    // Prepare Northstar for Installation
+    log::info!("Preparing Northstar...");
+    if game_install.profile != NORTHSTAR_DEFAULT_PROFILE {
+        // We are using a non standard Profile, we must:
+        // - move the DLL
+        // - rename the Profile
+
+        // Move DLL into the default R2Northstar Profile
+        let old_dll_path = format!("{}/{}", extract_directory, NORTHSTAR_DLL);
+        let new_dll_path = format!(
+            "{}/{}/{}",
+            extract_directory, NORTHSTAR_DEFAULT_PROFILE, NORTHSTAR_DLL
+        );
+        std::fs::rename(old_dll_path, new_dll_path)?;
+
+        // rename default R2Northstar Profile to the profile we want to use
+        let old_profile_path = format!("{}/{}/", extract_directory, NORTHSTAR_DEFAULT_PROFILE);
+        let new_profile_path = format!("{}/{}/", extract_directory, game_install.profile);
+        std::fs::rename(old_profile_path, new_profile_path)?;
+    }
+
     log::info!("Installing Northstar...");
 
     for entry in std::fs::read_dir(extract_directory).unwrap() {
@@ -163,7 +184,7 @@ pub async fn install_northstar(
         Err(err) => {
             if game_path
                 .to_lowercase()
-                .contains(&r#"C:\Program Files\"#.to_lowercase())
+                .contains(&r"C:\Program Files\".to_lowercase())
             // default is `C:\Program Files\EA Games\Titanfall2`
             {
                 return Err(

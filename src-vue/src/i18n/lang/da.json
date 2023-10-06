@@ -1,0 +1,166 @@
+{
+    "menu": {
+        "changelog": "Ændringslog",
+        "mods": "Mods",
+        "settings": "Indstillinger",
+        "dev": "Dev",
+        "play": "Spil"
+    },
+    "generic": {
+        "yes": "Ja",
+        "no": "Nej",
+        "error": "Fejl",
+        "cancel": "afbryd",
+        "informationShort": "Info",
+        "downloading": "Henter",
+        "success": "Succes",
+        "extracting": "Udpakker",
+        "done": "Færdig"
+    },
+    "play": {
+        "button": {
+            "select_game_dir": "Vælg Titanfall2 spil mappe",
+            "install": "Installere",
+            "installing": "Installer...",
+            "update": "Opdater",
+            "updating": "Opdatere...",
+            "ready_to_play": "Start spil",
+            "northstar_is_running": "Spillet køre"
+        },
+        "unknown_version": "Ukendt version",
+        "see_patch_notes": "Se patch noter",
+        "players": "Spillere",
+        "servers": "Servere",
+        "northstar_running": "Northstar køre",
+        "ea_app_running": "EA appen køre",
+        "unable_to_load_playercount": "Kan ikke hente antallet af spillere"
+    },
+    "mods": {
+        "local": {
+            "no_mods": "Ingen mods blev fundet.",
+            "delete_confirm": "Er du sikker på at du vil slette dette mod?",
+            "delete": "Slet",
+            "success_deleting": "Sletningen af {modName} lykkedes",
+            "part_of_ts_mod": "Dette Northstar mod er en del af et Thunderstore mod"
+        },
+        "online": {
+            "no_match": "Der er ikke fundet nogen matchende mod.",
+            "try_another_search": "Prøv en anden søgning!"
+        },
+        "menu": {
+            "local": "Lokal",
+            "online": "Online",
+            "filter": "Filter",
+            "search": "Søg",
+            "sort_mods": "Sorter mods",
+            "select_categories": "Vælg kategorier",
+            "sort": {
+                "name_asc": "navn (A til Z)",
+                "name_desc": "navn (Z til A)",
+                "date_asc": "Dato (fra ældste)",
+                "most_downloaded": "Mest hentet",
+                "top_rated": "bedst bedømt",
+                "date_desc": "Dato (fra nyeste)"
+            }
+        },
+        "card": {
+            "button": {
+                "being_installed": "Installerer...",
+                "being_updated": "Opdaterer...",
+                "installed": "Installeret",
+                "install": "Installere",
+                "outdated": "Opdater"
+            },
+            "by": "af",
+            "more_info": "Mere info",
+            "remove": "Fjern mod",
+            "remove_dialog_title": "Advarsel",
+            "remove_success": "Fjernet {modName}",
+            "install_success": "Installeret {modName}",
+            "remove_dialog_text": "Fjern Thunderstore mod?"
+        }
+    },
+    "settings": {
+        "manage_install": "Administrer installation",
+        "choose_folder": "Vælg installationsmappe",
+        "open_game_folder": "Åben mappe",
+        "nb_ts_mods_per_page": "Antal Thunderstore-mods pr. side",
+        "nb_ts_mods_reset": "Nulstil til standard",
+        "language": "Sprog",
+        "language_select": "Vælg dit yndlingssprog",
+        "about": "Om:",
+        "flightcore_version": "FlightCore version:",
+        "testing": "Tester:",
+        "enable_test_channels": "Aktiver testudgivelseskanaler",
+        "dev_mode_enabled_title": "Pas på!",
+        "dev_mode_enabled_text": "Udviklertilstand aktiveret.",
+        "show_deprecated_mods": "Vis forældede Thunderstore-mods",
+        "show_deprecated_mods_desc2": "Pas på, sådanne mods er normalt forældet af en god grund.",
+        "profile": {
+            "active": "Aktiv profil",
+            "edit": "Rediger profiler",
+            "dialog": {
+                "title": "Profiler"
+            }
+        },
+        "repair": {
+            "title": "Reparere",
+            "open_window": "Åbn reparationsvinduet",
+            "window": {
+                "title": "FlightCore reparationsvinduet",
+                "disable_all_but_core": "Deaktiver alle undtagen kernemods",
+                "disable_all_but_core_success": "Deaktiverede alle mods undtagen kernemods",
+                "disable_modsettings": "Deaktiver ModSettings mod",
+                "disable_modsettings_success": "Deaktiver ModSettings mod",
+                "force_reinstall_ns": "Tving geninstallation Northstar",
+                "force_delete_temp_dl": "Tving sletning af midlertidig download-mappe",
+                "delete_persistent_store": "Slet FlightCore persistent indhold",
+                "reinstall_title": "Tving geninstallation af Northstar",
+                "reinstall_text": "Vent lidt",
+                "reinstall_success": "Northstar blev geninstalleret",
+                "warning": "Dette vindue indeholder forskellige funktioner til at reparere almindelige problemer med Northstar og FlightCore.",
+                "kill_northstar_process": "Dræb, der kører Northstar/Titanfall2-processen"
+            }
+        },
+        "nb_ts_mods_per_page_desc1": "Dette har en indvirkning på skærmydelsen, når du gennemser Thunderstore-mods.",
+        "nb_ts_mods_per_page_desc2": "Indstil denne værdi til 0 for at deaktivere paginering.",
+        "show_deprecated_mods_desc1": "Dette giver dig mulighed for at se forældede mods i online-mods-samlingen."
+    },
+    "notification": {
+        "game_folder": {
+            "new": {
+                "title": "Ny spil mappe",
+                "text": "Spilmappen blev opdateret."
+            },
+            "wrong": {
+                "title": "Forkert mappe",
+                "text": "Den valgte mappe er ikke en gyldig Titanfall2 Installation."
+            },
+            "not_found": {
+                "title": "Titanfall2 ikke fundet!",
+                "text": "Vælg venligst installationsstedet manuelt"
+            }
+        },
+        "profile": {
+            "invalid": {
+                "title": "Ugyldig profil",
+                "text": "Den profil, du forsøgte at skifte til, er ikke længere gyldig."
+            }
+        },
+        "flightcore_outdated": {
+            "title": "FlightCore forældet!",
+            "text": "Opdater venligst FlightCore.\nKører forældet version {oldVersion}.\nNyeste er {newVersion}!"
+        }
+    },
+    "channels": {
+        "release": {
+            "switch": {
+                "text": "Skiftet udgivelseskanal til \"{canal}\"."
+            }
+        },
+        "names": {
+            "Northstar": "Northstar",
+            "NorthstarReleaseCandidate": "Northstar udgivelseskandidat"
+        }
+    }
+}

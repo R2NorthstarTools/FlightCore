@@ -1,7 +1,7 @@
 import { createStore } from 'vuex';
 import { listen, Event as TauriEvent } from "@tauri-apps/api/event";
 import { Tabs } from "../utils/Tabs";
-import { InstallType } from "../utils/InstallType";
+import { InstallType } from "../../../src-tauri/bindings/InstallType";
 import { invoke } from "@tauri-apps/api";
 import { GameInstall } from "../utils/GameInstall";
 import { LaunchObject } from "../utils/LaunchObject.d";
@@ -39,6 +39,7 @@ export interface FlightCoreStore {
     thunderstoreMods: ThunderstoreMod[],
     thunderstoreModsCategories: string[],
     installed_mods: NorthstarMod[],
+    available_profiles: string[],
 
     northstar_is_running: boolean,
     origin_is_running: boolean,
@@ -62,6 +63,8 @@ export const store = createStore<FlightCoreStore>({
         return {
             developer_mode: false,
             game_install: {} as unknown as GameInstall,
+
+            available_profiles: [],
 
             flightcore_version: "",
 
@@ -143,7 +146,7 @@ export const store = createStore<FlightCoreStore>({
                     catch {
                         console.warn("Nothing to close");
                     }
-                    state.game_install.install_type = InstallType.UNKNOWN;
+                    state.game_install.install_type = "UNKNOWN";
 
                     // Save change in persistent store
                     await persistentStore.set('game-install', { value: state.game_install });
@@ -288,6 +291,9 @@ export const store = createStore<FlightCoreStore>({
                 return;
             }
 
+            // Clear installed mod list first so we don't end up with leftovers
+            state.installed_mods = [];
+
             // Call back-end for installed mods
             await invoke("get_installed_mods_and_properties", { gameInstall: state.game_install })
                 .then((message) => {
@@ -316,6 +322,16 @@ export const store = createStore<FlightCoreStore>({
                 i18n.global.tc(`channels.names.${state.northstar_release_canal}`),
                 i18n.global.tc('channels.release.switch.text', {canal: state.northstar_release_canal}),
             );
+        },
+        async fetchProfiles(state: FlightCoreStore) {
+            await invoke("fetch_profiles", { gameInstall: state.game_install })
+                .then((message) => {
+                    state.available_profiles = message as string[];
+                })
+                .catch((error) => {
+                    console.error(error);
+                    showErrorNotification(error);
+                });
         }
     }
 });
@@ -419,6 +435,8 @@ async function _initializeApp(state: any) {
         await _get_northstar_version_number(state);
     }
 
+    store.commit('fetchProfiles');
+
     await invoke<[number, number]>("get_server_player_count")
         .then((message) => {
             state.player_count = message[0];
@@ -469,6 +487,8 @@ function _initializeListeners(state: any) {
  * state, for it to be displayed in UI.
  */
 async function _get_northstar_version_number(state: any) {
+    state.installed_northstar_version = "";
+
     await invoke("get_northstar_version_number", { gameInstall: state.game_install })
         .then((message) => {
             let northstar_version_number: string = message as string;
