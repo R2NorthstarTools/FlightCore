@@ -61,7 +61,7 @@ export const store = createStore<FlightCoreStore>({
     state(): FlightCoreStore {
         return {
             developer_mode: false,
-            game_install: {} as unknown as GameInstall,
+            game_install: {game_path: undefined, profile: undefined, install_type: "UNKNOWN"}  as unknown as GameInstall,
 
             available_profiles: [],
 
@@ -151,8 +151,15 @@ export const store = createStore<FlightCoreStore>({
                     await persistentStore.set('game-install', { value: state.game_install });
                     await persistentStore.save(); // explicit save to disk
 
+                    // We can no longer be sure if our last profile is valid, lets reset to be sure
+                    state.game_install.profile = "R2Northstar";
+
                     // Check for Northstar install
                     store.commit('checkNorthstarUpdates');
+
+                    // Since we are in a new game directory, lets see if there are any profiles
+                    store.commit('fetchProfiles');
+
                 }
                 else {
                     // Not valid Titanfall2 install
@@ -320,6 +327,12 @@ export const store = createStore<FlightCoreStore>({
             );
         },
         async fetchProfiles(state: FlightCoreStore) {
+            // To fetch profiles we need a valid game path
+            if (!state.game_install.game_path) {
+                return;
+            }
+
+
             await invoke("fetch_profiles", { gameInstall: state.game_install })
                 .then((message) => {
                     state.available_profiles = message as string[];
