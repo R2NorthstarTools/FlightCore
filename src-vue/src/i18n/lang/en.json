@@ -111,7 +111,12 @@
         "show_deprecated_mods_desc2": "Watch out, such mods are usually deprecated for a good reason.",
 
         "profile": {
-            "active": "Active Profile"
+            "active": "Active Profile",
+            "edit": "Edit Profiles",
+
+            "dialog": {
+                "title": "Profiles"
+            }
         },
 
         "repair": {

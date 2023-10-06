@@ -102,7 +102,10 @@
                 "disable_all_but_core": "Выключить все моды, кроме главных",
                 "warning": "Это окно содержит различные функции для устранения часто возникающих проблем с Northstar и FlightCore.",
                 "force_delete_temp_dl": "Принудительно удалить папку с временными загрузками",
-                "reinstall_success": "Нордстар успешно переустановлен"
+                "reinstall_success": "Нордстар успешно переустановлен",
+                "disable_modsettings": "Выключить мод ModSettings",
+                "disable_modsettings_success": "Выключен мод ModSettings",
+                "kill_northstar_process": "Закрыть запущенный Northstar/Titanfall 2"
             },
             "title": "Починка"
         },
@@ -111,7 +114,17 @@
         "nb_ts_mods_per_page": "Количество модов Thunderstore на каждую страницу",
         "nb_ts_mods_per_page_desc2": "Установите это значение на 0, чтобы отключить страницы.",
         "flightcore_version": "Версия FlightCore:",
-        "dev_mode_enabled_text": "Включен режим разработчика."
+        "dev_mode_enabled_text": "Включен режим разработчика.",
+        "show_deprecated_mods": "Показать устаревшие моды Thunderstore",
+        "show_deprecated_mods_desc1": "Это позволяет вам видеть устаревшие моды в меню онлайн модов.",
+        "show_deprecated_mods_desc2": "Внимание, такие моды обычно устаревшие по хорошей причине.",
+        "profile": {
+            "active": "Активный Профиль",
+            "edit": "Редактировать Профили",
+            "dialog": {
+                "title": "Профили"
+            }
+        }
     },
     "notification": {
         "game_folder": {
@@ -131,6 +144,12 @@
         "flightcore_outdated": {
             "title": "FlightCore устарел!",
             "text": "Пожалуйста, обновите FlightCore\nСейчас запущена старая версия - {oldVersion}.\nНовейшая версия - {newVersion}!"
+        },
+        "profile": {
+            "invalid": {
+                "title": "Некорректный Профиль",
+                "text": "Профиль, на который вы пытаетесь переключиться, больше не является корректным."
+            }
         }
     },
     "channels": {
