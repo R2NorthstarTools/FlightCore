@@ -1,6 +1,6 @@
 [package]
 name = "app"
-version = "2.6.0"
+version = "2.10.3"
 description = "A Tauri App"
 authors = ["you"]
 license = ""
@@ -39,7 +39,7 @@ zip = "0.6.2"
 # Regex
 regex = "1.9"
 # Read out running application process names
-sysinfo = "0.29.7"
+sysinfo = "0.29.10"
 # HTTP requests
 reqwest = { version = "0.11", features = ["blocking"] }
 # Persistent store for settings
@@ -47,16 +47,16 @@ tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", 
 # JSON5 parsing support (allows comments in JSON)
 json5 = "0.4.1"
 # Async recursion for recursive mod install
-async-recursion = "1.0.0"
+async-recursion = "1.0.5"
 # For parsing timestamps
-chrono = "0.4.23"
+chrono = "0.4.31"
 # TypeScript bindings
-ts-rs = "6.1"
+ts-rs = "7.0"
 # const formatting
 const_format = "0.2.30"
 # Logging libraries
 pretty_env_logger = "0.5.0"
-log = "0.4.17"
+log = "0.4"
 # Extracting zip files easily
 zip-extract = "0.1.2"
 # open urls
@@ -69,7 +69,7 @@ dirs = "5"
 [target.'cfg(windows)'.dependencies]
 # Windows API stuff
 winapi = "0.3.9"
-winreg = "0.50.0"
+winreg = "0.51.0"
 
 [features]
 # by default Tauri runs in production mode

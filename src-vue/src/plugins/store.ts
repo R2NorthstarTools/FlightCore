@@ -61,7 +61,7 @@ export const store = createStore<FlightCoreStore>({
     state(): FlightCoreStore {
         return {
             developer_mode: false,
-            game_install: {} as unknown as GameInstall,
+            game_install: {game_path: undefined, profile: undefined, install_type: "UNKNOWN"}  as unknown as GameInstall,
 
             available_profiles: [],
 
@@ -327,6 +327,12 @@ export const store = createStore<FlightCoreStore>({
             );
         },
         async fetchProfiles(state: FlightCoreStore) {
+            // To fetch profiles we need a valid game path
+            if (!state.game_install.game_path) {
+                return;
+            }
+
+
             await invoke("fetch_profiles", { gameInstall: state.game_install })
                 .then((message) => {
                     state.available_profiles = message as string[];
