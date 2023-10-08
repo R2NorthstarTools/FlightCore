@@ -65,6 +65,8 @@ semver = "1.0"
 # simplified filesystem access
 glob = "0.3.1"
 dirs = "5"
+egui = "0.23.0"
+eframe = "0.23.0"
 
 [target.'cfg(windows)'.dependencies]
 # Windows API stuff
