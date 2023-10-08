@@ -46,6 +46,96 @@ struct NorthstarThunderstoreReleaseWrapper {
 #[derive(Default)]
 struct Counter(Arc<Mutex<i32>>);
 
+/// We derive Deserialize/Serialize so we can persist app state on shutdown.
+#[derive(serde::Deserialize, serde::Serialize)]
+#[serde(default)] // if we add new fields, give them default values when deserializing old state
+pub struct TemplateApp {
+    #[serde(skip)]
+    scale_factor: f32,
+}
+
+impl Default for TemplateApp {
+    fn default() -> Self {
+        Self {
+            // Example stuff:
+            scale_factor: -1.0,
+        }
+    }
+}
+
+impl TemplateApp {
+    /// Called once before the first frame.
+    pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
+        // This is also where you can customized the look at feel of egui using
+        // `cc.egui_ctx.set_visuals` and `cc.egui_ctx.set_fonts`.
+
+        // Load previous app state (if any).
+        // Note that you must enable the `persistence` feature for this to work.
+        // if let Some(storage) = cc.storage {
+        //     return eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default();
+        // }
+
+        Default::default()
+    }
+}
+
+impl eframe::App for TemplateApp {
+    /// Called by the frame work to save state before shutdown.
+    // fn save(&mut self, storage: &mut dyn eframe::Storage) {
+    //     eframe::set_value(storage, eframe::APP_KEY, self);
+    // }
+
+    /// Called each time the UI needs repainting, which may be many times per second.
+    /// Put your widgets into a `SidePanel`, `TopPanel`, `CentralPanel`, `Window` or `Area`.
+    fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
+        let Self { scale_factor } = self;
+
+        egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
+            ui.add(egui::Slider::new(scale_factor, 0.5..=5.0).text("Scaling factor"));
+            // Stupide way to use default scale until value was updated
+            if scale_factor > &mut 0.0 {
+                ctx.set_pixels_per_point(*scale_factor);
+            }
+            // The top panel is often a good place for a menu bar:
+            egui::menu::bar(ui, |ui| {
+                ui.menu_button("File", |ui| {
+                    if ui.button("Quit").clicked() {
+                        frame.close();
+                    }
+                });
+                ui.label("| ");
+                egui::widgets::global_dark_light_mode_buttons(ui);
+            });
+        });
+
+        egui::SidePanel::left("side_panel").show(ctx, |ui| {
+            egui::ScrollArea::vertical().show(ui, |ui| {
+                ui.heading("Side Panel");
+                ui.label("Todo tabs here:");
+
+                ui.with_layout(egui::Layout::bottom_up(egui::Align::LEFT), |ui| {
+                    ui.horizontal(|ui| {
+                        ui.spacing_mut().item_spacing.x = 0.0;
+                        ui.label("powered by ");
+                        ui.hyperlink_to("egui", "https://github.com/emilk/egui");
+                        ui.label(" and ");
+                        ui.hyperlink_to(
+                            "eframe",
+                            "https://github.com/emilk/egui/tree/master/eframe",
+                        );
+                    });
+                });
+            });
+        });
+
+        egui::CentralPanel::default().show(ctx, |ui| {
+            // The central panel the region left after adding TopPanel's and SidePanel's
+
+            ui.heading(format!("test"));
+        });
+    }
+}
+
 fn main() {
     // Setup logger
     let mut log_builder = pretty_env_logger::formatted_builder();
@@ -66,131 +156,140 @@ fn main() {
         },
     ));
 
-    match tauri::Builder::default()
-        .plugin(tauri_plugin_store::Builder::default().build())
-        .setup(|app| {
-            let app_handle = app.app_handle();
-            tauri::async_runtime::spawn(async move {
-                loop {
-                    sleep(Duration::from_millis(2000)).await;
-                    // println!("sending backend ping");
-                    app_handle.emit_all("backend-ping", "ping").unwrap();
-                }
-            });
-            let app_handle = app.app_handle();
-            tauri::async_runtime::spawn(async move {
-                loop {
-                    sleep(Duration::from_millis(2000)).await;
-                    app_handle
-                        .emit_all(
-                            "ea-app-running-ping",
-                            util::check_ea_app_or_origin_running(),
-                        )
-                        .unwrap();
-                }
-            });
-            let app_handle = app.app_handle();
-            tauri::async_runtime::spawn(async move {
-                loop {
-                    sleep(Duration::from_millis(2000)).await;
-                    app_handle
-                        .emit_all("northstar-running-ping", util::check_northstar_running())
-                        .unwrap();
-                }
-            });
+    let native_options = eframe::NativeOptions::default();
 
-            // Emit updated player and server count to GUI
-            let app_handle = app.app_handle();
-            tauri::async_runtime::spawn(async move {
-                loop {
-                    sleep(REFRESH_DELAY).await;
-                    app_handle
-                        .emit_all(
-                            "northstar-statistics",
-                            util::get_server_player_count().await,
-                        )
-                        .unwrap();
-                }
-            });
+    eframe::run_native(
+        "FlightCore (egui edition)",
+        native_options,
+        Box::new(|cc| Box::new(TemplateApp::new(cc))),
+    )
+    .unwrap();
 
-            Ok(())
-        })
-        .manage(Counter(Default::default()))
-        .invoke_handler(tauri::generate_handler![
-            util::force_panic,
-            northstar::install::find_game_install_location,
-            get_flightcore_version_number,
-            northstar::get_northstar_version_number,
-            check_is_northstar_outdated,
-            verify_install_location,
-            get_host_os,
-            install_northstar_caller,
-            update_northstar,
-            northstar::launch_northstar,
-            northstar::launch_northstar_steam,
-            github::release_notes::check_is_flightcore_outdated,
-            repair_and_verify::get_log_list,
-            repair_and_verify::verify_game_files,
-            mod_management::set_mod_enabled_status,
-            repair_and_verify::disable_all_but_core,
-            util::is_debug_mode,
-            github::release_notes::get_northstar_release_notes,
-            linux_checks,
-            mod_management::get_installed_mods_and_properties,
-            install_mod_caller,
-            clean_up_download_folder_caller,
-            github::release_notes::get_newest_flightcore_version,
-            mod_management::delete_northstar_mod,
-            util::get_server_player_count,
-            util::kill_northstar,
-            mod_management::delete_thunderstore_mod,
-            install_northstar_proton_wrapper,
-            uninstall_northstar_proton_wrapper,
-            get_local_northstar_proton_wrapper_version,
-            open_repair_window,
-            thunderstore::query_thunderstore_packages_api,
-            github::get_list_of_tags,
-            github::compare_tags,
-            github::pull_requests::get_pull_requests_wrapper,
-            github::pull_requests::apply_launcher_pr,
-            github::pull_requests::apply_mods_pr,
-            github::pull_requests::get_launcher_download_link,
-            close_application,
-            development::install_git_main,
-            get_available_northstar_versions,
-            northstar::profile::fetch_profiles,
-            northstar::profile::validate_profile,
-        ])
-        .run(tauri::generate_context!())
-    {
-        Ok(()) => (),
-        Err(err) => {
-            // Failed to launch system native web view
+    // match tauri::Builder::default()
+    //     .plugin(tauri_plugin_store::Builder::default().build())
+    //     .setup(|app| {
+    //         let app_handle = app.app_handle();
+    //         tauri::async_runtime::spawn(async move {
+    //             loop {
+    //                 sleep(Duration::from_millis(2000)).await;
+    //                 // println!("sending backend ping");
+    //                 app_handle.emit_all("backend-ping", "ping").unwrap();
+    //             }
+    //         });
+    //         let app_handle = app.app_handle();
+    //         tauri::async_runtime::spawn(async move {
+    //             loop {
+    //                 sleep(Duration::from_millis(2000)).await;
+    //                 app_handle
+    //                     .emit_all(
+    //                         "ea-app-running-ping",
+    //                         util::check_ea_app_or_origin_running(),
+    //                     )
+    //                     .unwrap();
+    //             }
+    //         });
+    //         let app_handle = app.app_handle();
+    //         tauri::async_runtime::spawn(async move {
+    //             loop {
+    //                 sleep(Duration::from_millis(2000)).await;
+    //                 app_handle
+    //                     .emit_all("northstar-running-ping", util::check_northstar_running())
+    //                     .unwrap();
+    //             }
+    //         });
 
-            // Log error on Linux
-            #[cfg(not(target_os = "windows"))]
-            {
-                log::error!("{err}");
-            }
+    //         // Emit updated player and server count to GUI
+    //         let app_handle = app.app_handle();
+    //         tauri::async_runtime::spawn(async move {
+    //             loop {
+    //                 sleep(REFRESH_DELAY).await;
+    //                 app_handle
+    //                     .emit_all(
+    //                         "northstar-statistics",
+    //                         util::get_server_player_count().await,
+    //                     )
+    //                     .unwrap();
+    //             }
+    //         });
 
-            // On Windows we can show an error window using Windows API to show how to install WebView2
-            #[cfg(target_os = "windows")]
-            {
-                log::error!("WebView2 not installed: {err}");
-                let dialog = MessageDialogBuilder::new(
-                    "WebView2 not found",
-                    "FlightCore requires WebView2 to run.\n\nClick OK to open installation instructions."
-                )
-                .kind(MessageDialogKind::Error)
-                .buttons(MessageDialogButtons::Ok);
+    //         Ok(())
+    //     })
+    //     .manage(Counter(Default::default()))
+    //     .invoke_handler(tauri::generate_handler![
+    //         util::force_panic,
+    //         northstar::install::find_game_install_location,
+    //         get_flightcore_version_number,
+    //         northstar::get_northstar_version_number,
+    //         check_is_northstar_outdated,
+    //         verify_install_location,
+    //         get_host_os,
+    //         install_northstar_caller,
+    //         update_northstar,
+    //         northstar::launch_northstar,
+    //         northstar::launch_northstar_steam,
+    //         github::release_notes::check_is_flightcore_outdated,
+    //         repair_and_verify::get_log_list,
+    //         repair_and_verify::verify_game_files,
+    //         mod_management::set_mod_enabled_status,
+    //         repair_and_verify::disable_all_but_core,
+    //         util::is_debug_mode,
+    //         github::release_notes::get_northstar_release_notes,
+    //         linux_checks,
+    //         mod_management::get_installed_mods_and_properties,
+    //         install_mod_caller,
+    //         clean_up_download_folder_caller,
+    //         github::release_notes::get_newest_flightcore_version,
+    //         mod_management::delete_northstar_mod,
+    //         util::get_server_player_count,
+    //         util::kill_northstar,
+    //         mod_management::delete_thunderstore_mod,
+    //         install_northstar_proton_wrapper,
+    //         uninstall_northstar_proton_wrapper,
+    //         get_local_northstar_proton_wrapper_version,
+    //         open_repair_window,
+    //         thunderstore::query_thunderstore_packages_api,
+    //         github::get_list_of_tags,
+    //         github::compare_tags,
+    //         github::pull_requests::get_pull_requests_wrapper,
+    //         github::pull_requests::apply_launcher_pr,
+    //         github::pull_requests::apply_mods_pr,
+    //         github::pull_requests::get_launcher_download_link,
+    //         close_application,
+    //         development::install_git_main,
+    //         get_available_northstar_versions,
+    //         northstar::profile::fetch_profiles,
+    //         northstar::profile::validate_profile,
+    //     ])
+    //     .run(tauri::generate_context!())
+    // {
+    //     Ok(()) => (),
+    //     Err(err) => {
+    //         // Failed to launch system native web view
 
-                if dialog.show() {
-                    // Open the installation instructions URL in the user's default web browser
-                    open::that("https://github.com/R2NorthstarTools/FlightCore/blob/main/docs/TROUBLESHOOTING.md#flightcore-wont-launch").unwrap();
-                }
-            }
-        }
-    };
+    //         // Log error on Linux
+    //         #[cfg(not(target_os = "windows"))]
+    //         {
+    //             log::error!("{err}");
+    //         }
+
+    //         // On Windows we can show an error window using Windows API to show how to install WebView2
+    //         #[cfg(target_os = "windows")]
+    //         {
+    //             log::error!("WebView2 not installed: {err}");
+    //             let dialog = MessageDialogBuilder::new(
+    //                 "WebView2 not found",
+    //                 "FlightCore requires WebView2 to run.\n\nClick OK to open installation instructions."
+    //             )
+    //             .kind(MessageDialogKind::Error)
+    //             .buttons(MessageDialogButtons::Ok);
+
+    //             if dialog.show() {
+    //                 // Open the installation instructions URL in the user's default web browser
+    //                 open::that("https://github.com/R2NorthstarTools/FlightCore/blob/main/docs/TROUBLESHOOTING.md#flightcore-wont-launch").unwrap();
+    //             }
+    //         }
+    //     }
+    // };
 }
 
 /// Returns true if linux compatible
