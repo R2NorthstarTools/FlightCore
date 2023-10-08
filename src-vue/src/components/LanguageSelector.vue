@@ -35,6 +35,10 @@ export default defineComponent({
                 label: 'Deutsch'
             },
             {
+                value: 'es',
+                label: 'Español'
+            },
+            {
                 value: 'pl',
                 label: 'polski'
             },
@@ -45,6 +49,10 @@ export default defineComponent({
             {
                 value: 'it',
                 label: 'Italiano'
+            },
+            {
+                value: 'da',
+                label: 'Dansk'
             },
             {
                 value: 'zh_Hans',

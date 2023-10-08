@@ -142,6 +142,7 @@ fn main() {
             github::release_notes::get_newest_flightcore_version,
             mod_management::delete_northstar_mod,
             util::get_server_player_count,
+            util::kill_northstar,
             mod_management::delete_thunderstore_mod,
             install_northstar_proton_wrapper,
             uninstall_northstar_proton_wrapper,
@@ -157,6 +158,8 @@ fn main() {
             close_application,
             development::install_git_main,
             get_available_northstar_versions,
+            northstar::profile::fetch_profiles,
+            northstar::profile::validate_profile,
         ])
         .run(tauri::generate_context!())
     {
@@ -234,7 +237,7 @@ pub fn convert_release_candidate_number(version_number: String) -> String {
 /// true  -> Northstar install is outdated
 #[tauri::command]
 async fn check_is_northstar_outdated(
-    game_path: String,
+    game_install: GameInstall,
     northstar_package_name: Option<String>,
 ) -> Result<bool, String> {
     let northstar_package_name = match northstar_package_name {
@@ -258,7 +261,7 @@ async fn check_is_northstar_outdated(
         .expect("Couldn't find Northstar on thunderstore???");
     // .ok_or_else(|| anyhow!("Couldn't find Northstar on thunderstore???"))?;
 
-    let version_number = match northstar::get_northstar_version_number(&game_path) {
+    let version_number = match northstar::get_northstar_version_number(game_install) {
         Ok(version_number) => version_number,
         Err(err) => {
             log::warn!("{}", err);
@@ -295,7 +298,7 @@ async fn verify_install_location(game_path: String) -> bool {
 #[tauri::command]
 async fn install_northstar_caller(
     window: tauri::Window,
-    game_path: String,
+    game_install: GameInstall,
     northstar_package_name: Option<String>,
     version_number: Option<String>,
 ) -> Result<bool, String> {
@@ -314,7 +317,7 @@ async fn install_northstar_caller(
 
     match northstar::install::install_northstar(
         window,
-        &game_path,
+        game_install,
         northstar_package_name,
         version_number,
     )
@@ -332,13 +335,13 @@ async fn install_northstar_caller(
 #[tauri::command]
 async fn update_northstar(
     window: tauri::Window,
-    game_path: String,
+    game_install: GameInstall,
     northstar_package_name: Option<String>,
 ) -> Result<bool, String> {
     log::info!("Updating Northstar");
 
     // Simply re-run install with up-to-date version for upate
-    install_northstar_caller(window, game_path, northstar_package_name, None).await
+    install_northstar_caller(window, game_install, northstar_package_name, None).await
 }
 
 /// Installs the specified mod
@@ -456,7 +459,8 @@ mod platform_specific;
 #[cfg(target_os = "linux")]
 use platform_specific::linux;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
 pub enum InstallType {
     STEAM,
     ORIGIN,
@@ -467,6 +471,7 @@ pub enum InstallType {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct GameInstall {
     pub game_path: String,
+    pub profile: String,
     pub install_type: InstallType,
 }
 

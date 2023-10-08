@@ -12,6 +12,7 @@ use std::string::ToString;
 use std::{fs, path::PathBuf};
 
 mod legacy;
+mod plugins;
 use crate::GameInstall;
 
 #[derive(Debug, Clone)]
@@ -25,7 +26,7 @@ impl std::str::FromStr for ParsedThunderstoreModString {
     type Err = &'static str; // todo use an better error management
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        // Check whether Thunderstore string passse reges
+        // Check whether Thunderstore string passes regex
         let re = regex::Regex::new(r"^[a-zA-Z0-9_]+-[a-zA-Z0-9_]+-\d+\.\d+\.\d++$").unwrap();
         if !re.is_match(s) {
             return Err("Incorrect format");
@@ -90,7 +91,10 @@ impl std::ops::Deref for TempFile {
 
 /// Returns a serde json object of the parsed `enabledmods.json` file
 pub fn get_enabled_mods(game_install: &GameInstall) -> Result<serde_json::value::Value, String> {
-    let enabledmods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
+    let enabledmods_json_path = format!(
+        "{}/{}/enabledmods.json",
+        game_install.game_path, game_install.profile
+    );
 
     // Check for JSON file
     if !std::path::Path::new(&enabledmods_json_path).exists() {
@@ -115,7 +119,10 @@ pub fn get_enabled_mods(game_install: &GameInstall) -> Result<serde_json::value:
 
 /// Gets all currently installed and enabled/disabled mods to rebuild `enabledmods.json`
 pub fn rebuild_enabled_mods_json(game_install: &GameInstall) -> Result<(), String> {
-    let enabledmods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
+    let enabledmods_json_path = format!(
+        "{}/{}/enabledmods.json",
+        game_install.game_path, game_install.profile
+    );
     let mods_and_properties = get_installed_mods_and_properties(game_install.clone())?;
 
     // Create new mapping
@@ -146,7 +153,10 @@ pub fn set_mod_enabled_status(
     mod_name: String,
     is_enabled: bool,
 ) -> Result<(), String> {
-    let enabledmods_json_path = format!("{}/R2Northstar/enabledmods.json", game_install.game_path);
+    let enabledmods_json_path = format!(
+        "{}/{}/enabledmods.json",
+        game_install.game_path, game_install.profile
+    );
 
     // Parse JSON
     let mut res: serde_json::Value = match get_enabled_mods(&game_install) {
@@ -259,7 +269,10 @@ pub fn parse_installed_package_mods(
 ) -> Result<Vec<NorthstarMod>, anyhow::Error> {
     let mut collected_mods: Vec<NorthstarMod> = Vec::new();
 
-    let packages_folder = format!("{}/R2Northstar/packages/", game_install.game_path);
+    let packages_folder = format!(
+        "{}/{}/packages/",
+        game_install.game_path, game_install.profile
+    );
 
     let packages_dir = match fs::read_dir(packages_folder) {
         Ok(res) => res,
@@ -419,7 +432,10 @@ fn delete_older_versions(
         "Deleting other versions of {}",
         thunderstore_mod_string.to_string()
     );
-    let packages_folder = format!("{}/R2Northstar/packages", game_install.game_path);
+    let packages_folder = format!(
+        "{}/{}/packages",
+        game_install.game_path, game_install.profile
+    );
 
     // Get folders in packages dir
     let paths = match std::fs::read_dir(&packages_folder) {
@@ -498,8 +514,10 @@ fn fc_sanity_check(input: &&fs::File) -> bool {
         if file_path.starts_with("plugins/") {
             if let Some(name) = file_path.file_name() {
                 if name.to_str().unwrap().contains(".dll") {
-                    log::warn!("Plugin detected, skipping");
-                    return false; // We disallow plugins for now
+                    log::warn!("Plugin detected, prompting user");
+                    if !plugins::plugin_prompt() {
+                        return false; // Plugin detected and user denied install
+                    }
                 }
             }
         }
@@ -519,7 +537,7 @@ pub async fn fc_download_mod_and_install(
     log::info!("Attempting to install \"{thunderstore_mod_string}\" to {game_install:?}");
     // Get mods and download directories
     let download_directory = format!(
-        "{}/___flightcore-temp-download-dir/",
+        "{}/___flightcore-temp/download-dir/",
         game_install.game_path
     );
 
@@ -566,7 +584,7 @@ pub async fn fc_download_mod_and_install(
     };
 
     let path = format!(
-        "{}/___flightcore-temp-download-dir/{thunderstore_mod_string}.zip",
+        "{}/___flightcore-temp/download-dir/{thunderstore_mod_string}.zip",
         game_install.game_path
     );
 
@@ -587,7 +605,10 @@ pub async fn fc_download_mod_and_install(
     };
 
     // Get directory to install to made up of packages directory and Thunderstore mod string
-    let install_directory = format!("{}/R2Northstar/packages/", game_install.game_path);
+    let install_directory = format!(
+        "{}/{}/packages/",
+        game_install.game_path, game_install.profile
+    );
 
     // Extract the mod to the mods directory
     match thermite::core::manage::install_with_sanity(
@@ -700,7 +721,10 @@ pub fn delete_thunderstore_mod(
     thunderstore_mod_string: String,
 ) -> Result<(), String> {
     // Check packages
-    let packages_folder = format!("{}/R2Northstar/packages", game_install.game_path);
+    let packages_folder = format!(
+        "{}/{}/packages",
+        game_install.game_path, game_install.profile
+    );
     if std::path::Path::new(&packages_folder).exists() {
         for entry in fs::read_dir(packages_folder).unwrap() {
             let entry = entry.unwrap();

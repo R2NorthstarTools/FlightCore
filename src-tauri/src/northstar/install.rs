@@ -4,8 +4,11 @@ use std::time::Duration;
 use std::{cell::RefCell, time::Instant};
 use ts_rs::TS;
 
-use crate::constants::TITANFALL2_STEAM_ID;
-use crate::{util::extract, GameInstall, InstallType};
+use crate::constants::{NORTHSTAR_DEFAULT_PROFILE, NORTHSTAR_DLL, TITANFALL2_STEAM_ID};
+use crate::{
+    util::{extract, move_dir_all},
+    GameInstall, InstallType,
+};
 
 #[cfg(target_os = "windows")]
 use crate::platform_specific::windows;
@@ -33,16 +36,16 @@ struct InstallProgress {
 async fn do_install(
     window: tauri::Window,
     nmod: &thermite::model::ModVersion,
-    game_path: &std::path::Path,
+    game_install: GameInstall,
 ) -> Result<()> {
     let filename = format!("northstar-{}.zip", nmod.version);
-    let download_directory = format!("{}/___flightcore-temp-download-dir/", game_path.display());
+    let temp_dir = format!("{}/___flightcore-temp", game_install.game_path);
+    let download_directory = format!("{}/download-dir", temp_dir);
+    let extract_directory = format!("{}/extract-dir", temp_dir);
 
-    log::info!(
-        "Attempting to create temporary directory {}",
-        download_directory
-    );
+    log::info!("Attempting to create temporary directory {}", temp_dir);
     std::fs::create_dir_all(download_directory.clone())?;
+    std::fs::create_dir_all(extract_directory.clone())?;
 
     let download_path = format!("{}/{}", download_directory, filename);
     log::info!("Download path: {download_path}");
@@ -91,11 +94,50 @@ async fn do_install(
         .unwrap();
 
     log::info!("Extracting Northstar...");
-    extract(nfile, game_path)?;
+    extract(nfile, std::path::Path::new(&extract_directory))?;
+
+    // Prepare Northstar for Installation
+    log::info!("Preparing Northstar...");
+    if game_install.profile != NORTHSTAR_DEFAULT_PROFILE {
+        // We are using a non standard Profile, we must:
+        // - move the DLL
+        // - rename the Profile
+
+        // Move DLL into the default R2Northstar Profile
+        let old_dll_path = format!("{}/{}", extract_directory, NORTHSTAR_DLL);
+        let new_dll_path = format!(
+            "{}/{}/{}",
+            extract_directory, NORTHSTAR_DEFAULT_PROFILE, NORTHSTAR_DLL
+        );
+        std::fs::rename(old_dll_path, new_dll_path)?;
+
+        // rename default R2Northstar Profile to the profile we want to use
+        let old_profile_path = format!("{}/{}/", extract_directory, NORTHSTAR_DEFAULT_PROFILE);
+        let new_profile_path = format!("{}/{}/", extract_directory, game_install.profile);
+        std::fs::rename(old_profile_path, new_profile_path)?;
+    }
+
+    log::info!("Installing Northstar...");
+
+    for entry in std::fs::read_dir(extract_directory).unwrap() {
+        let entry = entry.unwrap();
+        let destination = format!(
+            "{}/{}",
+            game_install.game_path,
+            entry.path().file_name().unwrap().to_str().unwrap()
+        );
+
+        log::info!("Installing {}", entry.path().display());
+        if !entry.file_type().unwrap().is_dir() {
+            std::fs::rename(entry.path(), destination)?;
+        } else {
+            move_dir_all(entry.path(), destination)?;
+        }
+    }
 
     // Delete old copy
-    log::info!("Delete temp folder again");
-    std::fs::remove_dir_all(download_directory).unwrap();
+    log::info!("Delete temporary directory");
+    std::fs::remove_dir_all(temp_dir).unwrap();
 
     log::info!("Done installing Northstar!");
     window
@@ -114,7 +156,7 @@ async fn do_install(
 
 pub async fn install_northstar(
     window: tauri::Window,
-    game_path: &str,
+    game_install: GameInstall,
     northstar_package_name: String,
     version_number: Option<String>,
 ) -> Result<String, String> {
@@ -134,20 +176,15 @@ pub async fn install_northstar(
     // Use passed version or latest if no version was passed
     let version = version_number.as_ref().unwrap_or(&nmod.latest);
 
+    let game_path = game_install.game_path.clone();
     log::info!("Install path \"{}\"", game_path);
 
-    match do_install(
-        window,
-        nmod.versions.get(version).unwrap(),
-        std::path::Path::new(game_path),
-    )
-    .await
-    {
+    match do_install(window, nmod.versions.get(version).unwrap(), game_install).await {
         Ok(_) => (),
         Err(err) => {
             if game_path
                 .to_lowercase()
-                .contains(&r#"C:\Program Files\"#.to_lowercase())
+                .contains(&r"C:\Program Files\".to_lowercase())
             // default is `C:\Program Files\EA Games\Titanfall2`
             {
                 return Err(
@@ -190,6 +227,7 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
                     // println!("{:#?}", app);
                     let game_install = GameInstall {
                         game_path: app.path.to_str().unwrap().to_string(),
+                        profile: "R2Northstar".to_string(),
                         install_type: InstallType::STEAM,
                     };
                     return Ok(game_install);
@@ -206,6 +244,7 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
         Ok(game_path) => {
             let game_install = GameInstall {
                 game_path,
+                profile: "R2Northstar".to_string(),
                 install_type: InstallType::ORIGIN,
             };
             return Ok(game_install);
