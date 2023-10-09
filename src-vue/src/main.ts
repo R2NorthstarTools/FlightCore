@@ -13,7 +13,9 @@ import RepairView from "./views/RepairView.vue";
 import {createRouter, createWebHashHistory} from "vue-router";
 import en from "./i18n/lang/en.json";
 import fr from "./i18n/lang/fr.json";
+import da from "./i18n/lang/da.json";
 import de from "./i18n/lang/de.json";
+import es from "./i18n/lang/es.json";
 import pl from "./i18n/lang/pl.json";
 import ru from "./i18n/lang/ru.json";
 import it from "./i18n/lang/it.json";
@@ -27,7 +29,7 @@ export const i18n = createI18n({
     locale: 'en',
     fallbackLocale: 'en',
     messages: {
-        en, fr, de, pl, ru, it, zh_Hans
+        en, fr, da, de, es, pl, ru, it, zh_Hans
     }
 });
 app.use(i18n);

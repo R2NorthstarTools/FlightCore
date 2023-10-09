@@ -113,9 +113,17 @@
                 "reinstall_text": "请耐心等待",
                 "reinstall_success": "成功重装Northstar",
                 "force_reinstall_ns": "强制重装Northstar",
-                "reinstall_title": "正在强制重装Northstar"
+                "reinstall_title": "正在强制重装Northstar",
+                "kill_northstar_process": "终止正在运行的 Northstar/Titanfall2 进程"
             },
             "open_window": "打开修复工具"
+        },
+        "profile": {
+            "active": "当前用户配置",
+            "edit": "编辑用户配置",
+            "dialog": {
+                "title": "用户配置"
+            }
         }
     },
     "notification": {
@@ -136,6 +144,12 @@
         "flightcore_outdated": {
             "title": "FlightCore需要更新!",
             "text": "请更新FlightCore.\n正在运行旧版本 {oldVersion}.\n最新版本为 {newVersion}!"
+        },
+        "profile": {
+            "invalid": {
+                "title": "无效用户配置",
+                "text": "您尝试切换到的用户配置已失效。"
+            }
         }
     },
     "channels": {

@@ -74,7 +74,7 @@
             "by": "par",
             "more_info": "Plus d'informations",
             "remove": "Supprimer le mod",
-            "remove_dialog_title": "Attention !",
+            "remove_dialog_title": "Attention",
             "remove_dialog_text": "Voulez-vous vraiment supprimer ce mod Thunderstore ?",
             "remove_success": "{modName} supprimé",
             "install_success": "{modName} installé"
@@ -111,12 +111,20 @@
                 "reinstall_text": "Veuillez patienter",
                 "reinstall_success": "Northstar réinstallé avec succès",
                 "disable_modsettings": "Désactiver le mod ModSettings",
-                "disable_modsettings_success": "Mod ModSettings désactivé"
+                "disable_modsettings_success": "Mod ModSettings désactivé",
+                "kill_northstar_process": "Arrêter le processus en cous de Northstar/Titanfall2"
             }
         },
         "show_deprecated_mods": "Montrer les mods Thunderstore dépréciés",
         "show_deprecated_mods_desc1": "Ce paramètre vous permet d'afficher les mods Thunderstore dépréciés dans la collection de mods.",
-        "show_deprecated_mods_desc2": "Attention, les mods dépréciés le sont généralement pour une bonne raison."
+        "show_deprecated_mods_desc2": "Attention, les mods dépréciés le sont généralement pour une bonne raison.",
+        "profile": {
+            "active": "Profile actif",
+            "edit": "Éditer les profiles",
+            "dialog": {
+                "title": "Profiles"
+            }
+        }
     },
     "notification": {
         "game_folder": {
@@ -135,7 +143,13 @@
         },
         "flightcore_outdated": {
             "title": "Mise à jour disponible !",
-            "text": "Veuillez mettre à jour FlightCore.\nVersion actuelle : {oldVersion}.\nNouvelle version : {newVersion}."
+            "text": "Veuillez mettre à jour FlightCore.\nVersion actuelle : {oldVersion}.\nNouvelle version : {newVersion} !"
+        },
+        "profile": {
+            "invalid": {
+                "text": "Le profile sur lequel vous essayez de basculer n'est plus valide.",
+                "title": "Profile invalide"
+            }
         }
     },
     "channels": {
