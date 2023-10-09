@@ -2,6 +2,14 @@
 
 version: 2
 updates:
+  # Root NPM package
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "chore: "
+
   # NPM packages
   - package-ecosystem: 'npm'
     directory: '/src-vue'
