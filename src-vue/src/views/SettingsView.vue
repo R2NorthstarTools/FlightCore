@@ -256,7 +256,7 @@ export default defineComponent({
                     console.error(error);
                     showErrorNotification(error);
                 });
-        }
+        },
     },
     mounted() {
         document.querySelector('input')!.disabled = true;
