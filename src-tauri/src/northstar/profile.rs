@@ -74,3 +74,20 @@ pub fn validate_profile(game_install: GameInstall, profile: String) -> bool {
 
     profile_dir.is_dir()
 }
+
+#[tauri::command]
+pub fn delete_profile(game_install: GameInstall, profile: String) -> Result<(), String> {
+    // Check if the Profile actually exists
+    if !validate_profile(game_install.clone(), profile.clone()) {
+        return Err(format!("{} is not a valid Profile", profile));
+    }
+
+    log::info!("Deleting Profile {}", profile);
+
+    let profile_path = format!("{}/{}", game_install.game_path, profile);
+
+    match std::fs::remove_dir_all(profile_path) {
+        Ok(()) => Ok(()),
+        Err(err) => Err(format!("Failed to delete Profile: {}", err)),
+    }
+}

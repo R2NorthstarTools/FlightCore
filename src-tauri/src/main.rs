@@ -160,6 +160,7 @@ fn main() {
             get_available_northstar_versions,
             northstar::profile::fetch_profiles,
             northstar::profile::validate_profile,
+            northstar::profile::delete_profile,
         ])
         .run(tauri::generate_context!())
     {
