@@ -5,7 +5,7 @@ pub mod profile;
 
 use crate::util::check_ea_app_or_origin_running;
 use crate::{
-    constants::{CORE_MODS, TITANFALL2_STEAM_ID, VALID_NORTHSTAR_PROTON_BUILDS},
+    constants::{CORE_MODS, TITANFALL2_STEAM_ID},
     get_host_os, GameInstall, InstallType,
 };
 use anyhow::anyhow;
@@ -144,15 +144,7 @@ pub fn launch_northstar_steam(
             if get_host_os() != "windows" {
                 let titanfall2_steamid: u32 = TITANFALL2_STEAM_ID.parse().unwrap();
                 match steamdir.compat_tool(&titanfall2_steamid) {
-                    Some(compat) => {
-                        if !VALID_NORTHSTAR_PROTON_BUILDS
-                            .contains(&compat.clone().name.unwrap().as_str())
-                        {
-                            return Err(
-                                "Titanfall2 was not configured to use a valid version of NorthstarProton or GE-Proton".to_string(),
-                            );
-                        }
-                    }
+                    Some(_) => {}
                     None => {
                         return Err(
                             "Titanfall2 was not configured to use a compatibility tool".to_string()
