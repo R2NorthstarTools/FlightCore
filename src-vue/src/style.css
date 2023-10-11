@@ -46,3 +46,11 @@ body {
     color: white;
     margin: 30px 15px;
 }
+
+.el-popper {
+    width: 200px !important;
+}
+
+.el-popconfirm {
+    word-break: break-word;
+}
