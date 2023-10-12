@@ -9,8 +9,7 @@ use std::{
     time::Duration,
 };
 
-use crate::constants::REFRESH_DELAY;
-
+mod constants;
 mod development;
 mod github;
 mod mod_management;
@@ -103,7 +102,7 @@ fn main() {
             let app_handle = app.app_handle();
             tauri::async_runtime::spawn(async move {
                 loop {
-                    sleep(REFRESH_DELAY).await;
+                    sleep(constants::REFRESH_DELAY).await;
                     app_handle
                         .emit_all(
                             "northstar-statistics",
@@ -453,8 +452,6 @@ async fn get_available_northstar_versions() -> Result<Vec<NorthstarThunderstoreR
 }
 
 use anyhow::Result;
-
-pub mod constants;
 mod platform_specific;
 
 #[cfg(target_os = "linux")]
