@@ -50,6 +50,9 @@ body {
 .el-popper {
     width: 200px !important;
 }
+.fc_popper {
+    width: auto !important;
+}
 
 .el-popconfirm {
     word-break: break-word;

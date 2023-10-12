@@ -170,7 +170,7 @@ export default {
   height: 100%;
 }
 
-#fc_window__controls > button {
+#fc_window__controls > button, #fc_window__controls > .el-dropdown > button {
   color: white;
   font-size: 20px;
   margin: auto 5px;
@@ -179,11 +179,11 @@ export default {
   height: 100%;
 }
 
-#fc_window__controls > button:hover {
+#fc_window__controls > button:hover, #fc_window__controls > .el-dropdown > button:hover {
   color: #c6c9ce;
 }
 
-#fc_window__controls > button:active {
+#fc_window__controls > button:active, #fc_window__controls > .el-dropdown > button:active {
   color: #56585a;
 }
 
