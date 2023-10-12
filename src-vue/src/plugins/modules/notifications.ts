@@ -11,6 +11,11 @@ interface NotificationsStoreState {
 }
 
 
+/**
+ * This notification module is meant to host the list of notifications that have been fired while the application was
+ * not focused.
+ * This list is then used by the [NotificationButton] component to display notifications to user.
+ **/
 export const notificationsModule = {
     state: () => ({
         notifications: []
