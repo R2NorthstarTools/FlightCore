@@ -7,6 +7,7 @@
         <template #dropdown>
             <el-dropdown-menu>
                 <el-alert
+                    v-if="notifications.length != 0"
                     v-for="notification in notifications"
                     :key="JSON.stringify(notification)"
                     :title="notification.title"
@@ -15,6 +16,15 @@
                     show-icon
                     style="width: 300px"
                 />
+                <el-result
+                    v-else
+                    icon="success"
+                    title="Up-to-date"
+                    sub-title="Nothing to see here!"
+                >
+                    <template #icon>
+                    </template>
+                </el-result>
             </el-dropdown-menu>
         </template>
     </el-dropdown>
