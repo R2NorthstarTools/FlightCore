@@ -5,16 +5,17 @@
         </el-badge>
         <el-button v-else color="white" icon="BellFilled" circle />
         <template #dropdown>
-            <el-dropdown-menu>
+            <el-dropdown-menu :key="counter">
                 <el-alert
                     v-if="notifications.length != 0"
-                    v-for="notification in notifications"
-                    :key="JSON.stringify(notification)"
+                    v-for="(notification, i) in notifications"
+                    :key="i"
                     :title="notification.title"
                     :description="notification.text"
                     :type="notification.type"
                     show-icon
                     style="width: 300px"
+                    @close.stop="removeNotification(i)"
                 />
                 <el-result
                     v-else
@@ -36,11 +37,23 @@ import {Notification} from '../plugins/modules/notifications';
 
 export default defineComponent({
     name: 'NotificationButton',
+    data: () => ({
+        // This variable is used as a key for the dropdown menu, so we can force it to refresh when a item is deleted.
+        counter: 0
+    }),
     computed: {
         notifications(): Notification[] {
             return this.$store.state.notifications.notifications;
         }
     },
+    methods: {
+        removeNotification(index: number) {
+            this.$store.commit('removeNotification', index);
+            // By refreshing the notifications list, we ensure the first notification get the index 0, ensuring this list
+            // is synchronized with the store list.
+            this.counter += 1;
+        }
+    }
 })
 </script>
 

@@ -18,6 +18,9 @@ export const notificationsModule = {
     mutations: {
         addNotification(state: NotificationsStoreState, payload: Notification) {
             state.notifications.push(payload);
+        },
+        removeNotification(state: NotificationsStoreState, index: number): void {
+            state.notifications.splice(index, 1);
         }
     }
   }
