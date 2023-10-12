@@ -127,6 +127,11 @@
         }
     },
     "notification": {
+        "no_new": {
+            "title": "Vous êtes à jour",
+            "text": "Rien à voir par ici !"
+        },
+
         "game_folder": {
             "new": {
                 "title": "Nouveau dossier",

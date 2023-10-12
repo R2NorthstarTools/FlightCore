@@ -20,8 +20,8 @@
                 <el-result
                     v-else
                     icon="success"
-                    title="Up-to-date"
-                    sub-title="Nothing to see here!"
+                    :title="i18n.global.tc('notification.no_new.title')"
+                    :sub-title="i18n.global.tc('notification.no_new.text')"
                 >
                     <template #icon>
                     </template>
@@ -34,6 +34,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import {Notification} from '../plugins/modules/notifications';
+import {i18n} from "../main";
 
 export default defineComponent({
     name: 'NotificationButton',
@@ -42,6 +43,9 @@ export default defineComponent({
         counter: 0
     }),
     computed: {
+        i18n() {
+            return i18n
+        },
         notifications(): Notification[] {
             return this.$store.state.notifications.notifications;
         }
