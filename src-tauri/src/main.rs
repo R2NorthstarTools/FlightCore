@@ -9,8 +9,7 @@ use std::{
     time::Duration,
 };
 
-use crate::constants::REFRESH_DELAY;
-
+mod constants;
 mod development;
 mod github;
 mod mod_management;
@@ -103,7 +102,7 @@ fn main() {
             let app_handle = app.app_handle();
             tauri::async_runtime::spawn(async move {
                 loop {
-                    sleep(REFRESH_DELAY).await;
+                    sleep(constants::REFRESH_DELAY).await;
                     app_handle
                         .emit_all(
                             "northstar-statistics",
@@ -453,12 +452,7 @@ async fn get_available_northstar_versions() -> Result<Vec<NorthstarThunderstoreR
 }
 
 use anyhow::Result;
-
-pub mod constants;
 mod platform_specific;
-
-#[cfg(target_os = "linux")]
-use platform_specific::linux;
 
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
 #[ts(export)]
@@ -496,7 +490,7 @@ pub fn linux_checks_librs() -> Result<(), String> {
 
     // check `ldd --version` to see if glibc is up to date for northstar proton
     let min_required_ldd_version = 2.33;
-    let lddv = linux::check_glibc_v();
+    let lddv = platform_specific::linux::check_glibc_v();
     if lddv < min_required_ldd_version {
         return Err(format!(
             "GLIBC is not version {} or greater",
@@ -532,7 +526,7 @@ fn get_host_os() -> String {
 #[tauri::command]
 async fn install_northstar_proton_wrapper() -> Result<(), String> {
     #[cfg(target_os = "linux")]
-    return linux::install_ns_proton().map_err(|err| err.to_string());
+    return platform_specific::linux::install_ns_proton().map_err(|err| err.to_string());
 
     #[cfg(target_os = "windows")]
     Err("Not supported on Windows".to_string())
@@ -541,7 +535,7 @@ async fn install_northstar_proton_wrapper() -> Result<(), String> {
 #[tauri::command]
 async fn uninstall_northstar_proton_wrapper() -> Result<(), String> {
     #[cfg(target_os = "linux")]
-    return linux::uninstall_ns_proton();
+    return platform_specific::linux::uninstall_ns_proton();
 
     #[cfg(target_os = "windows")]
     Err("Not supported on Windows".to_string())
@@ -550,7 +544,7 @@ async fn uninstall_northstar_proton_wrapper() -> Result<(), String> {
 #[tauri::command]
 async fn get_local_northstar_proton_wrapper_version() -> Result<String, String> {
     #[cfg(target_os = "linux")]
-    return linux::get_local_ns_proton_version();
+    return platform_specific::linux::get_local_ns_proton_version();
 
     #[cfg(target_os = "windows")]
     Err("Not supported on Windows".to_string())
