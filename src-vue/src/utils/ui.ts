@@ -1,5 +1,6 @@
 import { ElNotification, NotificationHandle } from "element-plus";
 import { i18n } from "../main";
+import { store } from "../plugins/store";
 
 /**
  * Displays content to the user in the form of a notification appearing on screen bottom right.
@@ -10,6 +11,7 @@ function showNotification(
     type: 'success' | 'warning' | 'error' | 'info' = 'success',
     duration: number = 4500
 ): NotificationHandle {
+    store.commit('addNotification', {title, text: message, type});
     return ElNotification({
         title, message, type, duration,
         position: 'bottom-right',

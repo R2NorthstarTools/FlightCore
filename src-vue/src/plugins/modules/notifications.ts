@@ -16,7 +16,7 @@ export const notificationsModule = {
         notifications: []
     }) as NotificationsStoreState,
     mutations: {
-        push(state: NotificationsStoreState, payload: Notification) {
+        addNotification(state: NotificationsStoreState, payload: Notification) {
             state.notifications.push(payload);
         }
     }

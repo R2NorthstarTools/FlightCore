@@ -6,9 +6,9 @@
                 <el-alert
                     v-for="notification in notifications"
                     :key="JSON.stringify(notification)"
-                    title="success alert"
-                    type="success"
-                    description="more text description"
+                    :title="notification.title"
+                    :description="notification.text"
+                    :type="notification.type"
                     show-icon
                     style="width: 300px"
                 />
