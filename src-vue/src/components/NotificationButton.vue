@@ -4,7 +4,8 @@
         <template #dropdown>
             <el-dropdown-menu>
                 <el-alert
-                    v-for="i in 10" :key="i"
+                    v-for="notification in notifications"
+                    :key="JSON.stringify(notification)"
                     title="success alert"
                     type="success"
                     description="more text description"
@@ -18,33 +19,15 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Store } from 'tauri-plugin-store-api';
-import {Check, CircleCheck, CirclePlus, CirclePlusFilled, Plus} from "@element-plus/icons-vue";
-const persistentStore = new Store('flight-core-settings.json');
+import {Notification} from '../plugins/modules/notifications';
 
 export default defineComponent({
     name: 'NotificationButton',
-    data: () => ({
-
-    }),
-    methods: {
-        CircleCheck() {
-            return CircleCheck
-        },
-        Check() {
-            return Check
-        },
-        CirclePlus() {
-            return CirclePlus
-        },
-        CirclePlusFilled() {
-            return CirclePlusFilled
-        },
-        Plus() {
-            return Plus
+    computed: {
+        notifications(): Notification[] {
+            return this.$store.state.notifications.notifications;
         }
-
-    }
+    },
 })
 </script>
 

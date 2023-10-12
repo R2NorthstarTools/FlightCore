@@ -19,6 +19,7 @@ import { searchModule } from './modules/search';
 import { i18n } from '../main';
 import { pullRequestModule } from './modules/pull_requests';
 import { showErrorNotification, showNotification } from '../utils/ui';
+import { notificationsModule } from './modules/notifications';
 
 const persistentStore = new Store('flight-core-settings.json');
 
@@ -57,6 +58,7 @@ export const store = createStore<FlightCoreStore>({
     modules: {
         search: searchModule,
         pullrequests: pullRequestModule,
+        notifications: notificationsModule
     },
     state(): FlightCoreStore {
         return {
