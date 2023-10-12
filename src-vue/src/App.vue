@@ -170,7 +170,9 @@ export default {
   height: 100%;
 }
 
-#fc_window__controls > button, #fc_window__controls > .el-dropdown > button {
+#fc_window__controls > button,
+#fc_window__controls > .el-dropdown > button,
+#fc_window__controls > .el-dropdown > .el-badge > button {
   color: white;
   font-size: 20px;
   margin: auto 5px;
@@ -179,16 +181,24 @@ export default {
   height: 100%;
 }
 
-#fc_window__controls > button:hover, #fc_window__controls > .el-dropdown > button:hover {
+#fc_window__controls > button:hover,
+#fc_window__controls > .el-dropdown > button:hover,
+#fc_window__controls > .el-dropdown > .el-badge > button:hover {
   color: #c6c9ce;
 }
 
-#fc_window__controls > button:active, #fc_window__controls > .el-dropdown > button:active {
+#fc_window__controls > button:active,
+#fc_window__controls > .el-dropdown > button:active {
   color: #56585a;
 }
 
 #fc_window__controls > button:last-of-type {
   margin-right: 15px;
+}
+
+sup {
+  transform: translate(-10px, 5px) !important;
+  border: none !important;
 }
 
 </style>

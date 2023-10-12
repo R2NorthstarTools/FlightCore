@@ -1,6 +1,9 @@
 <template>
     <el-dropdown trigger="click" placement="bottom-end" max-height="280" popper-class="fc_popper">
-        <el-button color="white" icon="BellFilled" circle />
+        <el-badge v-if="notifications.length != 0" :value="notifications.length" :max="9" class="item" type="primary">
+            <el-button color="white" icon="BellFilled" circle />
+        </el-badge>
+        <el-button v-else color="white" icon="BellFilled" circle />
         <template #dropdown>
             <el-dropdown-menu>
                 <el-alert
