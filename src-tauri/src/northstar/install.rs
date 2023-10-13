@@ -50,14 +50,7 @@ pub async fn install_northstar_wrapper(
         })
         .unwrap_or("Northstar".to_string());
 
-    match install_northstar(
-        window,
-        game_install,
-        northstar_package_name,
-        version_number,
-    )
-    .await
-    {
+    match install_northstar(window, game_install, northstar_package_name, version_number).await {
         Ok(_) => Ok(true),
         Err(err) => {
             log::error!("{}", err);
