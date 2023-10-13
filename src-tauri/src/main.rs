@@ -136,7 +136,7 @@ fn main() {
             github::release_notes::get_northstar_release_notes,
             platform_specific::linux_checks,
             mod_management::get_installed_mods_and_properties,
-            install_mod_wrapper,
+            mod_management::install_mod_wrapper,
             clean_up_download_folder_wrapper,
             github::release_notes::get_newest_flightcore_version,
             mod_management::delete_northstar_mod,
@@ -200,31 +200,6 @@ pub fn convert_release_candidate_number(version_number: String) -> String {
     // Works as intended for RCs < 10, e.g.  `v1.9.2-rc1`  -> `v1.9.201`
     // Doesn't work for larger numbers, e.g. `v1.9.2-rc11` -> `v1.9.2011` (should be `v1.9.211`)
     version_number.replace("-rc", "0").replace("00", "")
-}
-
-/// Installs the specified mod
-#[tauri::command]
-async fn install_mod_wrapper(
-    game_install: GameInstall,
-    thunderstore_mod_string: String,
-) -> Result<(), String> {
-    match mod_management::fc_download_mod_and_install(&game_install, &thunderstore_mod_string).await
-    {
-        Ok(()) => (),
-        Err(err) => {
-            log::warn!("{err}");
-            return Err(err);
-        }
-    };
-    match repair_and_verify::clean_up_download_folder(&game_install, false) {
-        Ok(()) => Ok(()),
-        Err(err) => {
-            log::info!("Failed to delete download folder due to {}", err);
-            // Failure to delete download folder is not an error in mod install
-            // As such ignore. User can still force delete if need be
-            Ok(())
-        }
-    }
 }
 
 /// Installs the specified mod
