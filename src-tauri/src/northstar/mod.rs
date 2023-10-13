@@ -6,7 +6,8 @@ pub mod profile;
 use crate::util::check_ea_app_or_origin_running;
 use crate::{
     constants::{CORE_MODS, TITANFALL2_STEAM_ID},
-    get_host_os, GameInstall, InstallType,
+    platform_specific::get_host_os,
+    GameInstall, InstallType,
 };
 use anyhow::anyhow;
 

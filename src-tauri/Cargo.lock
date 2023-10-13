@@ -80,41 +80,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a4668cab20f66d8d020e1fbc0ebe47217433c1b6c8f2040faf858554e394ace6"
 
 [[package]]
-name = "app"
-version = "2.12.1"
-dependencies = [
- "anyhow",
- "async-recursion",
- "chrono",
- "const_format",
- "dirs",
- "glob",
- "json5",
- "libthermite",
- "log",
- "open 5.0.0",
- "pretty_env_logger",
- "regex",
- "reqwest",
- "semver",
- "sentry",
- "sentry-log",
- "serde",
- "serde_json",
- "steamlocate",
- "sysinfo",
- "tauri",
- "tauri-build",
- "tauri-plugin-store",
- "tokio",
- "ts-rs",
- "winapi",
- "winreg 0.51.0",
- "zip",
- "zip-extract",
-]
-
-[[package]]
 name = "async-broadcast"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1098,6 +1063,41 @@ checksum = "3b9429470923de8e8cbd4d2dc513535400b4b3fef0319fb5c4e1f520a7bef743"
 dependencies = [
  "crc32fast",
  "miniz_oxide",
+]
+
+[[package]]
+name = "flightcore"
+version = "2.12.1"
+dependencies = [
+ "anyhow",
+ "async-recursion",
+ "chrono",
+ "const_format",
+ "dirs",
+ "glob",
+ "json5",
+ "libthermite",
+ "log",
+ "open 5.0.0",
+ "pretty_env_logger",
+ "regex",
+ "reqwest",
+ "semver",
+ "sentry",
+ "sentry-log",
+ "serde",
+ "serde_json",
+ "steamlocate",
+ "sysinfo",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-store",
+ "tokio",
+ "ts-rs",
+ "winapi",
+ "winreg 0.51.0",
+ "zip",
+ "zip-extract",
 ]
 
 [[package]]
