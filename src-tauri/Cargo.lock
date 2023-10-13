@@ -3489,9 +3489,9 @@ dependencies = [
 
 [[package]]
 name = "sentry-core"
-version = "0.31.5"
+version = "0.31.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7163491708804a74446642ff2c80b3acd668d4b9e9f497f85621f3d250fd012b"
+checksum = "8f51264e4013ed9b16558cce43917b983fa38170de2ca480349ceb57d71d6053"
 dependencies = [
  "once_cell",
  "rand 0.8.5",
@@ -3513,9 +3513,9 @@ dependencies = [
 
 [[package]]
 name = "sentry-log"
-version = "0.31.5"
+version = "0.31.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2558fc4a85326e6063711b45ce82ed6b18cdacd0732580c1567da914ac1df33e"
+checksum = "606ee32c627214e5c11dd8d47838f9c53f4bd098855cd0da236e945e3541603b"
 dependencies = [
  "log",
  "sentry-core",
@@ -3545,13 +3545,13 @@ dependencies = [
 
 [[package]]
 name = "sentry-types"
-version = "0.31.5"
+version = "0.31.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9e7a88e0c1922d19b3efee12a8215f6a8a806e442e665ada71cc222cab72985f"
+checksum = "0e663b3eb62ddfc023c9cf5432daf5f1a4f6acb1df4d78dd80b740b32dd1a740"
 dependencies = [
  "debugid",
- "getrandom 0.2.10",
  "hex",
+ "rand 0.8.5",
  "serde",
  "serde_json",
  "thiserror",
