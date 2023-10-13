@@ -1,11 +1,11 @@
 [package]
-name = "app"
+name = "flightcore"
 version = "2.12.1"
-description = "A Tauri App"
-authors = ["you"]
-license = ""
-repository = ""
-default-run = "app"
+description = "Mod-manager for Northstar"
+authors = ["https://github.com/R2NorthstarTools/FlightCore/graphs/contributors"]
+license = "MIT"
+repository = "https://github.com/R2NorthstarTools/FlightCore"
+default-run = "flightcore"
 edition = "2021"
 rust-version = "1.66"
 
