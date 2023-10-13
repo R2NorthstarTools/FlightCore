@@ -137,7 +137,7 @@ fn main() {
             platform_specific::linux_checks,
             mod_management::get_installed_mods_and_properties,
             mod_management::install_mod_wrapper,
-            clean_up_download_folder_wrapper,
+            repair_and_verify::clean_up_download_folder_wrapper,
             github::release_notes::get_newest_flightcore_version,
             mod_management::delete_northstar_mod,
             util::get_server_player_count,
@@ -201,20 +201,6 @@ pub fn convert_release_candidate_number(version_number: String) -> String {
     // Doesn't work for larger numbers, e.g. `v1.9.2-rc11` -> `v1.9.2011` (should be `v1.9.211`)
     version_number.replace("-rc", "0").replace("00", "")
 }
-
-/// Installs the specified mod
-#[tauri::command]
-async fn clean_up_download_folder_wrapper(
-    game_install: GameInstall,
-    force: bool,
-) -> Result<(), String> {
-    match repair_and_verify::clean_up_download_folder(&game_install, force) {
-        Ok(()) => Ok(()),
-        Err(err) => Err(err.to_string()),
-    }
-}
-
-use anyhow::Result;
 
 /// Defines how Titanfall2 was installed (Steam, Origin, ...)
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
