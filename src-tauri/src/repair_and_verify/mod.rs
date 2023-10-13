@@ -57,6 +57,18 @@ pub fn disable_all_but_core(game_install: GameInstall) -> Result<(), String> {
     Ok(())
 }
 
+/// Installs the specified mod
+#[tauri::command]
+pub async fn clean_up_download_folder_wrapper(
+    game_install: GameInstall,
+    force: bool,
+) -> Result<(), String> {
+    match clean_up_download_folder(&game_install, force) {
+        Ok(()) => Ok(()),
+        Err(err) => Err(err.to_string()),
+    }
+}
+
 /// Deletes download folder
 /// If `force` is FALSE, bails on non-empty folder
 /// If `force` is TRUE, deletes folder even if non-empty
