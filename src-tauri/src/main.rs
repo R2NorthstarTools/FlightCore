@@ -19,7 +19,6 @@ mod repair_and_verify;
 mod thunderstore;
 mod util;
 
-use semver::Version;
 use serde::{Deserialize, Serialize};
 #[cfg(target_os = "windows")]
 use tauri::api::dialog::blocking::MessageDialogBuilder;
@@ -38,7 +37,7 @@ struct NorthstarThunderstoreRelease {
 
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
 #[ts(export)]
-struct NorthstarThunderstoreReleaseWrapper {
+pub struct NorthstarThunderstoreReleaseWrapper {
     label: String,
     value: NorthstarThunderstoreRelease,
 }
@@ -121,7 +120,7 @@ fn main() {
             northstar::install::find_game_install_location,
             util::get_flightcore_version_number,
             northstar::get_northstar_version_number,
-            check_is_northstar_outdated,
+            northstar::check_is_northstar_outdated,
             repair_and_verify::verify_install_location,
             platform_specific::get_host_os,
             northstar::install::install_northstar_wrapper,
@@ -157,7 +156,7 @@ fn main() {
             github::pull_requests::get_launcher_download_link,
             util::close_application,
             development::install_git_main,
-            get_available_northstar_versions,
+            northstar::get_available_northstar_versions,
             northstar::profile::fetch_profiles,
             northstar::profile::validate_profile,
             northstar::profile::delete_profile,
@@ -203,56 +202,6 @@ pub fn convert_release_candidate_number(version_number: String) -> String {
     version_number.replace("-rc", "0").replace("00", "")
 }
 
-/// Checks if installed Northstar version is up-to-date
-/// false -> Northstar install is up-to-date
-/// true  -> Northstar install is outdated
-#[tauri::command]
-async fn check_is_northstar_outdated(
-    game_install: GameInstall,
-    northstar_package_name: Option<String>,
-) -> Result<bool, String> {
-    let northstar_package_name = match northstar_package_name {
-        Some(northstar_package_name) => {
-            if northstar_package_name.len() <= 1 {
-                "Northstar".to_string()
-            } else {
-                northstar_package_name
-            }
-        }
-        None => "Northstar".to_string(),
-    };
-
-    let index = match thermite::api::get_package_index() {
-        Ok(res) => res.to_vec(),
-        Err(err) => return Err(format!("Couldn't check if Northstar up-to-date: {err}")),
-    };
-    let nmod = index
-        .iter()
-        .find(|f| f.name.to_lowercase() == northstar_package_name.to_lowercase())
-        .expect("Couldn't find Northstar on thunderstore???");
-    // .ok_or_else(|| anyhow!("Couldn't find Northstar on thunderstore???"))?;
-
-    let version_number = match northstar::get_northstar_version_number(game_install) {
-        Ok(version_number) => version_number,
-        Err(err) => {
-            log::warn!("{}", err);
-            // If we fail to get new version just assume we are up-to-date
-            return Err(err);
-        }
-    };
-
-    // Release candidate version numbers are different between `mods.json` and Thunderstore
-    let version_number = convert_release_candidate_number(version_number);
-
-    if version_number != nmod.latest {
-        log::info!("Installed Northstar version outdated");
-        Ok(true)
-    } else {
-        log::info!("Installed Northstar version up-to-date");
-        Ok(false)
-    }
-}
-
 /// Installs the specified mod
 #[tauri::command]
 async fn install_mod_wrapper(
@@ -288,46 +237,6 @@ async fn clean_up_download_folder_wrapper(
         Ok(()) => Ok(()),
         Err(err) => Err(err.to_string()),
     }
-}
-
-/// Gets list of available Northstar versions from Thunderstore
-#[tauri::command]
-async fn get_available_northstar_versions() -> Result<Vec<NorthstarThunderstoreReleaseWrapper>, ()>
-{
-    let northstar_package_name = "Northstar";
-    let index = thermite::api::get_package_index().unwrap().to_vec();
-    let nsmod = index
-        .iter()
-        .find(|f| f.name.to_lowercase() == northstar_package_name.to_lowercase())
-        .ok_or_else(|| panic!("Couldn't find Northstar on thunderstore???"))
-        .unwrap();
-
-    let mut releases: Vec<NorthstarThunderstoreReleaseWrapper> = vec![];
-    for (_version_string, nsmod_version_obj) in nsmod.versions.iter() {
-        let current_elem = NorthstarThunderstoreRelease {
-            package: nsmod_version_obj.name.clone(),
-            version: nsmod_version_obj.version.clone(),
-        };
-        let current_elem_wrapped = NorthstarThunderstoreReleaseWrapper {
-            label: format!(
-                "{} v{}",
-                nsmod_version_obj.name.clone(),
-                nsmod_version_obj.version.clone()
-            ),
-            value: current_elem,
-        };
-
-        releases.push(current_elem_wrapped);
-    }
-
-    releases.sort_by(|a, b| {
-        // Parse version number
-        let a_ver = Version::parse(&a.value.version).unwrap();
-        let b_ver = Version::parse(&b.value.version).unwrap();
-        b_ver.partial_cmp(&a_ver).unwrap() // Sort newest first
-    });
-
-    Ok(releases)
 }
 
 use anyhow::Result;
