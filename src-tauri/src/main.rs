@@ -119,7 +119,7 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             util::force_panic,
             northstar::install::find_game_install_location,
-            get_flightcore_version_number,
+            util::get_flightcore_version_number,
             northstar::get_northstar_version_number,
             check_is_northstar_outdated,
             repair_and_verify::verify_install_location,
@@ -192,19 +192,6 @@ fn main() {
             }
         }
     };
-}
-
-/// Returns the current version number as a string
-#[tauri::command]
-async fn get_flightcore_version_number() -> String {
-    let version = env!("CARGO_PKG_VERSION");
-    if cfg!(debug_assertions) {
-        // Debugging enabled
-        format!("v{} (debug mode)", version)
-    } else {
-        // Debugging disabled
-        format!("v{}", version)
-    }
 }
 
 /// Helps with converting release candidate numbers which are different on Thunderstore
