@@ -25,7 +25,7 @@ use serde::{Deserialize, Serialize};
 use tauri::api::dialog::blocking::MessageDialogBuilder;
 #[cfg(target_os = "windows")]
 use tauri::api::dialog::{MessageDialogButtons, MessageDialogKind};
-use tauri::{Manager, Runtime};
+use tauri::Manager;
 use tokio::time::sleep;
 use ts_rs::TS;
 
@@ -119,7 +119,7 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             util::force_panic,
             northstar::install::find_game_install_location,
-            get_flightcore_version_number,
+            util::get_flightcore_version_number,
             northstar::get_northstar_version_number,
             check_is_northstar_outdated,
             repair_and_verify::verify_install_location,
@@ -147,7 +147,7 @@ fn main() {
             platform_specific::install_northstar_proton_wrapper,
             platform_specific::uninstall_northstar_proton_wrapper,
             platform_specific::get_local_northstar_proton_wrapper_version,
-            open_repair_window,
+            util::open_repair_window,
             thunderstore::query_thunderstore_packages_api,
             github::get_list_of_tags,
             github::compare_tags,
@@ -155,7 +155,7 @@ fn main() {
             github::pull_requests::apply_launcher_pr,
             github::pull_requests::apply_mods_pr,
             github::pull_requests::get_launcher_download_link,
-            close_application,
+            util::close_application,
             development::install_git_main,
             get_available_northstar_versions,
             northstar::profile::fetch_profiles,
@@ -192,19 +192,6 @@ fn main() {
             }
         }
     };
-}
-
-/// Returns the current version number as a string
-#[tauri::command]
-async fn get_flightcore_version_number() -> String {
-    let version = env!("CARGO_PKG_VERSION");
-    if cfg!(debug_assertions) {
-        // Debugging enabled
-        format!("v{} (debug mode)", version)
-    } else {
-        // Debugging disabled
-        format!("v{}", version)
-    }
 }
 
 /// Helps with converting release candidate numbers which are different on Thunderstore
@@ -301,36 +288,6 @@ async fn clean_up_download_folder_wrapper(
         Ok(()) => Ok(()),
         Err(err) => Err(err.to_string()),
     }
-}
-
-/// Spawns repair window
-#[tauri::command]
-async fn open_repair_window(handle: tauri::AppHandle) -> Result<(), String> {
-    // Spawn new window
-    let repair_window = match tauri::WindowBuilder::new(
-        &handle,
-        "RepairWindow",
-        tauri::WindowUrl::App("/#/repair".into()),
-    )
-    .build()
-    {
-        Ok(res) => res,
-        Err(err) => return Err(err.to_string()),
-    };
-
-    // Set window title
-    match repair_window.set_title("FlightCore Repair Window") {
-        Ok(()) => (),
-        Err(err) => return Err(err.to_string()),
-    };
-    Ok(())
-}
-
-/// Closes all windows and exits application
-#[tauri::command]
-async fn close_application<R: Runtime>(app: tauri::AppHandle<R>) -> Result<(), String> {
-    app.exit(0); // Close application
-    Ok(())
 }
 
 /// Gets list of available Northstar versions from Thunderstore
