@@ -207,7 +207,7 @@ async fn linux_checks() -> Result<(), String> {
 
     #[cfg(target_os = "linux")]
     {
-        linux_checks_librs()
+        platform_specific::linux::linux_checks_librs()
     }
 }
 
@@ -478,28 +478,6 @@ pub struct NorthstarMod {
     pub thunderstore_mod_string: Option<String>,
     pub enabled: bool,
     pub directory: String,
-}
-
-// I intend to add more linux related stuff to check here, so making a func
-// for now tho it only checks `ldd --version`
-// - salmon
-#[cfg(target_os = "linux")]
-pub fn linux_checks_librs() -> Result<(), String> {
-    // Perform various checks in terms of Linux compatibility
-    // Return early with error message if a check fails
-
-    // check `ldd --version` to see if glibc is up to date for northstar proton
-    let min_required_ldd_version = 2.33;
-    let lddv = platform_specific::linux::check_glibc_v();
-    if lddv < min_required_ldd_version {
-        return Err(format!(
-            "GLIBC is not version {} or greater",
-            min_required_ldd_version
-        ));
-    };
-
-    // All checks passed
-    Ok(())
 }
 
 /// Checks whether the provided path is a valid Titanfall2 gamepath by checking against a certain set of criteria
