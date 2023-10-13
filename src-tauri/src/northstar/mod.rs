@@ -9,7 +9,48 @@ use crate::{
     platform_specific::get_host_os,
     GameInstall, InstallType,
 };
+use crate::{NorthstarThunderstoreRelease, NorthstarThunderstoreReleaseWrapper};
 use anyhow::anyhow;
+
+/// Gets list of available Northstar versions from Thunderstore
+#[tauri::command]
+pub async fn get_available_northstar_versions(
+) -> Result<Vec<NorthstarThunderstoreReleaseWrapper>, ()> {
+    let northstar_package_name = "Northstar";
+    let index = thermite::api::get_package_index().unwrap().to_vec();
+    let nsmod = index
+        .iter()
+        .find(|f| f.name.to_lowercase() == northstar_package_name.to_lowercase())
+        .ok_or_else(|| panic!("Couldn't find Northstar on thunderstore???"))
+        .unwrap();
+
+    let mut releases: Vec<NorthstarThunderstoreReleaseWrapper> = vec![];
+    for (_version_string, nsmod_version_obj) in nsmod.versions.iter() {
+        let current_elem = NorthstarThunderstoreRelease {
+            package: nsmod_version_obj.name.clone(),
+            version: nsmod_version_obj.version.clone(),
+        };
+        let current_elem_wrapped = NorthstarThunderstoreReleaseWrapper {
+            label: format!(
+                "{} v{}",
+                nsmod_version_obj.name.clone(),
+                nsmod_version_obj.version.clone()
+            ),
+            value: current_elem,
+        };
+
+        releases.push(current_elem_wrapped);
+    }
+
+    releases.sort_by(|a, b| {
+        // Parse version number
+        let a_ver = semver::Version::parse(&a.value.version).unwrap();
+        let b_ver = semver::Version::parse(&b.value.version).unwrap();
+        b_ver.partial_cmp(&a_ver).unwrap() // Sort newest first
+    });
+
+    Ok(releases)
+}
 
 /// Check version number of a mod
 pub fn check_mod_version_number(path_to_mod_folder: &str) -> Result<String, anyhow::Error> {
