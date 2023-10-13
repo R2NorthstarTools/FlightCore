@@ -37,7 +37,7 @@ struct NorthstarThunderstoreRelease {
 
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
 #[ts(export)]
-struct NorthstarThunderstoreReleaseWrapper {
+pub struct NorthstarThunderstoreReleaseWrapper {
     label: String,
     value: NorthstarThunderstoreRelease,
 }
@@ -120,7 +120,7 @@ fn main() {
             northstar::install::find_game_install_location,
             util::get_flightcore_version_number,
             northstar::get_northstar_version_number,
-            check_is_northstar_outdated,
+            northstar::check_is_northstar_outdated,
             repair_and_verify::verify_install_location,
             platform_specific::get_host_os,
             northstar::install::install_northstar_wrapper,
@@ -200,56 +200,6 @@ pub fn convert_release_candidate_number(version_number: String) -> String {
     // Works as intended for RCs < 10, e.g.  `v1.9.2-rc1`  -> `v1.9.201`
     // Doesn't work for larger numbers, e.g. `v1.9.2-rc11` -> `v1.9.2011` (should be `v1.9.211`)
     version_number.replace("-rc", "0").replace("00", "")
-}
-
-/// Checks if installed Northstar version is up-to-date
-/// false -> Northstar install is up-to-date
-/// true  -> Northstar install is outdated
-#[tauri::command]
-async fn check_is_northstar_outdated(
-    game_install: GameInstall,
-    northstar_package_name: Option<String>,
-) -> Result<bool, String> {
-    let northstar_package_name = match northstar_package_name {
-        Some(northstar_package_name) => {
-            if northstar_package_name.len() <= 1 {
-                "Northstar".to_string()
-            } else {
-                northstar_package_name
-            }
-        }
-        None => "Northstar".to_string(),
-    };
-
-    let index = match thermite::api::get_package_index() {
-        Ok(res) => res.to_vec(),
-        Err(err) => return Err(format!("Couldn't check if Northstar up-to-date: {err}")),
-    };
-    let nmod = index
-        .iter()
-        .find(|f| f.name.to_lowercase() == northstar_package_name.to_lowercase())
-        .expect("Couldn't find Northstar on thunderstore???");
-    // .ok_or_else(|| anyhow!("Couldn't find Northstar on thunderstore???"))?;
-
-    let version_number = match northstar::get_northstar_version_number(game_install) {
-        Ok(version_number) => version_number,
-        Err(err) => {
-            log::warn!("{}", err);
-            // If we fail to get new version just assume we are up-to-date
-            return Err(err);
-        }
-    };
-
-    // Release candidate version numbers are different between `mods.json` and Thunderstore
-    let version_number = convert_release_candidate_number(version_number);
-
-    if version_number != nmod.latest {
-        log::info!("Installed Northstar version outdated");
-        Ok(true)
-    } else {
-        log::info!("Installed Northstar version up-to-date");
-        Ok(false)
-    }
 }
 
 /// Installs the specified mod
