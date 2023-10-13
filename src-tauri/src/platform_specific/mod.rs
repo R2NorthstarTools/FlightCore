@@ -4,6 +4,12 @@ pub mod windows;
 #[cfg(target_os = "linux")]
 pub mod linux;
 
+/// Returns identifier of host OS FlightCore is running on
+#[tauri::command]
+pub fn get_host_os() -> String {
+    std::env::consts::OS.to_string()
+}
+
 /// On Linux attempts to install NorthstarProton
 /// On Windows simply returns an error message
 #[tauri::command]
