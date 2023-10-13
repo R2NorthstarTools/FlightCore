@@ -147,7 +147,7 @@ fn main() {
             platform_specific::install_northstar_proton_wrapper,
             platform_specific::uninstall_northstar_proton_wrapper,
             platform_specific::get_local_northstar_proton_wrapper_version,
-            open_repair_window,
+            util::open_repair_window,
             thunderstore::query_thunderstore_packages_api,
             github::get_list_of_tags,
             github::compare_tags,
@@ -288,29 +288,6 @@ async fn clean_up_download_folder_wrapper(
         Ok(()) => Ok(()),
         Err(err) => Err(err.to_string()),
     }
-}
-
-/// Spawns repair window
-#[tauri::command]
-async fn open_repair_window(handle: tauri::AppHandle) -> Result<(), String> {
-    // Spawn new window
-    let repair_window = match tauri::WindowBuilder::new(
-        &handle,
-        "RepairWindow",
-        tauri::WindowUrl::App("/#/repair".into()),
-    )
-    .build()
-    {
-        Ok(res) => res,
-        Err(err) => return Err(err.to_string()),
-    };
-
-    // Set window title
-    match repair_window.set_title("FlightCore Repair Window") {
-        Ok(()) => (),
-        Err(err) => return Err(err.to_string()),
-    };
-    Ok(())
 }
 
 /// Closes all windows and exits application

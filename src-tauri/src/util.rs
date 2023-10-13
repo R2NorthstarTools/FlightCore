@@ -39,6 +39,29 @@ pub async fn get_flightcore_version_number() -> String {
     }
 }
 
+/// Spawns repair window
+#[tauri::command]
+pub async fn open_repair_window(handle: tauri::AppHandle) -> Result<(), String> {
+    // Spawn new window
+    let repair_window = match tauri::WindowBuilder::new(
+        &handle,
+        "RepairWindow",
+        tauri::WindowUrl::App("/#/repair".into()),
+    )
+    .build()
+    {
+        Ok(res) => res,
+        Err(err) => return Err(err.to_string()),
+    };
+
+    // Set window title
+    match repair_window.set_title("FlightCore Repair Window") {
+        Ok(()) => (),
+        Err(err) => return Err(err.to_string()),
+    };
+    Ok(())
+}
+
 /// Fetches `/client/servers` endpoint from master server
 async fn fetch_server_list() -> Result<String, anyhow::Error> {
     let url = format!("{MASTER_SERVER_URL}{SERVER_BROWSER_ENDPOINT}");
