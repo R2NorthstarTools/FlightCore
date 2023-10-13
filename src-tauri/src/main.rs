@@ -25,7 +25,7 @@ use serde::{Deserialize, Serialize};
 use tauri::api::dialog::blocking::MessageDialogBuilder;
 #[cfg(target_os = "windows")]
 use tauri::api::dialog::{MessageDialogButtons, MessageDialogKind};
-use tauri::{Manager, Runtime};
+use tauri::Manager;
 use tokio::time::sleep;
 use ts_rs::TS;
 
@@ -155,7 +155,7 @@ fn main() {
             github::pull_requests::apply_launcher_pr,
             github::pull_requests::apply_mods_pr,
             github::pull_requests::get_launcher_download_link,
-            close_application,
+            util::close_application,
             development::install_git_main,
             get_available_northstar_versions,
             northstar::profile::fetch_profiles,
@@ -288,13 +288,6 @@ async fn clean_up_download_folder_wrapper(
         Ok(()) => Ok(()),
         Err(err) => Err(err.to_string()),
     }
-}
-
-/// Closes all windows and exits application
-#[tauri::command]
-async fn close_application<R: Runtime>(app: tauri::AppHandle<R>) -> Result<(), String> {
-    app.exit(0); // Close application
-    Ok(())
 }
 
 /// Gets list of available Northstar versions from Thunderstore

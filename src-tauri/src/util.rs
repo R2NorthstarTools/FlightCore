@@ -62,6 +62,13 @@ pub async fn open_repair_window(handle: tauri::AppHandle) -> Result<(), String> 
     Ok(())
 }
 
+/// Closes all windows and exits application
+#[tauri::command]
+pub async fn close_application<R: tauri::Runtime>(app: tauri::AppHandle<R>) -> Result<(), String> {
+    app.exit(0); // Close application
+    Ok(())
+}
+
 /// Fetches `/client/servers` endpoint from master server
 async fn fetch_server_list() -> Result<String, anyhow::Error> {
     let url = format!("{MASTER_SERVER_URL}{SERVER_BROWSER_ENDPOINT}");
