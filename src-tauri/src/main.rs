@@ -124,7 +124,7 @@ fn main() {
             check_is_northstar_outdated,
             verify_install_location,
             platform_specific::get_host_os,
-            install_northstar_caller,
+            install_northstar_wrapper,
             update_northstar,
             northstar::launch_northstar,
             northstar::launch_northstar_steam,
@@ -137,8 +137,8 @@ fn main() {
             github::release_notes::get_northstar_release_notes,
             platform_specific::linux_checks,
             mod_management::get_installed_mods_and_properties,
-            install_mod_caller,
-            clean_up_download_folder_caller,
+            install_mod_wrapper,
+            clean_up_download_folder_wrapper,
             github::release_notes::get_newest_flightcore_version,
             mod_management::delete_northstar_mod,
             util::get_server_player_count,
@@ -280,7 +280,7 @@ async fn verify_install_location(game_path: String) -> bool {
 
 /// Installs Northstar to the given path
 #[tauri::command]
-async fn install_northstar_caller(
+async fn install_northstar_wrapper(
     window: tauri::Window,
     game_install: GameInstall,
     northstar_package_name: Option<String>,
@@ -325,12 +325,12 @@ async fn update_northstar(
     log::info!("Updating Northstar");
 
     // Simply re-run install with up-to-date version for upate
-    install_northstar_caller(window, game_install, northstar_package_name, None).await
+    install_northstar_wrapper(window, game_install, northstar_package_name, None).await
 }
 
 /// Installs the specified mod
 #[tauri::command]
-async fn install_mod_caller(
+async fn install_mod_wrapper(
     game_install: GameInstall,
     thunderstore_mod_string: String,
 ) -> Result<(), String> {
@@ -355,7 +355,7 @@ async fn install_mod_caller(
 
 /// Installs the specified mod
 #[tauri::command]
-async fn clean_up_download_folder_caller(
+async fn clean_up_download_folder_wrapper(
     game_install: GameInstall,
     force: bool,
 ) -> Result<(), String> {
