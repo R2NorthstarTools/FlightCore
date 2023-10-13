@@ -26,6 +26,49 @@ pub async fn is_debug_mode() -> bool {
     cfg!(debug_assertions)
 }
 
+/// Returns the current version number as a string
+#[tauri::command]
+pub async fn get_flightcore_version_number() -> String {
+    let version = env!("CARGO_PKG_VERSION");
+    if cfg!(debug_assertions) {
+        // Debugging enabled
+        format!("v{} (debug mode)", version)
+    } else {
+        // Debugging disabled
+        format!("v{}", version)
+    }
+}
+
+/// Spawns repair window
+#[tauri::command]
+pub async fn open_repair_window(handle: tauri::AppHandle) -> Result<(), String> {
+    // Spawn new window
+    let repair_window = match tauri::WindowBuilder::new(
+        &handle,
+        "RepairWindow",
+        tauri::WindowUrl::App("/#/repair".into()),
+    )
+    .build()
+    {
+        Ok(res) => res,
+        Err(err) => return Err(err.to_string()),
+    };
+
+    // Set window title
+    match repair_window.set_title("FlightCore Repair Window") {
+        Ok(()) => (),
+        Err(err) => return Err(err.to_string()),
+    };
+    Ok(())
+}
+
+/// Closes all windows and exits application
+#[tauri::command]
+pub async fn close_application<R: tauri::Runtime>(app: tauri::AppHandle<R>) -> Result<(), String> {
+    app.exit(0); // Close application
+    Ok(())
+}
+
 /// Fetches `/client/servers` endpoint from master server
 async fn fetch_server_list() -> Result<String, anyhow::Error> {
     let url = format!("{MASTER_SERVER_URL}{SERVER_BROWSER_ENDPOINT}");
@@ -181,4 +224,13 @@ pub fn move_dir_all(
         }
     }
     Ok(())
+}
+
+/// Helps with converting release candidate numbers which are different on Thunderstore
+/// due to restrictions imposed by the platform
+pub fn convert_release_candidate_number(version_number: String) -> String {
+    // This simply converts `-rc` to `0`
+    // Works as intended for RCs < 10, e.g.  `v1.9.2-rc1`  -> `v1.9.201`
+    // Doesn't work for larger numbers, e.g. `v1.9.2-rc11` -> `v1.9.2011` (should be `v1.9.211`)
+    version_number.replace("-rc", "0").replace("00", "")
 }
