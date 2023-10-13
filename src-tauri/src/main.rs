@@ -437,6 +437,7 @@ async fn get_available_northstar_versions() -> Result<Vec<NorthstarThunderstoreR
 
 use anyhow::Result;
 
+/// Defines how Titanfall2 was installed (Steam, Origin, ...)
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
 #[ts(export)]
 pub enum InstallType {
@@ -446,6 +447,10 @@ pub enum InstallType {
     UNKNOWN,
 }
 
+/// Object holding information of the Titanfall2 install, including
+/// - Install path
+/// - Active profile
+/// - Type of installation (Steam, Origin, ...)
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct GameInstall {
     pub game_path: String,
@@ -453,6 +458,7 @@ pub struct GameInstall {
     pub install_type: InstallType,
 }
 
+/// Object holding various information about a Northstar mod
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
 #[ts(export)]
 pub struct NorthstarMod {
