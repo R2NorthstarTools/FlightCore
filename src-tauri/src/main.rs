@@ -123,7 +123,7 @@ fn main() {
             northstar::get_northstar_version_number,
             check_is_northstar_outdated,
             verify_install_location,
-            get_host_os,
+            platform_specific::get_host_os,
             install_northstar_caller,
             update_northstar,
             northstar::launch_northstar,
@@ -474,10 +474,4 @@ pub fn check_is_valid_game_path(game_install_path: &str) -> Result<(), String> {
         return Err(format!("Incorrect game path \"{game_install_path}\"")); // Return error cause wrong game path
     }
     Ok(())
-}
-
-/// Returns identifier of host OS FlightCore is running on
-#[tauri::command]
-fn get_host_os() -> String {
-    env::consts::OS.to_string()
 }
