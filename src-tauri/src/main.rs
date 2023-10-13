@@ -14,6 +14,7 @@ mod development;
 mod github;
 mod mod_management;
 mod northstar;
+mod platform_specific;
 mod repair_and_verify;
 mod thunderstore;
 mod util;
@@ -134,7 +135,7 @@ fn main() {
             repair_and_verify::disable_all_but_core,
             util::is_debug_mode,
             github::release_notes::get_northstar_release_notes,
-            linux_checks,
+            platform_specific::linux_checks,
             mod_management::get_installed_mods_and_properties,
             install_mod_caller,
             clean_up_download_folder_caller,
@@ -143,9 +144,9 @@ fn main() {
             util::get_server_player_count,
             util::kill_northstar,
             mod_management::delete_thunderstore_mod,
-            install_northstar_proton_wrapper,
-            uninstall_northstar_proton_wrapper,
-            get_local_northstar_proton_wrapper_version,
+            platform_specific::install_northstar_proton_wrapper,
+            platform_specific::uninstall_northstar_proton_wrapper,
+            platform_specific::get_local_northstar_proton_wrapper_version,
             open_repair_window,
             thunderstore::query_thunderstore_packages_api,
             github::get_list_of_tags,
@@ -191,23 +192,6 @@ fn main() {
             }
         }
     };
-}
-
-/// Returns true if linux compatible
-#[tauri::command]
-async fn linux_checks() -> Result<(), String> {
-    // Different behaviour depending on OS
-    // MacOS is missing as it is not a target
-    // in turn this means this application will not build on MacOS.
-    #[cfg(target_os = "windows")]
-    {
-        Err("Not available on Windows".to_string())
-    }
-
-    #[cfg(target_os = "linux")]
-    {
-        linux_checks_librs()
-    }
 }
 
 /// Returns the current version number as a string
@@ -452,7 +436,6 @@ async fn get_available_northstar_versions() -> Result<Vec<NorthstarThunderstoreR
 }
 
 use anyhow::Result;
-mod platform_specific;
 
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
 #[ts(export)]
@@ -480,28 +463,6 @@ pub struct NorthstarMod {
     pub directory: String,
 }
 
-// I intend to add more linux related stuff to check here, so making a func
-// for now tho it only checks `ldd --version`
-// - salmon
-#[cfg(target_os = "linux")]
-pub fn linux_checks_librs() -> Result<(), String> {
-    // Perform various checks in terms of Linux compatibility
-    // Return early with error message if a check fails
-
-    // check `ldd --version` to see if glibc is up to date for northstar proton
-    let min_required_ldd_version = 2.33;
-    let lddv = platform_specific::linux::check_glibc_v();
-    if lddv < min_required_ldd_version {
-        return Err(format!(
-            "GLIBC is not version {} or greater",
-            min_required_ldd_version
-        ));
-    };
-
-    // All checks passed
-    Ok(())
-}
-
 /// Checks whether the provided path is a valid Titanfall2 gamepath by checking against a certain set of criteria
 pub fn check_is_valid_game_path(game_install_path: &str) -> Result<(), String> {
     let path_to_titanfall2_exe = format!("{game_install_path}/Titanfall2.exe");
@@ -519,33 +480,4 @@ pub fn check_is_valid_game_path(game_install_path: &str) -> Result<(), String> {
 #[tauri::command]
 fn get_host_os() -> String {
     env::consts::OS.to_string()
-}
-
-/// On Linux attempts to install NorthstarProton
-/// On Windows simply returns an error message
-#[tauri::command]
-async fn install_northstar_proton_wrapper() -> Result<(), String> {
-    #[cfg(target_os = "linux")]
-    return platform_specific::linux::install_ns_proton().map_err(|err| err.to_string());
-
-    #[cfg(target_os = "windows")]
-    Err("Not supported on Windows".to_string())
-}
-
-#[tauri::command]
-async fn uninstall_northstar_proton_wrapper() -> Result<(), String> {
-    #[cfg(target_os = "linux")]
-    return platform_specific::linux::uninstall_ns_proton();
-
-    #[cfg(target_os = "windows")]
-    Err("Not supported on Windows".to_string())
-}
-
-#[tauri::command]
-async fn get_local_northstar_proton_wrapper_version() -> Result<String, String> {
-    #[cfg(target_os = "linux")]
-    return platform_specific::linux::get_local_ns_proton_version();
-
-    #[cfg(target_os = "windows")]
-    Err("Not supported on Windows".to_string())
 }
