@@ -124,8 +124,8 @@ fn main() {
             check_is_northstar_outdated,
             verify_install_location,
             platform_specific::get_host_os,
-            install_northstar_wrapper,
-            update_northstar,
+            northstar::install::install_northstar_wrapper,
+            northstar::install::update_northstar,
             northstar::launch_northstar,
             northstar::launch_northstar_steam,
             github::release_notes::check_is_flightcore_outdated,
@@ -276,56 +276,6 @@ async fn verify_install_location(game_path: String) -> bool {
             false
         }
     }
-}
-
-/// Installs Northstar to the given path
-#[tauri::command]
-async fn install_northstar_wrapper(
-    window: tauri::Window,
-    game_install: GameInstall,
-    northstar_package_name: Option<String>,
-    version_number: Option<String>,
-) -> Result<bool, String> {
-    log::info!("Running Northstar install");
-
-    // Get Northstar package name (`Northstar` vs `NorthstarReleaseCandidate`)
-    let northstar_package_name = northstar_package_name
-        .map(|name| {
-            if name.len() <= 1 {
-                "Northstar".to_string()
-            } else {
-                name
-            }
-        })
-        .unwrap_or("Northstar".to_string());
-
-    match northstar::install::install_northstar(
-        window,
-        game_install,
-        northstar_package_name,
-        version_number,
-    )
-    .await
-    {
-        Ok(_) => Ok(true),
-        Err(err) => {
-            log::error!("{}", err);
-            Err(err)
-        }
-    }
-}
-
-/// Update Northstar install in the given path
-#[tauri::command]
-async fn update_northstar(
-    window: tauri::Window,
-    game_install: GameInstall,
-    northstar_package_name: Option<String>,
-) -> Result<bool, String> {
-    log::info!("Updating Northstar");
-
-    // Simply re-run install with up-to-date version for upate
-    install_northstar_wrapper(window, game_install, northstar_package_name, None).await
 }
 
 /// Installs the specified mod
