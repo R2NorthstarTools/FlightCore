@@ -135,7 +135,7 @@ fn main() {
             repair_and_verify::disable_all_but_core,
             util::is_debug_mode,
             github::release_notes::get_northstar_release_notes,
-            linux_checks,
+            platform_specific::linux_checks,
             mod_management::get_installed_mods_and_properties,
             install_mod_caller,
             clean_up_download_folder_caller,
@@ -192,23 +192,6 @@ fn main() {
             }
         }
     };
-}
-
-/// Returns true if linux compatible
-#[tauri::command]
-async fn linux_checks() -> Result<(), String> {
-    // Different behaviour depending on OS
-    // MacOS is missing as it is not a target
-    // in turn this means this application will not build on MacOS.
-    #[cfg(target_os = "windows")]
-    {
-        Err("Not available on Windows".to_string())
-    }
-
-    #[cfg(target_os = "linux")]
-    {
-        platform_specific::linux::linux_checks_librs()
-    }
 }
 
 /// Returns the current version number as a string
