@@ -91,7 +91,7 @@ pub async fn check_is_northstar_outdated(
     };
 
     // Release candidate version numbers are different between `mods.json` and Thunderstore
-    let version_number = crate::convert_release_candidate_number(version_number);
+    let version_number = crate::util::convert_release_candidate_number(version_number);
 
     if version_number != nmod.latest {
         log::info!("Installed Northstar version outdated");
