@@ -62,7 +62,7 @@ export const store = createStore<FlightCoreStore>({
     state(): FlightCoreStore {
         return {
             developer_mode: false,
-            game_install: {} as unknown as GameInstall,
+            game_install: {game_path: undefined, profile: undefined, install_type: "UNKNOWN"}  as unknown as GameInstall,
 
             available_profiles: [],
 
@@ -152,8 +152,15 @@ export const store = createStore<FlightCoreStore>({
                     await persistentStore.set('game-install', { value: state.game_install });
                     await persistentStore.save(); // explicit save to disk
 
+                    // We can no longer be sure if our last profile is valid, lets reset to be sure
+                    state.game_install.profile = "R2Northstar";
+
                     // Check for Northstar install
                     store.commit('checkNorthstarUpdates');
+
+                    // Since we are in a new game directory, lets see if there are any profiles
+                    store.commit('fetchProfiles');
+
                 }
                 else {
                     // Not valid Titanfall2 install
@@ -184,7 +191,7 @@ export const store = createStore<FlightCoreStore>({
             switch (state.northstar_state) {
                 // Install northstar if it wasn't detected.
                 case NorthstarState.INSTALL:
-                    let install_northstar_result = invoke("install_northstar_caller", { gameInstall: state.game_install, northstarPackageName: state.northstar_release_canal });
+                    let install_northstar_result = invoke("install_northstar_wrapper", { gameInstall: state.game_install, northstarPackageName: state.northstar_release_canal });
                     state.northstar_state = NorthstarState.INSTALLING;
 
                     await install_northstar_result.then((message) => {
@@ -201,7 +208,7 @@ export const store = createStore<FlightCoreStore>({
                 // Update northstar if it is outdated.
                 case NorthstarState.MUST_UPDATE:
                     // Updating is the same as installing, simply overwrites the existing files
-                    let reinstall_northstar_result = invoke("install_northstar_caller", { gameInstall: state.game_install, northstarPackageName: state.northstar_release_canal });
+                    let reinstall_northstar_result = invoke("install_northstar_wrapper", { gameInstall: state.game_install, northstarPackageName: state.northstar_release_canal });
                     state.northstar_state = NorthstarState.UPDATING;
 
                     await reinstall_northstar_result.then((message) => {
@@ -324,6 +331,12 @@ export const store = createStore<FlightCoreStore>({
             );
         },
         async fetchProfiles(state: FlightCoreStore) {
+            // To fetch profiles we need a valid game path
+            if (!state.game_install.game_path) {
+                return;
+            }
+
+
             await invoke("fetch_profiles", { gameInstall: state.game_install })
                 .then((message) => {
                     state.available_profiles = message as string[];
@@ -434,8 +447,6 @@ async function _initializeApp(state: any) {
         // Check installed Northstar version if found
         await _get_northstar_version_number(state);
     }
-
-    store.commit('fetchProfiles');
 
     await invoke<[number, number]>("get_server_player_count")
         .then((message) => {

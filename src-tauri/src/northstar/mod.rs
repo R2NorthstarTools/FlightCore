@@ -5,10 +5,102 @@ pub mod profile;
 
 use crate::util::check_ea_app_or_origin_running;
 use crate::{
-    constants::{CORE_MODS, TITANFALL2_STEAM_ID, VALID_NORTHSTAR_PROTON_BUILDS},
-    get_host_os, GameInstall, InstallType,
+    constants::{CORE_MODS, TITANFALL2_STEAM_ID},
+    platform_specific::get_host_os,
+    GameInstall, InstallType,
 };
+use crate::{NorthstarThunderstoreRelease, NorthstarThunderstoreReleaseWrapper};
 use anyhow::anyhow;
+
+/// Gets list of available Northstar versions from Thunderstore
+#[tauri::command]
+pub async fn get_available_northstar_versions(
+) -> Result<Vec<NorthstarThunderstoreReleaseWrapper>, ()> {
+    let northstar_package_name = "Northstar";
+    let index = thermite::api::get_package_index().unwrap().to_vec();
+    let nsmod = index
+        .iter()
+        .find(|f| f.name.to_lowercase() == northstar_package_name.to_lowercase())
+        .ok_or_else(|| panic!("Couldn't find Northstar on thunderstore???"))
+        .unwrap();
+
+    let mut releases: Vec<NorthstarThunderstoreReleaseWrapper> = vec![];
+    for (_version_string, nsmod_version_obj) in nsmod.versions.iter() {
+        let current_elem = NorthstarThunderstoreRelease {
+            package: nsmod_version_obj.name.clone(),
+            version: nsmod_version_obj.version.clone(),
+        };
+        let current_elem_wrapped = NorthstarThunderstoreReleaseWrapper {
+            label: format!(
+                "{} v{}",
+                nsmod_version_obj.name.clone(),
+                nsmod_version_obj.version.clone()
+            ),
+            value: current_elem,
+        };
+
+        releases.push(current_elem_wrapped);
+    }
+
+    releases.sort_by(|a, b| {
+        // Parse version number
+        let a_ver = semver::Version::parse(&a.value.version).unwrap();
+        let b_ver = semver::Version::parse(&b.value.version).unwrap();
+        b_ver.partial_cmp(&a_ver).unwrap() // Sort newest first
+    });
+
+    Ok(releases)
+}
+
+/// Checks if installed Northstar version is up-to-date
+/// false -> Northstar install is up-to-date
+/// true  -> Northstar install is outdated
+#[tauri::command]
+pub async fn check_is_northstar_outdated(
+    game_install: GameInstall,
+    northstar_package_name: Option<String>,
+) -> Result<bool, String> {
+    let northstar_package_name = match northstar_package_name {
+        Some(northstar_package_name) => {
+            if northstar_package_name.len() <= 1 {
+                "Northstar".to_string()
+            } else {
+                northstar_package_name
+            }
+        }
+        None => "Northstar".to_string(),
+    };
+
+    let index = match thermite::api::get_package_index() {
+        Ok(res) => res.to_vec(),
+        Err(err) => return Err(format!("Couldn't check if Northstar up-to-date: {err}")),
+    };
+    let nmod = index
+        .iter()
+        .find(|f| f.name.to_lowercase() == northstar_package_name.to_lowercase())
+        .expect("Couldn't find Northstar on thunderstore???");
+    // .ok_or_else(|| anyhow!("Couldn't find Northstar on thunderstore???"))?;
+
+    let version_number = match get_northstar_version_number(game_install) {
+        Ok(version_number) => version_number,
+        Err(err) => {
+            log::warn!("{}", err);
+            // If we fail to get new version just assume we are up-to-date
+            return Err(err);
+        }
+    };
+
+    // Release candidate version numbers are different between `mods.json` and Thunderstore
+    let version_number = crate::util::convert_release_candidate_number(version_number);
+
+    if version_number != nmod.latest {
+        log::info!("Installed Northstar version outdated");
+        Ok(true)
+    } else {
+        log::info!("Installed Northstar version up-to-date");
+        Ok(false)
+    }
+}
 
 /// Check version number of a mod
 pub fn check_mod_version_number(path_to_mod_folder: &str) -> Result<String, anyhow::Error> {
@@ -158,15 +250,7 @@ pub fn launch_northstar_steam(
             if get_host_os() != "windows" {
                 let titanfall2_steamid: u32 = TITANFALL2_STEAM_ID.parse().unwrap();
                 match steamdir.compat_tool(&titanfall2_steamid) {
-                    Some(compat) => {
-                        if !VALID_NORTHSTAR_PROTON_BUILDS
-                            .contains(&compat.clone().name.unwrap().as_str())
-                        {
-                            return Err(
-                                "Titanfall2 was not configured to use a valid version of NorthstarProton or GE-Proton".to_string(),
-                            );
-                        }
-                    }
+                    Some(_) => {}
                     None => {
                         return Err(
                             "Titanfall2 was not configured to use a compatibility tool".to_string()

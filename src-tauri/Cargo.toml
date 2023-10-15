@@ -1,11 +1,11 @@
 [package]
-name = "app"
-version = "2.10.3"
-description = "A Tauri App"
-authors = ["you"]
-license = ""
-repository = ""
-default-run = "app"
+name = "flightcore"
+version = "2.13.0"
+description = "Mod-manager for Northstar"
+authors = ["https://github.com/R2NorthstarTools/FlightCore/graphs/contributors"]
+license = "MIT"
+repository = "https://github.com/R2NorthstarTools/FlightCore"
+default-run = "flightcore"
 edition = "2021"
 rust-version = "1.66"
 
@@ -18,12 +18,12 @@ rust-version = "1.66"
 debug = 1
 
 [build-dependencies]
-tauri-build = { version = "1.4", features = [] }
+tauri-build = { version = "1.5", features = [] }
 
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.4", features = ["api-all", "dialog", "updater"] }
+tauri = { version = "1.5", features = ["api-all", "dialog", "updater"] }
 tokio = { version = "1", features = ["full"] }
 # Sentry (crash) logging
 sentry = "0.31"
@@ -37,7 +37,7 @@ libthermite = { version = "0.7.0-beta", features = ["proton"] }
 # zip stuff
 zip = "0.6.2"
 # Regex
-regex = "1.9"
+regex = "1.10"
 # Read out running application process names
 sysinfo = "0.29.10"
 # HTTP requests

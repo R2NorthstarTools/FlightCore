@@ -89,6 +89,30 @@ impl std::ops::Deref for TempFile {
     }
 }
 
+/// Installs the specified mod
+#[tauri::command]
+pub async fn install_mod_wrapper(
+    game_install: GameInstall,
+    thunderstore_mod_string: String,
+) -> Result<(), String> {
+    match fc_download_mod_and_install(&game_install, &thunderstore_mod_string).await {
+        Ok(()) => (),
+        Err(err) => {
+            log::warn!("{err}");
+            return Err(err);
+        }
+    };
+    match crate::repair_and_verify::clean_up_download_folder(&game_install, false) {
+        Ok(()) => Ok(()),
+        Err(err) => {
+            log::info!("Failed to delete download folder due to {}", err);
+            // Failure to delete download folder is not an error in mod install
+            // As such ignore. User can still force delete if need be
+            Ok(())
+        }
+    }
+}
+
 /// Returns a serde json object of the parsed `enabledmods.json` file
 pub fn get_enabled_mods(game_install: &GameInstall) -> Result<serde_json::value::Value, String> {
     let enabledmods_json_path = format!(

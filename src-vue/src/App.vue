@@ -34,9 +34,6 @@ export default {
     this.$root!.$i18n.locale = lang;
   },
   methods: {
-    async toggleMaximize() {
-      await appWindow.toggleMaximize();
-    },
     minimize() {
       appWindow.minimize()
     },
@@ -77,7 +74,6 @@ export default {
       <!-- Window controls -->
       <div id="fc_window__controls">
         <el-button color="white" icon="SemiSelect" @click="minimize" circle />
-        <el-button color="white" icon="FullScreen" @click="toggleMaximize" circle />
         <el-button color="white" icon="CloseBold" @click="close" circle />
       </div>
     </nav>

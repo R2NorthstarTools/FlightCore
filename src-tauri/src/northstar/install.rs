@@ -29,6 +29,49 @@ struct InstallProgress {
     state: InstallState,
 }
 
+/// Installs Northstar to the given path
+#[tauri::command]
+pub async fn install_northstar_wrapper(
+    window: tauri::Window,
+    game_install: GameInstall,
+    northstar_package_name: Option<String>,
+    version_number: Option<String>,
+) -> Result<bool, String> {
+    log::info!("Running Northstar install");
+
+    // Get Northstar package name (`Northstar` vs `NorthstarReleaseCandidate`)
+    let northstar_package_name = northstar_package_name
+        .map(|name| {
+            if name.len() <= 1 {
+                "Northstar".to_string()
+            } else {
+                name
+            }
+        })
+        .unwrap_or("Northstar".to_string());
+
+    match install_northstar(window, game_install, northstar_package_name, version_number).await {
+        Ok(_) => Ok(true),
+        Err(err) => {
+            log::error!("{}", err);
+            Err(err)
+        }
+    }
+}
+
+/// Update Northstar install in the given path
+#[tauri::command]
+pub async fn update_northstar(
+    window: tauri::Window,
+    game_install: GameInstall,
+    northstar_package_name: Option<String>,
+) -> Result<bool, String> {
+    log::info!("Updating Northstar");
+
+    // Simply re-run install with up-to-date version for upate
+    install_northstar_wrapper(window, game_install, northstar_package_name, None).await
+}
+
 /// Copied from `papa` source code and modified
 ///Install N* from the provided mod
 ///
