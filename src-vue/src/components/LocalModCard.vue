@@ -1,6 +1,7 @@
 <template>
-    <el-card shadow="hover">
-        <el-switch style="--el-switch-on-color: #13ce66; --el-switch-off-color: #8957e5" v-model="mod.enabled"
+    <el-card shadow="hover" class="local_mods_Item">
+        {{ mod.name }}
+        <el-switch style="padding-left: 5px; padding-right: 5px; --el-switch-on-color: #13ce66; --el-switch-off-color: #8957e5" v-model="mod.enabled"
                     :before-change="() => updateWhichModsEnabled(mod)" :loading="global_load_indicator" />
         <el-popconfirm
             :title="$t('mods.local.delete_confirm')"
@@ -14,7 +15,6 @@
                 </el-button>
             </template>
         </el-popconfirm>
-        {{ mod.name }}
         <span v-if="mod.version != null">(v{{ mod.version }})</span>
         <img
             v-if="mod.thunderstore_mod_string != null"
@@ -86,5 +86,9 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
+    .local_mods_item {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
 </style>
