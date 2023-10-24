@@ -47,9 +47,6 @@ body {
     margin: 30px 15px;
 }
 
-.el-popper {
-    width: 200px !important;
-}
 .fc_popper {
     width: auto !important;
 }

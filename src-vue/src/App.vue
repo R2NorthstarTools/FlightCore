@@ -197,7 +197,6 @@ export default {
 }
 
 sup {
-  transform: translate(-10px, 5px) !important;
   border: none !important;
 }
 

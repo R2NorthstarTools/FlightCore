@@ -74,4 +74,8 @@ export default defineComponent({
 .el-alert {
     margin: 5px 10px 5px 5px;
 }
+
+.el-badge:deep(sup) {
+    transform: translate(-10px, 5px) !important;
+}
 </style>
