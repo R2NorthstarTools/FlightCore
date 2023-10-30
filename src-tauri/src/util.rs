@@ -234,3 +234,36 @@ pub fn convert_release_candidate_number(version_number: String) -> String {
     // Doesn't work for larger numbers, e.g. `v1.9.2-rc11` -> `v1.9.2011` (should be `v1.9.211`)
     version_number.replace("-rc", "0").replace(".00", ".")
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_basic_release_candidate_number_conversion() {
+        let input = "v1.2.3-rc4".to_string();
+        let output = convert_release_candidate_number(input);
+        let expected_output = "v1.2.304";
+        assert_eq!(output, expected_output);
+    }
+
+    #[test]
+    fn test_leading_zero_release_candidate_number_conversion() {
+        let input = "v1.2.0-rc3".to_string();
+        let output = convert_release_candidate_number(input);
+        let expected_output = "v1.2.3";
+        assert_eq!(output, expected_output);
+    }
+
+    #[test]
+    fn test_double_patch_digit_release_candidate_number_conversion() {
+        // let input = "v1.2.34-rc5".to_string();
+        // let output = convert_release_candidate_number(input);
+        // let expected_output = "v1.2.3405";
+        let input = "v1.19.10-rc1".to_string();
+        let output = convert_release_candidate_number(input);
+        let expected_output = "v1.19.1001";
+
+        assert_eq!(output, expected_output);
+    }
+}
