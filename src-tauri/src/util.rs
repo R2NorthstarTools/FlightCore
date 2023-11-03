@@ -240,6 +240,14 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_not_release_candidate() {
+        let input = "v1.2.3".to_string();
+        let output = convert_release_candidate_number(input.clone());
+        let expected_output = input;
+        assert_eq!(output, expected_output);
+    }
+
+    #[test]
     fn test_basic_release_candidate_number_conversion() {
         let input = "v1.2.3-rc4".to_string();
         let output = convert_release_candidate_number(input);
