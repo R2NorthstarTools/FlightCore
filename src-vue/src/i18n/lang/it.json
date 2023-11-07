@@ -8,7 +8,8 @@
         "extracting": "Estraendo",
         "done": "Fatto",
         "success": "Successo",
-        "informationShort": "Info"
+        "informationShort": "Info",
+        "confirm": "Conferma"
     },
     "play": {
         "unknown_version": "Versione sconosciuta",
@@ -99,6 +100,16 @@
         "flightcore_outdated": {
             "title": "FlightCore fuori data!",
             "text": "Per favore aggiorna FlightCore.\nVersione in uso {oldVersion} fuori data.\nLa più recente è {newVersion}!"
+        },
+        "no_new": {
+            "text": "Niente da vedere qui!",
+            "title": "Aggiornato"
+        },
+        "profile": {
+            "invalid": {
+                "text": "Il profilo a cui hai provato ad accedere non è più valido.",
+                "title": "Profilo non valido"
+            }
         }
     },
     "settings": {
@@ -130,9 +141,25 @@
                 "delete_persistent_store": "Elimina lo spazio d'archiviazione persistente di FlightCore",
                 "reinstall_title": "Reinstallando Northstar forzatamente",
                 "reinstall_text": "Attendere per favore",
-                "reinstall_success": "Northstar reinstallato con successo"
+                "reinstall_success": "Northstar reinstallato con successo",
+                "kill_northstar_process": "Ferma il processo Northstar/Titanfall2 in esecuzione",
+                "disable_modsettings_success": "ModSettings disabilitata",
+                "disable_modsettings": "Disabilita la mod ModSettings"
             }
-        }
+        },
+        "profile": {
+            "active": "Profilo attivo",
+            "dialog": {
+                "clone": "Clona",
+                "delete": "Elimina",
+                "delete_confirm": "Sei sicuro di voler eliminare questo profilo?",
+                "title": "Profili"
+            },
+            "edit": "Modifica profilo"
+        },
+        "show_deprecated_mods": "Mostra mod di Thunderstore deprecate",
+        "show_deprecated_mods_desc2": "Fai attenzione, alcune mod di solito sono deprecate per un buon motivo.",
+        "show_deprecated_mods_desc1": "Permette di vedere le mod deprecate nella collezione online."
     },
     "channels": {
         "release": {
