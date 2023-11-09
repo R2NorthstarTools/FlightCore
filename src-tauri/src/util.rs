@@ -308,9 +308,9 @@ mod tests {
 
     #[test]
     fn test_double_digit_release_candidate_number_conversion() {
-        let input = "v1.2.3-rc45".to_string();
+        let input = "1.2.3-rc45".to_string();
         let output = convert_release_candidate_number(input);
-        let expected_output = "v1.2.345";
+        let expected_output = "1.2.345";
 
         assert_eq!(output, expected_output);
     }
