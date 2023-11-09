@@ -229,6 +229,13 @@ pub fn move_dir_all(
 /// Helps with converting release candidate numbers which are different on Thunderstore
 /// due to restrictions imposed by the platform
 pub fn convert_release_candidate_number(version_number: String) -> String {
+    let release_candidate_suffix = "-rc";
+
+    if !version_number.contains(release_candidate_suffix) {
+        // Not an release-candidate version number, nothing to do, return early
+        return version_number;
+    }
+
     // This simply converts `-rc` to `0`
     // Works as intended for RCs < 10, e.g.  `v1.9.2-rc1`  -> `v1.9.201`
     // Doesn't work for larger numbers, e.g. `v1.9.2-rc11` -> `v1.9.2011` (should be `v1.9.211`)
