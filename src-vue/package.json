@@ -10,11 +10,11 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.0.9",
-    "element-plus": "^2.4.1",
-    "marked": "^9.1.2",
+    "element-plus": "^2.4.2",
+    "marked": "^9.1.5",
     "tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store#9bd993aa67766596638bbfd91e79a1bf8f632014",
-    "vue": "^3.3.6",
-    "vue-i18n": "^9.5.0",
+    "vue": "^3.3.8",
+    "vue-i18n": "^9.6.5",
     "vue-router": "^4.2.5",
     "vuex": "^4.0.2"
   },
@@ -23,6 +23,6 @@
     "@vitejs/plugin-vue": "^3.1.0",
     "typescript": "^5.2.2",
     "vite": "^3.1.0",
-    "vue-tsc": "^1.8.20"
+    "vue-tsc": "^1.8.22"
   }
 }
