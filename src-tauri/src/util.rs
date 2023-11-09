@@ -272,7 +272,7 @@ mod tests {
 
     #[test]
     fn test_not_release_candidate() {
-        let input = "v1.2.3".to_string();
+        let input = "1.2.3".to_string();
         let output = convert_release_candidate_number(input.clone());
         let expected_output = input;
         assert_eq!(output, expected_output);
@@ -280,17 +280,17 @@ mod tests {
 
     #[test]
     fn test_basic_release_candidate_number_conversion() {
-        let input = "v1.2.3-rc4".to_string();
+        let input = "1.2.3-rc4".to_string();
         let output = convert_release_candidate_number(input);
-        let expected_output = "v1.2.304";
+        let expected_output = "1.2.304";
         assert_eq!(output, expected_output);
     }
 
     #[test]
     fn test_leading_zero_release_candidate_number_conversion() {
-        let input = "v1.2.0-rc3".to_string();
+        let input = "1.2.0-rc3".to_string();
         let output = convert_release_candidate_number(input);
-        let expected_output = "v1.2.3";
+        let expected_output = "1.2.3";
         assert_eq!(output, expected_output);
     }
 
@@ -299,9 +299,9 @@ mod tests {
         // let input = "v1.2.34-rc5".to_string();
         // let output = convert_release_candidate_number(input);
         // let expected_output = "v1.2.3405";
-        let input = "v1.19.10-rc1".to_string();
+        let input = "1.19.10-rc1".to_string();
         let output = convert_release_candidate_number(input);
-        let expected_output = "v1.19.1001";
+        let expected_output = "1.19.1001";
 
         assert_eq!(output, expected_output);
     }
