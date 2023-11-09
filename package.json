@@ -1,8 +1,7 @@
 {
   "name": "flightcore",
   "scripts": {
-    "tauri": "tauri",
-    "setup": "npm i && cd src-vue && npm install && cd .. "
+    "tauri": "tauri"
   },
   "dependencies": {
     "@tauri-apps/api": "^1.5.1"
