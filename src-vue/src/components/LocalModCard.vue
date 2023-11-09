@@ -1,28 +1,32 @@
 <template>
-    <el-card shadow="hover" class="local_mods_Item">
-        {{ mod.name }}
-        <el-switch style="padding-left: 5px; padding-right: 5px; --el-switch-on-color: #13ce66; --el-switch-off-color: #8957e5" v-model="mod.enabled"
-                    :before-change="() => updateWhichModsEnabled(mod)" :loading="global_load_indicator" />
-        <el-popconfirm
-            :title="$t('mods.local.delete_confirm')"
-            :confirm-button-text="$t('generic.yes')"
-            :cancel-button-text="$t('generic.no')"
-            @confirm="deleteMod(mod)"
-        >
-            <template #reference>
-                <el-button type="danger">
-                    {{ $t('mods.local.delete') }}
-                </el-button>
-            </template>
-        </el-popconfirm>
-        <span v-if="mod.version != null">(v{{ mod.version }})</span>
-        <img
-            v-if="mod.thunderstore_mod_string != null"
-            :title="$t('mods.local.part_of_ts_mod') + '\n' + mod.thunderstore_mod_string"
-            src="/src/assets/thunderstore-icon.png"
-            class="image"
-            height="16"
-        />
+    <el-card shadow="hover" :body-style="{display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'space-between'}">
+        <div style="display: flex;">
+            {{ mod.name }} <span v-if="mod.version != null">(v{{ mod.version }})</span>
+            <img
+                v-if="mod.thunderstore_mod_string != null"
+                :title="$t('mods.local.part_of_ts_mod') + '\n' + mod.thunderstore_mod_string"
+                src="/src/assets/thunderstore-icon.png"
+                class="image"
+                height="16"
+                style="margin: 0 5px;"
+            />
+        </div>
+        <div>
+            <el-switch style="padding-left: 5px; padding-right: 5px; --el-switch-on-color: #13ce66; --el-switch-off-color: #8957e5" v-model="mod.enabled"
+                        :before-change="() => updateWhichModsEnabled(mod)" :loading="global_load_indicator" />
+            <el-popconfirm
+                :title="$t('mods.local.delete_confirm')"
+                :confirm-button-text="$t('generic.yes')"
+                :cancel-button-text="$t('generic.no')"
+                @confirm="deleteMod(mod)"
+            >
+                <template #reference>
+                    <el-button type="danger">
+                        {{ $t('mods.local.delete') }}
+                    </el-button>
+                </template>
+            </el-popconfirm>
+        </div>
     </el-card>
 </template>
 
@@ -84,11 +88,3 @@ export default defineComponent({
     }
 });
 </script>
-
-<style scoped>
-    .local_mods_item {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-    }
-</style>
