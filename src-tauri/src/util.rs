@@ -236,10 +236,34 @@ pub fn convert_release_candidate_number(version_number: String) -> String {
         return version_number;
     }
 
-    // This simply converts `-rc` to `0`
-    // Works as intended for RCs < 10, e.g.  `v1.9.2-rc1`  -> `v1.9.201`
-    // Doesn't work for larger numbers, e.g. `v1.9.2-rc11` -> `v1.9.2011` (should be `v1.9.211`)
-    version_number.replace("-rc", "0").replace(".00", ".")
+    // Version number is guaranteed to contain `-rc`
+    let re = regex::Regex::new(r"(\d+)\.(\d+)\.(\d+)-rc(\d+)").unwrap();
+    if let Some(captures) = re.captures(&version_number) {
+        // Extract versions
+        let major_version: u32 = captures[1].parse().unwrap();
+        let minor_version: u32 = captures[2].parse().unwrap();
+        let patch_version: u32 = captures[3].parse().unwrap();
+        let release_candidate: u32 = captures[4].parse().unwrap();
+
+        // Zero pad
+        let padded_release_candidate = format!("{:02}", release_candidate);
+
+        // Combine
+        let combined_patch_version = format!("{}{}", patch_version, padded_release_candidate);
+
+        // Strip leading zeroes
+        let trimmed_combined_patch_version = combined_patch_version.trim_start_matches('0');
+
+        // Combine all
+        let version_number = format!(
+            "{}.{}.{}",
+            major_version, minor_version, trimmed_combined_patch_version
+        );
+        return version_number;
+    }
+
+    // We should never end up here
+    panic!();
 }
 
 #[cfg(test)]
