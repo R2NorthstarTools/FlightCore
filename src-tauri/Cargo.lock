@@ -3513,9 +3513,9 @@ dependencies = [
 
 [[package]]
 name = "sentry-log"
-version = "0.31.5"
+version = "0.31.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2558fc4a85326e6063711b45ce82ed6b18cdacd0732580c1567da914ac1df33e"
+checksum = "3683db529ca6e915b1cb3bd6e4a3755423dd5d19d6cdb6bf38b7a08ff1ea08fc"
 dependencies = [
  "log",
  "sentry-core",
