@@ -314,4 +314,13 @@ mod tests {
 
         assert_eq!(output, expected_output);
     }
+
+    #[test]
+    fn test_double_digit_patch_and_rc_number_conversion() {
+        let input = "1.2.34-rc56".to_string();
+        let output = convert_release_candidate_number(input);
+        let expected_output = "1.2.3456";
+
+        assert_eq!(output, expected_output);
+    }
 }
