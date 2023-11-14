@@ -64,7 +64,7 @@ jobs:
         path: |
           src-tauri/target/release/bundle/appimage/*AppImage*
           src-tauri/target/release/bundle/msi/*msi*
-          src-tauri/target/release/app.pdb
+          src-tauri/target/release/flightcore.pdb
     - name: Install sentry-cli (Windows only)
       if: matrix.platform == 'windows-latest'
       run: |
@@ -76,7 +76,7 @@ jobs:
         SENTRY_ORG: northstar-kv
         SENTRY_PROJECT: flightcore
       run: |
-        ./sentry-cli.exe upload-dif --wait src-tauri/target/release/app.pdb
+        ./sentry-cli.exe upload-dif --wait src-tauri/target/release/flightcore.pdb
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
