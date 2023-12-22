@@ -14,7 +14,9 @@ function showNotification(
     duration: number = 4500
 ): NotificationHandle {
     if (!document.hasFocus()) {
-        store.commit('addNotification', {title, text: message, type});
+        const date = new Date();
+        const titleWithDate = `${title} (${i18n.global.tc('notification.date_prefix')} ${('0' + date.getHours()).slice(-2)}:${('0' + date.getMinutes()).slice(-2)})`;
+        store.commit('addNotification', {title: titleWithDate, text: message, type});
         appWindow.requestUserAttention(UserAttentionType.Informational);
     }
 

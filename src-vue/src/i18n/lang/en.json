@@ -146,6 +146,8 @@
     },
 
     "notification": {
+        "date_prefix": "at",
+
         "no_new": {
             "title": "Up-to-date",
             "text": "Nothing to see here!"
