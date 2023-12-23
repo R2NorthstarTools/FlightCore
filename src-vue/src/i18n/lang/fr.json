@@ -131,6 +131,7 @@
         }
     },
     "notification": {
+        "date_prefix": "à",
         "no_new": {
             "title": "Vous êtes à jour",
             "text": "Rien à voir par ici !"

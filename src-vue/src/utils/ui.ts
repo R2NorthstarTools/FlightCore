@@ -1,4 +1,5 @@
 import { ElNotification, NotificationHandle } from "element-plus";
+import { appWindow, UserAttentionType } from '@tauri-apps/api/window';
 import { i18n } from "../main";
 import { store } from "../plugins/store";
 
@@ -13,7 +14,10 @@ function showNotification(
     duration: number = 4500
 ): NotificationHandle {
     if (!document.hasFocus()) {
-        store.commit('addNotification', {title, text: message, type});
+        const date = new Date();
+        const titleWithDate = `${title} (${i18n.global.tc('notification.date_prefix')} ${('0' + date.getHours()).slice(-2)}:${('0' + date.getMinutes()).slice(-2)})`;
+        store.commit('addNotification', {title: titleWithDate, text: message, type});
+        appWindow.requestUserAttention(UserAttentionType.Informational);
     }
 
     return ElNotification({
