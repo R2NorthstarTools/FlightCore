@@ -1,7 +1,7 @@
-import {ElNotification, NotificationHandle} from "element-plus";
-import {appWindow, UserAttentionType} from '@tauri-apps/api/window';
-import {i18n} from "../main";
-import {store} from "../plugins/store";
+import { ElNotification, NotificationHandle } from "element-plus";
+import { appWindow, UserAttentionType } from '@tauri-apps/api/window';
+import { i18n } from "../main";
+import { store } from "../plugins/store";
 
 /**
  * Displays content to the user in the form of a notification appearing on screen bottom right.
