@@ -229,10 +229,41 @@ pub fn move_dir_all(
 /// Helps with converting release candidate numbers which are different on Thunderstore
 /// due to restrictions imposed by the platform
 pub fn convert_release_candidate_number(version_number: String) -> String {
-    // This simply converts `-rc` to `0`
-    // Works as intended for RCs < 10, e.g.  `v1.9.2-rc1`  -> `v1.9.201`
-    // Doesn't work for larger numbers, e.g. `v1.9.2-rc11` -> `v1.9.2011` (should be `v1.9.211`)
-    version_number.replace("-rc", "0").replace(".00", ".")
+    let release_candidate_suffix = "-rc";
+
+    if !version_number.contains(release_candidate_suffix) {
+        // Not an release-candidate version number, nothing to do, return early
+        return version_number;
+    }
+
+    // Version number is guaranteed to contain `-rc`
+    let re = regex::Regex::new(r"(\d+)\.(\d+)\.(\d+)-rc(\d+)").unwrap();
+    if let Some(captures) = re.captures(&version_number) {
+        // Extract versions
+        let major_version: u32 = captures[1].parse().unwrap();
+        let minor_version: u32 = captures[2].parse().unwrap();
+        let patch_version: u32 = captures[3].parse().unwrap();
+        let release_candidate: u32 = captures[4].parse().unwrap();
+
+        // Zero pad
+        let padded_release_candidate = format!("{:02}", release_candidate);
+
+        // Combine
+        let combined_patch_version = format!("{}{}", patch_version, padded_release_candidate);
+
+        // Strip leading zeroes
+        let trimmed_combined_patch_version = combined_patch_version.trim_start_matches('0');
+
+        // Combine all
+        let version_number = format!(
+            "{}.{}.{}",
+            major_version, minor_version, trimmed_combined_patch_version
+        );
+        return version_number;
+    }
+
+    // We should never end up here
+    panic!();
 }
 
 #[cfg(test)]
@@ -240,18 +271,26 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_not_release_candidate() {
+        let input = "1.2.3".to_string();
+        let output = convert_release_candidate_number(input.clone());
+        let expected_output = input;
+        assert_eq!(output, expected_output);
+    }
+
+    #[test]
     fn test_basic_release_candidate_number_conversion() {
-        let input = "v1.2.3-rc4".to_string();
+        let input = "1.2.3-rc4".to_string();
         let output = convert_release_candidate_number(input);
-        let expected_output = "v1.2.304";
+        let expected_output = "1.2.304";
         assert_eq!(output, expected_output);
     }
 
     #[test]
     fn test_leading_zero_release_candidate_number_conversion() {
-        let input = "v1.2.0-rc3".to_string();
+        let input = "1.2.0-rc3".to_string();
         let output = convert_release_candidate_number(input);
-        let expected_output = "v1.2.3";
+        let expected_output = "1.2.3";
         assert_eq!(output, expected_output);
     }
 
@@ -260,9 +299,27 @@ mod tests {
         // let input = "v1.2.34-rc5".to_string();
         // let output = convert_release_candidate_number(input);
         // let expected_output = "v1.2.3405";
-        let input = "v1.19.10-rc1".to_string();
+        let input = "1.19.10-rc1".to_string();
         let output = convert_release_candidate_number(input);
-        let expected_output = "v1.19.1001";
+        let expected_output = "1.19.1001";
+
+        assert_eq!(output, expected_output);
+    }
+
+    #[test]
+    fn test_double_digit_release_candidate_number_conversion() {
+        let input = "1.2.3-rc45".to_string();
+        let output = convert_release_candidate_number(input);
+        let expected_output = "1.2.345";
+
+        assert_eq!(output, expected_output);
+    }
+
+    #[test]
+    fn test_double_digit_patch_and_rc_number_conversion() {
+        let input = "1.2.34-rc56".to_string();
+        let output = convert_release_candidate_number(input);
+        let expected_output = "1.2.3456";
 
         assert_eq!(output, expected_output);
     }
