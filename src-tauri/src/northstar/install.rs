@@ -195,7 +195,7 @@ async fn do_install(
         let mod_json_path = std::path::Path::new(&mod_json_path);
 
         if !mod_json_path.exists() {
-            log::error!("Missing mod.json, this shouldn't happen");
+            log::error!("Missing mod.json for {path_to_delete_string} this shouldn't happen");
             continue;
         }
 
