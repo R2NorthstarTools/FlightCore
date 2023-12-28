@@ -163,7 +163,6 @@ async fn do_install(
     log::info!("Installing Northstar...");
 
     // Delete previous version here
-    log::info!("{}", game_install.profile);
     for core_mod in CORE_MODS {
         let path_to_delete_string = format!(
             "{}/{}/mods/{}/",
