@@ -163,7 +163,6 @@ async fn do_install(
     log::info!("Installing Northstar...");
 
     // Delete previous version here
-    log::info!("=========================================");
     log::info!("{}", game_install.profile);
     for core_mod in CORE_MODS {
         let path_to_delete_string = format!(
@@ -209,7 +208,6 @@ async fn do_install(
             }
         };
     }
-    log::info!("=========================================");
 
     for entry in std::fs::read_dir(extract_directory).unwrap() {
         let entry = entry.unwrap();
