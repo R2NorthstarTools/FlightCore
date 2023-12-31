@@ -15,7 +15,8 @@
         "extracting": "Extrayendo",
         "done": "Listo",
         "success": "Éxito",
-        "downloading": "Descargando"
+        "downloading": "Descargando",
+        "confirm": "Confirmar"
     },
     "play": {
         "button": {
@@ -101,7 +102,10 @@
             "active": "Perfil activo",
             "edit": "Editar perfiles",
             "dialog": {
-                "title": "Perfiles"
+                "title": "Perfiles",
+                "delete_confirm": "Eliminar Perfil?",
+                "delete": "Eliminar",
+                "clone": "Duplicar"
             }
         },
         "repair": {
@@ -150,7 +154,12 @@
         "flightcore_outdated": {
             "title": "FlightCore desactualizado!",
             "text": "Por favor actualize FlightCore.\nEsta versión esta desactualizada {oldVersion}\nLa versión mas nueva es {newVersion}!"
-        }
+        },
+        "no_new": {
+            "title": "Al día",
+            "text": "Nada que ver aquí!"
+        },
+        "date_prefix": "en"
     },
     "channels": {
         "release": {
