@@ -71,6 +71,10 @@ import { LaunchArgument } from '../utils/LaunchArgument';
 import { NorthstarState } from '../utils/NorthstarState';
 import {invoke} from "@tauri-apps/api";
 import { showErrorNotification } from '../utils/ui';
+import { Store } from 'tauri-plugin-store-api';
+
+const persistentStore = new Store('flight-core-settings.json');
+const argumentsStoreKey = 'launch_arguments';
 
 export default defineComponent({
     name: 'LaunchArgumentsSelector',
@@ -81,7 +85,6 @@ export default defineComponent({
         },
         displayLanguageSelector(): boolean {
             const langArgPrefix = '-language ';
-            console.log(this.arguments);
             return this.arguments
                 .map(arg => arg.argumentName)
                 .filter(name => name.substring(0, langArgPrefix.length) === langArgPrefix)
@@ -161,13 +164,15 @@ export default defineComponent({
                 .filter((value: LaunchArgument, index: number) => {
                     return this.values[index];
                 })
-                .map((value: LaunchArgument) => value.argumentName)
-
-            invoke<string[]>("set_launch_arguments", {
-                gamePath: this.$store.state.game_install.game_path, arguments: newArgs
-            }).catch((err: any) => {
-                showErrorNotification(err);
-            });
+                .map((value: LaunchArgument) => value.argumentName);
+            
+            persistentStore.set(argumentsStoreKey, newArgs)
+                .then(() => {
+                    console.log("Launch arguments updated.");
+                })
+                .catch((err: any) => {
+                    showErrorNotification(err);
+                });
         },
         showInput() {
             this.inputVisible = true;
@@ -187,8 +192,13 @@ export default defineComponent({
     async mounted() {
         this.values = this.arguments.map(a => false);
 
+        const fileArgs: string[] | null = await persistentStore.get(argumentsStoreKey);
+        if (fileArgs === null) {
+            console.log('No local launch arguments to load, exiting.');
+            return;
+        }
+
         // Only add to local arguments those who are not in official arguments array
-        const fileArgs = await invoke<string[]>("get_launch_arguments", { gamePath: this.$store.state.game_install.game_path});
         this.localCustomArgs = fileArgs
             .filter(arg => this.officialArguments.map(oArg => oArg.argumentName).indexOf(arg) === -1)
             .map(arg => new LaunchArgument(arg));
