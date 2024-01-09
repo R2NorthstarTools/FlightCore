@@ -1,7 +1,8 @@
 use crate::github::release_notes::fetch_github_releases_api;
 
-use crate::check_is_valid_game_path;
 use crate::constants::{APP_USER_AGENT, PULLS_API_ENDPOINT_LAUNCHER, PULLS_API_ENDPOINT_MODS};
+use crate::repair_and_verify::check_is_valid_game_path;
+use crate::GameInstall;
 use anyhow::anyhow;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
@@ -231,10 +232,10 @@ fn add_batch_file(game_install_path: &str) {
 #[tauri::command]
 pub async fn apply_launcher_pr(
     pull_request: PullsApiResponseElement,
-    game_install_path: &str,
+    game_install: GameInstall,
 ) -> Result<(), String> {
     // Exit early if wrong game path
-    check_is_valid_game_path(game_install_path)?;
+    check_is_valid_game_path(&game_install.game_path)?;
 
     // get download link
     let download_url = match get_launcher_download_link(pull_request.head.sha.clone()).await {
@@ -253,8 +254,8 @@ pub async fn apply_launcher_pr(
     };
 
     let extract_directory = format!(
-        "{}/___flightcore-temp-download-dir/launcher-pr-{}",
-        game_install_path, pull_request.number
+        "{}/___flightcore-temp/download-dir/launcher-pr-{}",
+        game_install.game_path, pull_request.number
     );
     match std::fs::create_dir_all(extract_directory.clone()) {
         Ok(_) => (),
@@ -281,7 +282,7 @@ pub async fn apply_launcher_pr(
     let files_to_copy = vec!["NorthstarLauncher.exe", "Northstar.dll"];
     for file_name in files_to_copy {
         let source_file_path = format!("{}/{}", extract_directory, file_name);
-        let destination_file_path = format!("{}/{}", game_install_path, file_name);
+        let destination_file_path = format!("{}/{}", game_install.game_path, file_name);
         match std::fs::copy(source_file_path, destination_file_path) {
             Ok(_result) => (),
             Err(err) => {
@@ -312,10 +313,10 @@ pub async fn apply_launcher_pr(
 #[tauri::command]
 pub async fn apply_mods_pr(
     pull_request: PullsApiResponseElement,
-    game_install_path: &str,
+    game_install: GameInstall,
 ) -> Result<(), String> {
     // Exit early if wrong game path
-    check_is_valid_game_path(game_install_path)?;
+    check_is_valid_game_path(&game_install.game_path)?;
 
     let download_url = match get_mods_download_link(pull_request) {
         Ok(url) => url,
@@ -327,7 +328,10 @@ pub async fn apply_mods_pr(
         Err(err) => return Err(err.to_string()),
     };
 
-    let profile_folder = format!("{}/R2Northstar-PR-test-managed-folder", game_install_path);
+    let profile_folder = format!(
+        "{}/R2Northstar-PR-test-managed-folder",
+        game_install.game_path
+    );
 
     // Delete previously managed folder
     if std::fs::remove_dir_all(profile_folder.clone()).is_err() {
@@ -352,7 +356,7 @@ pub async fn apply_mods_pr(
         }
     };
     // Add batch file to launch right profile
-    add_batch_file(game_install_path);
+    add_batch_file(&game_install.game_path);
 
     log::info!("All done with installing mods PR");
     Ok(())

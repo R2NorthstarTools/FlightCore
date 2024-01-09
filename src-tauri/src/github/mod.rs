@@ -160,9 +160,10 @@ fn generate_flightcore_release_notes(commits: Vec<String>) -> String {
                     "feat" => "**Features:**",
                     "fix" => "**Bug Fixes:**",
                     "docs" => "**Documentation:**",
-                    "style" => "**Styles:**",
+                    "style" => "**Code style changes:**",
                     "refactor" => "**Code Refactoring:**",
                     "build" => "**Build:**",
+                    "ci" => "**Continuous integration changes:**",
                     "test" => "**Tests:**",
                     "chore" => "**Chores:**",
                     "i18n" => "**Translations:**",
@@ -180,6 +181,7 @@ fn generate_flightcore_release_notes(commits: Vec<String>) -> String {
         }
     }
 
+    let release_notes = release_notes.trim_end_matches('\n').to_string();
     release_notes
 }
 
@@ -297,8 +299,7 @@ fn turn_pr_number_into_link(input: &str, repo: &str) -> String {
     // Extract `Mods/Launcher` from repo title
     let last_line = repo
         .split('/')
-        .rev()
-        .next()
+        .next_back()
         .unwrap()
         .trim_start_matches("Northstar");
     // Extract PR number

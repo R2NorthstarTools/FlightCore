@@ -1,0 +1,27 @@
+# Configures dependabot
+
+version: 2
+updates:
+  # Root NPM package
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "chore: "
+
+  # NPM packages
+  - package-ecosystem: 'npm'
+    directory: '/src-vue'
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "chore: "
+
+  # Rust crates
+  - package-ecosystem: 'cargo'
+    directory: '/src-tauri'
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "chore: "

@@ -71,7 +71,6 @@ import { ThunderstoreModVersion } from "../../../src-tauri/bindings/Thunderstore
 import { invoke, shell } from "@tauri-apps/api";
 import { ThunderstoreModStatus } from "../utils/thunderstore/ThunderstoreModStatus";
 import { NorthstarMod } from "../../../src-tauri/bindings/NorthstarMod";
-import { GameInstall } from "../utils/GameInstall";
 import { NorthstarState } from "../utils/NorthstarState";
 import { ElMessageBox } from "element-plus";
 import { showErrorNotification, showNotification } from "../utils/ui";
@@ -217,12 +216,7 @@ export default defineComponent({
                 }
             )
                 .then(async () => { // Deletion confirmed
-                    let game_install = {
-                        game_path: this.$store.state.game_path,
-                        install_type: this.$store.state.install_type
-                    } as GameInstall;
-
-                    await invoke<string>("delete_thunderstore_mod", { gameInstall: game_install, thunderstoreModString: this.latestVersion.full_name })
+                    await invoke<string>("delete_thunderstore_mod", { gameInstall: this.$store.state.game_install, thunderstoreModString: this.latestVersion.full_name })
                         .then((message) => {
                             showNotification(this.$t('mods.card.remove_success', { modName: mod.name }), message);
                         })
@@ -239,11 +233,6 @@ export default defineComponent({
         },
 
         async installMod(mod: ThunderstoreMod) {
-            let game_install = {
-                game_path: this.$store.state.game_path,
-                install_type: this.$store.state.install_type
-            } as GameInstall;
-
             // set internal state according to current installation state
             if (this.modStatus === ThunderstoreModStatus.OUTDATED) {
                 this.isBeingUpdated = true;
@@ -254,7 +243,7 @@ export default defineComponent({
             // Capture translation method in a context, so it can be used outside Vue component context.
             // (see https://github.com/R2NorthstarTools/FlightCore/issues/384)
             (async (translate: Function) => {
-                await invoke<string>("install_mod_caller", { gameInstall: game_install, thunderstoreModString: this.latestVersion.full_name }).then((message) => {
+                await invoke<string>("install_mod_wrapper", { gameInstall: this.$store.state.game_install, thunderstoreModString: this.latestVersion.full_name }).then((message) => {
                 showNotification(translate('mods.card.install_success', { modName: mod.name }), message);
             })
                 .catch((error) => {
@@ -322,5 +311,9 @@ export default defineComponent({
 .moreBtn {
     margin-left: 10px;
     height: auto;
+}
+
+.image {
+    background-color: lightgray;
 }
 </style>

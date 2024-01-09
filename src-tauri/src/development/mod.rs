@@ -25,7 +25,7 @@ pub async fn install_git_main(game_install_path: &str) -> Result<String, String>
     };
 
     let extract_directory = format!(
-        "{}/___flightcore-temp-download-dir/launcher-pr-{}",
+        "{}/___flightcore-temp/download-dir/launcher-pr-{}",
         game_install_path, latest_commit_sha
     );
     match std::fs::create_dir_all(extract_directory.clone()) {

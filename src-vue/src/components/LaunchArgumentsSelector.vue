@@ -164,7 +164,7 @@ export default defineComponent({
                 .map((value: LaunchArgument) => value.argumentName)
 
             invoke<string[]>("set_launch_arguments", {
-                gamePath: this.$store.state.game_path, arguments: newArgs
+                gamePath: this.$store.state.game_install.game_path, arguments: newArgs
             }).catch((err: any) => {
                 showErrorNotification(err);
             });
@@ -188,7 +188,7 @@ export default defineComponent({
         this.values = this.arguments.map(a => false);
 
         // Only add to local arguments those who are not in official arguments array
-        const fileArgs = await invoke<string[]>("get_launch_arguments", { gamePath: this.$store.state.game_path});
+        const fileArgs = await invoke<string[]>("get_launch_arguments", { gamePath: this.$store.state.game_install.game_path});
         this.localCustomArgs = fileArgs
             .filter(arg => this.officialArguments.map(oArg => oArg.argumentName).indexOf(arg) === -1)
             .map(arg => new LaunchArgument(arg));

@@ -1,4 +1,31 @@
 <template>
+    <el-dialog
+        v-model="showProfileDialog"
+        :title="$t('settings.profile.dialog.title')"
+        width="75%"
+    >
+        <el-table :data="availableProfiles" >
+            <el-table-column prop="name" label="Name" />
+            <el-table-column align="right">
+              <template #default="scope">
+                <el-popconfirm
+                    v-if="scope.row.name != 'R2Northstar'"
+                    :title="$t('settings.profile.dialog.delete_confirm')"
+                    :confirm-button-text="$t('generic.yes')"
+                    :cancel-button-text="$t('generic.no')"
+                    @confirm="deleteProfile(scope.row.name)"
+                >
+                    <template #reference>
+                        <el-button type="danger">
+                            {{ $t('settings.profile.dialog.delete') }}
+                        </el-button>
+                    </template>
+                </el-popconfirm>
+              </template>
+          </el-table-column>
+        </el-table>
+    </el-dialog>
+
     <div class="fc-container">
         <el-scrollbar>
             <div class="fc_settings__container">
@@ -6,7 +33,7 @@
                 <div class="fc_parameter__panel">
                     <h3>{{ $t('settings.manage_install') }}</h3>
                     <el-input
-                        v-model="$store.state.game_path"
+                        v-model="$store.state.game_install.game_path"
                         :placeholder="$t('settings.choose_folder')"
                         @click="updateGamePath"
                     >
@@ -19,6 +46,22 @@
                             </el-button>
                         </template>
                     </el-input>
+                </div>
+
+                <!-- Northstar Active Profile -->
+                <div class="fc_parameter__panel" v-if="$store.state.developer_mode">
+                    <h3>{{ $t('settings.profile.active') }}</h3>
+                    <el-dropdown trigger="click" :disabled="!availableProfiles.length">
+                        <el-button>
+                            {{ activeProfile }} <el-icon class="el-icon--right" v-if="availableProfiles.length"><arrow-down /></el-icon>
+                        </el-button>
+                        <template #dropdown>
+                            <el-dropdown-menu>
+                                <el-dropdown-item v-for="profile in $store.state.available_profiles" @click="switchProfile(profile)">{{ profile }}</el-dropdown-item>
+                                <el-dropdown-item divided @click="showProfileDialog = true">{{ $t('settings.profile.edit') }}</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </template>
+                    </el-dropdown>
                 </div>
 
                 <!-- Launch arguments selection -->
@@ -103,6 +146,7 @@ import LanguageSelector from "../components/LanguageSelector.vue";
 import LaunchArgumentsSelector from "../components/LaunchArgumentsSelector.vue";
 const persistentStore = new Store('flight-core-settings.json');
 import { open } from '@tauri-apps/api/shell';
+import { i18n } from '../main';
 
 export default defineComponent({
     name: "SettingsView",
@@ -112,7 +156,8 @@ export default defineComponent({
     },
     data() {
         return {
-            developerModeClicks: 0
+            developerModeClicks: 0,
+            showProfileDialog: false,
         }
     },
     computed: {
@@ -152,6 +197,20 @@ export default defineComponent({
                 persistentStore.set('thunderstore-mods-per-page', { value });
                 await persistentStore.save(); // explicit save to disk
             }
+        },
+        activeProfile(): String {
+            return this.$store.state.game_install.profile || "None";
+        },
+        availableProfiles(): Object[] {
+            let profiles = this.$store.state.available_profiles
+
+            // convert string array to object array so we can fill a table
+            let data = profiles.reduce(
+                (a: Object[], v: string) => [...a, {"name": v}],
+                []
+            );
+
+            return data;
         }
     },
     methods: {
@@ -178,12 +237,73 @@ export default defineComponent({
                 });
         },
         async openGameInstallFolder() {
+            // Verify the game path is actually set
+            if (!this.$store.state.game_install.game_path) {
+                showErrorNotification(
+                    i18n.global.tc('notification.game_folder.not_found.text'),
+                    i18n.global.tc('notification.game_folder.not_found.title')
+                );
+                return;
+            }
+
             // Opens the folder in default file explorer application
-            await open(`${this.$store.state.game_path}`);
-        }
+            await open(`${this.$store.state.game_install.game_path}`);
+        },
+        async switchProfile(value: string) {
+            let store = this.$store;
+            let state = store.state;
+
+            await invoke("validate_profile", { gameInstall: state.game_install, profile: value })
+                .then(async (message) => {
+                    if (!message)
+                    {
+                        // Profile is no longer valid, inform the user...
+                        showErrorNotification(
+                            i18n.global.tc('notification.profile.invalid.text'),
+                            i18n.global.tc('notification.profile.invalid.title')
+                        );
+
+                        // ...and refresh
+                        store.commit('fetchProfiles');
+                        return;
+                    }
+
+                    state.game_install.profile = value;
+
+                    // Check for Northstar updates
+                    store.commit('checkNorthstarUpdates');
+
+                    // Save change in persistent store
+                    await persistentStore.set('game-install', { value: state.game_install });
+                    await persistentStore.save(); // explicit save to disk
+                })
+                .catch((error) => {
+                    console.error(error);
+                    showErrorNotification(error);
+                });
+        },
+        async deleteProfile(profile: string) {
+            let store = this.$store;
+            await invoke("delete_profile", {
+                gameInstall: store.state.game_install,
+                profile: profile,
+            }).then(async (message) => {
+                if (profile == store.state.game_install.profile)
+                {
+                    // trying to delete the active profile, lets switch to the default profile
+                    await this.switchProfile("R2Northstar");
+                }
+                store.commit('fetchProfiles');
+                showNotification('Success');
+            }).catch((error) => {
+                console.error(error);
+                showErrorNotification(error);
+            });
+        },
     },
     mounted() {
         document.querySelector('input')!.disabled = true;
+        this.$store.commit('fetchProfiles');
     },
     unmounted() {
         if (('' + this.modsPerPage) === '') {

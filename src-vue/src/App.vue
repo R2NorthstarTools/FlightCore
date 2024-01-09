@@ -8,9 +8,11 @@ import { appWindow } from '@tauri-apps/api/window';
 import { store } from './plugins/store';
 import { Store } from 'tauri-plugin-store-api';
 import { invoke } from "@tauri-apps/api";
+import NotificationButton from "./components/NotificationButton.vue";
 
 export default {
   components: {
+      NotificationButton,
       ChangelogView,
       DeveloperView,
       PlayView,
@@ -34,9 +36,6 @@ export default {
     this.$root!.$i18n.locale = lang;
   },
   methods: {
-    async toggleMaximize() {
-      await appWindow.toggleMaximize();
-    },
     minimize() {
       appWindow.minimize()
     },
@@ -76,8 +75,8 @@ export default {
 
       <!-- Window controls -->
       <div id="fc_window__controls">
+        <NotificationButton />
         <el-button color="white" icon="SemiSelect" @click="minimize" circle />
-        <el-button color="white" icon="FullScreen" @click="toggleMaximize" circle />
         <el-button color="white" icon="CloseBold" @click="close" circle />
       </div>
     </nav>
@@ -123,7 +122,7 @@ export default {
   height: 100%;
   background-color: transparent;
   float: left;
-  width: calc(100% - 148px); /* window controls container width */
+  width: calc(100% - 168px); /* window controls container width */
 }
 
 #fc__menu_items .el-menu-item, #fc__menu_items .el-sub-menu__title {
@@ -171,7 +170,9 @@ export default {
   height: 100%;
 }
 
-#fc_window__controls > button {
+#fc_window__controls > button,
+#fc_window__controls > .el-dropdown > button,
+#fc_window__controls > .el-dropdown > .el-badge > button {
   color: white;
   font-size: 20px;
   margin: auto 5px;
@@ -180,16 +181,23 @@ export default {
   height: 100%;
 }
 
-#fc_window__controls > button:hover {
+#fc_window__controls > button:hover,
+#fc_window__controls > .el-dropdown > button:hover,
+#fc_window__controls > .el-dropdown > .el-badge > button:hover {
   color: #c6c9ce;
 }
 
-#fc_window__controls > button:active {
+#fc_window__controls > button:active,
+#fc_window__controls > .el-dropdown > button:active {
   color: #56585a;
 }
 
 #fc_window__controls > button:last-of-type {
   margin-right: 15px;
+}
+
+sup {
+  border: none !important;
 }
 
 </style>

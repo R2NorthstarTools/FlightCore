@@ -1,7 +1,31 @@
 use crate::mod_management::{get_enabled_mods, rebuild_enabled_mods_json, set_mod_enabled_status};
 /// Contains various functions to repair common issues and verifying installation
 use crate::{constants::CORE_MODS, GameInstall};
-use anyhow::anyhow;
+
+/// Checks if is valid Titanfall2 install based on certain conditions
+#[tauri::command]
+pub async fn verify_install_location(game_path: String) -> bool {
+    match check_is_valid_game_path(&game_path) {
+        Ok(()) => true,
+        Err(err) => {
+            log::warn!("{}", err);
+            false
+        }
+    }
+}
+
+/// Checks whether the provided path is a valid Titanfall2 gamepath by checking against a certain set of criteria
+pub fn check_is_valid_game_path(game_install_path: &str) -> Result<(), String> {
+    let path_to_titanfall2_exe = format!("{game_install_path}/Titanfall2.exe");
+    let is_correct_game_path = std::path::Path::new(&path_to_titanfall2_exe).exists();
+    log::info!("Titanfall2.exe exists in path? {}", is_correct_game_path);
+
+    // Exit early if wrong game path
+    if !is_correct_game_path {
+        return Err(format!("Incorrect game path \"{game_install_path}\"")); // Return error cause wrong game path
+    }
+    Ok(())
+}
 
 /// Verifies Titanfall2 game files
 #[tauri::command]
@@ -33,6 +57,18 @@ pub fn disable_all_but_core(game_install: GameInstall) -> Result<(), String> {
     Ok(())
 }
 
+/// Installs the specified mod
+#[tauri::command]
+pub async fn clean_up_download_folder_wrapper(
+    game_install: GameInstall,
+    force: bool,
+) -> Result<(), String> {
+    match clean_up_download_folder(&game_install, force) {
+        Ok(()) => Ok(()),
+        Err(err) => Err(err.to_string()),
+    }
+}
+
 /// Deletes download folder
 /// If `force` is FALSE, bails on non-empty folder
 /// If `force` is TRUE, deletes folder even if non-empty
@@ -40,33 +76,43 @@ pub fn clean_up_download_folder(
     game_install: &GameInstall,
     force: bool,
 ) -> Result<(), anyhow::Error> {
-    // Get download directory
-    let download_directory = format!(
-        "{}/___flightcore-temp-download-dir/",
-        game_install.game_path
-    );
+    const TEMPORARY_DIRECTORIES: [&str; 4] = [
+        "___flightcore-temp-download-dir",
+        "___flightcore-temp/download-dir",
+        "___flightcore-temp/extract-dir",
+        "___flightcore-temp",
+    ];
 
-    // Check if files in folder
-    let download_dir_contents = std::fs::read_dir(download_directory.clone())?;
-    // dbg!(download_dir_contents);
+    for directory in TEMPORARY_DIRECTORIES {
+        // Get download directory
+        let download_directory = format!("{}/{}/", game_install.game_path, directory);
 
-    let mut count = 0;
-    download_dir_contents.for_each(|_| count += 1);
+        // Check if files in folder
+        let download_dir_contents = match std::fs::read_dir(download_directory.clone()) {
+            Ok(contents) => contents,
+            Err(_) => continue,
+        };
+        // dbg!(download_dir_contents);
 
-    if count > 0 && !force {
-        return Err(anyhow!("Folder not empty, not deleting"));
+        let mut count = 0;
+        download_dir_contents.for_each(|_| count += 1);
+
+        if count > 0 && !force {
+            // Skip folder if not empty
+            log::warn!("Folder not empty, not deleting: {directory}");
+            continue;
+        }
+
+        // Delete folder
+        std::fs::remove_dir_all(download_directory)?;
     }
-
-    // Delete folder
-    std::fs::remove_dir_all(download_directory)?;
-
     Ok(())
 }
 
 /// Get list of Northstar logs
 #[tauri::command]
 pub fn get_log_list(game_install: GameInstall) -> Result<Vec<std::path::PathBuf>, String> {
-    let ns_log_folder = format!("{}/R2Northstar/logs", game_install.game_path);
+    let ns_log_folder = format!("{}/{}/logs", game_install.game_path, game_install.profile);
 
     // List files in logs folder
     let paths = match std::fs::read_dir(ns_log_folder) {

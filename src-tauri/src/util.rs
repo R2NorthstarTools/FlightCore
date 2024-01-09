@@ -2,7 +2,7 @@
 
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
-use sysinfo::SystemExt;
+use sysinfo::{ProcessExt, SystemExt};
 use zip::ZipArchive;
 
 use crate::constants::{APP_USER_AGENT, MASTER_SERVER_URL, SERVER_BROWSER_ENDPOINT};
@@ -24,6 +24,49 @@ pub fn force_panic() {
 #[tauri::command]
 pub async fn is_debug_mode() -> bool {
     cfg!(debug_assertions)
+}
+
+/// Returns the current version number as a string
+#[tauri::command]
+pub async fn get_flightcore_version_number() -> String {
+    let version = env!("CARGO_PKG_VERSION");
+    if cfg!(debug_assertions) {
+        // Debugging enabled
+        format!("v{} (debug mode)", version)
+    } else {
+        // Debugging disabled
+        format!("v{}", version)
+    }
+}
+
+/// Spawns repair window
+#[tauri::command]
+pub async fn open_repair_window(handle: tauri::AppHandle) -> Result<(), String> {
+    // Spawn new window
+    let repair_window = match tauri::WindowBuilder::new(
+        &handle,
+        "RepairWindow",
+        tauri::WindowUrl::App("/#/repair".into()),
+    )
+    .build()
+    {
+        Ok(res) => res,
+        Err(err) => return Err(err.to_string()),
+    };
+
+    // Set window title
+    match repair_window.set_title("FlightCore Repair Window") {
+        Ok(()) => (),
+        Err(err) => return Err(err.to_string()),
+    };
+    Ok(())
+}
+
+/// Closes all windows and exits application
+#[tauri::command]
+pub async fn close_application<R: tauri::Runtime>(app: tauri::AppHandle<R>) -> Result<(), String> {
+    app.exit(0); // Close application
+    Ok(())
 }
 
 /// Fetches `/client/servers` endpoint from master server
@@ -62,6 +105,27 @@ pub async fn get_server_player_count() -> Result<(i32, usize), String> {
     log::info!("server_count:       {}", server_count);
 
     Ok((total_player_count, server_count))
+}
+
+#[tauri::command]
+pub async fn kill_northstar() -> Result<(), String> {
+    if !check_northstar_running() {
+        return Err("Northstar is not running".to_string());
+    }
+
+    let s = sysinfo::System::new_all();
+
+    for process in s.processes_by_exact_name("Titanfall2.exe") {
+        log::info!("Killing Process {}", process.pid());
+        process.kill();
+    }
+
+    for process in s.processes_by_exact_name("NorthstarLauncher.exe") {
+        log::info!("Killing Process {}", process.pid());
+        process.kill();
+    }
+
+    Ok(())
 }
 
 /// Copied from `papa` source code and modified
@@ -121,4 +185,142 @@ pub fn check_northstar_running() -> bool {
         .is_some()
         || s.processes_by_name("Titanfall2.exe").next().is_some();
     x
+}
+
+/// Copies a folder and all its contents to a new location
+#[allow(dead_code)]
+pub fn copy_dir_all(
+    src: impl AsRef<std::path::Path>,
+    dst: impl AsRef<std::path::Path>,
+) -> std::io::Result<()> {
+    std::fs::create_dir_all(&dst)?;
+    for entry in std::fs::read_dir(src)? {
+        let entry = entry?;
+        let ty = entry.file_type()?;
+        if ty.is_dir() {
+            copy_dir_all(entry.path(), dst.as_ref().join(entry.file_name()))?;
+        } else {
+            std::fs::copy(entry.path(), dst.as_ref().join(entry.file_name()))?;
+        }
+    }
+    Ok(())
+}
+
+/// Moves a folders file structure to a new location
+/// Old folders are not removed
+pub fn move_dir_all(
+    src: impl AsRef<std::path::Path>,
+    dst: impl AsRef<std::path::Path>,
+) -> std::io::Result<()> {
+    std::fs::create_dir_all(&dst)?;
+    for entry in std::fs::read_dir(src)? {
+        let entry = entry?;
+        let ty = entry.file_type()?;
+        if ty.is_dir() {
+            move_dir_all(entry.path(), dst.as_ref().join(entry.file_name()))?;
+            std::fs::remove_dir(entry.path())?;
+        } else {
+            std::fs::rename(entry.path(), dst.as_ref().join(entry.file_name()))?;
+        }
+    }
+    Ok(())
+}
+
+/// Helps with converting release candidate numbers which are different on Thunderstore
+/// due to restrictions imposed by the platform
+pub fn convert_release_candidate_number(version_number: String) -> String {
+    let release_candidate_suffix = "-rc";
+
+    if !version_number.contains(release_candidate_suffix) {
+        // Not an release-candidate version number, nothing to do, return early
+        return version_number;
+    }
+
+    // Version number is guaranteed to contain `-rc`
+    let re = regex::Regex::new(r"(\d+)\.(\d+)\.(\d+)-rc(\d+)").unwrap();
+    if let Some(captures) = re.captures(&version_number) {
+        // Extract versions
+        let major_version: u32 = captures[1].parse().unwrap();
+        let minor_version: u32 = captures[2].parse().unwrap();
+        let patch_version: u32 = captures[3].parse().unwrap();
+        let release_candidate: u32 = captures[4].parse().unwrap();
+
+        // Zero pad
+        let padded_release_candidate = format!("{:02}", release_candidate);
+
+        // Combine
+        let combined_patch_version = format!("{}{}", patch_version, padded_release_candidate);
+
+        // Strip leading zeroes
+        let trimmed_combined_patch_version = combined_patch_version.trim_start_matches('0');
+
+        // Combine all
+        let version_number = format!(
+            "{}.{}.{}",
+            major_version, minor_version, trimmed_combined_patch_version
+        );
+        return version_number;
+    }
+
+    // We should never end up here
+    panic!();
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_not_release_candidate() {
+        let input = "1.2.3".to_string();
+        let output = convert_release_candidate_number(input.clone());
+        let expected_output = input;
+        assert_eq!(output, expected_output);
+    }
+
+    #[test]
+    fn test_basic_release_candidate_number_conversion() {
+        let input = "1.2.3-rc4".to_string();
+        let output = convert_release_candidate_number(input);
+        let expected_output = "1.2.304";
+        assert_eq!(output, expected_output);
+    }
+
+    #[test]
+    fn test_leading_zero_release_candidate_number_conversion() {
+        let input = "1.2.0-rc3".to_string();
+        let output = convert_release_candidate_number(input);
+        let expected_output = "1.2.3";
+        assert_eq!(output, expected_output);
+    }
+
+    #[test]
+    fn test_double_patch_digit_release_candidate_number_conversion() {
+        // let input = "v1.2.34-rc5".to_string();
+        // let output = convert_release_candidate_number(input);
+        // let expected_output = "v1.2.3405";
+        let input = "1.19.10-rc1".to_string();
+        let output = convert_release_candidate_number(input);
+        let expected_output = "1.19.1001";
+
+        assert_eq!(output, expected_output);
+    }
+
+    #[test]
+    fn test_double_digit_release_candidate_number_conversion() {
+        let input = "1.2.3-rc45".to_string();
+        let output = convert_release_candidate_number(input);
+        let expected_output = "1.2.345";
+
+        assert_eq!(output, expected_output);
+    }
+
+    #[test]
+    fn test_double_digit_patch_and_rc_number_conversion() {
+        let input = "1.2.34-rc56".to_string();
+        let output = convert_release_candidate_number(input);
+        let expected_output = "1.2.3456";
+
+        assert_eq!(output, expected_output);
+    }
 }

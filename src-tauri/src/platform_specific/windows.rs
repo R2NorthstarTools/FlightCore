@@ -4,7 +4,7 @@ use anyhow::{anyhow, Result};
 #[cfg(target_os = "windows")]
 use winreg::{enums::HKEY_LOCAL_MACHINE, RegKey};
 
-use crate::check_is_valid_game_path;
+use crate::repair_and_verify::check_is_valid_game_path;
 
 /// Gets Titanfall2 install location on Origin
 pub fn origin_install_location_detection() -> Result<String, anyhow::Error> {

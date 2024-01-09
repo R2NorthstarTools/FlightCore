@@ -21,7 +21,7 @@ body {
 }
 
 #fc_bg__container {
-  background: url(/src/assets/wallpaperflare.com_wallpaper.jpg) center no-repeat;
+  background: url(/src/assets/mp_colony020033.jpg) center no-repeat;
   background-size: cover;
   height: 100%;
   width: 100%;
@@ -45,4 +45,12 @@ body {
 .noModMessage {
     color: white;
     margin: 30px 15px;
+}
+
+.fc_popper {
+    width: auto !important;
+}
+
+.el-popconfirm {
+    word-break: break-word;
 }
