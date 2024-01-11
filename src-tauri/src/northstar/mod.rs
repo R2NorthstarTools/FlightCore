@@ -11,7 +11,6 @@ use crate::{
 };
 use crate::{NorthstarThunderstoreRelease, NorthstarThunderstoreReleaseWrapper};
 use anyhow::anyhow;
-pub mod launch_arguments;
 
 /// Gets list of available Northstar versions from Thunderstore
 #[tauri::command]

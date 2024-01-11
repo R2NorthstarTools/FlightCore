@@ -118,8 +118,6 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             util::force_panic,
             northstar::install::find_game_install_location,
-            northstar::launch_arguments::get_launch_arguments,
-            northstar::launch_arguments::set_launch_arguments,
             util::get_flightcore_version_number,
             northstar::get_northstar_version_number,
             northstar::check_is_northstar_outdated,
