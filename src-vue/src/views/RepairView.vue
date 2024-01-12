@@ -25,6 +25,11 @@
                 {{ $t('settings.repair.window.disable_modsettings') }}
             </el-button>
 
+            <el-button type="primary" @click="deleteRemoteMods">
+                {{ $t('settings.repair.window.delete_remote_mods') }}
+            </el-button>
+            
+
             <h2>FlightCore</h2>
 
             <el-button type="primary" @click="cleanUpDownloadFolder">
@@ -130,6 +135,15 @@ export default defineComponent({
                 .then((message) => {
                     // Just a visual indicator that it worked
                     showNotification('Success');
+                })
+                .catch((error) => {
+                    showErrorNotification(error);
+                });
+        },
+        async deleteRemoteMods() {
+            await invoke("delete_remote_mods", { gameInstall: this.$store.state.game_install })
+                .then((message) => {
+                    showNotification(this.$t('generic.success'));
                 })
                 .catch((error) => {
                     showErrorNotification(error);

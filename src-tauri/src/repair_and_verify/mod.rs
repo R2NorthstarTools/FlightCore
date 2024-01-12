@@ -136,3 +136,38 @@ pub fn get_log_list(game_install: GameInstall) -> Result<Vec<std::path::PathBuf>
         Err("No logs found".to_string())
     }
 }
+
+/// TODO
+#[tauri::command]
+pub fn delete_remote_mods(game_install: GameInstall) -> Result<(), String> {
+    // Get remote mods folder
+    let ns_remote_mod_folder = format!(
+        "{}/{}/runtime/remote/mods/",
+        game_install.game_path, game_install.profile
+    ); // TODO double check
+
+    // Safety check
+    let path_to_delete = std::path::Path::new(&ns_remote_mod_folder);
+
+    // Check if path even exists before we attempt to remove
+    if !path_to_delete.exists() {
+        log::info!(
+            "{} does not exist. Nothing to do here",
+            ns_remote_mod_folder
+        );
+        return Ok(());
+    }
+
+    if !path_to_delete.is_dir() {
+        let error_message = format!(
+            "{} exists but is a file? This should never happen",
+            ns_remote_mod_folder
+        );
+        log::error!("{}", error_message);
+        return Err(error_message);
+    }
+
+    // Delete
+    // TODO
+    Err("TODO".to_string())
+}

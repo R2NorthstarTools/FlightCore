@@ -130,6 +130,7 @@ fn main() {
             github::release_notes::check_is_flightcore_outdated,
             repair_and_verify::get_log_list,
             repair_and_verify::verify_game_files,
+            repair_and_verify::delete_remote_mods,
             mod_management::set_mod_enabled_status,
             repair_and_verify::disable_all_but_core,
             util::is_debug_mode,
