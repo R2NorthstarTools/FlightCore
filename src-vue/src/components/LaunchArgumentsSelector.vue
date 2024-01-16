@@ -167,7 +167,8 @@ export default defineComponent({
                 .map((value: LaunchArgument) => value.argumentName);
             
             persistentStore.set(argumentsStoreKey, newArgs)
-                .then(() => {
+                .then(async () => {
+                    await persistentStore.save();
                     console.log("Launch arguments updated.");
                 })
                 .catch((err: any) => {
