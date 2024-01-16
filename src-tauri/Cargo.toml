@@ -1,6 +1,6 @@
 [package]
 name = "flightcore"
-version = "2.17.0"
+version = "2.17.1"
 description = "Mod-manager for Northstar"
 authors = ["https://github.com/R2NorthstarTools/FlightCore/graphs/contributors"]
 license = "MIT"
@@ -33,7 +33,7 @@ steamlocate = "1.2"
 # Error messages
 anyhow = "1.0"
 # libthermite for Northstar/mod install handling
-libthermite = { version = "0.7.0-beta", features = ["proton"] }
+libthermite = { version = "0.7.0", features = ["proton"] }
 # zip stuff
 zip = "0.6.2"
 # Regex
