@@ -87,7 +87,7 @@ export default defineComponent({
     },
     methods: {
         async launchGame() {
-            this.$store.commit('launchGame');
+            this.$store.commit('launchGame', {});
         }
     }
 });

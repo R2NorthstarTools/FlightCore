@@ -43,6 +43,21 @@
                 Launch Northstar via Steam
             </el-button>
 
+            <br />
+            <br />
+
+            <el-input v-model="launch_args" placeholder="Launch args" clearable />
+            <el-button type="primary" @click="launchGameWithArgs">
+                Launch Northstar with args
+            </el-button>
+
+            <el-button type="primary" @click="launchGameViaSteamWithArgs">
+                Launch Northstar with args via Steam
+            </el-button>
+
+            <br />
+            <br />
+
             <el-button type="primary" @click="installLauncherGitMain">
                 Install launcher from main branch
             </el-button>
@@ -150,6 +165,7 @@ export default defineComponent({
     data() {
         return {
             mod_to_install_field_string: "",
+            launch_args: undefined,
             release_notes_text: "",
             first_tag: { label: '', value: { name: '' } },
             second_tag: { label: '', value: { name: '' } },
@@ -206,10 +222,17 @@ export default defineComponent({
                 });
         },
         async launchGameWithoutChecks() {
-            this.$store.commit('launchGame', true);
+            this.$store.commit('launchGame', {no_checks: true});
+        },
+        async launchGameWithArgs() {
+            console.log(this.launch_args);
+            this.$store.commit('launchGame', {no_checks: false, launch_args: this.launch_args});
         },
         async launchGameViaSteam() {
-            this.$store.commit('launchGameSteam', true);
+            this.$store.commit('launchGameSteam', {no_checks: true});
+        },
+        async launchGameViaSteamWithArgs() {
+            this.$store.commit('launchGameSteam', {no_checks: false, launch_args: this.launch_args});
         },
         async getInstalledMods() {
             await invoke("get_installed_mods_and_properties", { gameInstall: this.$store.state.game_install }).then((message) => {
