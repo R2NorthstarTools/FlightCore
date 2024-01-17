@@ -137,7 +137,6 @@ fn main() {
             northstar::install::find_game_install_location,
             northstar::install::install_northstar_wrapper,
             northstar::install::update_northstar,
-            northstar::launch_northstar_steam,
             northstar::launch_northstar,
             northstar::profile::delete_profile,
             northstar::profile::fetch_profiles,
