@@ -154,9 +154,15 @@ pub fn get_northstar_version_number(game_install: GameInstall) -> Result<String,
 #[tauri::command]
 pub fn launch_northstar(
     game_install: GameInstall,
+    launch_via_steam: Option<bool>,
     bypass_checks: Option<bool>,
 ) -> Result<String, String> {
     dbg!(game_install.clone());
+
+    let launch_via_steam = launch_via_steam.unwrap_or(false);
+    if launch_via_steam {
+        return launch_northstar_steam(game_install, bypass_checks);
+    }
 
     let host_os = get_host_os();
 
@@ -222,7 +228,6 @@ pub fn launch_northstar(
 }
 
 /// Prepare Northstar and Launch through Steam using the Browser Protocol
-#[tauri::command]
 pub fn launch_northstar_steam(
     game_install: GameInstall,
     _bypass_checks: Option<bool>,
