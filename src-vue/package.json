@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.0.9",
-    "element-plus": "^2.4.4",
+    "element-plus": "^2.5.1",
     "marked": "^11.1.1",
     "tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store#9bd993aa67766596638bbfd91e79a1bf8f632014",
     "vue": "^3.3.8",
