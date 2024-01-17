@@ -51,7 +51,7 @@ async-recursion = "1.0.5"
 # For parsing timestamps
 chrono = "0.4.31"
 # TypeScript bindings
-ts-rs = "7.0"
+ts-rs = "7.1"
 # const formatting
 const_format = "0.2.32"
 # Logging libraries
