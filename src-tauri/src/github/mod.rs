@@ -163,6 +163,7 @@ fn generate_flightcore_release_notes(commits: Vec<String>) -> String {
                     "style" => "**Code style changes:**",
                     "refactor" => "**Code Refactoring:**",
                     "build" => "**Build:**",
+                    "ci" => "**Continuous integration changes:**",
                     "test" => "**Tests:**",
                     "chore" => "**Chores:**",
                     "i18n" => "**Translations:**",

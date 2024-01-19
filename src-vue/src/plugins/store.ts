@@ -19,6 +19,7 @@ import { searchModule } from './modules/search';
 import { i18n } from '../main';
 import { pullRequestModule } from './modules/pull_requests';
 import { showErrorNotification, showNotification } from '../utils/ui';
+import { notificationsModule } from './modules/notifications';
 
 const persistentStore = new Store('flight-core-settings.json');
 
@@ -57,6 +58,7 @@ export const store = createStore<FlightCoreStore>({
     modules: {
         search: searchModule,
         pullrequests: pullRequestModule,
+        notifications: notificationsModule
     },
     state(): FlightCoreStore {
         return {
@@ -189,7 +191,7 @@ export const store = createStore<FlightCoreStore>({
             switch (state.northstar_state) {
                 // Install northstar if it wasn't detected.
                 case NorthstarState.INSTALL:
-                    let install_northstar_result = invoke("install_northstar_caller", { gameInstall: state.game_install, northstarPackageName: state.northstar_release_canal });
+                    let install_northstar_result = invoke("install_northstar_wrapper", { gameInstall: state.game_install, northstarPackageName: state.northstar_release_canal });
                     state.northstar_state = NorthstarState.INSTALLING;
 
                     await install_northstar_result.then((message) => {
@@ -206,7 +208,7 @@ export const store = createStore<FlightCoreStore>({
                 // Update northstar if it is outdated.
                 case NorthstarState.MUST_UPDATE:
                     // Updating is the same as installing, simply overwrites the existing files
-                    let reinstall_northstar_result = invoke("install_northstar_caller", { gameInstall: state.game_install, northstarPackageName: state.northstar_release_canal });
+                    let reinstall_northstar_result = invoke("install_northstar_wrapper", { gameInstall: state.game_install, northstarPackageName: state.northstar_release_canal });
                     state.northstar_state = NorthstarState.UPDATING;
 
                     await reinstall_northstar_result.then((message) => {
@@ -239,7 +241,7 @@ export const store = createStore<FlightCoreStore>({
             }
         },
         async launchGameSteam(state: any, no_checks = false) {
-            await invoke("launch_northstar_steam", { gameInstall: state.game_install, bypassChecks: no_checks })
+            await invoke("launch_northstar", { gameInstall: state.game_install, launchViaSteam: true, bypassChecks: no_checks })
                 .then((message) => {
                     showNotification('Success');
                 })

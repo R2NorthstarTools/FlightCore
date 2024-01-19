@@ -244,7 +244,7 @@ export default defineComponent({
         },
         async installMod() {
             let mod_to_install = this.mod_to_install_field_string;
-            await invoke<string>("install_mod_caller", { gameInstall: this.$store.state.game_install, thunderstoreModString: mod_to_install }).then((message) => {
+            await invoke<string>("install_mod_wrapper", { gameInstall: this.$store.state.game_install, thunderstoreModString: mod_to_install }).then((message) => {
                 // Show user notification if mod install completed.
                 showNotification(`Installed ${mod_to_install}`, message);
             })
@@ -312,7 +312,7 @@ export default defineComponent({
                 0
             );
 
-            let install_northstar_result = invoke("install_northstar_caller", { gameInstall: this.$store.state.game_install, northstarPackageName: this.selected_ns_version.value.package, versionNumber: this.selected_ns_version.value.version });
+            let install_northstar_result = invoke("install_northstar_wrapper", { gameInstall: this.$store.state.game_install, northstarPackageName: this.selected_ns_version.value.package, versionNumber: this.selected_ns_version.value.version });
 
             await install_northstar_result
                 .then((message) => {

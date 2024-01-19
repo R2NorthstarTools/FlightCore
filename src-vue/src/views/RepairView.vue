@@ -75,7 +75,7 @@ export default defineComponent({
                 0
             );
 
-            let install_northstar_result = invoke("install_northstar_caller", { gameInstall: this.$store.state.game_install, northstarPackageName: ReleaseCanal.RELEASE });
+            let install_northstar_result = invoke("install_northstar_wrapper", { gameInstall: this.$store.state.game_install, northstarPackageName: ReleaseCanal.RELEASE });
 
             appWindow.listen<InstallProgress>(
                 'northstar-install-download-progress',
@@ -102,7 +102,7 @@ export default defineComponent({
                 });
         },
         async cleanUpDownloadFolder() {
-            await invoke("clean_up_download_folder_caller", { gameInstall: this.$store.state.game_install, force: true }).then((message) => {
+            await invoke("clean_up_download_folder_wrapper", { gameInstall: this.$store.state.game_install, force: true }).then((message) => {
                 // Show user notification if task completed.
                 showNotification(this.$t('generic.done'), this.$t('generic.done'));
             })
