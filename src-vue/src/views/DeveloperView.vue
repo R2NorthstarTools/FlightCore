@@ -136,6 +136,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { invoke } from "@tauri-apps/api";
+import { LaunchOptions } from "../utils/LaunchOptions";
 import { TagWrapper } from "../../../src-tauri/bindings/TagWrapper";
 import { NorthstarThunderstoreReleaseWrapper } from "../../../src-tauri/bindings/NorthstarThunderstoreReleaseWrapper";
 import PullRequestsSelector from "../components/PullRequestsSelector.vue";
@@ -206,7 +207,8 @@ export default defineComponent({
                 });
         },
         async launchGameWithoutChecks() {
-            this.$store.commit('launchGame', true);
+            let launch_options: LaunchOptions = { no_checks: true };
+            this.$store.commit('launchGame', launch_options);
         },
         async launchGameViaSteam() {
             this.$store.commit('launchGameSteam', true);

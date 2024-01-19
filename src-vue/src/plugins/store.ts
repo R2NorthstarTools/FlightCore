@@ -6,6 +6,7 @@ import { invoke } from "@tauri-apps/api";
 import { GameInstall } from "../utils/GameInstall";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { FlightCoreVersion } from "../../../src-tauri/bindings/FlightCoreVersion";
+import { LaunchOptions } from "../utils/LaunchOptions";
 import { NotificationHandle } from 'element-plus';
 import { NorthstarState } from '../utils/NorthstarState';
 import { appDir } from '@tauri-apps/api/path';
@@ -172,7 +173,13 @@ export const store = createStore<FlightCoreStore>({
                 }
             }
         },
-        async launchGame(state: any, no_checks = false) {
+        async launchGame(state: any, launch_options: LaunchOptions | null = null) {
+            let no_checks = false;
+
+            if (launch_options != null) {
+                no_checks = launch_options.no_checks;
+            }
+
             if (no_checks) {
                 await invoke("launch_northstar", { gameInstall: state.game_install, bypassChecks: no_checks })
                     .then((message) => {
