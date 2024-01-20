@@ -93,6 +93,7 @@ pub fn delete_profile(game_install: GameInstall, profile: String) -> Result<(), 
     }
 }
 
+/// Clones a profile by simply duplicating the folder under a new name
 #[tauri::command]
 pub fn clone_profile(
     game_install: GameInstall,
