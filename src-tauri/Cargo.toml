@@ -65,6 +65,7 @@ semver = "1.0"
 # simplified filesystem access
 glob = "0.3.1"
 dirs = "5"
+octocrab = "0.33"
 
 [target.'cfg(windows)'.dependencies]
 # Windows API stuff
