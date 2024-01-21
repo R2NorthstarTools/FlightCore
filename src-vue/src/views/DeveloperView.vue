@@ -74,10 +74,6 @@
                 Get installed mods
             </el-button>
 
-            <el-button type="primary" @click="getAvailableProfiles">
-                Get available Profiles
-            </el-button>
-
             <h3>Testing</h3>
             <pull-requests-selector />
 
@@ -225,20 +221,6 @@ export default defineComponent({
                 showNotification('Success');
             })
                 .catch((error) => {
-                    showErrorNotification(error);
-                });
-        },
-        async getAvailableProfiles() {
-            let state = this.$store.state;
-            await invoke("fetch_profiles", { gameInstall: state.game_install })
-                .then((message) => {
-                    state.available_profiles = message;
-
-                    // Just a visual indicator that it worked
-                    showNotification('Success');
-                })
-                .catch((error) => {
-                    console.error(error);
                     showErrorNotification(error);
                 });
         },
