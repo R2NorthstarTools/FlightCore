@@ -141,7 +141,6 @@ fn main() {
             northstar::profile::delete_profile,
             northstar::profile::fetch_profiles,
             northstar::profile::validate_profile,
-            northstar::profile::delete_profile,
             northstar::profile::clone_profile,
             platform_specific::get_host_os,
             platform_specific::get_local_northstar_proton_wrapper_version,
