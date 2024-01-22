@@ -5675,9 +5675,9 @@ dependencies = [
 
 [[package]]
 name = "zip-extract"
-version = "0.1.2"
+version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bb654964c003959ed64cbd0d7b329bcdcbd9690facd50c8617748d3622543972"
+checksum = "e109e5a291403b4c1e514d39f8a22d3f98d257e691a52bb1f16051bb1ffed63e"
 dependencies = [
  "log",
  "thiserror",
