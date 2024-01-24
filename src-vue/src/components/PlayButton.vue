@@ -119,6 +119,10 @@ export default defineComponent({
 </template>
 
 <style scoped>
+nav {
+    margin-right: 20px;
+}
+
 button {
     text-transform: uppercase;
     padding: 30px;
@@ -134,7 +138,6 @@ button {
 /* Release canal selector */
 .el-select {
     width: 31px;
-    margin-right: 50px;
     border-left: 1px solid rgb(176, 205, 255);
 }
 
