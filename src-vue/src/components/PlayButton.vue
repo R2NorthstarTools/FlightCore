@@ -133,12 +133,12 @@ button {
 
 /* Release canal selector */
 .el-select {
-    width: 0;
+    width: 31px;
     margin-right: 50px;
     border-left: 1px solid rgb(176, 205, 255);
 }
 
-.el-select:deep(.el-input__wrapper) {
+.el-select:deep(.el-select__wrapper) {
     padding: 0 9px 0 0;
     background-color: var(--el-color-primary);
     border: none;
