@@ -138,6 +138,7 @@ fn main() {
             northstar::install::install_northstar_wrapper,
             northstar::install::update_northstar,
             northstar::launch_northstar,
+            northstar::profile::clone_profile,
             northstar::profile::delete_profile,
             northstar::profile::fetch_profiles,
             northstar::profile::validate_profile,
