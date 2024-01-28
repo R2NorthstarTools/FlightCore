@@ -119,7 +119,9 @@
                 "title": "Profiles",
                 "delete_confirm": "Are you sure to delete this profile?",
                 "delete": "Delete",
-                "clone": "Clone"
+                "clone": "Clone",
+                "new_profile_name": "Enter the new Profile name",
+                "create_empty": "New Profile"
             }
         },
 
