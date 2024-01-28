@@ -267,7 +267,9 @@ pub fn launch_northstar_steam(
 
     match open::that(format!(
         "steam://run/{}//-profile={} --northstar/ {}",
-        TITANFALL2_STEAM_ID, game_install.profile, launch_args.join(" ")
+        TITANFALL2_STEAM_ID,
+        game_install.profile,
+        launch_args.join(" ")
     )) {
         Ok(()) => Ok("Started game".to_string()),
         Err(_err) => Err("Failed to launch Titanfall 2 via Steam".to_string()),
