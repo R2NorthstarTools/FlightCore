@@ -84,7 +84,7 @@ export default defineComponent({
                 .sort((a, b) => a.argumentName.localeCompare(b.argumentName));
         },
         displayLanguageSelector(): boolean {
-            const langArgPrefix = '-language ';
+            const langArgPrefix = '-language=';
             return this.arguments
                 .map(arg => arg.argumentName)
                 .filter(name => name.substring(0, langArgPrefix.length) === langArgPrefix)
@@ -124,7 +124,7 @@ export default defineComponent({
     }),
     methods: {
         onLanguageSelection( lang: string ) {
-            this.createNewArgument( `-language ${lang}` );
+            this.createNewArgument( `-language=${lang}` );
             this.langArgumentValue = '';
         },
         createNewArgument(arg: string) {
