@@ -241,7 +241,7 @@ export default defineComponent({
 
 .disabled_container {
     pointer-events: none;
-    filter: grayscale();
+    filter: grayscale(1);
 }
 
 .fc-tag__input {
