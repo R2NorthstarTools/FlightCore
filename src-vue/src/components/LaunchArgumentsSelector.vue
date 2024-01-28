@@ -224,6 +224,10 @@ export default defineComponent({
     transform: translateX(-8px);
 }
 
+.fc-tags_container .el-select {
+    min-width: 222px;
+}
+
 .el-tag {
     background-color: var(--el-color-primary-light-8);
     color: var(--el-color-primary);
