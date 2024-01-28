@@ -154,10 +154,12 @@ pub fn get_northstar_version_number(game_install: GameInstall) -> Result<String,
 #[tauri::command]
 pub fn launch_northstar(
     game_install: GameInstall,
+    launch_args: Vec<String>,
     launch_via_steam: Option<bool>,
     bypass_checks: Option<bool>,
 ) -> Result<String, String> {
     dbg!(game_install.clone());
+    println!("Launch arguments: {:?}", launch_args);
 
     let launch_via_steam = launch_via_steam.unwrap_or(false);
     if launch_via_steam {
