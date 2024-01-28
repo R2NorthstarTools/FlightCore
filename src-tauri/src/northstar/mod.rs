@@ -154,7 +154,7 @@ pub fn get_northstar_version_number(game_install: GameInstall) -> Result<String,
 #[tauri::command]
 pub fn launch_northstar(
     game_install: GameInstall,
-    launch_args: Vec<String>,
+    launch_args: Vec<&str>,
     launch_via_steam: Option<bool>,
     bypass_checks: Option<bool>,
 ) -> Result<String, String> {
@@ -214,10 +214,11 @@ pub fn launch_northstar(
     {
         let ns_exe_path = format!("{}/NorthstarLauncher.exe", game_install.game_path);
         let ns_profile_arg = format!("-profile={}", game_install.profile);
-        let args_str = &launch_args.join(" ");
+        let mut arguments = vec!["/C", "start", "", &ns_exe_path, &ns_profile_arg];
+        arguments.extend(launch_args);
 
         let _output = std::process::Command::new("C:\\Windows\\System32\\cmd.exe")
-            .args(["/C", "start", "", &ns_exe_path, &ns_profile_arg, args_str])
+            .args(arguments)
             .spawn()
             .expect("failed to execute process");
         return Ok("Launched game".to_string());
@@ -233,7 +234,7 @@ pub fn launch_northstar(
 /// Prepare Northstar and Launch through Steam using the Browser Protocol
 pub fn launch_northstar_steam(
     game_install: GameInstall,
-    launch_args: Vec<String>,
+    launch_args: Vec<&str>,
     _bypass_checks: Option<bool>,
 ) -> Result<String, String> {
     if !matches!(game_install.install_type, InstallType::STEAM) {
