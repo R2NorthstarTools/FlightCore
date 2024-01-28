@@ -72,9 +72,9 @@ import { NorthstarState } from '../utils/NorthstarState';
 import {invoke} from "@tauri-apps/api";
 import { showErrorNotification } from '../utils/ui';
 import { Store } from 'tauri-plugin-store-api';
+import {argumentsStoreKey} from "../main";
 
 const persistentStore = new Store('flight-core-settings.json');
-const argumentsStoreKey = 'launch_arguments';
 
 export default defineComponent({
     name: 'LaunchArgumentsSelector',
@@ -165,7 +165,7 @@ export default defineComponent({
                     return this.values[index];
                 })
                 .map((value: LaunchArgument) => value.argumentName);
-            
+
             persistentStore.set(argumentsStoreKey, newArgs)
                 .then(async () => {
                     await persistentStore.save();
