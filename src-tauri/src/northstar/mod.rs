@@ -163,7 +163,7 @@ pub fn launch_northstar(
 
     let launch_via_steam = launch_via_steam.unwrap_or(false);
     if launch_via_steam {
-        return launch_northstar_steam(game_install, bypass_checks);
+        return launch_northstar_steam(game_install, launch_args, bypass_checks);
     }
 
     let host_os = get_host_os();
@@ -178,7 +178,7 @@ pub fn launch_northstar(
             ));
         }
 
-        return launch_northstar_steam(game_install, bypass_checks);
+        return launch_northstar_steam(game_install, launch_args, bypass_checks);
     }
 
     let bypass_checks = bypass_checks.unwrap_or(false);
@@ -214,9 +214,10 @@ pub fn launch_northstar(
     {
         let ns_exe_path = format!("{}/NorthstarLauncher.exe", game_install.game_path);
         let ns_profile_arg = format!("-profile={}", game_install.profile);
+        let args_str = &launch_args.join(" ");
 
         let _output = std::process::Command::new("C:\\Windows\\System32\\cmd.exe")
-            .args(["/C", "start", "", &ns_exe_path, &ns_profile_arg])
+            .args(["/C", "start", "", &ns_exe_path, &ns_profile_arg, args_str])
             .spawn()
             .expect("failed to execute process");
         return Ok("Launched game".to_string());
@@ -232,6 +233,7 @@ pub fn launch_northstar(
 /// Prepare Northstar and Launch through Steam using the Browser Protocol
 pub fn launch_northstar_steam(
     game_install: GameInstall,
+    launch_args: Vec<String>,
     _bypass_checks: Option<bool>,
 ) -> Result<String, String> {
     if !matches!(game_install.install_type, InstallType::STEAM) {
@@ -264,8 +266,8 @@ pub fn launch_northstar_steam(
     }
 
     match open::that(format!(
-        "steam://run/{}//-profile={} --northstar/",
-        TITANFALL2_STEAM_ID, game_install.profile
+        "steam://run/{}//-profile={} --northstar/ {}",
+        TITANFALL2_STEAM_ID, game_install.profile, launch_args.join(" ")
     )) {
         Ok(()) => Ok("Started game".to_string()),
         Err(_err) => Err("Failed to launch Titanfall 2 via Steam".to_string()),
