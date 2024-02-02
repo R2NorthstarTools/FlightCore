@@ -33,7 +33,7 @@ steamlocate = "1.2"
 # Error messages
 anyhow = "1.0"
 # libthermite for Northstar/mod install handling
-libthermite = { version = "0.7.0", features = ["proton"] }
+libthermite = { version = "0.7.1", features = ["proton"] }
 # zip stuff
 zip = "0.6.2"
 # Regex
