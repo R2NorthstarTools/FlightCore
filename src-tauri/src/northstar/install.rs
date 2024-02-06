@@ -4,7 +4,7 @@ use std::time::Duration;
 use std::{cell::RefCell, time::Instant};
 use ts_rs::TS;
 
-use crate::constants::{CORE_MODS, NORTHSTAR_DEFAULT_PROFILE, NORTHSTAR_DLL, TITANFALL2_STEAM_ID};
+use crate::constants::{CORE_MODS, NORTHSTAR_DEFAULT_PROFILE, NORTHSTAR_DLL};
 use crate::{
     util::{extract, move_dir_all},
     GameInstall, InstallType,
@@ -310,8 +310,7 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
                 }
             }
 
-            let titanfall2_steamid = TITANFALL2_STEAM_ID.parse().unwrap();
-            match steamdir.app(&titanfall2_steamid) {
+            match steamdir.app(&thermite::TITANFALL2_STEAM_ID) {
                 Some(app) => {
                     // println!("{:#?}", app);
                     let game_install = GameInstall {
