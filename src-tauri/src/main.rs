@@ -65,7 +65,7 @@ fn main() {
         },
     ));
 
-    match tauri::Builder::default()
+    let tauri_builder_res = tauri::Builder::default()
         .plugin(tauri_plugin_store::Builder::default().build())
         .setup(|app| {
             let app_handle = app.app_handle();
@@ -161,8 +161,9 @@ fn main() {
             util::kill_northstar,
             util::open_repair_window,
         ])
-        .run(tauri::generate_context!())
-    {
+        .run(tauri::generate_context!());
+
+    match tauri_builder_res {
         Ok(()) => (),
         Err(err) => {
             // Failed to launch system native web view
