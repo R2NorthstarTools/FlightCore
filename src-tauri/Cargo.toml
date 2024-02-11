@@ -68,7 +68,7 @@ dirs = "5"
 
 # Interacting with GitHub
 octocrab = "0.34.0"
-
+# Library for removing markdown links
 remove-markdown-links = "1.0.0"
 
 [target.'cfg(windows)'.dependencies]
