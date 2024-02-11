@@ -265,6 +265,7 @@ pub fn convert_release_candidate_number(version_number: String) -> String {
     panic!();
 }
 
+/// Checks latest GitHub release and generates a announcement message for Discord based on it
 #[tauri::command]
 pub async fn generate_release_note_announcement() -> Result<String, String> {
     let octocrab = octocrab::instance();
@@ -280,9 +281,12 @@ pub async fn generate_release_note_announcement() -> Result<String, String> {
         .await
         .unwrap();
 
+    // Extract the URL to the GitHub release note
     let github_release_link = page.items[0].html_url.clone();
 
     let current_ns_version = "v1.24.0";
+
+    // Extract changelog and format it
     let changelog = remove_markdown_links::remove_markdown_links(
         page.items[0]
             .body
@@ -294,10 +298,13 @@ pub async fn generate_release_note_announcement() -> Result<String, String> {
             .trim(),
     );
 
+    // Strings to insert for different sections
+    // Hardcoded for now
     let general_info = "REPLACE ME";
     let modders_info = "Mod compatibility should not be impacted";
     let server_hosters_info = "REPLACE ME";
 
+    // Build announcement string
     let return_string = format!(
         r"Hello beautiful people <3
 **Northstar `{current_ns_version}` is out!**
@@ -325,6 +332,7 @@ If you do notice any bugs, please open an issue on Github or drop a message in t
 "
     );
 
+    // Return built announcement message
     Ok(return_string.to_string())
 }
 
