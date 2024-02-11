@@ -287,6 +287,7 @@ pub async fn generate_release_note_announcement() -> Result<String, String> {
     // Extract the URL to the GitHub release note
     let github_release_link = latest_release_item.html_url.clone();
 
+    // Extract release version number
     let current_ns_version = &latest_release_item.tag_name;
 
     // Extract changelog and format it
