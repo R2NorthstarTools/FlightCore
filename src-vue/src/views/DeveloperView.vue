@@ -129,6 +129,19 @@
                 :rows="5"
                 placeholder="Output"
             />
+
+            <h3>Release announcements</h3>
+
+            <el-button type="primary" @click="generateReleaseAnnouncementMessage">
+                Generate release announcement
+            </el-button>
+
+            <el-input
+                v-model="discord_release_announcement_text"
+                type="textarea"
+                :rows="5"
+                placeholder="Output"
+            />
         </el-scrollbar>
     </div>
 </template>
@@ -151,6 +164,7 @@ export default defineComponent({
         return {
             mod_to_install_field_string: "",
             release_notes_text: "",
+            discord_release_announcement_text: "",
             first_tag: { label: '', value: { name: '' } },
             second_tag: { label: '', value: { name: '' } },
             ns_release_tags: [] as TagWrapper[],
@@ -334,6 +348,16 @@ export default defineComponent({
                 })
                 .catch(() => {
                     showErrorNotification("Failed copying to clipboard");
+                });
+        },
+        async generateReleaseAnnouncementMessage() {
+            await invoke<string>("generate_release_note_announcement", { })
+                .then((message) => {
+                    this.discord_release_announcement_text = message;
+                    showNotification("Done", "Generated announcement");
+                })
+                .catch((error) => {
+                    showErrorNotification(error);
                 });
         },
     }

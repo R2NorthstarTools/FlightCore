@@ -66,6 +66,11 @@ semver = "1.0"
 glob = "0.3.1"
 dirs = "5"
 
+# Interacting with GitHub
+octocrab = "0.34.0"
+
+remove-markdown-links = "1.0.0"
+
 [target.'cfg(windows)'.dependencies]
 # Windows API stuff
 winapi = "0.3.9"

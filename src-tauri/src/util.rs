@@ -265,6 +265,71 @@ pub fn convert_release_candidate_number(version_number: String) -> String {
     panic!();
 }
 
+#[tauri::command]
+pub async fn generate_release_note_announcement() -> Result<String, String> {
+    let octocrab = octocrab::instance();
+    let page = octocrab
+        .repos("R2Northstar", "Northstar")
+        .releases()
+        .list()
+        // Optional Parameters
+        .per_page(1)
+        .page(1u32)
+        // Send the request
+        .send()
+        .await
+        .unwrap();
+
+    let github_release_link = page.items[0].html_url.clone();
+
+    dbg!(&page.items[0]);
+
+    let current_ns_version = "v1.24.0";
+    let changelog = remove_markdown_links::remove_markdown_links(
+        page.items[0]
+            .body
+            .as_ref()
+            .unwrap()
+            .split("**Contributors:**")
+            .next()
+            .unwrap()
+            .trim(),
+    );
+
+    let general_info = "REPLACE ME";
+    let modders_info = "Mod compatibility should not be impacted";
+    let server_hosters_info = "REPLACE ME";
+
+    let return_string = format!(
+        r"Hello beautiful people <3
+**Northstar `{current_ns_version}` is out!**
+
+{general_info}
+
+**__Modders:__**
+
+{modders_info}
+
+**__Server hosters:__**
+
+{server_hosters_info}
+
+**__Changelog:__**
+```
+{changelog}
+```
+{github_release_link}
+
+Checkout #installation on how to install/update Northstar
+(the process is the same for both, using a Northstar installer like FlightCore, Viper, or VTOL is recommended over manual installation)
+
+If you do notice any bugs, please open an issue on Github or drop a message in the thread below
+"
+    );
+
+    Ok(return_string.to_string())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
