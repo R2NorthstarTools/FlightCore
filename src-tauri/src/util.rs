@@ -281,14 +281,17 @@ pub async fn generate_release_note_announcement() -> Result<String, String> {
         .await
         .unwrap();
 
-    // Extract the URL to the GitHub release note
-    let github_release_link = page.items[0].html_url.clone();
+    // Get newest element
+    let latest_release_item = &page.items[0];
 
-    let current_ns_version = &page.items[0].tag_name;
+    // Extract the URL to the GitHub release note
+    let github_release_link = latest_release_item.html_url.clone();
+
+    let current_ns_version = &latest_release_item.tag_name;
 
     // Extract changelog and format it
     let changelog = remove_markdown_links::remove_markdown_links(
-        page.items[0]
+        latest_release_item
             .body
             .as_ref()
             .unwrap()
