@@ -26,9 +26,6 @@ pub const BLACKLISTED_MODS: [&str; 3] = [
     "ebkr-r2modman",
 ];
 
-/// Titanfall2 Steam App ID
-pub const TITANFALL2_STEAM_ID: &str = "1237970";
-
 /// Order in which the sections for release notes should be displayed
 pub const SECTION_ORDER: [&str; 11] = [
     "feat", "fix", "docs", "style", "refactor", "build", "test", "i18n", "ci", "chore", "other",

@@ -4,11 +4,7 @@ pub mod install;
 pub mod profile;
 
 use crate::util::check_ea_app_or_origin_running;
-use crate::{
-    constants::{CORE_MODS, TITANFALL2_STEAM_ID},
-    platform_specific::get_host_os,
-    GameInstall, InstallType,
-};
+use crate::{constants::CORE_MODS, platform_specific::get_host_os, GameInstall, InstallType};
 use crate::{NorthstarThunderstoreRelease, NorthstarThunderstoreReleaseWrapper};
 use anyhow::anyhow;
 
@@ -239,8 +235,7 @@ pub fn launch_northstar_steam(
     match steamlocate::SteamDir::locate() {
         Some(mut steamdir) => {
             if get_host_os() != "windows" {
-                let titanfall2_steamid: u32 = TITANFALL2_STEAM_ID.parse().unwrap();
-                match steamdir.compat_tool(&titanfall2_steamid) {
+                match steamdir.compat_tool(&thermite::TITANFALL2_STEAM_ID) {
                     Some(_) => {}
                     None => {
                         return Err(
@@ -263,7 +258,8 @@ pub fn launch_northstar_steam(
 
     match open::that(format!(
         "steam://run/{}//-profile={} --northstar/",
-        TITANFALL2_STEAM_ID, game_install.profile
+        thermite::TITANFALL2_STEAM_ID,
+        game_install.profile
     )) {
         Ok(()) => Ok("Started game".to_string()),
         Err(_err) => Err("Failed to launch Titanfall 2 via Steam".to_string()),
