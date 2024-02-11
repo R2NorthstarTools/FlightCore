@@ -284,7 +284,7 @@ pub async fn generate_release_note_announcement() -> Result<String, String> {
     // Extract the URL to the GitHub release note
     let github_release_link = page.items[0].html_url.clone();
 
-    let current_ns_version = "v1.24.0";
+    let current_ns_version = &page.items[0].tag_name;
 
     // Extract changelog and format it
     let changelog = remove_markdown_links::remove_markdown_links(
