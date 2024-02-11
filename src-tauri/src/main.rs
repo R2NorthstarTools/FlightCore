@@ -155,6 +155,7 @@ fn main() {
             thunderstore::query_thunderstore_packages_api,
             util::close_application,
             util::force_panic,
+            util::generate_release_note_announcement,
             util::get_flightcore_version_number,
             util::get_server_player_count,
             util::is_debug_mode,
