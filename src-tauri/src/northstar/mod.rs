@@ -224,9 +224,7 @@ pub fn launch_northstar(
 }
 
 /// Prepare Northstar and Launch through Steam using the Browser Protocol
-pub fn launch_northstar_steam(
-    game_install: GameInstall,
-) -> Result<String, String> {
+pub fn launch_northstar_steam(game_install: GameInstall) -> Result<String, String> {
     if !matches!(game_install.install_type, InstallType::STEAM) {
         return Err("Titanfall2 was not installed via Steam".to_string());
     }
