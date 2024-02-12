@@ -157,7 +157,7 @@ pub fn launch_northstar(
 
     let launch_via_steam = launch_via_steam.unwrap_or(false);
     if launch_via_steam {
-        return launch_northstar_steam(game_install, bypass_checks);
+        return launch_northstar_steam(game_install);
     }
 
     let host_os = get_host_os();
@@ -172,7 +172,7 @@ pub fn launch_northstar(
             ));
         }
 
-        return launch_northstar_steam(game_install, bypass_checks);
+        return launch_northstar_steam(game_install);
     }
 
     let bypass_checks = bypass_checks.unwrap_or(false);
@@ -226,7 +226,6 @@ pub fn launch_northstar(
 /// Prepare Northstar and Launch through Steam using the Browser Protocol
 pub fn launch_northstar_steam(
     game_install: GameInstall,
-    _bypass_checks: Option<bool>,
 ) -> Result<String, String> {
     if !matches!(game_install.install_type, InstallType::STEAM) {
         return Err("Titanfall2 was not installed via Steam".to_string());
