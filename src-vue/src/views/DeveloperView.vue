@@ -93,7 +93,7 @@
                 :label="item.label"
                 :value="item.value"
                 />
-            </el-select>            
+            </el-select>
             <el-button type="primary" @click="getTags">
                 Get tags
             </el-button>
