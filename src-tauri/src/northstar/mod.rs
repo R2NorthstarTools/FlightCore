@@ -7,6 +7,15 @@ use crate::util::check_ea_app_or_origin_running;
 use crate::{constants::CORE_MODS, platform_specific::get_host_os, GameInstall, InstallType};
 use crate::{NorthstarThunderstoreRelease, NorthstarThunderstoreReleaseWrapper};
 use anyhow::anyhow;
+use serde::{Deserialize, Serialize};
+use ts_rs::TS;
+
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
+pub struct NorthstarLaunchOptions {
+    launch_via_steam: bool,
+    bypass_checks: bool,
+}
 
 /// Gets list of available Northstar versions from Thunderstore
 #[tauri::command]
@@ -150,14 +159,12 @@ pub fn get_northstar_version_number(game_install: GameInstall) -> Result<String,
 #[tauri::command]
 pub fn launch_northstar(
     game_install: GameInstall,
-    launch_via_steam: Option<bool>,
-    bypass_checks: Option<bool>,
+    launch_options: NorthstarLaunchOptions,
 ) -> Result<String, String> {
     dbg!(game_install.clone());
 
-    let launch_via_steam = launch_via_steam.unwrap_or(false);
-    if launch_via_steam {
-        return launch_northstar_steam(game_install, bypass_checks);
+    if launch_options.launch_via_steam {
+        return launch_northstar_steam(game_install);
     }
 
     let host_os = get_host_os();
@@ -172,13 +179,11 @@ pub fn launch_northstar(
             ));
         }
 
-        return launch_northstar_steam(game_install, bypass_checks);
+        return launch_northstar_steam(game_install);
     }
 
-    let bypass_checks = bypass_checks.unwrap_or(false);
-
     // Only check guards if bypassing checks is not enabled
-    if !bypass_checks {
+    if !launch_options.bypass_checks {
         // Some safety checks before, should have more in the future
         if get_northstar_version_number(game_install.clone()).is_err() {
             return Err(anyhow!("Not all checks were met").to_string());
@@ -224,10 +229,7 @@ pub fn launch_northstar(
 }
 
 /// Prepare Northstar and Launch through Steam using the Browser Protocol
-pub fn launch_northstar_steam(
-    game_install: GameInstall,
-    _bypass_checks: Option<bool>,
-) -> Result<String, String> {
+pub fn launch_northstar_steam(game_install: GameInstall) -> Result<String, String> {
     if !matches!(game_install.install_type, InstallType::STEAM) {
         return Err("Titanfall2 was not installed via Steam".to_string());
     }
