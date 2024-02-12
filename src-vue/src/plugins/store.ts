@@ -6,7 +6,6 @@ import { invoke } from "@tauri-apps/api";
 import { GameInstall } from "../utils/GameInstall";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { FlightCoreVersion } from "../../../src-tauri/bindings/FlightCoreVersion";
-import { LaunchOptions } from "../utils/LaunchOptions";
 import { NotificationHandle } from 'element-plus';
 import { NorthstarState } from '../utils/NorthstarState';
 import { appDir } from '@tauri-apps/api/path';
@@ -174,18 +173,7 @@ export const store = createStore<FlightCoreStore>({
                 }
             }
         },
-        async launchGame(state: any, passed_launch_options: LaunchOptions | null = null) {
-            let no_checks = false;
-
-            if (passed_launch_options != null) {
-                no_checks = passed_launch_options.no_checks;
-            }
-
-            const launch_options: NorthstarLaunchOptions = {
-                launch_via_steam: false,
-                bypass_checks: no_checks,
-            };
-
+        async launchGame(state: any, launch_options: NorthstarLaunchOptions = { launch_via_steam: false, bypass_checks: false}) {
 
             if (launch_options.bypass_checks) {
                 await invoke("launch_northstar", { gameInstall: state.game_install, launchOptions: launch_options })
@@ -254,11 +242,7 @@ export const store = createStore<FlightCoreStore>({
                     break;
             }
         },
-        async launchGameSteam(state: any, no_checks = false) {
-            const launch_options: NorthstarLaunchOptions = {
-                launch_via_steam: true,
-                bypass_checks: false,
-            };
+        async launchGameSteam(state: any, launch_options: NorthstarLaunchOptions = { launch_via_steam: true, bypass_checks: false}) {
             await invoke("launch_northstar", { gameInstall: state.game_install, launchOptions: launch_options })
                 .then((message) => {
                     showNotification('Success');
