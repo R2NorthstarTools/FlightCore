@@ -102,12 +102,47 @@ pub async fn get_pull_requests(url: String) -> Result<Vec<PullsApiResponseElemen
 pub async fn get_pull_requests_wrapper(
     install_type: PullRequestType,
 ) -> Result<Vec<PullsApiResponseElement>, String> {
-    let api_pr_url = match install_type {
-        PullRequestType::Mods => PULLS_API_ENDPOINT_MODS,
-        PullRequestType::Launcher => PULLS_API_ENDPOINT_LAUNCHER,
+    let repo = match install_type {
+        PullRequestType::Mods => "NorthstarMods",
+        PullRequestType::Launcher => "NorthstarLauncher",
     };
 
-    get_pull_requests(api_pr_url.to_string()).await
+    let octocrab = octocrab::instance();
+
+    let page = octocrab
+        .pulls("R2Northstar", repo)
+        .list()
+        .state(octocrab::params::State::Open)
+        .per_page(50)
+        .page(1u32)
+        .send()
+        .await
+        .unwrap();
+
+    let mut all_pull_requests: Vec<PullsApiResponseElement> = vec![];
+    for item in page.items {
+        let repo = Repo {
+            full_name: item.head.repo.unwrap().full_name.unwrap(),
+        };
+
+        let head = CommitHead {
+            sha: item.head.sha,
+            gh_ref: item.head.ref_field,
+            repo: repo,
+        };
+
+        let elem = PullsApiResponseElement {
+            number: item.number as i64, // bad but we never go this high anyway
+            title: item.title.unwrap(),
+            url: item.url,
+            head: head,
+            html_url: item.html_url.unwrap().to_string(),
+        };
+
+        all_pull_requests.push(elem);
+    }
+
+    Ok(all_pull_requests)
 }
 
 pub async fn check_github_api(url: &str) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
