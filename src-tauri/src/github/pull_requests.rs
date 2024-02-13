@@ -66,7 +66,7 @@ pub enum PullRequestType {
 /// Parse pull requests from specified URL
 pub async fn get_pull_requests(
     repo: PullRequestType,
-) -> Result<Vec<PullsApiResponseElement>, String> {
+) -> Result<Vec<PullsApiResponseElement>, anyhow::Error> {
     let repo = match repo {
         PullRequestType::Mods => NORTHSTAR_MODS_REPO_NAME,
         PullRequestType::Launcher => NORTHSTAR_LAUNCHER_REPO_NAME,
@@ -81,13 +81,17 @@ pub async fn get_pull_requests(
         .per_page(50)
         .page(1u32)
         .send()
-        .await
-        .unwrap();
+        .await?;
 
     let mut all_pull_requests: Vec<PullsApiResponseElement> = vec![];
     for item in page.items {
         let repo = Repo {
-            full_name: item.head.repo.unwrap().full_name.unwrap(),
+            full_name: item
+                .head
+                .repo
+                .ok_or(anyhow!("repo not found"))?
+                .full_name
+                .ok_or(anyhow!("full_name not found"))?,
         };
 
         let head = CommitHead {
@@ -98,10 +102,13 @@ pub async fn get_pull_requests(
 
         let elem = PullsApiResponseElement {
             number: item.number as i64, // bad but we never go this high anyway
-            title: item.title.unwrap(),
+            title: item.title.ok_or(anyhow!("title not found"))?,
             url: item.url,
             head,
-            html_url: item.html_url.unwrap().to_string(),
+            html_url: item
+                .html_url
+                .ok_or(anyhow!("html_url not found"))?
+                .to_string(),
         };
 
         all_pull_requests.push(elem);
@@ -115,7 +122,10 @@ pub async fn get_pull_requests(
 pub async fn get_pull_requests_wrapper(
     install_type: PullRequestType,
 ) -> Result<Vec<PullsApiResponseElement>, String> {
-    get_pull_requests(install_type).await
+    match get_pull_requests(install_type).await {
+        Ok(res) => Ok(res),
+        Err(err) => Err(err.to_string()),
+    }
 }
 
 pub async fn check_github_api(url: &str) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
