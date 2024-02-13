@@ -63,12 +63,11 @@ pub enum PullRequestType {
     Launcher,
 }
 
-/// Gets either launcher or mods PRs
-#[tauri::command]
-pub async fn get_pull_requests_wrapper(
-    install_type: PullRequestType,
+/// Parse pull requests from specified URL
+pub async fn get_pull_requests(
+    repo: PullRequestType,
 ) -> Result<Vec<PullsApiResponseElement>, String> {
-    let repo = match install_type {
+    let repo = match repo {
         PullRequestType::Mods => NORTHSTAR_MODS_REPO_NAME,
         PullRequestType::Launcher => NORTHSTAR_LAUNCHER_REPO_NAME,
     };
@@ -109,6 +108,14 @@ pub async fn get_pull_requests_wrapper(
     }
 
     Ok(all_pull_requests)
+}
+
+/// Gets either launcher or mods PRs
+#[tauri::command]
+pub async fn get_pull_requests_wrapper(
+    install_type: PullRequestType,
+) -> Result<Vec<PullsApiResponseElement>, String> {
+    get_pull_requests(install_type).await
 }
 
 pub async fn check_github_api(url: &str) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
