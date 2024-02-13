@@ -41,10 +41,10 @@ pub const FLIGHTCORE_REPO_NAME: &str = "R2NorthstarTools/FlightCore";
 pub const NORTHSTAR_RELEASE_REPO_NAME: &str = "R2Northstar/Northstar";
 
 /// NorthstarLauncher repo name on GitHub
-pub const NORTHSTAR_LAUNCHER_REPO_NAME: &str= "NorthstarLauncher";
+pub const NORTHSTAR_LAUNCHER_REPO_NAME: &str = "NorthstarLauncher";
 
 /// NorthstarMods repo name on GitHub
-pub const NORTHSTAR_MODS_REPO_NAME: &str= "NorthstarMods";
+pub const NORTHSTAR_MODS_REPO_NAME: &str = "NorthstarMods";
 
 /// URL to launcher commits API URL
 pub const NS_LAUNCHER_COMMITS_API_URL: &str =
