@@ -29,7 +29,7 @@ struct CommitHead {
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
 #[ts(export)]
 pub struct PullsApiResponseElement {
-    number: i64,
+    number: u64,
     title: String,
     url: String,
     head: CommitHead,
