@@ -1,4 +1,4 @@
-use crate::constants::APP_USER_AGENT;
+use crate::constants::{APP_USER_AGENT, NORTHSTAR_LAUNCHER_REPO_NAME, NORTHSTAR_MODS_REPO_NAME};
 use crate::repair_and_verify::check_is_valid_game_path;
 use crate::GameInstall;
 use anyhow::anyhow;
@@ -69,8 +69,8 @@ pub async fn get_pull_requests_wrapper(
     install_type: PullRequestType,
 ) -> Result<Vec<PullsApiResponseElement>, String> {
     let repo = match install_type {
-        PullRequestType::Mods => "NorthstarMods",
-        PullRequestType::Launcher => "NorthstarLauncher",
+        PullRequestType::Mods => NORTHSTAR_MODS_REPO_NAME,
+        PullRequestType::Launcher => NORTHSTAR_LAUNCHER_REPO_NAME,
     };
 
     let octocrab = octocrab::instance();
