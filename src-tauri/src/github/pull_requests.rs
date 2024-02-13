@@ -94,14 +94,14 @@ pub async fn get_pull_requests_wrapper(
         let head = CommitHead {
             sha: item.head.sha,
             gh_ref: item.head.ref_field,
-            repo: repo,
+            repo,
         };
 
         let elem = PullsApiResponseElement {
             number: item.number as i64, // bad but we never go this high anyway
             title: item.title.unwrap(),
             url: item.url,
-            head: head,
+            head,
             html_url: item.html_url.unwrap().to_string(),
         };
 
