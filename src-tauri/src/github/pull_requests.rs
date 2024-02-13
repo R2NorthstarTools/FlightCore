@@ -1,6 +1,4 @@
-use crate::github::release_notes::fetch_github_releases_api;
-
-use crate::constants::{APP_USER_AGENT, PULLS_API_ENDPOINT_LAUNCHER, PULLS_API_ENDPOINT_MODS};
+use crate::constants::APP_USER_AGENT;
 use crate::repair_and_verify::check_is_valid_game_path;
 use crate::GameInstall;
 use anyhow::anyhow;
@@ -63,38 +61,6 @@ struct ArtifactsResponse {
 pub enum PullRequestType {
     Mods,
     Launcher,
-}
-
-/// Parse pull requests from specified URL
-pub async fn get_pull_requests(url: String) -> Result<Vec<PullsApiResponseElement>, String> {
-    let mut all_pull_requests: Vec<PullsApiResponseElement> = vec![];
-
-    let mut i = 1; // pagination on GitHub starts with `1`.
-    loop {
-        let paginated_url = format!("{}?page={}", url, i);
-
-        let json_response = match fetch_github_releases_api(&paginated_url).await {
-            Ok(result) => result,
-            Err(err) => return Err(format!("Failed fetching GitHub API {err}")),
-        };
-
-        let pulls_response: Vec<PullsApiResponseElement> =
-            match serde_json::from_str(&json_response) {
-                Ok(res) => res,
-                Err(err) => return Err(err.to_string()),
-            };
-
-        // Check if we still got a result
-        if pulls_response.is_empty() {
-            // Empty result means we went through all pages with content
-            break;
-        }
-
-        all_pull_requests.extend(pulls_response);
-        i += 1;
-    }
-
-    Ok(all_pull_requests)
 }
 
 /// Gets either launcher or mods PRs

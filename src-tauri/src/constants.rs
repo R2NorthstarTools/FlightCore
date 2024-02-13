@@ -31,12 +31,6 @@ pub const SECTION_ORDER: [&str; 11] = [
     "feat", "fix", "docs", "style", "refactor", "build", "test", "i18n", "ci", "chore", "other",
 ];
 
-/// GitHub API endpoints for launcher/mods PRs
-pub const PULLS_API_ENDPOINT_LAUNCHER: &str =
-    "https://api.github.com/repos/R2Northstar/NorthstarLauncher/pulls";
-pub const PULLS_API_ENDPOINT_MODS: &str =
-    "https://api.github.com/repos/R2Northstar/NorthstarMods/pulls";
-
 /// Statistics (players and servers counts) refresh delay
 pub const REFRESH_DELAY: Duration = Duration::from_secs(5 * 60);
 
