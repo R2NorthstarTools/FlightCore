@@ -103,7 +103,7 @@ pub async fn get_pull_requests(
 
         // TODO there's probably a way to automatically serialize into the struct but I don't know yet how to
         let elem = PullsApiResponseElement {
-            number: item.number as i64, // bad but we never go this high anyway
+            number: item.number,
             title: item.title.ok_or(anyhow!("title not found"))?,
             url: item.url,
             head,
