@@ -72,17 +72,18 @@ pub async fn get_pull_requests(
         PullRequestType::Launcher => NORTHSTAR_LAUNCHER_REPO_NAME,
     };
 
+    // Grab list of PRs
     let octocrab = octocrab::instance();
-
     let page = octocrab
         .pulls("R2Northstar", repo)
         .list()
         .state(octocrab::params::State::Open)
-        .per_page(50)
+        .per_page(50) // Only grab 50 PRs
         .page(1u32)
         .send()
         .await?;
 
+    // Iterate over pull request elements and insert into struct
     let mut all_pull_requests: Vec<PullsApiResponseElement> = vec![];
     for item in page.items {
         let repo = Repo {
@@ -100,6 +101,7 @@ pub async fn get_pull_requests(
             repo,
         };
 
+        // TODO there's probably a way to automatically serialize into the struct but I don't know yet how to
         let elem = PullsApiResponseElement {
             number: item.number as i64, // bad but we never go this high anyway
             title: item.title.ok_or(anyhow!("title not found"))?,
