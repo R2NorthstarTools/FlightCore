@@ -190,7 +190,6 @@ pub async fn get_launcher_download_link(commit_sha: String) -> Result<String, St
                 for artifact in artifacts_response.artifacts {
                     // Make sure artifact and CI run commit head sha match
                     if artifact.workflow_run.head_sha == workflow_run.head_sha {
-                        dbg!(artifact.id);
 
                         // Download artifact
                         return Ok(format!("https://nightly.link/R2Northstar/NorthstarLauncher/actions/artifacts/{}.zip", artifact.id));
