@@ -124,3 +124,78 @@ pub async fn get_northstar_release_notes() -> Result<Vec<ReleaseInfo>, String> {
 
     Ok(release_info_vector)
 }
+
+/// Checks latest GitHub release and generates a announcement message for Discord based on it
+#[tauri::command]
+pub async fn generate_release_note_announcement() -> Result<String, String> {
+    let octocrab = octocrab::instance();
+    let page = octocrab
+        .repos("R2Northstar", "Northstar")
+        .releases()
+        .list()
+        // Optional Parameters
+        .per_page(1)
+        .page(1u32)
+        // Send the request
+        .send()
+        .await
+        .unwrap();
+
+    // Get newest element
+    let latest_release_item = &page.items[0];
+
+    // Extract the URL to the GitHub release note
+    let github_release_link = latest_release_item.html_url.clone();
+
+    // Extract release version number
+    let current_ns_version = &latest_release_item.tag_name;
+
+    // Extract changelog and format it
+    let changelog = remove_markdown_links::remove_markdown_links(
+        latest_release_item
+            .body
+            .as_ref()
+            .unwrap()
+            .split("**Contributors:**")
+            .next()
+            .unwrap()
+            .trim(),
+    );
+
+    // Strings to insert for different sections
+    // Hardcoded for now
+    let general_info = "REPLACE ME";
+    let modders_info = "Mod compatibility should not be impacted";
+    let server_hosters_info = "REPLACE ME";
+
+    // Build announcement string
+    let return_string = format!(
+        r"Hello beautiful people <3
+**Northstar `{current_ns_version}` is out!**
+
+{general_info}
+
+**__Modders:__**
+
+{modders_info}
+
+**__Server hosters:__**
+
+{server_hosters_info}
+
+**__Changelog:__**
+```
+{changelog}
+```
+{github_release_link}
+
+Checkout #installation on how to install/update Northstar
+(the process is the same for both, using a Northstar installer like FlightCore, Viper, or VTOL is recommended over manual installation)
+
+If you do notice any bugs, please open an issue on Github or drop a message in the thread below
+"
+    );
+
+    // Return built announcement message
+    Ok(return_string.to_string())
+}
