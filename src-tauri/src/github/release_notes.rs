@@ -1,4 +1,3 @@
-use crate::constants::APP_USER_AGENT;
 use serde::{Deserialize, Serialize};
 use std::vec::Vec;
 use ts_rs::TS;
@@ -18,35 +17,31 @@ pub struct FlightCoreVersion {
     published_at: String,
 }
 
-// Fetches repo release API and returns response as string
-pub async fn fetch_github_releases_api(url: &str) -> Result<String, anyhow::Error> {
-    log::info!("Fetching releases notes from GitHub API");
-
-    let client = reqwest::Client::new();
-    let res = client
-        .get(url)
-        .header(reqwest::header::USER_AGENT, APP_USER_AGENT)
-        .send()
-        .await?
-        .text()
-        .await?;
-
-    Ok(res)
-}
-
 /// Gets newest FlighCore version from GitHub
 #[tauri::command]
 pub async fn get_newest_flightcore_version() -> Result<FlightCoreVersion, String> {
     // Get newest version number from GitHub API
     log::info!("Checking GitHub API");
-    let url = "https://api.github.com/repos/R2NorthstarTools/FlightCore/releases/latest";
-    let res = match fetch_github_releases_api(url).await {
-        Ok(res) => res,
-        Err(err) => return Err(format!("Failed getting newest FlightCore version: {err}")),
-    };
+    let octocrab = octocrab::instance();
+    let page = octocrab
+        .repos("R2NorthstarTools", "FlightCore")
+        .releases()
+        .list()
+        // Optional Parameters
+        .per_page(1)
+        .page(1u32)
+        // Send the request
+        .send()
+        .await
+        .map_err(|err| err.to_string())?;
 
-    let flightcore_version: FlightCoreVersion =
-        serde_json::from_str(&res).expect("JSON was not well-formatted");
+    // Get newest element
+    let latest_release_item = &page.items[0];
+
+    let flightcore_version = FlightCoreVersion {
+        tag_name: latest_release_item.tag_name.clone(),
+        published_at: latest_release_item.published_at.unwrap().to_rfc3339(),
+    };
     log::info!("Done checking GitHub API");
 
     Ok(flightcore_version)
