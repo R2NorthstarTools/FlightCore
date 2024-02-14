@@ -1,4 +1,3 @@
-use crate::constants::APP_USER_AGENT;
 use serde::{Deserialize, Serialize};
 use std::vec::Vec;
 use ts_rs::TS;
@@ -16,22 +15,6 @@ pub struct ReleaseInfo {
 pub struct FlightCoreVersion {
     tag_name: String,
     published_at: String,
-}
-
-// Fetches repo release API and returns response as string
-pub async fn fetch_github_releases_api(url: &str) -> Result<String, anyhow::Error> {
-    log::info!("Fetching releases notes from GitHub API");
-
-    let client = reqwest::Client::new();
-    let res = client
-        .get(url)
-        .header(reqwest::header::USER_AGENT, APP_USER_AGENT)
-        .send()
-        .await?
-        .text()
-        .await?;
-
-    Ok(res)
 }
 
 /// Gets newest FlighCore version from GitHub
