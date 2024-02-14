@@ -33,7 +33,7 @@ pub async fn get_newest_flightcore_version() -> Result<FlightCoreVersion, String
         // Send the request
         .send()
         .await
-        .unwrap();
+        .map_err(|err| err.to_string())?;
 
     // Get newest element
     let latest_release_item = &page.items[0];
