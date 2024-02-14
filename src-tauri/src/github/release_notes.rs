@@ -104,7 +104,7 @@ pub async fn get_northstar_release_notes() -> Result<Vec<ReleaseInfo>, String> {
         // Send the request
         .send()
         .await
-        .unwrap();
+        .map_err(|err| err.to_string())?;
 
     // TODO there's probably a way to automatically serialize into the struct but I don't know yet how to
     let mut release_info_vector: Vec<ReleaseInfo> = vec![];
