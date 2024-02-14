@@ -111,6 +111,7 @@ pub async fn get_northstar_release_notes() -> Result<Vec<ReleaseInfo>, String> {
         .await
         .unwrap();
 
+    // TODO there's probably a way to automatically serialize into the struct but I don't know yet how to
     let mut release_info_vector: Vec<ReleaseInfo> = vec![];
     for item in page.items {
         let release_info = ReleaseInfo {
