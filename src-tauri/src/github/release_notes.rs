@@ -98,19 +98,32 @@ pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
 
 #[tauri::command]
 pub async fn get_northstar_release_notes() -> Result<Vec<ReleaseInfo>, String> {
-    let url = "https://api.github.com/repos/R2Northstar/Northstar/releases";
-    let res = match fetch_github_releases_api(url).await {
-        Ok(res) => res,
-        Err(err) => return Err(format!("Failed getting Northstar release notes: {err}")),
-    };
+    let octocrab = octocrab::instance();
+    let page = octocrab
+        .repos("R2Northstar", "Northstar")
+        .releases()
+        .list()
+        // Optional Parameters
+        .per_page(25)
+        .page(1u32)
+        // Send the request
+        .send()
+        .await
+        .unwrap();
 
-    let release_info_vector: Vec<ReleaseInfo> = match serde_json::from_str(&res) {
-        Ok(res) => res,
-        Err(err) => {
-            log::warn!("{err}");
-            return Err("Could not fetch release notes. JSON was not well-formatted".to_string());
-        }
-    };
+    let mut release_info_vector: Vec<ReleaseInfo> = vec![];
+    for item in page.items {
+        let release_info = ReleaseInfo {
+            name: item.name.ok_or(String::from("Release name not found"))?,
+            published_at: item
+                .published_at
+                .ok_or(String::from("Release date not found"))?
+                .to_rfc3339(),
+            body: item.body.ok_or(String::from("Release body not found"))?,
+        };
+        release_info_vector.push(release_info);
+    }
+
     log::info!("Done checking GitHub API");
 
     Ok(release_info_vector)
