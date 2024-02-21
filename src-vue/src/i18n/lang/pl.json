@@ -15,7 +15,8 @@
         "extracting": "Wypakowywanie",
         "done": "Gotowe",
         "success": "Sukces",
-        "informationShort": "Informacja"
+        "informationShort": "Informacja",
+        "confirm": "Potwierdź"
     },
     "play": {
         "button": {
@@ -121,7 +122,12 @@
         "profile": {
             "active": "Aktywny profil",
             "dialog": {
-                "title": "Profile"
+                "title": "Profile",
+                "delete": "Usuń",
+                "clone": "Klonuj",
+                "new_profile_name": "Wprowadź nową nazwę profilu",
+                "create_empty": "Nowy Profil",
+                "delete_confirm": "Czy na pewno chcesz usunąć ten profil?"
             },
             "edit": "Edytuj profile"
         }
@@ -150,7 +156,12 @@
                 "title": "Nieprawidłowy profil",
                 "text": "Profil, na który próbowano się przełączyć, nie jest już prawidłowy."
             }
-        }
+        },
+        "no_new": {
+            "title": "aktualny",
+            "text": "Nie ma tu nic do obejrzenia!"
+        },
+        "date_prefix": "na"
     },
     "channels": {
         "release": {
