@@ -126,7 +126,7 @@
                 "delete": "Usuń",
                 "clone": "Klonuj",
                 "new_profile_name": "Wprowadź nową nazwę profilu",
-                "create_empty": "Nowy Profil",
+                "create_empty": "Nowy profil",
                 "delete_confirm": "Czy na pewno chcesz usunąć ten profil?"
             },
             "edit": "Edytuj profile"
@@ -158,7 +158,7 @@
             }
         },
         "no_new": {
-            "title": "aktualny",
+            "title": "Aktualny",
             "text": "Nie ma tu nic do obejrzenia!"
         },
         "date_prefix": "na"
