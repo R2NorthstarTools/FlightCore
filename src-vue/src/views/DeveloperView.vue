@@ -149,6 +149,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { invoke } from "@tauri-apps/api";
+import { NorthstarLaunchOptions } from "../../../src-tauri/bindings/NorthstarLaunchOptions";
 import { TagWrapper } from "../../../src-tauri/bindings/TagWrapper";
 import { NorthstarThunderstoreReleaseWrapper } from "../../../src-tauri/bindings/NorthstarThunderstoreReleaseWrapper";
 import PullRequestsSelector from "../components/PullRequestsSelector.vue";
@@ -220,10 +221,12 @@ export default defineComponent({
                 });
         },
         async launchGameWithoutChecks() {
-            this.$store.commit('launchGame', true);
+            let launch_options: NorthstarLaunchOptions = { bypass_checks: true, launch_via_steam: false };
+            this.$store.commit('launchGame', launch_options);
         },
         async launchGameViaSteam() {
-            this.$store.commit('launchGameSteam', true);
+            let launch_options: NorthstarLaunchOptions = { bypass_checks: false, launch_via_steam: true };
+            this.$store.commit('launchGameSteam', launch_options);
         },
         async getInstalledMods() {
             await invoke("get_installed_mods_and_properties", { gameInstall: this.$store.state.game_install }).then((message) => {
