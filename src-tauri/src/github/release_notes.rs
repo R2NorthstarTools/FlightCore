@@ -175,15 +175,15 @@ pub async fn generate_release_note_announcement() -> Result<String, String> {
 
 {general_info}
 
-**__Modders:__**
+__**Modders:**__
 
 {modders_info}
 
-**__Server hosters:__**
+__**Server hosters:**__
 
 {server_hosters_info}
 
-**__Changelog:__**
+__**Changelog:**__
 ```
 {changelog}
 ```
