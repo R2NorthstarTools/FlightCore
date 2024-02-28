@@ -1131,7 +1131,7 @@ dependencies = [
  "libthermite",
  "log",
  "octocrab",
- "open 5.0.1",
+ "open 5.0.2",
  "pretty_env_logger",
  "regex",
  "remove-markdown-links",
@@ -2725,9 +2725,9 @@ dependencies = [
 
 [[package]]
 name = "open"
-version = "5.0.1"
+version = "5.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "90878fb664448b54c4e592455ad02831e23a3f7e157374a8b95654731aac7349"
+checksum = "eedff767bc49d336bff300224f73307ae36963c843e38dc9312a22171b012cbc"
 dependencies = [
  "is-wsl",
  "libc",
