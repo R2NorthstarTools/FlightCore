@@ -414,7 +414,6 @@ async fn get_ns_mod_download_url(thunderstore_mod_string: &str) -> Result<String
         // Iterate over all versions of a given mod
         for ns_mod in ns_mod.versions.values() {
             if ns_mod.url.contains(&ts_mod_string_url) {
-                dbg!(ns_mod.clone());
                 return Ok(ns_mod.url.clone());
             }
         }
@@ -437,7 +436,6 @@ async fn get_mod_dependencies(thunderstore_mod_string: &str) -> Result<Vec<Strin
         // Iterate over all versions of a given mod
         for ns_mod in ns_mod.versions.values() {
             if ns_mod.url.contains(&ts_mod_string_url) {
-                dbg!(ns_mod.clone());
                 return Ok(ns_mod.deps.clone());
             }
         }

@@ -65,7 +65,7 @@ fn main() {
         },
     ));
 
-    match tauri::Builder::default()
+    let tauri_builder_res = tauri::Builder::default()
         .plugin(tauri_plugin_store::Builder::default().build())
         .setup(|app| {
             let app_handle = app.app_handle();
@@ -124,6 +124,7 @@ fn main() {
             github::pull_requests::get_launcher_download_link,
             github::pull_requests::get_pull_requests_wrapper,
             github::release_notes::check_is_flightcore_outdated,
+            github::release_notes::generate_release_note_announcement,
             github::release_notes::get_newest_flightcore_version,
             github::release_notes::get_northstar_release_notes,
             mod_management::delete_northstar_mod,
@@ -161,8 +162,9 @@ fn main() {
             util::kill_northstar,
             util::open_repair_window,
         ])
-        .run(tauri::generate_context!())
-    {
+        .run(tauri::generate_context!());
+
+    match tauri_builder_res {
         Ok(()) => (),
         Err(err) => {
             // Failed to launch system native web view

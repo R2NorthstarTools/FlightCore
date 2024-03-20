@@ -1,4 +1,3 @@
-use crate::constants::APP_USER_AGENT;
 use serde::{Deserialize, Serialize};
 use std::vec::Vec;
 use ts_rs::TS;
@@ -18,35 +17,31 @@ pub struct FlightCoreVersion {
     published_at: String,
 }
 
-// Fetches repo release API and returns response as string
-pub async fn fetch_github_releases_api(url: &str) -> Result<String, anyhow::Error> {
-    log::info!("Fetching releases notes from GitHub API");
-
-    let client = reqwest::Client::new();
-    let res = client
-        .get(url)
-        .header(reqwest::header::USER_AGENT, APP_USER_AGENT)
-        .send()
-        .await?
-        .text()
-        .await?;
-
-    Ok(res)
-}
-
 /// Gets newest FlighCore version from GitHub
 #[tauri::command]
 pub async fn get_newest_flightcore_version() -> Result<FlightCoreVersion, String> {
     // Get newest version number from GitHub API
     log::info!("Checking GitHub API");
-    let url = "https://api.github.com/repos/R2NorthstarTools/FlightCore/releases/latest";
-    let res = match fetch_github_releases_api(url).await {
-        Ok(res) => res,
-        Err(err) => return Err(format!("Failed getting newest FlightCore version: {err}")),
-    };
+    let octocrab = octocrab::instance();
+    let page = octocrab
+        .repos("R2NorthstarTools", "FlightCore")
+        .releases()
+        .list()
+        // Optional Parameters
+        .per_page(1)
+        .page(1u32)
+        // Send the request
+        .send()
+        .await
+        .map_err(|err| err.to_string())?;
 
-    let flightcore_version: FlightCoreVersion =
-        serde_json::from_str(&res).expect("JSON was not well-formatted");
+    // Get newest element
+    let latest_release_item = &page.items[0];
+
+    let flightcore_version = FlightCoreVersion {
+        tag_name: latest_release_item.tag_name.clone(),
+        published_at: latest_release_item.published_at.unwrap().to_rfc3339(),
+    };
     log::info!("Done checking GitHub API");
 
     Ok(flightcore_version)
@@ -98,20 +93,109 @@ pub async fn check_is_flightcore_outdated() -> Result<bool, String> {
 
 #[tauri::command]
 pub async fn get_northstar_release_notes() -> Result<Vec<ReleaseInfo>, String> {
-    let url = "https://api.github.com/repos/R2Northstar/Northstar/releases";
-    let res = match fetch_github_releases_api(url).await {
-        Ok(res) => res,
-        Err(err) => return Err(format!("Failed getting Northstar release notes: {err}")),
-    };
+    let octocrab = octocrab::instance();
+    let page = octocrab
+        .repos("R2Northstar", "Northstar")
+        .releases()
+        .list()
+        // Optional Parameters
+        .per_page(25)
+        .page(1u32)
+        // Send the request
+        .send()
+        .await
+        .map_err(|err| err.to_string())?;
 
-    let release_info_vector: Vec<ReleaseInfo> = match serde_json::from_str(&res) {
-        Ok(res) => res,
-        Err(err) => {
-            log::warn!("{err}");
-            return Err("Could not fetch release notes. JSON was not well-formatted".to_string());
-        }
-    };
+    // TODO there's probably a way to automatically serialize into the struct but I don't know yet how to
+    let mut release_info_vector: Vec<ReleaseInfo> = vec![];
+    for item in page.items {
+        let release_info = ReleaseInfo {
+            name: item.name.ok_or(String::from("Release name not found"))?,
+            published_at: item
+                .published_at
+                .ok_or(String::from("Release date not found"))?
+                .to_rfc3339(),
+            body: item.body.ok_or(String::from("Release body not found"))?,
+        };
+        release_info_vector.push(release_info);
+    }
+
     log::info!("Done checking GitHub API");
 
     Ok(release_info_vector)
+}
+
+/// Checks latest GitHub release and generates a announcement message for Discord based on it
+#[tauri::command]
+pub async fn generate_release_note_announcement() -> Result<String, String> {
+    let octocrab = octocrab::instance();
+    let page = octocrab
+        .repos("R2Northstar", "Northstar")
+        .releases()
+        .list()
+        // Optional Parameters
+        .per_page(1)
+        .page(1u32)
+        // Send the request
+        .send()
+        .await
+        .unwrap();
+
+    // Get newest element
+    let latest_release_item = &page.items[0];
+
+    // Extract the URL to the GitHub release note
+    let github_release_link = latest_release_item.html_url.clone();
+
+    // Extract release version number
+    let current_ns_version = &latest_release_item.tag_name;
+
+    // Extract changelog and format it
+    let changelog = remove_markdown_links::remove_markdown_links(
+        latest_release_item
+            .body
+            .as_ref()
+            .unwrap()
+            .split("**Contributors:**")
+            .next()
+            .unwrap()
+            .trim(),
+    );
+
+    // Strings to insert for different sections
+    // Hardcoded for now
+    let general_info = "REPLACE ME";
+    let modders_info = "Mod compatibility should not be impacted";
+    let server_hosters_info = "REPLACE ME";
+
+    // Build announcement string
+    let return_string = format!(
+        r"Hello beautiful people <3
+**Northstar `{current_ns_version}` is out!**
+
+{general_info}
+
+__**Modders:**__
+
+{modders_info}
+
+__**Server hosters:**__
+
+{server_hosters_info}
+
+__**Changelog:**__
+```
+{changelog}
+```
+{github_release_link}
+
+Checkout #installation on how to install/update Northstar
+(the process is the same for both, using a Northstar installer like FlightCore, Viper, or VTOL is recommended over manual installation)
+
+If you do notice any bugs, please open an issue on Github or drop a message in the thread below
+"
+    );
+
+    // Return built announcement message
+    Ok(return_string.to_string())
 }
