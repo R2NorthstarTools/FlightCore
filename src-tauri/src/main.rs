@@ -3,10 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-use std::{
-    env,
-    time::Duration,
-};
+use std::{env, time::Duration};
 
 mod constants;
 mod development;
