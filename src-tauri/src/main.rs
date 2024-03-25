@@ -3,11 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-use std::{
-    env,
-    sync::{Arc, Mutex},
-    time::Duration,
-};
+use std::{env, time::Duration};
 
 mod constants;
 mod development;
@@ -41,9 +37,6 @@ pub struct NorthstarThunderstoreReleaseWrapper {
     label: String,
     value: NorthstarThunderstoreRelease,
 }
-
-#[derive(Default)]
-struct Counter(Arc<Mutex<i32>>);
 
 fn main() {
     // Setup logger
@@ -114,7 +107,7 @@ fn main() {
 
             Ok(())
         })
-        .manage(Counter(Default::default()))
+        .manage(())
         .invoke_handler(tauri::generate_handler![
             development::install_git_main,
             github::compare_tags,
