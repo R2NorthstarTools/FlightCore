@@ -35,13 +35,14 @@
 
             <h3>Testing:</h3>
 
-            <el-button type="primary" @click="launchGameWithoutChecks">
-                Launch Northstar (bypass all checks)
+            <el-checkbox v-model="launchNorthstarBypassChecks" label="Bypass all checks" />
+            <el-checkbox v-model="launchNorthstarViaSteam" label="Launch via Steam" />
+
+            <el-button type="primary" @click="launchNorthstarWithOptions">
+                Launch Northstar with options
             </el-button>
 
-            <el-button type="primary" @click="launchGameViaSteam">
-                Launch Northstar via Steam
-            </el-button>
+            <br />
 
             <el-button type="primary" @click="installLauncherGitMain">
                 Install launcher from main branch
@@ -168,6 +169,8 @@ export default defineComponent({
             discord_release_announcement_text: "",
             first_tag: { label: '', value: { name: '' } },
             second_tag: { label: '', value: { name: '' } },
+            launchNorthstarBypassChecks: true,
+            launchNorthstarViaSteam: false,
             ns_release_tags: [] as TagWrapper[],
             ns_versions: [] as NorthstarThunderstoreReleaseWrapper[],
             selected_ns_version: { label: '', value: { package: '', version: '' } } as NorthstarThunderstoreReleaseWrapper,
@@ -220,6 +223,11 @@ export default defineComponent({
                     console.error(error);
                 });
         },
+        async launchNorthstarWithOptions() {
+            let launch_options: NorthstarLaunchOptions = { bypass_checks: this.launchNorthstarBypassChecks, launch_via_steam: this.launchNorthstarViaSteam };
+            this.$store.commit('launchGame', launch_options);
+        },
+        // todo, remove the two below
         async launchGameWithoutChecks() {
             let launch_options: NorthstarLaunchOptions = { bypass_checks: true, launch_via_steam: false };
             this.$store.commit('launchGame', launch_options);
