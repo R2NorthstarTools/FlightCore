@@ -49,9 +49,9 @@ json5 = "0.4.1"
 # Async recursion for recursive mod install
 async-recursion = "1.1.0"
 # For parsing timestamps
-chrono = "0.4.35"
+chrono = "0.4.37"
 # TypeScript bindings
-ts-rs = "8.0"
+ts-rs = "8.1"
 # const formatting
 const_format = "0.2.32"
 # Logging libraries
@@ -67,7 +67,7 @@ glob = "0.3.1"
 dirs = "5"
 
 # Interacting with GitHub
-octocrab = "0.36.0"
+octocrab = "0.37.0"
 # Library for removing markdown links
 remove-markdown-links = "1.0.0"
 
