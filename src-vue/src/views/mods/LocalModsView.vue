@@ -5,7 +5,7 @@
     </div>
 
     <el-scrollbar v-else>
-        <el-button type="primary" @click="disableAllModsButCore">
+        <el-button class="disableModsBtn" type="primary" @click="disableAllModsButCore">
             {{ $t('settings.repair.window.disable_all_but_core') }}
         </el-button>
         <local-mod-card v-for="mod of mods" v-bind:key="mod.name" :mod="mod" />
@@ -64,5 +64,9 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
+.disableModsBtn {
+    margin-bottom: 10px;
+    top: 10px;
+    position: sticky;
+}
 </style>
