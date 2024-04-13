@@ -78,7 +78,7 @@ pub fn get_local_ns_proton_version() -> Result<String, String> {
     let compat_dir = get_proton_dir().unwrap();
     let pattern = format!("{}/NorthstarProton*/version", compat_dir);
 
-    for e in glob::glob(&pattern).expect("Failed to read glob pattern") {
+    if let Some(e) = glob::glob(&pattern).expect("Failed to read glob pattern").next() {
         let version_content = std::fs::read_to_string(e.unwrap()).unwrap();
         let version = version_content.split(' ').nth(1).unwrap().to_string();
 
