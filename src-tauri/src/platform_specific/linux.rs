@@ -26,7 +26,7 @@ pub fn linux_checks_librs() -> Result<(), String> {
 
 fn get_proton_dir() -> Option<String> {
     let steam_dir = steamlocate::SteamDir::locate()?;
-    let compat_dir = format!("{}/compatibilitytools.d/", steam_dir.path.display());
+    let compat_dir = format!("{}/compatibilitytools.d", steam_dir.path.display());
 
     Some(compat_dir)
 }
@@ -65,7 +65,7 @@ pub fn install_ns_proton() -> Result<(), thermite::prelude::ThermiteError> {
 /// Remove NS Proton
 pub fn uninstall_ns_proton() -> Result<(), String> {
     let compat_dir = get_proton_dir().unwrap();
-    let pattern = format!("{}/NorthstarProton-*", compat_dir);
+    let pattern = format!("{}/NorthstarProton*", compat_dir);
     for e in glob::glob(&pattern).expect("Failed to read glob pattern") {
         std::fs::remove_dir_all(e.unwrap()).unwrap();
     }
@@ -76,27 +76,16 @@ pub fn uninstall_ns_proton() -> Result<(), String> {
 /// Get the latest installed NS Proton version
 pub fn get_local_ns_proton_version() -> Result<String, String> {
     let compat_dir = get_proton_dir().unwrap();
-    let ns_prefix = "NorthstarProton-";
-    let pattern = format!("{}/{}*/version", compat_dir, ns_prefix);
-
-    let mut version: String = "".to_string();
+    let pattern = format!("{}/NorthstarProton*/version", compat_dir);
 
     for e in glob::glob(&pattern).expect("Failed to read glob pattern") {
         let version_content = std::fs::read_to_string(e.unwrap()).unwrap();
-        let version_string = version_content.split(' ').nth(1).unwrap();
+        let version = version_content.split(' ').nth(1).unwrap().to_string();
 
-        if version_string.starts_with(ns_prefix) {
-            version = version_string[ns_prefix.len()..version_string.len() - 1]
-                .to_string()
-                .clone();
-        }
+        return Ok(version);
     }
 
-    if version.is_empty() {
-        return Err("Northstar Proton is not installed".to_string());
-    }
-
-    Ok(version)
+    Err("Northstar Proton is not installed".to_string())
 }
 
 pub fn check_glibc_v() -> f32 {
