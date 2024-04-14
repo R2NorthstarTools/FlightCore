@@ -293,7 +293,7 @@ pub async fn install_northstar(
 pub fn find_game_install_location() -> Result<GameInstall, String> {
     // Attempt parsing Steam library directly
     match steamlocate::SteamDir::locate() {
-        Some(mut steamdir) => {
+        Ok(steamdir) => {
             #[cfg(target_os = "linux")]
             {
                 let snap_dir = match std::env::var("SNAP_USER_DATA") {
@@ -305,25 +305,34 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
                     .join("snap"),
                 };
 
-                if steamdir.path.starts_with(snap_dir) {
+                if steamdir.path().starts_with(snap_dir) {
                     log::warn!("Found Steam installed via Snap, you may encounter issues");
                 }
             }
 
-            match steamdir.app(&thermite::TITANFALL2_STEAM_ID) {
-                Some(app) => {
-                    // println!("{:#?}", app);
+            match steamdir.find_app(thermite::TITANFALL2_STEAM_ID) {
+                Ok(result) => {
+                    let (app, library) = result.unwrap();
+                    let app_path = library
+                        .path()
+                        .join("steamapps")
+                        .join("common")
+                        .join(app.install_dir)
+                        .into_os_string()
+                        .into_string()
+                        .unwrap();
+
                     let game_install = GameInstall {
-                        game_path: app.path.to_str().unwrap().to_string(),
+                        game_path: app_path,
                         profile: "R2Northstar".to_string(),
                         install_type: InstallType::STEAM,
                     };
                     return Ok(game_install);
                 }
-                None => log::info!("Couldn't locate Titanfall2 Steam install"),
+                Err(err) => log::info!("Couldn't locate Titanfall2 Steam install. {}", err),
             }
         }
-        None => log::info!("Couldn't locate Steam on this computer!"),
+        Err(err) => log::info!("Couldn't locate Steam on this computer! {}", err),
     }
 
     // (On Windows only) try parsing Windows registry for Origin install path
