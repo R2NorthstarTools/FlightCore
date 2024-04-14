@@ -17,10 +17,6 @@
 
             <h3>Linux:</h3>
 
-            <el-button type="primary" @click="checkLinuxCompatibility">
-                Check NSProton Compatibility
-            </el-button>
-
             <el-button type="primary" @click="installNSProton">
                 Install NSProton
             </el-button>
@@ -209,16 +205,6 @@ export default defineComponent({
         async crashApplication() {
             await invoke("force_panic");
             showErrorNotification("Never should have been able to get here!");
-        },
-        async checkLinuxCompatibility() {
-            await invoke("linux_checks")
-                .then(() => {
-                    showNotification('Linux compatible', 'All checks passed');
-                })
-                .catch((error) => {
-                    showNotification('Not Linux compatible', error, 'error');
-                    console.error(error);
-                });
         },
         async launchGameWithoutChecks() {
             let launch_options: NorthstarLaunchOptions = { bypass_checks: true, launch_via_steam: false };
