@@ -139,7 +139,6 @@ fn main() {
             platform_specific::get_host_os,
             platform_specific::get_local_northstar_proton_wrapper_version,
             platform_specific::install_northstar_proton_wrapper,
-            platform_specific::linux_checks,
             platform_specific::uninstall_northstar_proton_wrapper,
             repair_and_verify::clean_up_download_folder_wrapper,
             repair_and_verify::disable_all_but_core,
