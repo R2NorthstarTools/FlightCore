@@ -235,19 +235,25 @@ pub fn launch_northstar_steam(game_install: GameInstall) -> Result<String, Strin
     }
 
     match steamlocate::SteamDir::locate() {
-        Some(mut steamdir) => {
+        Ok(steamdir) => {
             if get_host_os() != "windows" {
-                match steamdir.compat_tool(&thermite::TITANFALL2_STEAM_ID) {
-                    Some(_) => {}
-                    None => {
-                        return Err(
-                            "Titanfall2 was not configured to use a compatibility tool".to_string()
-                        );
+                match steamdir.compat_tool_mapping() {
+                    Ok(map) => match map.get(&thermite::TITANFALL2_STEAM_ID) {
+                        Some(_) => {}
+                        None => {
+                            return Err(
+                                "Titanfall2 was not configured to use a compatibility tool"
+                                    .to_string(),
+                            );
+                        }
+                    },
+                    Err(_) => {
+                        return Err("Could not get compatibility tool mapping".to_string());
                     }
                 }
             }
         }
-        None => {
+        Err(_) => {
             return Err("Couldn't access Titanfall2 directory".to_string());
         }
     }
