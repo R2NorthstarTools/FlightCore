@@ -311,8 +311,7 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
             }
 
             match steamdir.find_app(thermite::TITANFALL2_STEAM_ID) {
-                Ok(result) => {
-                    let (app, library) = result.unwrap();
+                Ok(Some((app, library))) => {
                     let app_path = library
                         .path()
                         .join("steamapps")
@@ -329,7 +328,11 @@ pub fn find_game_install_location() -> Result<GameInstall, String> {
                     };
                     return Ok(game_install);
                 }
-                Err(err) => log::info!("Couldn't locate Titanfall2 Steam install. {}", err),
+                Ok(None) => log::info!("Couldn't locate your Titanfall 2 Steam install."),
+                Err(err) => log::info!(
+                    "Something went wrong while trying to find Titanfall 2 {}",
+                    err
+                ),
             }
         }
         Err(err) => log::info!("Couldn't locate Steam on this computer! {}", err),
