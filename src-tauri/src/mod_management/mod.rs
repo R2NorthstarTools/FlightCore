@@ -46,9 +46,9 @@ impl std::str::FromStr for ParsedThunderstoreModString {
     }
 }
 
-impl ToString for ParsedThunderstoreModString {
-    fn to_string(&self) -> String {
-        format!("{}-{}-{}", self.author_name, self.mod_name, self.version)
+impl std::fmt::Display for ParsedThunderstoreModString {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}-{}-{}", self.author_name, self.mod_name, self.version)
     }
 }
 
