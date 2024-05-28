@@ -15,7 +15,8 @@
         "downloading": "Herunterladen",
         "extracting": "Extrahieren",
         "done": "Fertig",
-        "success": "Erfolg"
+        "success": "Erfolg",
+        "confirm": "Bestätigen"
     },
     "play": {
         "button": {
@@ -120,8 +121,15 @@
         "show_deprecated_mods": "Veraltete Thunderstore mods anzeigen",
         "profile": {
             "dialog": {
-                "title": "Profile"
-            }
+                "title": "Profile",
+                "delete_confirm": "Sind Sie sich sicher, dass Sie dieses Profil löschen möchten?",
+                "delete": "Löschen",
+                "clone": "Duplizieren",
+                "create_empty": "Neues Profil",
+                "new_profile_name": "Neuen Profilnamen eingeben"
+            },
+            "active": "Aktives Profil",
+            "edit": "Profile bearbeiten"
         }
     },
     "notification": {
@@ -142,7 +150,18 @@
         "flightcore_outdated": {
             "title": "FlightCore veraltet!",
             "text": "Bitte aktualisiere FlightCore.\nDu hast die veraltetet Version {oldVersion}.\nNeuste Version ist {newVersion}!"
-        }
+        },
+        "profile": {
+            "invalid": {
+                "text": "Das Profil auf das Sie wechseln möchten ist nicht länger gültig.",
+                "title": "Ungültiges Profil"
+            }
+        },
+        "no_new": {
+            "title": "Aktuell",
+            "text": "Hier gibt es nichts zu sehen!"
+        },
+        "date_prefix": "auf"
     },
     "channels": {
         "release": {
