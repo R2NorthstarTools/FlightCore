@@ -110,7 +110,8 @@
                 "text": "Il profilo a cui hai provato ad accedere non è più valido.",
                 "title": "Profilo non valido"
             }
-        }
+        },
+        "date_prefix": "a"
     },
     "settings": {
         "manage_install": "Gestisci l'installazione",
@@ -153,7 +154,9 @@
                 "clone": "Clona",
                 "delete": "Elimina",
                 "delete_confirm": "Sei sicuro di voler eliminare questo profilo?",
-                "title": "Profili"
+                "title": "Profili",
+                "new_profile_name": "Inserisci il nuovo nome del profilo",
+                "create_empty": "Nuovo profilo"
             },
             "edit": "Modifica profilo"
         },
