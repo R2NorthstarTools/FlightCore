@@ -15,7 +15,8 @@
         "downloading": "Henter",
         "success": "Succes",
         "extracting": "Udpakker",
-        "done": "Færdig"
+        "done": "Færdig",
+        "confirm": "Bekræft"
     },
     "play": {
         "button": {
@@ -100,7 +101,12 @@
             "active": "Aktiv profil",
             "edit": "Rediger profiler",
             "dialog": {
-                "title": "Profiler"
+                "title": "Profiler",
+                "delete_confirm": "Er du sikker på, at du vil slette denne profil?",
+                "delete": "Slet",
+                "clone": "Klon",
+                "new_profile_name": "Indtast det nye profilnavn",
+                "create_empty": "Ny profil"
             }
         },
         "repair": {
@@ -150,7 +156,12 @@
         "flightcore_outdated": {
             "title": "FlightCore forældet!",
             "text": "Opdater venligst FlightCore.\nKører forældet version {oldVersion}.\nNyeste er {newVersion}!"
-        }
+        },
+        "no_new": {
+            "title": "Opdateret",
+            "text": "Intet at se her!"
+        },
+        "date_prefix": "på"
     },
     "channels": {
         "release": {
