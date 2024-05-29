@@ -105,7 +105,9 @@
                 "title": "Perfiles",
                 "delete_confirm": "Eliminar Perfil?",
                 "delete": "Eliminar",
-                "clone": "Duplicar"
+                "clone": "Duplicar",
+                "new_profile_name": "Ingrese el nuevo nombre del perfil",
+                "create_empty": "Nuevo perfil"
             }
         },
         "repair": {
