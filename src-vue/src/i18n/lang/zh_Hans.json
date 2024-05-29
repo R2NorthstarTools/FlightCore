@@ -125,7 +125,10 @@
             "dialog": {
                 "title": "用户配置",
                 "delete_confirm": "你确定要删除此配置文件吗?",
-                "delete": "删除"
+                "delete": "删除",
+                "clone": "克隆",
+                "new_profile_name": "输入新的配置文件名称",
+                "create_empty": "新配置文件"
             }
         }
     },
@@ -153,7 +156,12 @@
                 "title": "无效用户配置",
                 "text": "您尝试切换到的用户配置已失效。"
             }
-        }
+        },
+        "no_new": {
+            "title": "最新的",
+            "text": "这里没什么可看的!"
+        },
+        "date_prefix": "在"
     },
     "channels": {
         "release": {
