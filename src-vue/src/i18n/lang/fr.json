@@ -126,7 +126,9 @@
                 "title": "Profiles",
                 "clone": "Cloner",
                 "delete": "Supprimer",
-                "delete_confirm": "Voulez-vous vraiment supprimer ce profil ?"
+                "delete_confirm": "Voulez-vous vraiment supprimer ce profil ?",
+                "create_empty": "nouveau profil",
+                "new_profile_name": "Entrez le nouveau nom du profil"
             }
         }
     },
