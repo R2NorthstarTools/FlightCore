@@ -48,6 +48,7 @@ struct ActionsRunsResponse {
 #[derive(Debug, Deserialize, Clone)]
 struct Artifact {
     id: u64,
+    name: String,
     workflow_run: WorkflowRun,
 }
 
@@ -206,8 +207,14 @@ pub async fn get_launcher_download_link(commit_sha: String) -> Result<String, St
                 )
                 .unwrap();
 
+                let multiple_artifacts = artifacts_response.artifacts.len() > 1;
+
                 // Iterate over artifacts
                 for artifact in artifacts_response.artifacts {
+                    if multiple_artifacts && !artifact.name.starts_with("NorthstarLauncher-MSVC") {
+                        continue;
+                    }
+
                     // Make sure artifact and CI run commit head sha match
                     if artifact.workflow_run.head_sha == workflow_run.head_sha {
                         // Download artifact
