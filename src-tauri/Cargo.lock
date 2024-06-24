@@ -2314,9 +2314,9 @@ checksum = "9c198f91728a82281a64e1f4f9eeb25d82cb32a5de251c6bd1b5154d63a8e7bd"
 
 [[package]]
 name = "libthermite"
-version = "0.7.1"
+version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1c4f076e602c8aa9ec99cd8b2d23cdf1606c27e5f04cba13aa61bdc50e678ee8"
+checksum = "c27ac02c14161a4b0db739b37618d929d7f2af320c1f993e3d674599f77b79e7"
 dependencies = [
  "flate2",
  "json5",
