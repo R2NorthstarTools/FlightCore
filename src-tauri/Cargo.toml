@@ -47,7 +47,7 @@ tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", 
 # JSON5 parsing support (allows comments in JSON)
 json5 = "0.4.1"
 # Async recursion for recursive mod install
-async-recursion = "1.1.0"
+async-recursion = "1.1.1"
 # For parsing timestamps
 chrono = "0.4.38"
 # TypeScript bindings
