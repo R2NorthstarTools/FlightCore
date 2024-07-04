@@ -66,6 +66,9 @@ export default defineComponent({
         showDeprecatedMods(): boolean {
             return this.$store.state.search.showDeprecatedMods;
         },
+        showNsfwMods(): boolean {
+            return this.$store.state.search.showNsfwMods;
+        },
         searchValue(): string {
             return this.$store.getters.searchWords;
         },
@@ -95,22 +98,25 @@ export default defineComponent({
                 // Filter out deprecated mods
                 const showDeprecated = !mod.is_deprecated || this.showDeprecatedMods;
 
+                // Filter out NSFW mods
+                const showNsfw = !mod.has_nsfw_content || this.showNsfwMods;
+
                 // Filter with categories (only if some categories are selected)
                 const categoriesMatch: boolean = this.selectedCategories.length === 0
                     || mod.categories
                         .filter((category: string) => this.selectedCategories.includes(category))
                         .length === this.selectedCategories.length;
 
-                return inputMatches && categoriesMatch && showDeprecated;
+                return inputMatches && categoriesMatch && showDeprecated && showNsfw;
             });
         },
         modsList(): ThunderstoreMod[] {
             // Use filtered mods if user is searching, vanilla list otherwise.
             const mods: ThunderstoreMod[] = this.searchValue.length !== 0 || this.selectedCategories.length !== 0
                 ? this.filteredMods
-                : this.showDeprecatedMods
-                    ? this.mods
-                    : this.mods.filter(mod => !mod.is_deprecated);
+                : this.mods
+                    .filter(mod => this.showDeprecatedMods || !mod.is_deprecated)
+                    .filter(mod => this.showNsfwMods || !mod.has_nsfw_content);
 
             // Sort mods regarding user selected algorithm.
             let compare: (a: ThunderstoreMod, b: ThunderstoreMod) => number;

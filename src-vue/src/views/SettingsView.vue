@@ -112,6 +112,14 @@
                     </el-button>
                 </div>
 
+                <div class="fc_parameter__panel">
+                    <h3>{{ $t('settings.show_nsfw_mods') }}</h3>
+                    <span>
+                        {{ $t('settings.show_nsfw_mods') }}
+                        <el-switch v-model="showNsfwMods"></el-switch>
+                    </span>
+                </div>
+
                 <!-- About section -->
                 <div class="fc_parameter__panel">
                     <h3>{{ $t('settings.about') }}</h3>
@@ -157,6 +165,14 @@ export default defineComponent({
         }
     },
     computed: {
+        showNsfwMods: {
+            get(): boolean {
+                return this.$store.state.search.showNsfwMods;
+            },
+            set(value: boolean) {
+                this.$store.state.search.showNsfwMods = value;
+            }
+        },
         showDeprecatedMods: {
             get(): boolean {
                 return this.$store.state.search.showDeprecatedMods;
