@@ -47,8 +47,8 @@ pub async fn check_cgnat() -> Result<String, String> {
         return Err(format!("Not valid IPv4 address: {}", response));
     }
 
-    let hope_count = run_tracert(&response)?;
-    Ok(format!("Counted {} hops to {}", hope_count, response))
+    let hops_count = run_tracert(&response)?;
+    Ok(format!("Counted {} hops to {}", hops_count, response))
 }
 
 /// Count number of hops in tracert output
