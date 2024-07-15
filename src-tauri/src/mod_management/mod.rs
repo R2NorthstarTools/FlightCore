@@ -7,6 +7,7 @@ use thermite::prelude::ThermiteError;
 use crate::NorthstarMod;
 use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
+use std::error::Error;
 use std::str::FromStr;
 use std::string::ToString;
 use std::{fs, path::PathBuf};
@@ -505,10 +506,14 @@ fn delete_older_versions(
 /// Checks whether some mod is correctly formatted
 /// Currently checks whether
 /// - Some `mod.json` exists under `mods/*/mod.json`
-fn fc_sanity_check(input: &&fs::File) -> bool {
+fn fc_sanity_check(input: &&fs::File) -> Result<(), Box<dyn Error + Send + Sync + 'static>> {
     let mut archive = match zip::read::ZipArchive::new(*input) {
         Ok(archive) => archive,
-        Err(_) => return false,
+        Err(_) => {
+            return Err(Box::new(ThermiteError::UnknownError(
+                "Failed reading zip file".into(),
+            )))
+        }
     };
 
     let mut has_mods = false;
@@ -538,14 +543,22 @@ fn fc_sanity_check(input: &&fs::File) -> bool {
                 if name.to_str().unwrap().contains(".dll") {
                     log::warn!("Plugin detected, prompting user");
                     if !plugins::plugin_prompt() {
-                        return false; // Plugin detected and user denied install
+                        return Err(Box::new(ThermiteError::UnknownError(
+                            "Plugin detected and install denied".into(),
+                        )));
                     }
                 }
             }
         }
     }
 
-    has_mods && mod_json_exists
+    if has_mods && mod_json_exists {
+        Ok(())
+    } else {
+        Err(Box::new(ThermiteError::UnknownError(
+            "Mod not correctly formatted".into(),
+        )))
+    }
 }
 
 // Copied from `libtermite` source code and modified
@@ -643,9 +656,8 @@ pub async fn fc_download_mod_and_install(
         Err(err) => {
             log::warn!("libthermite couldn't install mod {thunderstore_mod_string} due to {err:?}",);
             return match err {
-                ThermiteError::SanityError => Err(
-                    "Mod failed sanity check during install. It's probably not correctly formatted"
-                        .to_string(),
+                ThermiteError::SanityError(e) => Err(
+                    format!("Mod failed sanity check during install. It's probably not correctly formatted. {}", e)
                 ),
                 _ => Err(err.to_string()),
             };
