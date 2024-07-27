@@ -1165,7 +1165,7 @@ dependencies = [
 
 [[package]]
 name = "flightcore"
-version = "2.23.1"
+version = "2.23.2"
 dependencies = [
  "anyhow",
  "async-recursion",
