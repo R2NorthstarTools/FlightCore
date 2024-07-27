@@ -28,6 +28,7 @@
                     <a target="_blank" :href="pull_request.html_url">
                         {{ pull_request.number }}: {{ pull_request.title }}
                     </a>
+                    <el-tag v-for="label in pull_request.labels">{{ label }}</el-tag>
                 </el-card>
                 <div v-else class="no_matching_pr">
                     No matching PR found.
@@ -67,6 +68,7 @@
                     <a target="_blank" :href="pull_request.html_url">
                         {{ pull_request.number }}: {{ pull_request.title }}
                     </a>
+                    <el-tag v-for="label in pull_request.labels">{{ label }}</el-tag>
                 </el-card>
                 <div v-else class="no_matching_pr">
                     No matching PR found.
