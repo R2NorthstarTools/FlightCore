@@ -32,6 +32,7 @@ pub struct PullsApiResponseElement {
     url: String,
     head: CommitHead,
     html_url: String,
+    labels: Vec<String>,
 }
 
 // GitHub API response JSON elements as structs
@@ -102,6 +103,14 @@ pub async fn get_pull_requests(
             repo,
         };
 
+        // Get labels and their names and put the into vector
+        let label_names: Vec<String> = item
+            .labels
+            .unwrap_or_else(Vec::new)
+            .into_iter()
+            .map(|label| label.name)
+            .collect();
+
         // TODO there's probably a way to automatically serialize into the struct but I don't know yet how to
         let elem = PullsApiResponseElement {
             number: item.number,
@@ -112,6 +121,7 @@ pub async fn get_pull_requests(
                 .html_url
                 .ok_or(anyhow!("html_url not found"))?
                 .to_string(),
+            labels: label_names,
         };
 
         all_pull_requests.push(elem);
