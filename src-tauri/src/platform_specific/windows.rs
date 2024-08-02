@@ -1,8 +1,6 @@
 /// Windows specific code
 use anyhow::{anyhow, Result};
 use std::net::Ipv4Addr;
-use std::process::Command;
-use std::str;
 
 #[cfg(target_os = "windows")]
 use winreg::{enums::HKEY_LOCAL_MACHINE, RegKey};
@@ -73,7 +71,7 @@ fn run_tracert(target_ip: &str) -> Result<usize, String> {
     assert!(target_ip.parse::<Ipv4Addr>().is_ok());
 
     // Execute the `tracert` command
-    let output = match Command::new("tracert")
+    let output = match std::process::Command::new("tracert")
         .arg("-4") // Force IPv4
         .arg("-d") // Prevent resolving intermediate IP addresses
         .arg("-w") // Set timeout to 1 second
@@ -91,7 +89,7 @@ fn run_tracert(target_ip: &str) -> Result<usize, String> {
     if output.status.success() {
         // Convert the output to a string
         let stdout =
-            str::from_utf8(&output.stdout).expect("Invalid UTF-8 sequence in command output");
+            std::str::from_utf8(&output.stdout).expect("Invalid UTF-8 sequence in command output");
         println!("{}", stdout);
 
         // Count the number of hops
@@ -99,7 +97,7 @@ fn run_tracert(target_ip: &str) -> Result<usize, String> {
         Ok(hop_count)
     } else {
         let stderr =
-            str::from_utf8(&output.stderr).expect("Invalid UTF-8 sequence in command error output");
+            std::str::from_utf8(&output.stderr).expect("Invalid UTF-8 sequence in command error output");
         println!("{}", stderr);
         Err(format!("Failed collecting tracert output: {}", stderr))
     }
