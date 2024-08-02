@@ -76,6 +76,8 @@ fn run_tracert(target_ip: &str) -> Result<usize, String> {
     let output = match Command::new("tracert")
         .arg("-4") // Force IPv4
         .arg("-d") // Prevent resolving intermediate IP addresses
+        .arg("-w") // Set timeout to 1 second
+        .arg("1000")
         .arg("-h") // Set max hop count
         .arg("5")
         .arg(target_ip)
