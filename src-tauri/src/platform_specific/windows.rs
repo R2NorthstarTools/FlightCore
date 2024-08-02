@@ -59,7 +59,7 @@ fn count_hops(output: &str) -> usize {
     // Filter lines that appear to represent hops
     let hop_lines: Vec<&str> = lines
         .iter()
-        .filter(|&line| line.contains("ms")) // TODO check if it contains just the `ms` surrounded by whitespace, otherwise it might falsely pick up some domain names as well
+        .filter(|&line| line.contains("ms") || line.contains("*")) // TODO check if it contains just the `ms` surrounded by whitespace, otherwise it might falsely pick up some domain names as well
         .cloned()
         .collect();
 
