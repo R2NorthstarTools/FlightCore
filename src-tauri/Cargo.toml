@@ -1,6 +1,6 @@
 [package]
 name = "flightcore"
-version = "2.23.2"
+version = "2.24.0"
 description = "Mod-manager for Northstar"
 authors = ["https://github.com/R2NorthstarTools/FlightCore/graphs/contributors"]
 license = "MIT"
@@ -65,6 +65,8 @@ semver = "1.0"
 # simplified filesystem access
 glob = "0.3.1"
 dirs = "5"
+# Random number stuff
+rand = "0.8.5"
 
 # Interacting with GitHub
 octocrab = "0.38.0"
