@@ -96,8 +96,8 @@ fn run_tracert(target_ip: &str) -> Result<usize, String> {
         let hop_count = count_hops(stdout);
         Ok(hop_count)
     } else {
-        let stderr =
-            std::str::from_utf8(&output.stderr).expect("Invalid UTF-8 sequence in command error output");
+        let stderr = std::str::from_utf8(&output.stderr)
+            .expect("Invalid UTF-8 sequence in command error output");
         println!("{}", stderr);
         Err(format!("Failed collecting tracert output: {}", stderr))
     }
