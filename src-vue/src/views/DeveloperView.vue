@@ -14,11 +14,6 @@
             <el-button type="primary" @click="crashApplication">
                 Panic button
             </el-button>
-
-            <el-button type="primary" @click="checkCgnat">
-                Run tracert and collect hop count
-            </el-button>
-
             <h3>Linux:</h3>
 
             <el-button type="primary" @click="installNSProton">
@@ -69,6 +64,9 @@
 
             <h3>Repair:</h3>
 
+            <el-button type="primary" @click="checkCgnat">
+                Run tracert and collect hop count
+            </el-button>
 
             <el-button type="primary" @click="getInstalledMods">
                 Get installed mods
