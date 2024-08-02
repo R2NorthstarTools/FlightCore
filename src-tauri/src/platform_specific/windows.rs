@@ -76,6 +76,8 @@ fn run_tracert(target_ip: &str) -> Result<usize, String> {
     let output = match Command::new("tracert")
         .arg("-4") // Force IPv4
         .arg("-d") // Prevent resolving intermediate IP addresses
+        .arg("-h") // Set max hop count
+        .arg("5")
         .arg(target_ip)
         .output()
     {
@@ -96,6 +98,7 @@ fn run_tracert(target_ip: &str) -> Result<usize, String> {
     } else {
         let stderr =
             str::from_utf8(&output.stderr).expect("Invalid UTF-8 sequence in command error output");
+        println!("{}", stderr);
         Err(format!("Failed collecting tracert output: {}", stderr))
     }
 }
