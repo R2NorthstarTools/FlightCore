@@ -14,6 +14,7 @@
             <el-button type="primary" @click="crashApplication">
                 Panic button
             </el-button>
+
             <h3>Linux:</h3>
 
             <el-button type="primary" @click="installNSProton">
