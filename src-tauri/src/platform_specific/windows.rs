@@ -75,6 +75,7 @@ fn run_tracert(target_ip: &str) -> Result<usize, String> {
     // Execute the `tracert` command
     let output = match Command::new("tracert")
         .arg("-4") // Force IPv4
+        .arg("-d") // Prevent resolving intermediate IP addresses
         .arg(target_ip)
         .output()
     {
