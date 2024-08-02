@@ -1,6 +1,4 @@
-use crate::github::release_notes::fetch_github_releases_api;
-
-use crate::constants::{APP_USER_AGENT, PULLS_API_ENDPOINT_LAUNCHER, PULLS_API_ENDPOINT_MODS};
+use crate::constants::{APP_USER_AGENT, NORTHSTAR_LAUNCHER_REPO_NAME, NORTHSTAR_MODS_REPO_NAME};
 use crate::repair_and_verify::check_is_valid_game_path;
 use crate::GameInstall;
 use anyhow::anyhow;
@@ -29,11 +27,12 @@ struct CommitHead {
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
 #[ts(export)]
 pub struct PullsApiResponseElement {
-    number: i64,
+    number: u64,
     title: String,
     url: String,
     head: CommitHead,
     html_url: String,
+    labels: Vec<String>,
 }
 
 // GitHub API response JSON elements as structs
@@ -50,6 +49,7 @@ struct ActionsRunsResponse {
 #[derive(Debug, Deserialize, Clone)]
 struct Artifact {
     id: u64,
+    name: String,
     workflow_run: WorkflowRun,
 }
 
@@ -66,32 +66,65 @@ pub enum PullRequestType {
 }
 
 /// Parse pull requests from specified URL
-pub async fn get_pull_requests(url: String) -> Result<Vec<PullsApiResponseElement>, String> {
+pub async fn get_pull_requests(
+    repo: PullRequestType,
+) -> Result<Vec<PullsApiResponseElement>, anyhow::Error> {
+    let repo = match repo {
+        PullRequestType::Mods => NORTHSTAR_MODS_REPO_NAME,
+        PullRequestType::Launcher => NORTHSTAR_LAUNCHER_REPO_NAME,
+    };
+
+    // Grab list of PRs
+    let octocrab = octocrab::instance();
+    let page = octocrab
+        .pulls("R2Northstar", repo)
+        .list()
+        .state(octocrab::params::State::Open)
+        .per_page(50) // Only grab 50 PRs
+        .page(1u32)
+        .send()
+        .await?;
+
+    // Iterate over pull request elements and insert into struct
     let mut all_pull_requests: Vec<PullsApiResponseElement> = vec![];
-
-    let mut i = 1; // pagination on GitHub starts with `1`.
-    loop {
-        let paginated_url = format!("{}?page={}", url, i);
-
-        let json_response = match fetch_github_releases_api(&paginated_url).await {
-            Ok(result) => result,
-            Err(err) => return Err(format!("Failed fetching GitHub API {err}")),
+    for item in page.items {
+        let repo = Repo {
+            full_name: item
+                .head
+                .repo
+                .ok_or(anyhow!("repo not found"))?
+                .full_name
+                .ok_or(anyhow!("full_name not found"))?,
         };
 
-        let pulls_response: Vec<PullsApiResponseElement> =
-            match serde_json::from_str(&json_response) {
-                Ok(res) => res,
-                Err(err) => return Err(err.to_string()),
-            };
+        let head = CommitHead {
+            sha: item.head.sha,
+            gh_ref: item.head.ref_field,
+            repo,
+        };
 
-        // Check if we still got a result
-        if pulls_response.is_empty() {
-            // Empty result means we went through all pages with content
-            break;
-        }
+        // Get labels and their names and put the into vector
+        let label_names: Vec<String> = item
+            .labels
+            .unwrap_or_else(Vec::new)
+            .into_iter()
+            .map(|label| label.name)
+            .collect();
 
-        all_pull_requests.extend(pulls_response);
-        i += 1;
+        // TODO there's probably a way to automatically serialize into the struct but I don't know yet how to
+        let elem = PullsApiResponseElement {
+            number: item.number,
+            title: item.title.ok_or(anyhow!("title not found"))?,
+            url: item.url,
+            head,
+            html_url: item
+                .html_url
+                .ok_or(anyhow!("html_url not found"))?
+                .to_string(),
+            labels: label_names,
+        };
+
+        all_pull_requests.push(elem);
     }
 
     Ok(all_pull_requests)
@@ -102,12 +135,10 @@ pub async fn get_pull_requests(url: String) -> Result<Vec<PullsApiResponseElemen
 pub async fn get_pull_requests_wrapper(
     install_type: PullRequestType,
 ) -> Result<Vec<PullsApiResponseElement>, String> {
-    let api_pr_url = match install_type {
-        PullRequestType::Mods => PULLS_API_ENDPOINT_MODS,
-        PullRequestType::Launcher => PULLS_API_ENDPOINT_LAUNCHER,
-    };
-
-    get_pull_requests(api_pr_url.to_string()).await
+    match get_pull_requests(install_type).await {
+        Ok(res) => Ok(res),
+        Err(err) => Err(err.to_string()),
+    }
 }
 
 pub async fn check_github_api(url: &str) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
@@ -186,12 +217,16 @@ pub async fn get_launcher_download_link(commit_sha: String) -> Result<String, St
                 )
                 .unwrap();
 
+                let multiple_artifacts = artifacts_response.artifacts.len() > 1;
+
                 // Iterate over artifacts
                 for artifact in artifacts_response.artifacts {
+                    if multiple_artifacts && !artifact.name.starts_with("NorthstarLauncher-MSVC") {
+                        continue;
+                    }
+
                     // Make sure artifact and CI run commit head sha match
                     if artifact.workflow_run.head_sha == workflow_run.head_sha {
-                        dbg!(artifact.id);
-
                         // Download artifact
                         return Ok(format!("https://nightly.link/R2Northstar/NorthstarLauncher/actions/artifacts/{}.zip", artifact.id));
                     }

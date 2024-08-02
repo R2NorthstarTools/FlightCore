@@ -9,6 +9,7 @@ export const searchModule = {
         // Selected mod categories
         selectedCategories: [],
         showDeprecatedMods: false,
+        showNsfwMods: false,
         sortValue: {label: '', value: ''}
     }),
     getters: {

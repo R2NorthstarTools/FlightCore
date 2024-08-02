@@ -26,19 +26,10 @@ pub const BLACKLISTED_MODS: [&str; 3] = [
     "ebkr-r2modman",
 ];
 
-/// Titanfall2 Steam App ID
-pub const TITANFALL2_STEAM_ID: &str = "1237970";
-
 /// Order in which the sections for release notes should be displayed
 pub const SECTION_ORDER: [&str; 11] = [
     "feat", "fix", "docs", "style", "refactor", "build", "test", "i18n", "ci", "chore", "other",
 ];
-
-/// GitHub API endpoints for launcher/mods PRs
-pub const PULLS_API_ENDPOINT_LAUNCHER: &str =
-    "https://api.github.com/repos/R2Northstar/NorthstarLauncher/pulls";
-pub const PULLS_API_ENDPOINT_MODS: &str =
-    "https://api.github.com/repos/R2Northstar/NorthstarMods/pulls";
 
 /// Statistics (players and servers counts) refresh delay
 pub const REFRESH_DELAY: Duration = Duration::from_secs(5 * 60);
@@ -48,6 +39,12 @@ pub const FLIGHTCORE_REPO_NAME: &str = "R2NorthstarTools/FlightCore";
 
 /// Northstar release repo name and org name on GitHub
 pub const NORTHSTAR_RELEASE_REPO_NAME: &str = "R2Northstar/Northstar";
+
+/// NorthstarLauncher repo name on GitHub
+pub const NORTHSTAR_LAUNCHER_REPO_NAME: &str = "NorthstarLauncher";
+
+/// NorthstarMods repo name on GitHub
+pub const NORTHSTAR_MODS_REPO_NAME: &str = "NorthstarMods";
 
 /// URL to launcher commits API URL
 pub const NS_LAUNCHER_COMMITS_API_URL: &str =

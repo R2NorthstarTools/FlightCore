@@ -17,10 +17,6 @@
 
             <h3>Linux:</h3>
 
-            <el-button type="primary" @click="checkLinuxCompatibility">
-                Check NSProton Compatibility
-            </el-button>
-
             <el-button type="primary" @click="installNSProton">
                 Install NSProton
             </el-button>
@@ -93,7 +89,7 @@
                 :label="item.label"
                 :value="item.value"
                 />
-            </el-select>            
+            </el-select>
             <el-button type="primary" @click="getTags">
                 Get tags
             </el-button>
@@ -129,6 +125,19 @@
                 :rows="5"
                 placeholder="Output"
             />
+
+            <h3>Release announcements</h3>
+
+            <el-button type="primary" @click="generateReleaseAnnouncementMessage">
+                Generate release announcement
+            </el-button>
+
+            <el-input
+                v-model="discord_release_announcement_text"
+                type="textarea"
+                :rows="5"
+                placeholder="Output"
+            />
         </el-scrollbar>
     </div>
 </template>
@@ -136,6 +145,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { invoke } from "@tauri-apps/api";
+import { NorthstarLaunchOptions } from "../../../src-tauri/bindings/NorthstarLaunchOptions";
 import { TagWrapper } from "../../../src-tauri/bindings/TagWrapper";
 import { NorthstarThunderstoreReleaseWrapper } from "../../../src-tauri/bindings/NorthstarThunderstoreReleaseWrapper";
 import PullRequestsSelector from "../components/PullRequestsSelector.vue";
@@ -151,6 +161,7 @@ export default defineComponent({
         return {
             mod_to_install_field_string: "",
             release_notes_text: "",
+            discord_release_announcement_text: "",
             first_tag: { label: '', value: { name: '' } },
             second_tag: { label: '', value: { name: '' } },
             ns_release_tags: [] as TagWrapper[],
@@ -195,21 +206,13 @@ export default defineComponent({
             await invoke("force_panic");
             showErrorNotification("Never should have been able to get here!");
         },
-        async checkLinuxCompatibility() {
-            await invoke("linux_checks")
-                .then(() => {
-                    showNotification('Linux compatible', 'All checks passed');
-                })
-                .catch((error) => {
-                    showNotification('Not Linux compatible', error, 'error');
-                    console.error(error);
-                });
-        },
         async launchGameWithoutChecks() {
-            this.$store.commit('launchGame', true);
+            let launch_options: NorthstarLaunchOptions = { bypass_checks: true, launch_via_steam: false };
+            this.$store.commit('launchGame', launch_options);
         },
         async launchGameViaSteam() {
-            this.$store.commit('launchGameSteam', true);
+            let launch_options: NorthstarLaunchOptions = { bypass_checks: false, launch_via_steam: true };
+            this.$store.commit('launchGameSteam', launch_options);
         },
         async getInstalledMods() {
             await invoke("get_installed_mods_and_properties", { gameInstall: this.$store.state.game_install }).then((message) => {
@@ -334,6 +337,16 @@ export default defineComponent({
                 })
                 .catch(() => {
                     showErrorNotification("Failed copying to clipboard");
+                });
+        },
+        async generateReleaseAnnouncementMessage() {
+            await invoke<string>("generate_release_note_announcement", { })
+                .then((message) => {
+                    this.discord_release_announcement_text = message;
+                    showNotification("Done", "Generated announcement");
+                })
+                .catch((error) => {
+                    showErrorNotification(error);
                 });
         },
     }

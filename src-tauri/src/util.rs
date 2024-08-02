@@ -2,7 +2,6 @@
 
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
-use sysinfo::{ProcessExt, SystemExt};
 use zip::ZipArchive;
 
 use crate::constants::{APP_USER_AGENT, MASTER_SERVER_URL, SERVER_BROWSER_ENDPOINT};

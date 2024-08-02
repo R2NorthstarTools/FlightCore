@@ -7,6 +7,7 @@ use thermite::prelude::ThermiteError;
 use crate::NorthstarMod;
 use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
+use std::error::Error;
 use std::str::FromStr;
 use std::string::ToString;
 use std::{fs, path::PathBuf};
@@ -46,9 +47,9 @@ impl std::str::FromStr for ParsedThunderstoreModString {
     }
 }
 
-impl ToString for ParsedThunderstoreModString {
-    fn to_string(&self) -> String {
-        format!("{}-{}-{}", self.author_name, self.mod_name, self.version)
+impl std::fmt::Display for ParsedThunderstoreModString {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}-{}-{}", self.author_name, self.mod_name, self.version)
     }
 }
 
@@ -414,7 +415,6 @@ async fn get_ns_mod_download_url(thunderstore_mod_string: &str) -> Result<String
         // Iterate over all versions of a given mod
         for ns_mod in ns_mod.versions.values() {
             if ns_mod.url.contains(&ts_mod_string_url) {
-                dbg!(ns_mod.clone());
                 return Ok(ns_mod.url.clone());
             }
         }
@@ -437,7 +437,6 @@ async fn get_mod_dependencies(thunderstore_mod_string: &str) -> Result<Vec<Strin
         // Iterate over all versions of a given mod
         for ns_mod in ns_mod.versions.values() {
             if ns_mod.url.contains(&ts_mod_string_url) {
-                dbg!(ns_mod.clone());
                 return Ok(ns_mod.deps.clone());
             }
         }
@@ -507,10 +506,14 @@ fn delete_older_versions(
 /// Checks whether some mod is correctly formatted
 /// Currently checks whether
 /// - Some `mod.json` exists under `mods/*/mod.json`
-fn fc_sanity_check(input: &&fs::File) -> bool {
+fn fc_sanity_check(input: &&fs::File) -> Result<(), Box<dyn Error + Send + Sync + 'static>> {
     let mut archive = match zip::read::ZipArchive::new(*input) {
         Ok(archive) => archive,
-        Err(_) => return false,
+        Err(_) => {
+            return Err(Box::new(ThermiteError::UnknownError(
+                "Failed reading zip file".into(),
+            )))
+        }
     };
 
     let mut has_mods = false;
@@ -540,14 +543,22 @@ fn fc_sanity_check(input: &&fs::File) -> bool {
                 if name.to_str().unwrap().contains(".dll") {
                     log::warn!("Plugin detected, prompting user");
                     if !plugins::plugin_prompt() {
-                        return false; // Plugin detected and user denied install
+                        return Err(Box::new(ThermiteError::UnknownError(
+                            "Plugin detected and install denied".into(),
+                        )));
                     }
                 }
             }
         }
     }
 
-    has_mods && mod_json_exists
+    if has_mods && mod_json_exists {
+        Ok(())
+    } else {
+        Err(Box::new(ThermiteError::UnknownError(
+            "Mod not correctly formatted".into(),
+        )))
+    }
 }
 
 // Copied from `libtermite` source code and modified
@@ -645,9 +656,8 @@ pub async fn fc_download_mod_and_install(
         Err(err) => {
             log::warn!("libthermite couldn't install mod {thunderstore_mod_string} due to {err:?}",);
             return match err {
-                ThermiteError::SanityError => Err(
-                    "Mod failed sanity check during install. It's probably not correctly formatted"
-                        .to_string(),
+                ThermiteError::SanityError(e) => Err(
+                    format!("Mod failed sanity check during install. It's probably not correctly formatted. {}", e)
                 ),
                 _ => Err(err.to_string()),
             };

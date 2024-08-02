@@ -3,11 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-use std::{
-    env,
-    sync::{Arc, Mutex},
-    time::Duration,
-};
+use std::{env, time::Duration};
 
 mod constants;
 mod development;
@@ -42,9 +38,6 @@ pub struct NorthstarThunderstoreReleaseWrapper {
     value: NorthstarThunderstoreRelease,
 }
 
-#[derive(Default)]
-struct Counter(Arc<Mutex<i32>>);
-
 fn main() {
     // Setup logger
     let mut log_builder = pretty_env_logger::formatted_builder();
@@ -65,7 +58,7 @@ fn main() {
         },
     ));
 
-    match tauri::Builder::default()
+    let tauri_builder_res = tauri::Builder::default()
         .plugin(tauri_plugin_store::Builder::default().build())
         .setup(|app| {
             let app_handle = app.app_handle();
@@ -114,7 +107,7 @@ fn main() {
 
             Ok(())
         })
-        .manage(Counter(Default::default()))
+        .manage(())
         .invoke_handler(tauri::generate_handler![
             development::install_git_main,
             github::compare_tags,
@@ -124,6 +117,7 @@ fn main() {
             github::pull_requests::get_launcher_download_link,
             github::pull_requests::get_pull_requests_wrapper,
             github::release_notes::check_is_flightcore_outdated,
+            github::release_notes::generate_release_note_announcement,
             github::release_notes::get_newest_flightcore_version,
             github::release_notes::get_northstar_release_notes,
             mod_management::delete_northstar_mod,
@@ -145,7 +139,6 @@ fn main() {
             platform_specific::get_host_os,
             platform_specific::get_local_northstar_proton_wrapper_version,
             platform_specific::install_northstar_proton_wrapper,
-            platform_specific::linux_checks,
             platform_specific::uninstall_northstar_proton_wrapper,
             repair_and_verify::clean_up_download_folder_wrapper,
             repair_and_verify::disable_all_but_core,
@@ -161,8 +154,9 @@ fn main() {
             util::kill_northstar,
             util::open_repair_window,
         ])
-        .run(tauri::generate_context!())
-    {
+        .run(tauri::generate_context!());
+
+    match tauri_builder_res {
         Ok(()) => (),
         Err(err) => {
             // Failed to launch system native web view

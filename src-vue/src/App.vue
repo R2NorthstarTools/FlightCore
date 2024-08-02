@@ -137,11 +137,21 @@ export default {
   font-weight: bold;
   font-size: large;
   background-color: transparent !important;
+
+  border-width: 2px !important;
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-radius: 10px !important;
+  transition: none;
 }
 
 #fc__menu_items .el-menu-item:hover, #fc__menu_items .el-sub-menu__title {
   color: #c6c9ce;
   background-color: transparent;
+}
+
+#fc__menu_items .el-menu-item:focus-visible {
+  border-color: rgb(160, 207, 255) !important;
 }
 
 #fc__menu_items .el-menu-item.is-active, #fc__menu_items .el-sub-menu.is-active > .el-sub-menu__title {

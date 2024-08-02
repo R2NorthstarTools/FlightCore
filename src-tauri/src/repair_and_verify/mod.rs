@@ -92,7 +92,6 @@ pub fn clean_up_download_folder(
             Ok(contents) => contents,
             Err(_) => continue,
         };
-        // dbg!(download_dir_contents);
 
         let mut count = 0;
         download_dir_contents.for_each(|_| count += 1);
