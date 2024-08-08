@@ -38,3 +38,13 @@ pub async fn get_local_northstar_proton_wrapper_version() -> Result<String, Stri
     #[cfg(target_os = "windows")]
     Err("Not supported on Windows".to_string())
 }
+
+/// Check whether the current device might be behind a CGNAT
+#[tauri::command]
+pub async fn check_cgnat() -> Result<String, String> {
+    #[cfg(target_os = "linux")]
+    return Err("Not supported on Linux".to_string());
+
+    #[cfg(target_os = "windows")]
+    windows::check_cgnat().await
+}
