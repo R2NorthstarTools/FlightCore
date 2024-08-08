@@ -3,11 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-use std::{
-    env,
-    sync::{Arc, Mutex},
-    time::Duration,
-};
+use std::{env, time::Duration};
 
 mod constants;
 mod development;
@@ -41,9 +37,6 @@ pub struct NorthstarThunderstoreReleaseWrapper {
     label: String,
     value: NorthstarThunderstoreRelease,
 }
-
-#[derive(Default)]
-struct Counter(Arc<Mutex<i32>>);
 
 fn main() {
     // Setup logger
@@ -114,7 +107,7 @@ fn main() {
 
             Ok(())
         })
-        .manage(Counter(Default::default()))
+        .manage(())
         .invoke_handler(tauri::generate_handler![
             development::install_git_main,
             github::compare_tags,
@@ -143,10 +136,10 @@ fn main() {
             northstar::profile::delete_profile,
             northstar::profile::fetch_profiles,
             northstar::profile::validate_profile,
+            platform_specific::check_cgnat,
             platform_specific::get_host_os,
             platform_specific::get_local_northstar_proton_wrapper_version,
             platform_specific::install_northstar_proton_wrapper,
-            platform_specific::linux_checks,
             platform_specific::uninstall_northstar_proton_wrapper,
             repair_and_verify::clean_up_download_folder_wrapper,
             repair_and_verify::disable_all_but_core,

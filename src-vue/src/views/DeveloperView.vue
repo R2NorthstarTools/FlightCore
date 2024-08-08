@@ -17,10 +17,6 @@
 
             <h3>Linux:</h3>
 
-            <el-button type="primary" @click="checkLinuxCompatibility">
-                Check NSProton Compatibility
-            </el-button>
-
             <el-button type="primary" @click="installNSProton">
                 Install NSProton
             </el-button>
@@ -69,6 +65,9 @@
 
             <h3>Repair:</h3>
 
+            <el-button type="primary" @click="checkCgnat">
+                Run tracert and collect hop count
+            </el-button>
 
             <el-button type="primary" @click="getInstalledMods">
                 Get installed mods
@@ -210,16 +209,6 @@ export default defineComponent({
             await invoke("force_panic");
             showErrorNotification("Never should have been able to get here!");
         },
-        async checkLinuxCompatibility() {
-            await invoke("linux_checks")
-                .then(() => {
-                    showNotification('Linux compatible', 'All checks passed');
-                })
-                .catch((error) => {
-                    showNotification('Not Linux compatible', error, 'error');
-                    console.error(error);
-                });
-        },
         async launchGameWithoutChecks() {
             let launch_options: NorthstarLaunchOptions = { bypass_checks: true, launch_via_steam: false };
             this.$store.commit('launchGame', launch_options);
@@ -343,6 +332,15 @@ export default defineComponent({
             await invoke("get_local_northstar_proton_wrapper_version")
                 .then((message) => { showNotification(`NSProton Version`, message as string); })
                 .catch((error) => { showNotification(`Error`, error, "error"); })
+        },
+        async checkCgnat() {
+            await invoke<string>("check_cgnat")
+                .then((message) => {
+                    showNotification(message);
+                })
+                .catch((error) => {
+                    showErrorNotification(error);
+                });
         },
         async copyReleaseNotesToClipboard() {
             navigator.clipboard.writeText(this.release_notes_text)
