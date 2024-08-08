@@ -1,3 +1,4 @@
+use rand::prelude::SliceRandom;
 use serde::{Deserialize, Serialize};
 use std::vec::Vec;
 use ts_rs::TS;
@@ -168,9 +169,51 @@ pub async fn generate_release_note_announcement() -> Result<String, String> {
     let modders_info = "Mod compatibility should not be impacted";
     let server_hosters_info = "REPLACE ME";
 
+    let mut rng = rand::thread_rng();
+    let attributes = vec![
+        "adorable",
+        "amazing",
+        "beautiful",
+        "blithsome",
+        "brilliant",
+        "compassionate",
+        "dazzling",
+        "delightful",
+        "distinguished",
+        "elegant",
+        "enigmatic",
+        "enthusiastic",
+        "fashionable",
+        "fortuitous",
+        "friendly",
+        "generous",
+        "gleeful",
+        "gorgeous",
+        "handsome",
+        "lively",
+        "lovely",
+        "lucky",
+        "lustrous",
+        "marvelous",
+        "merry",
+        "mirthful",
+        "phantasmagorical",
+        "pretty",
+        "propitious",
+        "ravishing",
+        "sincere",
+        "sophisticated fellow",
+        "stupendous",
+        "vivacious",
+        "wonderful",
+        "zestful",
+    ];
+
+    let selected_attribute = attributes.choose(&mut rng).unwrap();
+
     // Build announcement string
     let return_string = format!(
-        r"Hello beautiful people <3
+        r"Hello {selected_attribute} people <3
 **Northstar `{current_ns_version}` is out!**
 
 {general_info}

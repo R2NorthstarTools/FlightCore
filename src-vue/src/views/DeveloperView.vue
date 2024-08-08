@@ -65,6 +65,9 @@
 
             <h3>Repair:</h3>
 
+            <el-button type="primary" @click="checkCgnat">
+                Run tracert and collect hop count
+            </el-button>
 
             <el-button type="primary" @click="getInstalledMods">
                 Get installed mods
@@ -329,6 +332,15 @@ export default defineComponent({
             await invoke("get_local_northstar_proton_wrapper_version")
                 .then((message) => { showNotification(`NSProton Version`, message as string); })
                 .catch((error) => { showNotification(`Error`, error, "error"); })
+        },
+        async checkCgnat() {
+            await invoke<string>("check_cgnat")
+                .then((message) => {
+                    showNotification(message);
+                })
+                .catch((error) => {
+                    showErrorNotification(error);
+                });
         },
         async copyReleaseNotesToClipboard() {
             navigator.clipboard.writeText(this.release_notes_text)
