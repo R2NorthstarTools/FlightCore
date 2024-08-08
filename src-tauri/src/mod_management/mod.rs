@@ -1,6 +1,6 @@
 // This file contains various mod management functions
 
-use crate::constants::{BLACKLISTED_MODS, CORE_MODS};
+use crate::constants::{BLACKLISTED_MODS, CORE_MODS, MODS_WITH_SPECIAL_REQUIREMENTS};
 use async_recursion::async_recursion;
 use thermite::prelude::ThermiteError;
 
@@ -606,6 +606,16 @@ pub async fn fc_download_mod_and_install(
     for blacklisted_mod in BLACKLISTED_MODS {
         if thunderstore_mod_string.contains(blacklisted_mod) {
             return Err("Cannot install Northstar as a mod!".to_string());
+        }
+    }
+
+    // Prevent installing mods that have specific install requirements
+    for special_mod in MODS_WITH_SPECIAL_REQUIREMENTS {
+        if thunderstore_mod_string.contains(special_mod) {
+            return Err(format!(
+                "{} has special install requirements and cannot be installed with FlightCore",
+                thunderstore_mod_string
+            ));
         }
     }
 
