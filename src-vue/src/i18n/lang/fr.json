@@ -15,7 +15,8 @@
         "downloading": "Téléchargement",
         "extracting": "Extraction",
         "done": "Fait",
-        "success": "Succès"
+        "success": "Succès",
+        "confirm": "Confirmed"
     },
     "play": {
         "button": {
@@ -122,11 +123,21 @@
             "active": "Profile actif",
             "edit": "Éditer les profiles",
             "dialog": {
-                "title": "Profiles"
+                "title": "Profiles",
+                "clone": "Cloner",
+                "delete": "Supprimer",
+                "delete_confirm": "Voulez-vous vraiment supprimer ce profil ?",
+                "create_empty": "nouveau profil",
+                "new_profile_name": "Entrez le nouveau nom du profil"
             }
         }
     },
     "notification": {
+        "date_prefix": "à",
+        "no_new": {
+            "title": "Vous êtes à jour",
+            "text": "Rien à voir par ici !"
+        },
         "game_folder": {
             "new": {
                 "title": "Nouveau dossier",

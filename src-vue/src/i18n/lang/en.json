@@ -11,6 +11,7 @@
         "yes": "Yes",
         "no": "No",
         "error": "Error",
+        "confirm": "Confirm",
         "cancel": "Cancel",
         "informationShort": "Info",
         "downloading": "Downloading",
@@ -109,13 +110,19 @@
         "show_deprecated_mods": "Show deprecated Thunderstore mods",
         "show_deprecated_mods_desc1": "This allows you to see deprecated mods in the online mods collection.",
         "show_deprecated_mods_desc2": "Watch out, such mods are usually deprecated for a good reason.",
+        "show_nsfw_mods": "Show NSFW Thunderstore mods",
 
         "profile": {
             "active": "Active Profile",
             "edit": "Edit Profiles",
 
             "dialog": {
-                "title": "Profiles"
+                "title": "Profiles",
+                "delete_confirm": "Are you sure to delete this profile?",
+                "delete": "Delete",
+                "clone": "Clone",
+                "new_profile_name": "Enter the new Profile name",
+                "create_empty": "New Profile"
             }
         },
 
@@ -142,6 +149,12 @@
     },
 
     "notification": {
+        "date_prefix": "at",
+        "no_new": {
+            "title": "Up-to-date",
+            "text": "Nothing to see here!"
+        },
+
         "game_folder": {
             "new": {
                 "title": "New game folder",

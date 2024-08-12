@@ -15,7 +15,8 @@
         "downloading": "下载中",
         "extracting": "解压中",
         "done": "完成",
-        "success": "成功"
+        "success": "成功",
+        "confirm": "确认"
     },
     "play": {
         "button": {
@@ -122,7 +123,9 @@
             "active": "当前用户配置",
             "edit": "编辑用户配置",
             "dialog": {
-                "title": "用户配置"
+                "title": "用户配置",
+                "delete_confirm": "你确定要删除此配置文件吗?",
+                "delete": "删除"
             }
         }
     },

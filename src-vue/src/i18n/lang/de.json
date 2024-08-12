@@ -15,7 +15,8 @@
         "downloading": "Herunterladen",
         "extracting": "Extrahieren",
         "done": "Fertig",
-        "success": "Erfolg"
+        "success": "Erfolg",
+        "confirm": "Bestätigen"
     },
     "play": {
         "button": {
@@ -117,7 +118,19 @@
         },
         "show_deprecated_mods_desc1": "Damit werden veraltete Mods in der Online-Mods-Ansicht sichtbar.",
         "show_deprecated_mods_desc2": "Aber Vorsicht, solche Mods sind normalerweise aus gutem Grund als veraltet markiert.",
-        "show_deprecated_mods": "Veraltete Thunderstore mods anzeigen"
+        "show_deprecated_mods": "Veraltete Thunderstore mods anzeigen",
+        "profile": {
+            "dialog": {
+                "title": "Profile",
+                "delete_confirm": "Sind Sie sich sicher, dass Sie dieses Profil löschen möchten?",
+                "delete": "Löschen",
+                "clone": "Duplizieren",
+                "create_empty": "Neues Profil",
+                "new_profile_name": "Neuen Profilnamen eingeben"
+            },
+            "active": "Aktives Profil",
+            "edit": "Profile bearbeiten"
+        }
     },
     "notification": {
         "game_folder": {
@@ -137,7 +150,18 @@
         "flightcore_outdated": {
             "title": "FlightCore veraltet!",
             "text": "Bitte aktualisiere FlightCore.\nDu hast die veraltetet Version {oldVersion}.\nNeuste Version ist {newVersion}!"
-        }
+        },
+        "profile": {
+            "invalid": {
+                "text": "Das Profil auf das Sie wechseln möchten ist nicht länger gültig.",
+                "title": "Ungültiges Profil"
+            }
+        },
+        "no_new": {
+            "title": "Aktuell",
+            "text": "Hier gibt es nichts zu sehen!"
+        },
+        "date_prefix": "auf"
     },
     "channels": {
         "release": {

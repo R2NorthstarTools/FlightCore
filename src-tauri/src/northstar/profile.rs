@@ -1,3 +1,4 @@
+use crate::util::copy_dir_all;
 use crate::GameInstall;
 
 // These folders are part of Titanfall 2 and
@@ -73,4 +74,48 @@ pub fn validate_profile(game_install: GameInstall, profile: String) -> bool {
     let profile_dir = std::path::Path::new(profile_path.as_str());
 
     profile_dir.is_dir()
+}
+
+#[tauri::command]
+pub fn delete_profile(game_install: GameInstall, profile: String) -> Result<(), String> {
+    // Check if the Profile actually exists
+    if !validate_profile(game_install.clone(), profile.clone()) {
+        return Err(format!("{} is not a valid Profile", profile));
+    }
+
+    log::info!("Deleting Profile {}", profile);
+
+    let profile_path = format!("{}/{}", game_install.game_path, profile);
+
+    match std::fs::remove_dir_all(profile_path) {
+        Ok(()) => Ok(()),
+        Err(err) => Err(format!("Failed to delete Profile: {}", err)),
+    }
+}
+
+/// Clones a profile by simply duplicating the folder under a new name
+#[tauri::command]
+pub fn clone_profile(
+    game_install: GameInstall,
+    old_profile: String,
+    new_profile: String,
+) -> Result<(), String> {
+    // Check if the old Profile already exists
+    if !validate_profile(game_install.clone(), old_profile.clone()) {
+        return Err(format!("{} is not a valid Profile", old_profile));
+    }
+
+    // Check that new Profile does not already exist
+    if validate_profile(game_install.clone(), new_profile.clone()) {
+        return Err(format!("{} already exists", new_profile));
+    }
+
+    log::info!("Cloning Profile {} to {}", old_profile, new_profile);
+
+    let old_profile_path = format!("{}/{}", game_install.game_path, old_profile);
+    let new_profile_path = format!("{}/{}", game_install.game_path, new_profile);
+
+    copy_dir_all(old_profile_path, new_profile_path).unwrap();
+
+    Ok(())
 }

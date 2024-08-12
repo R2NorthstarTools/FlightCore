@@ -1,11 +1,11 @@
 [package]
-name = "app"
-version = "2.10.0"
-description = "A Tauri App"
-authors = ["you"]
-license = ""
-repository = ""
-default-run = "app"
+name = "flightcore"
+version = "2.24.0"
+description = "Mod-manager for Northstar"
+authors = ["https://github.com/R2NorthstarTools/FlightCore/graphs/contributors"]
+license = "MIT"
+repository = "https://github.com/R2NorthstarTools/FlightCore"
+default-run = "flightcore"
 edition = "2021"
 rust-version = "1.66"
 
@@ -18,58 +18,66 @@ rust-version = "1.66"
 debug = 1
 
 [build-dependencies]
-tauri-build = { version = "1.4", features = [] }
+tauri-build = { version = "1.5", features = [] }
 
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.4", features = ["api-all", "dialog", "updater"] }
+tauri = { version = "1.6", features = ["api-all", "dialog", "updater"] }
 tokio = { version = "1", features = ["full"] }
 # Sentry (crash) logging
-sentry = "0.31"
-sentry-log = "0.31"
+sentry = "0.32"
+sentry-log = "0.34"
 # Find steam games
-steamlocate = "1.2"
+steamlocate = "2.0.0-beta.2"
 # Error messages
 anyhow = "1.0"
 # libthermite for Northstar/mod install handling
-libthermite = { version = "0.7.0-beta", features = ["proton"] }
+libthermite = { version = "0.8.1", features = ["proton"] }
 # zip stuff
 zip = "0.6.2"
 # Regex
-regex = "1.9"
+regex = "1.10"
 # Read out running application process names
-sysinfo = "0.29.10"
+sysinfo = "0.30.12"
 # HTTP requests
 reqwest = { version = "0.11", features = ["blocking"] }
 # Persistent store for settings
-tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", rev = "5a6abd3203dc94c38f96d0c4bf7ecbef399f8c25" }
+tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 # JSON5 parsing support (allows comments in JSON)
 json5 = "0.4.1"
 # Async recursion for recursive mod install
-async-recursion = "1.0.5"
+async-recursion = "1.1.1"
 # For parsing timestamps
-chrono = "0.4.30"
+chrono = "0.4.38"
 # TypeScript bindings
-ts-rs = "7.0"
+ts-rs = "8.1"
 # const formatting
-const_format = "0.2.30"
+const_format = "0.2.32"
 # Logging libraries
 pretty_env_logger = "0.5.0"
 log = "0.4"
 # Extracting zip files easily
-zip-extract = "0.1.2"
+zip-extract = "0.1.3"
 # open urls
-open = "5.0.0"
+open = "5.3.0"
 semver = "1.0"
 # simplified filesystem access
 glob = "0.3.1"
 dirs = "5"
+# Random number stuff
+rand = "0.8.5"
+
+# Interacting with GitHub
+octocrab = "0.38.0"
+# Library for removing markdown links
+remove-markdown-links = "1.0.0"
+
 
 [target.'cfg(windows)'.dependencies]
 # Windows API stuff
 winapi = "0.3.9"
-winreg = "0.51.0"
+winreg = "0.52.0"
 
 [features]
 # by default Tauri runs in production mode
