@@ -13,8 +13,8 @@ import NotificationButton from "./components/NotificationButton.vue";
 export default {
   components: {
       NotificationButton,
-      DeveloperView,
       ChangelogView,
+      DeveloperView,
       PlayView,
       SettingsView,
       ModsView
