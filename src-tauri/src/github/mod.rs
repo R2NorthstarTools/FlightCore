@@ -279,7 +279,7 @@ pub fn compare_tags_northstar(first_tag: Tag, second_tag: Tag) -> Result<String,
 
     // Convert the set to a sorted vector.
     let mut sorted_vec: Vec<String> = authors_set.into_iter().collect();
-    sorted_vec.sort();
+    sorted_vec.sort_by(|a, b| a.to_lowercase().cmp(&b.to_lowercase()));
 
     // Define a string to prepend to each element.
     let prefix = "@";
