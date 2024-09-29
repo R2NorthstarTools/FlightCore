@@ -1,6 +1,6 @@
 [package]
 name = "flightcore"
-version = "2.24.0"
+version = "2.26.0"
 description = "Mod-manager for Northstar"
 authors = ["https://github.com/R2NorthstarTools/FlightCore/graphs/contributors"]
 license = "MIT"
@@ -51,7 +51,7 @@ async-recursion = "1.1.1"
 # For parsing timestamps
 chrono = "0.4.38"
 # TypeScript bindings
-ts-rs = "8.1"
+ts-rs = "9.0"
 # const formatting
 const_format = "0.2.32"
 # Logging libraries

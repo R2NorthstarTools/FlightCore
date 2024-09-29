@@ -3,12 +3,6 @@
 version = 3
 
 [[package]]
-name = "Inflector"
-version = "0.11.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fe438c63458706e03479442743baae6c88256498e6431708f6dfc520a26515d3"
-
-[[package]]
 name = "addr2line"
 version = "0.20.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1165,7 +1159,7 @@ dependencies = [
 
 [[package]]
 name = "flightcore"
-version = "2.24.0"
+version = "2.26.0"
 dependencies = [
  "anyhow",
  "async-recursion",
@@ -3519,9 +3513,9 @@ dependencies = [
 
 [[package]]
 name = "regex"
-version = "1.10.5"
+version = "1.10.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b91213439dad192326a0d7c6ee3955910425f441d7038e0d6933b0aec5c4517f"
+checksum = "4219d74c6b67a3654a9fbebc4b419e22126d13d2f3c4a07ee0cb61ff79a79619"
 dependencies = [
  "aho-corasick",
  "memchr",
@@ -4130,12 +4124,13 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.120"
+version = "1.0.127"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4e0d21c9a8cae1235ad58a00c11cb40d4b1e5c784f1ef2c537876ed6ffd8b7c5"
+checksum = "8043c06d9f82bd7271361ed64f415fe5e12a77fdb52e573e7f06a516dea329ad"
 dependencies = [
  "indexmap 2.2.5",
  "itoa 1.0.9",
+ "memchr",
  "ryu",
  "serde",
 ]
@@ -5281,9 +5276,9 @@ checksum = "3528ecfd12c466c6f163363caf2d02a71161dd5e1cc6ae7b34207ea2d42d81ed"
 
 [[package]]
 name = "ts-rs"
-version = "8.1.0"
+version = "9.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "09d3fa4606cdab1e9b668cc65ce2545941d01f52bc27536a195c66c55b91cb84"
+checksum = "b44017f9f875786e543595076374b9ef7d13465a518dd93d6ccdbf5b432dde8c"
 dependencies = [
  "thiserror",
  "ts-rs-macros",
@@ -5291,11 +5286,10 @@ dependencies = [
 
 [[package]]
 name = "ts-rs-macros"
-version = "8.1.0"
+version = "9.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f86ae36cbb2d58b86677ad413054feeb0712e382e822131cf9a4a1e580c419b5"
+checksum = "c88cc88fd23b5a04528f3a8436024f20010a16ec18eb23c164b1242f65860130"
 dependencies = [
- "Inflector",
  "proc-macro2",
  "quote",
  "syn 2.0.46",

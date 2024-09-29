@@ -244,8 +244,8 @@ pub fn parse_mods_in_package(
 
     // Get list of folders in `mods` directory
     for path in paths {
-        let my_path = path.unwrap().path();
-        let md = std::fs::metadata(my_path.clone()).unwrap();
+        let my_path = path?.path();
+        let md = std::fs::metadata(my_path.clone())?;
         if md.is_dir() {
             directories.push(my_path);
         }
