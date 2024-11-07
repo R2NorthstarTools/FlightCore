@@ -53,7 +53,7 @@ chrono = "0.4.38"
 # TypeScript bindings
 ts-rs = "10.0"
 # const formatting
-const_format = "0.2.32"
+const_format = "0.2.33"
 # Logging libraries
 pretty_env_logger = "0.5.0"
 log = "0.4"
