@@ -380,6 +380,15 @@ pub fn get_installed_mods_and_properties(
     let binding = serde_json::Map::new(); // Empty map in case treating as object fails
     let mapping = enabled_mods.as_object().unwrap_or(&binding);
 
+    // With the change introduced in https://github.com/R2Northstar/NorthstarLauncher/pull/828,
+    // enabledmods.json now has a different format, forcing us to detect whether it is used and
+    // react accordingly.
+    //
+    // Old format: { modName: string => is_enabled: bool }
+    // New format: { modName: string => versions: string[] => is_enabled: bool }
+    let old_format_used: bool = mapping.values().last().unwrap().is_boolean();
+    log::info!("Old enabledmods.json format detected: {old_format_used}");
+
     // Use list of installed mods and set enabled based on `enabledmods.json`
     for mut current_mod in found_installed_mods {
         let current_mod_enabled = match mapping.get(&current_mod.name) {
