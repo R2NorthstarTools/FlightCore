@@ -384,17 +384,28 @@ pub fn get_installed_mods_and_properties(
     // enabledmods.json now has a different format, forcing us to detect whether it is used and
     // react accordingly.
     //
-    // Old format: { modName: string => is_enabled: bool }
-    // New format: { modName: string => versions: string[] => is_enabled: bool }
     let old_format_used: bool = mapping.len() != 0 && mapping.values().last().unwrap().is_boolean();
     log::info!("Old enabledmods.json format detected: {old_format_used}");
 
     // Use list of installed mods and set enabled based on `enabledmods.json`
     for mut current_mod in found_installed_mods {
-        let current_mod_enabled = match mapping.get(&current_mod.name) {
-            Some(enabled) => enabled.as_bool().unwrap(),
-            None => true, // Northstar considers mods not in mapping as enabled.
+        let current_mod_enabled: bool = match old_format_used {
+            // Old format: { modName: string => is_enabled: bool }
+            true => match mapping.get(&current_mod.name) {
+                Some(enabled) => enabled.as_bool().unwrap(),
+                None => true, // Northstar considers mods not in mapping as enabled.
+            },
+
+            // New format: { modName: string => versions: string[] => is_enabled: bool }
+            false => match mapping.get(&current_mod.name) {
+                Some(versions) => match versions.get(current_mod.version.clone().unwrap()) {
+                    Some(enabled) => enabled.as_bool().unwrap(),
+                    None => false,
+                },
+                None => false,
+            }
         };
+
         current_mod.enabled = current_mod_enabled;
         installed_mods.push(current_mod);
     }
