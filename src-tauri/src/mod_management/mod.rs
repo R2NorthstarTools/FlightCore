@@ -386,7 +386,7 @@ pub fn get_installed_mods_and_properties(
     //
     // Old format: { modName: string => is_enabled: bool }
     // New format: { modName: string => versions: string[] => is_enabled: bool }
-    let old_format_used: bool = mapping.values().last().unwrap().is_boolean();
+    let old_format_used: bool = mapping.len() != 0 && mapping.values().last().unwrap().is_boolean();
     log::info!("Old enabledmods.json format detected: {old_format_used}");
 
     // Use list of installed mods and set enabled based on `enabledmods.json`
