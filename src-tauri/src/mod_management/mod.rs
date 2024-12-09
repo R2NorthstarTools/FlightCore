@@ -176,6 +176,7 @@ pub fn rebuild_enabled_mods_json(game_install: &GameInstall) -> Result<(), Strin
 pub fn set_mod_enabled_status(
     game_install: GameInstall,
     mod_name: String,
+    mod_version: String,
     is_enabled: bool,
 ) -> Result<(), String> {
     let enabledmods_json_path = format!(
@@ -207,8 +208,39 @@ pub fn set_mod_enabled_status(
         res = get_enabled_mods(&game_install)?;
     }
 
+    // Get manifest format version
+    let mut manifest_version = 0;
+    let manifest_object = &res.as_object().unwrap();
+
+    if manifest_object.contains_key("Version") && manifest_object["Version"].is_number() {
+        manifest_version = manifest_object["Version"].as_i64().unwrap();
+    }
+    log::info!("Using enabledmods.json format version {}.", manifest_version);
+
+    // Fail without version parameter
+    if mod_version.len() == 0 {
+        match manifest_version {
+            0 => (),
+            _ => return Err("todo: Missing `mod_version` parameter with new enabledmods.json format.".to_string())
+        }
+    }
+
     // Update value
-    res[mod_name] = serde_json::Value::Bool(is_enabled);
+    match manifest_version {
+        0 => {
+            res[mod_name] = serde_json::Value::Bool(is_enabled);
+        }
+        _ => {
+            // Create mod entry if needed
+            if !res.as_object().unwrap().contains_key(&mod_name) || !res[&mod_name].is_object() {
+                let mut version_map: serde_json::Map<String, serde_json::Value> = serde_json::Map::new();
+                version_map.insert(mod_version, serde_json::Value::Bool(is_enabled));
+                res[&mod_name] = serde_json::Value::Object(version_map);
+            } else {
+                res[mod_name][mod_version] = serde_json::Value::Bool(is_enabled);
+            }
+        }
+    }
 
     // Save the JSON structure into the output file
     std::fs::write(
@@ -380,12 +412,32 @@ pub fn get_installed_mods_and_properties(
     let binding = serde_json::Map::new(); // Empty map in case treating as object fails
     let mapping = enabled_mods.as_object().unwrap_or(&binding);
 
+    // With the change introduced in https://github.com/R2Northstar/NorthstarLauncher/pull/828,
+    // enabledmods.json now has a different format, forcing us to detect whether it is used and
+    // react accordingly.
+    //
+    let old_format_used: bool = mapping.len() != 0 && mapping.values().last().unwrap().is_boolean();
+    log::info!("Old enabledmods.json format detected: {old_format_used}");
+
     // Use list of installed mods and set enabled based on `enabledmods.json`
     for mut current_mod in found_installed_mods {
-        let current_mod_enabled = match mapping.get(&current_mod.name) {
-            Some(enabled) => enabled.as_bool().unwrap(),
-            None => true, // Northstar considers mods not in mapping as enabled.
+        let current_mod_enabled: bool = match old_format_used {
+            // Old format: { modName: string => is_enabled: bool }
+            true => match mapping.get(&current_mod.name) {
+                Some(enabled) => enabled.as_bool().unwrap(),
+                None => true, // Northstar considers mods not in mapping as enabled.
+            },
+
+            // New format: { modName: string => versions: string[] => is_enabled: bool }
+            false => match mapping.get(&current_mod.name) {
+                Some(versions) => match versions.get(current_mod.version.clone().unwrap()) {
+                    Some(enabled) => enabled.as_bool().unwrap(),
+                    None => false,
+                },
+                None => false,
+            }
         };
+
         current_mod.enabled = current_mod_enabled;
         installed_mods.push(current_mod);
     }
