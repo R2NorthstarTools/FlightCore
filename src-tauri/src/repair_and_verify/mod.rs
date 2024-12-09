@@ -47,10 +47,10 @@ pub fn disable_all_but_core(game_install: GameInstall) -> Result<(), String> {
     for (key, _value) in current_mods.as_object().unwrap() {
         if CORE_MODS.contains(&key.as_str()) {
             // This is a core mod, we do not want to disable it
-            set_mod_enabled_status(game_install.clone(), key.to_string(), true)?;
+            set_mod_enabled_status(game_install.clone(), key.to_string(), "".to_string(), true)?;
         } else {
             // Not a core mod
-            set_mod_enabled_status(game_install.clone(), key.to_string(), false)?;
+            set_mod_enabled_status(game_install.clone(), key.to_string(), "".to_string(), false)?;
         }
     }
 

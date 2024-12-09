@@ -176,6 +176,7 @@ pub fn rebuild_enabled_mods_json(game_install: &GameInstall) -> Result<(), Strin
 pub fn set_mod_enabled_status(
     game_install: GameInstall,
     mod_name: String,
+    mod_version: String,
     is_enabled: bool,
 ) -> Result<(), String> {
     let enabledmods_json_path = format!(
@@ -207,8 +208,39 @@ pub fn set_mod_enabled_status(
         res = get_enabled_mods(&game_install)?;
     }
 
+    // Get manifest format version
+    let mut manifest_version = 0;
+    let manifest_object = &res.as_object().unwrap();
+
+    if manifest_object.contains_key("Version") && manifest_object["Version"].is_number() {
+        manifest_version = manifest_object["Version"].as_i64().unwrap();
+    }
+    log::info!("Using enabledmods.json format version {}.", manifest_version);
+
+    // Fail without version parameter
+    if mod_version.len() == 0 {
+        match manifest_version {
+            0 => (),
+            _ => return Err("todo: Missing `mod_version` parameter with new enabledmods.json format.".to_string())
+        }
+    }
+
     // Update value
-    res[mod_name] = serde_json::Value::Bool(is_enabled);
+    match manifest_version {
+        0 => {
+            res[mod_name] = serde_json::Value::Bool(is_enabled);
+        }
+        _ => {
+            // Create mod entry if needed
+            if !res.as_object().unwrap().contains_key(&mod_name) || !res[&mod_name].is_object() {
+                let mut version_map: serde_json::Map<String, serde_json::Value> = serde_json::Map::new();
+                version_map.insert(mod_version, serde_json::Value::Bool(is_enabled));
+                res[&mod_name] = serde_json::Value::Object(version_map);
+            } else {
+                res[mod_name][mod_version] = serde_json::Value::Bool(is_enabled);
+            }
+        }
+    }
 
     // Save the JSON structure into the output file
     std::fs::write(
