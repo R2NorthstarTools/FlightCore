@@ -1,5 +1,9 @@
 name: "test-on-push"
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "0 0 * * 0" # Run weekly to cover rust toolchain updates
 
 jobs:
   # Ensure version numbers in various places match up
