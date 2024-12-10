@@ -1,6 +1,6 @@
 // This file contains various mod management functions
 
-use crate::constants::{BLACKLISTED_MODS, CORE_MODS, MODS_WITH_SPECIAL_REQUIREMENTS};
+use crate::constants::{BLACKLISTED_MODS, CORE_MODS, MODS_WITH_SPECIAL_REQUIREMENTS, NORTHSTAR_MODS_MANIFEST_VERSION};
 use async_recursion::async_recursion;
 use thermite::prelude::ThermiteError;
 
@@ -154,8 +154,7 @@ pub fn rebuild_enabled_mods_json(game_install: &GameInstall) -> Result<(), Strin
     let mut my_map = serde_json::Map::new();
 
     // Build mapping (adapting to manifest version)
-    let manifest_version = 1;
-    match manifest_version {
+    match NORTHSTAR_MODS_MANIFEST_VERSION {
         0 => {
             for ns_mod in mods_and_properties.into_iter() {
                 my_map.insert(ns_mod.name, serde_json::Value::Bool(ns_mod.enabled));
@@ -182,7 +181,7 @@ pub fn rebuild_enabled_mods_json(game_install: &GameInstall) -> Result<(), Strin
     }
 
     // Assign manifest version
-    my_map.insert("Version".to_string(), serde_json::json!(manifest_version));
+    my_map.insert("Version".to_string(), serde_json::json!(NORTHSTAR_MODS_MANIFEST_VERSION));
 
     let obj = serde_json::Value::Object(my_map);
 
@@ -234,7 +233,7 @@ pub fn set_mod_enabled_status(
     }
 
     // Get manifest format version
-    let mut manifest_version = 1;
+    let mut manifest_version = NORTHSTAR_MODS_MANIFEST_VERSION;
     let manifest_object = &res.as_object().unwrap();
 
     if manifest_object.contains_key("Version") && manifest_object["Version"].is_number() {
