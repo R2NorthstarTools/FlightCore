@@ -153,12 +153,37 @@ pub fn rebuild_enabled_mods_json(game_install: &GameInstall) -> Result<(), Strin
     // Create new mapping
     let mut my_map = serde_json::Map::new();
 
-    // Build mapping
-    for ns_mod in mods_and_properties.into_iter() {
-        my_map.insert(ns_mod.name, serde_json::Value::Bool(ns_mod.enabled));
+    // Build mapping (adapting to manifest version)
+    let manifest_version = 0;
+    match manifest_version {
+        0 => {
+            for ns_mod in mods_and_properties.into_iter() {
+                my_map.insert(ns_mod.name, serde_json::Value::Bool(ns_mod.enabled));
+            }
+        },
+        1 => {
+            for ns_mod in mods_and_properties.into_iter() {
+                // Create mod key if needed
+                if !my_map.contains_key(&ns_mod.name) {
+                    let mut versions_map = serde_json::Map::new();
+                    versions_map.insert(ns_mod.version.unwrap(), serde_json::Value::Bool(ns_mod.enabled));
+                    my_map.insert(ns_mod.name, serde_json::Value::Object(versions_map));
+                }
+
+                // Else create version key
+                else {
+                    let mut version_map = my_map[&ns_mod.name].as_object().unwrap().clone();
+                    version_map.insert(ns_mod.version.unwrap(), serde_json::Value::Bool(ns_mod.enabled));
+                    my_map.insert(ns_mod.name, serde_json::Value::Object(version_map));
+                }
+            }
+        },
+        _ => return Err("Unknown manifest version.".to_string())
     }
 
-    // Turn into serde object
+    // Assign manifest version
+    my_map.insert("Version".to_string(), serde_json::json!(manifest_version));
+
     let obj = serde_json::Value::Object(my_map);
 
     // Write to file
