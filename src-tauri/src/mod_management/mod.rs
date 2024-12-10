@@ -455,7 +455,8 @@ pub fn get_installed_mods_and_properties(
     // enabledmods.json now has a different format, forcing us to detect whether it is used and
     // react accordingly.
     //
-    let old_format_used: bool = mapping.len() != 0 && mapping.values().last().unwrap().is_boolean();
+    let old_format_used: bool = mapping.len() != 0 && !mapping.contains_key("Version") 
+        || mapping.len() != 0 && mapping.contains_key("Version") && mapping.get("Version").unwrap() == 0;
     log::info!("Old enabledmods.json format detected: {old_format_used}");
 
     // Use list of installed mods and set enabled based on `enabledmods.json`
