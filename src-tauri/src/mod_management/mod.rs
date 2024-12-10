@@ -153,6 +153,9 @@ pub fn rebuild_enabled_mods_json(game_install: &GameInstall) -> Result<(), Strin
     // Create new mapping
     let mut my_map = serde_json::Map::new();
 
+    // Assign manifest version
+    my_map.insert("Version".to_string(), serde_json::json!(NORTHSTAR_MODS_MANIFEST_VERSION));
+
     // Build mapping (adapting to manifest version)
     match NORTHSTAR_MODS_MANIFEST_VERSION {
         0 => {
@@ -179,9 +182,6 @@ pub fn rebuild_enabled_mods_json(game_install: &GameInstall) -> Result<(), Strin
         },
         _ => return Err("Unknown manifest version.".to_string())
     }
-
-    // Assign manifest version
-    my_map.insert("Version".to_string(), serde_json::json!(NORTHSTAR_MODS_MANIFEST_VERSION));
 
     let obj = serde_json::Value::Object(my_map);
 
