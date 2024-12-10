@@ -154,7 +154,7 @@ pub fn rebuild_enabled_mods_json(game_install: &GameInstall) -> Result<(), Strin
     let mut my_map = serde_json::Map::new();
 
     // Build mapping (adapting to manifest version)
-    let manifest_version = 0;
+    let manifest_version = 1;
     match manifest_version {
         0 => {
             for ns_mod in mods_and_properties.into_iter() {
@@ -201,7 +201,7 @@ pub fn rebuild_enabled_mods_json(game_install: &GameInstall) -> Result<(), Strin
 pub fn set_mod_enabled_status(
     game_install: GameInstall,
     mod_name: String,
-    mod_version: String,
+    mut mod_version: String,
     is_enabled: bool,
 ) -> Result<(), String> {
     let enabledmods_json_path = format!(
@@ -234,7 +234,7 @@ pub fn set_mod_enabled_status(
     }
 
     // Get manifest format version
-    let mut manifest_version = 0;
+    let mut manifest_version = 1;
     let manifest_object = &res.as_object().unwrap();
 
     if manifest_object.contains_key("Version") && manifest_object["Version"].is_number() {
@@ -246,7 +246,22 @@ pub fn set_mod_enabled_status(
     if mod_version.len() == 0 {
         match manifest_version {
             0 => (),
-            _ => return Err("todo: Missing `mod_version` parameter with new enabledmods.json format.".to_string())
+            _ => {
+                // Trying to retrieve version
+                let mods_and_properties = get_installed_mods_and_properties(game_install.clone())?;
+                for m in mods_and_properties {
+                    if m.name == mod_name {
+                        mod_version = m.version.unwrap();
+                        break;
+                    }
+                }
+
+                // Fail if version couldn't be retrieved
+                if mod_version.len() == 0 {
+                    log::error!("Didn't find mod version for mod \"{}\".", mod_name);
+                    return Err("todo: Missing `mod_version` parameter with new enabledmods.json format.".to_string())
+                }
+            }
         }
     }
 
