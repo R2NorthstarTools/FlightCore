@@ -143,7 +143,7 @@ pub fn get_enabled_mods(game_install: &GameInstall) -> Result<serde_json::value:
 }
 
 /// Gets all currently installed and enabled/disabled mods to rebuild `enabledmods.json`
-pub fn rebuild_enabled_mods_json(game_install: &GameInstall) -> Result<(), String> {
+pub fn rebuild_enabled_mods_json(game_install: &GameInstall, mut manifest_version: i64) -> Result<(), String> {
     let enabledmods_json_path = format!(
         "{}/{}/enabledmods.json",
         game_install.game_path, game_install.profile
@@ -154,10 +154,13 @@ pub fn rebuild_enabled_mods_json(game_install: &GameInstall) -> Result<(), Strin
     let mut my_map = serde_json::Map::new();
 
     // Assign manifest version
-    my_map.insert("Version".to_string(), serde_json::json!(NORTHSTAR_MODS_MANIFEST_VERSION));
+    if manifest_version < 0 {
+        manifest_version = NORTHSTAR_MODS_MANIFEST_VERSION;
+    }
+    my_map.insert("Version".to_string(), serde_json::json!(manifest_version));
 
     // Build mapping (adapting to manifest version)
-    match NORTHSTAR_MODS_MANIFEST_VERSION {
+    match manifest_version {
         0 => {
             for ns_mod in mods_and_properties.into_iter() {
                 my_map.insert(ns_mod.name, serde_json::Value::Bool(ns_mod.enabled));
@@ -215,7 +218,7 @@ pub fn set_mod_enabled_status(
             log::warn!("Couldn't parse `enabledmod.json`: {}", err);
             log::warn!("Rebuilding file.");
 
-            rebuild_enabled_mods_json(&game_install)?;
+            rebuild_enabled_mods_json(&game_install, -1)?;
 
             // Then try again
             get_enabled_mods(&game_install)?
@@ -226,7 +229,13 @@ pub fn set_mod_enabled_status(
     if res.get(mod_name.clone()).is_none() {
         // If it doesn't exist, rebuild `enabledmod.json`
         log::info!("Value not found in `enabledmod.json`. Rebuilding file");
-        rebuild_enabled_mods_json(&game_install)?;
+
+        let manifest_version = match res.get("Version").is_some() && res.get("Version").unwrap().is_i64() {
+            true => res.get("Version").unwrap().as_i64().unwrap(),
+            false => NORTHSTAR_MODS_MANIFEST_VERSION
+        };
+
+        rebuild_enabled_mods_json(&game_install, manifest_version)?;
 
         // Then try again
         res = get_enabled_mods(&game_install)?;

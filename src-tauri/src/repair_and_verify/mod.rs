@@ -1,3 +1,4 @@
+use crate::constants::NORTHSTAR_MODS_MANIFEST_VERSION;
 use crate::mod_management::{get_enabled_mods, rebuild_enabled_mods_json, set_mod_enabled_status};
 /// Contains various functions to repair common issues and verifying installation
 use crate::{constants::CORE_MODS, GameInstall};
@@ -38,8 +39,19 @@ pub fn verify_game_files(game_install: GameInstall) -> Result<String, String> {
 /// Enables core mods if disabled
 #[tauri::command]
 pub fn disable_all_but_core(game_install: GameInstall) -> Result<(), String> {
-    // Rebuild `enabledmods.json` first to ensure all mods are added
-    rebuild_enabled_mods_json(&game_install)?;
+    // Try to fetch `enabledmods.json` a first time to try getting a manifest version
+    let manifest_version: i64 = match get_enabled_mods(&game_install) {
+        Ok(res) => match &res.as_object().unwrap().contains_key("Version") {
+            false => NORTHSTAR_MODS_MANIFEST_VERSION,
+            true => res.as_object().unwrap().get("Version").unwrap().as_i64().unwrap()
+        },
+        Err(_) => {
+            NORTHSTAR_MODS_MANIFEST_VERSION
+        }
+    };
+
+    // Rebuild `enabledmods.json` to ensure all mods are added
+    rebuild_enabled_mods_json(&game_install, manifest_version)?;
 
     let current_mods = get_enabled_mods(&game_install)?;
 
