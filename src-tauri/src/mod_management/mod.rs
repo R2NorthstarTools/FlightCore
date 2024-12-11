@@ -265,7 +265,7 @@ pub fn set_mod_enabled_status(
     );
 
     // Fail without version parameter
-    if mod_version.len() == 0 {
+    if mod_version.is_empty() {
         match manifest_version {
             0 => (),
             _ => {
@@ -279,7 +279,7 @@ pub fn set_mod_enabled_status(
                 }
 
                 // Fail if version couldn't be retrieved
-                if mod_version.len() == 0 {
+                if mod_version.is_empty() {
                     log::error!("Didn't find mod version for mod \"{}\".", mod_name);
                     return Err(
                         "todo: Missing `mod_version` parameter with new enabledmods.json format."
@@ -482,8 +482,8 @@ pub fn get_installed_mods_and_properties(
     // enabledmods.json now has a different format, forcing us to detect whether it is used and
     // react accordingly.
     //
-    let old_format_used: bool = mapping.len() != 0 && !mapping.contains_key("Version")
-        || mapping.len() != 0
+    let old_format_used: bool = !mapping.is_empty() && !mapping.contains_key("Version")
+        || !mapping.is_empty()
             && mapping.contains_key("Version")
             && mapping.get("Version").unwrap() == 0;
     log::info!("Old enabledmods.json format detected: {old_format_used}");
