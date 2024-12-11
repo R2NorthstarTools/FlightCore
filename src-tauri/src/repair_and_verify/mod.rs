@@ -43,11 +43,15 @@ pub fn disable_all_but_core(game_install: GameInstall) -> Result<(), String> {
     let manifest_version: i64 = match get_enabled_mods(&game_install) {
         Ok(res) => match &res.as_object().unwrap().contains_key("Version") {
             false => NORTHSTAR_MODS_MANIFEST_VERSION,
-            true => res.as_object().unwrap().get("Version").unwrap().as_i64().unwrap()
+            true => res
+                .as_object()
+                .unwrap()
+                .get("Version")
+                .unwrap()
+                .as_i64()
+                .unwrap(),
         },
-        Err(_) => {
-            NORTHSTAR_MODS_MANIFEST_VERSION
-        }
+        Err(_) => NORTHSTAR_MODS_MANIFEST_VERSION,
     };
 
     // Rebuild `enabledmods.json` to ensure all mods are added
@@ -66,12 +70,22 @@ pub fn disable_all_but_core(game_install: GameInstall) -> Result<(), String> {
             // Disable all mod versions...
             if _value.is_object() {
                 for version in _value.as_object().unwrap().keys() {
-                    set_mod_enabled_status(game_install.clone(), key.to_string(), version.clone(), false)?;
+                    set_mod_enabled_status(
+                        game_install.clone(),
+                        key.to_string(),
+                        version.clone(),
+                        false,
+                    )?;
                 }
             }
             // ...or simply the mod version listed
             else {
-                set_mod_enabled_status(game_install.clone(), key.to_string(), _value.as_str().unwrap_or("").to_string(), false)?;
+                set_mod_enabled_status(
+                    game_install.clone(),
+                    key.to_string(),
+                    _value.as_str().unwrap_or("").to_string(),
+                    false,
+                )?;
             }
         }
     }
