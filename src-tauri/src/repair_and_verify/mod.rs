@@ -60,9 +60,19 @@ pub fn disable_all_but_core(game_install: GameInstall) -> Result<(), String> {
         if CORE_MODS.contains(&key.as_str()) {
             // This is a core mod, we do not want to disable it
             set_mod_enabled_status(game_install.clone(), key.to_string(), "".to_string(), true)?;
-        } else if key != "Version" {
-            // Not a core mod
-            set_mod_enabled_status(game_install.clone(), key.to_string(), "".to_string(), false)?;
+        }
+        // Not a core mod
+        else if key != "Version" {
+            // Disable all mod versions...
+            if _value.is_object() {
+                for version in _value.as_object().unwrap().keys() {
+                    set_mod_enabled_status(game_install.clone(), key.to_string(), version.clone(), false)?;
+                }
+            }
+            // ...or simply the mod version listed
+            else {
+                set_mod_enabled_status(game_install.clone(), key.to_string(), _value.as_str().unwrap_or("").to_string(), false)?;
+            }
         }
     }
 
