@@ -1,14 +1,14 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "FlightCore",
-  "version": "2.26.2",
-  "identifier": "com.github.r2northstartools.flightcore",
   "build": {
     "beforeBuildCommand": "cd src-vue && npm run build",
     "beforeDevCommand": "cd src-vue && npm run dev",
     "devUrl": "http://localhost:1420/",
     "frontendDist": "../src-vue/dist"
   },
+  "productName": "FlightCore",
+  "version": "2.26.2",
+  "identifier": "com.github.r2northstartools.flightcore",
   "app": {
     "windows": [
       {
