@@ -1,8 +1,0 @@
-export enum NorthstarState {
-    GAME_NOT_FOUND = "GAME_NOT_FOUND",
-    INSTALL = "INSTALL",
-    INSTALLING = "INSTALLING",
-    MUST_UPDATE = "MUST_UPDATE",
-    UPDATING = "UPDATING",
-    READY_TO_PLAY = "READY_TO_PLAY"
-}
