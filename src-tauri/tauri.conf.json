@@ -4,10 +4,10 @@
   "version": "2.26.2",
   "identifier": "com.github.r2northstartools.flightcore",
   "build": {
-    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "cd src-vue && npm run build",
+    "beforeDevCommand": "cd src-vue && npm run dev",
     "devUrl": "http://localhost:1420/",
-    "beforeBuildCommand": "npm run build",
-    "frontendDist": "../dist"
+    "frontendDist": "../src-vue/dist"
   },
   "app": {
     "windows": [
