@@ -1,0 +1,177 @@
+{
+    "menu": {
+        "changelog": "Dziennik zmian",
+        "mods": "Mody",
+        "settings": "Ustawienia",
+        "dev": "Dev",
+        "play": "Graj"
+    },
+    "generic": {
+        "yes": "Tak",
+        "no": "Nie",
+        "error": "Błąd",
+        "cancel": "Anuluj",
+        "downloading": "Pobieranie",
+        "extracting": "Wypakowywanie",
+        "done": "Gotowe",
+        "success": "Sukces",
+        "informationShort": "Informacja",
+        "confirm": "Potwierdź"
+    },
+    "play": {
+        "button": {
+            "northstar_is_running": "Gra jest uruchomiona",
+            "select_game_dir": "Wybierz folder gry Titanfall2",
+            "install": "Zainstaluj",
+            "update": "Aktualizuj",
+            "updating": "Aktualizowanie...",
+            "ready_to_play": "Uruchom grę",
+            "installing": "Instalowanie..."
+        },
+        "unknown_version": "Nieznana wersja",
+        "see_patch_notes": "zobacz listę zmian",
+        "players": "gracze",
+        "servers": "serwery",
+        "northstar_running": "Northstar jest uruchomiony:",
+        "ea_app_running": "EA App jest uruchomiony:",
+        "unable_to_load_playercount": "Nie można załadować liczby graczy"
+    },
+    "mods": {
+        "local": {
+            "no_mods": "Nie znaleziono żadnych modów.",
+            "delete_confirm": "Czy na pewno chcesz usunąć ten mod?",
+            "delete": "Usuń",
+            "success_deleting": "Sukces usuwania {modName}",
+            "part_of_ts_mod": "Ten mod Northstar jest częścią moda Thunderstore"
+        },
+        "online": {
+            "no_match": "Nie znaleziono pasującego moda.",
+            "try_another_search": "Spróbuj innego wyszukiwania!"
+        },
+        "menu": {
+            "local": "Lokalne",
+            "online": "Online",
+            "filter": "Filtry",
+            "search": "Szukaj",
+            "sort_mods": "Sortowanie modów",
+            "select_categories": "Wybierz kategorie",
+            "sort": {
+                "name_asc": "Według nazwy (od A do Z)",
+                "name_desc": "Według nazwy (od Z do A)",
+                "date_desc": "Według daty (od najnowszej)",
+                "most_downloaded": "Najczęściej pobierane",
+                "top_rated": "Najwyżej ocenione",
+                "date_asc": "Według daty (od najstarszej)"
+            }
+        },
+        "card": {
+            "button": {
+                "being_installed": "Instalowanie...",
+                "being_updated": "Aktualizowanie...",
+                "installed": "Zainstalowano",
+                "install": "Zainstaluj",
+                "outdated": "Aktualizuj"
+            },
+            "by": "od",
+            "more_info": "Więcej informacji",
+            "remove": "Usuń moda",
+            "remove_dialog_title": "Ostrzeżenie",
+            "remove_dialog_text": "Usunąć mod Thunderstore?",
+            "remove_success": "Usunięto {modName}",
+            "install_success": "Zainstalowano {modName}"
+        }
+    },
+    "settings": {
+        "manage_install": "Zarządzaj instalacją",
+        "choose_folder": "Wybierz folder instalacyjny",
+        "nb_ts_mods_per_page": "Liczba modów Thunderstore na stronie",
+        "nb_ts_mods_per_page_desc2": "Ustaw tę wartość na 0, aby wyłączyć paginację.",
+        "nb_ts_mods_reset": "Przywrócenie ustawień domyślnych",
+        "language": "Język",
+        "language_select": "Wybierz swój ulubiony język",
+        "about": "O:",
+        "flightcore_version": "Wersja FlightCore:",
+        "testing": "Testy:",
+        "enable_test_channels": "Włączenie kanałów wydań testowych",
+        "dev_mode_enabled_title": "Uważaj!",
+        "dev_mode_enabled_text": "Tryb deweloperski włączony.",
+        "repair": {
+            "title": "Naprawa",
+            "open_window": "Otwórz okno naprawy",
+            "window": {
+                "disable_all_but_core": "Wyłączenie wszystkich modów poza podstawowymi",
+                "disable_all_but_core_success": "Wyłączone wszystkie mody oprócz podstawowych",
+                "force_reinstall_ns": "Wymuś reinstalację Northstara",
+                "force_delete_temp_dl": "Wymuś usunięcie folderu tymczasowego pobierania",
+                "delete_persistent_store": "Usuń stały magazyn FlightCore",
+                "reinstall_title": "Wymuszona reinstalacja Northstara",
+                "reinstall_text": "Proszę czekać",
+                "reinstall_success": "Pomyślnie przeinstalowano Northstar",
+                "title": "Okno naprawy FlightCore",
+                "warning": "To okno zawiera różne funkcje do naprawy typowych problemów z Northstar i FlightCore.",
+                "disable_modsettings": "Wyłącz moda ModSettings",
+                "disable_modsettings_success": "Wyłączono moda ModSettings",
+                "kill_northstar_process": "Zamknij uruchomiony proces Northstar/Titanfall2"
+            }
+        },
+        "nb_ts_mods_per_page_desc1": "Ma to wpływ na wydajność wyświetlania podczas przeglądania modów Thunderstore.",
+        "open_game_folder": "Otwórz folder",
+        "show_deprecated_mods_desc2": "Ostrożnie, mody są zazwyczaj oznaczone jako przestarzałe nie bez powodu.",
+        "show_deprecated_mods": "Pokaż przestarzałe mody Thunderstore",
+        "show_deprecated_mods_desc1": "Pozwala to zobaczyć przestarzałe mody w kolekcji modów online.",
+        "profile": {
+            "active": "Aktywny profil",
+            "dialog": {
+                "title": "Profile",
+                "delete": "Usuń",
+                "clone": "Klonuj",
+                "new_profile_name": "Wprowadź nową nazwę profilu",
+                "create_empty": "Nowy profil",
+                "delete_confirm": "Czy na pewno chcesz usunąć ten profil?"
+            },
+            "edit": "Edytuj profile"
+        }
+    },
+    "notification": {
+        "game_folder": {
+            "new": {
+                "title": "Nowy folder z grą",
+                "text": "Folder gry został pomyślnie zaktualizowany."
+            },
+            "wrong": {
+                "title": "Niewłaściwy folder",
+                "text": "Wybrany folder nie jest poprawną instalacją Titanfall2."
+            },
+            "not_found": {
+                "title": "Nie znaleziono Titanfall2!",
+                "text": "Proszę ręcznie wybrać lokalizację instalacji"
+            }
+        },
+        "flightcore_outdated": {
+            "title": "FlightCore nieaktualny!",
+            "text": "Proszę zaktualizować FlightCore.\nUruchomiono przestarzałą wersję {oldVersion}.\nNajnowsza to {newVersion}!"
+        },
+        "profile": {
+            "invalid": {
+                "title": "Nieprawidłowy profil",
+                "text": "Profil, na który próbowano się przełączyć, nie jest już prawidłowy."
+            }
+        },
+        "no_new": {
+            "title": "Aktualny",
+            "text": "Nie ma tu nic do obejrzenia!"
+        },
+        "date_prefix": "na"
+    },
+    "channels": {
+        "release": {
+            "switch": {
+                "text": "Przełączono kanał wydań na \"{canal}\"."
+            }
+        },
+        "names": {
+            "Northstar": "Northstar",
+            "NorthstarReleaseCandidate": "Kandydat do wydania Northstar"
+        }
+    }
+}
