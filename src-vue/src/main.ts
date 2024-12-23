@@ -3,6 +3,7 @@ import { createI18n } from "vue-i18n";
 import App from './App.vue'
 import ElementPlus from "element-plus";
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import { store } from './plugins/store';
 import PlayView from "./views/PlayView.vue";
 import ChangelogView from "./views/ChangelogView.vue";
 import ModsView from "./views/ModsView.vue";
@@ -45,6 +46,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 }
 
 // style
+
 
 // routes
 const routes = [

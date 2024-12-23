@@ -1,5 +1,11 @@
 <script lang="ts">
+import ChangelogView from './views/ChangelogView.vue';
+import DeveloperView from './views/DeveloperView.vue';
+import PlayView from './views/PlayView.vue';
+import ModsView from './views/ModsView.vue';
+import SettingsView from './views/SettingsView.vue';
 import { ref } from "vue";
+import { store } from './plugins/store';
 import { invoke } from "@tauri-apps/api/core";
 
 const greetMsg = ref("");
