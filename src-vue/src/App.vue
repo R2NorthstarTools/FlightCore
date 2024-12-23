@@ -7,6 +7,7 @@ import SettingsView from './views/SettingsView.vue';
 import { ref } from "vue";
 import { store } from './plugins/store';
 import { invoke } from "@tauri-apps/api/core";
+import NotificationButton from "./components/NotificationButton.vue";
 
 const greetMsg = ref("");
 const name = ref("");
@@ -18,6 +19,11 @@ async function greet() {
 
 export default {
   components: {
+      ChangelogView,
+      DeveloperView,
+      PlayView,
+      SettingsView,
+      ModsView
   },
   data() {
     return {}
@@ -25,6 +31,8 @@ export default {
   mounted: async function() {
 
     // Initialize interface language
+    let lang = "en"
+    this.$root!.$i18n.locale = lang;
   },
   methods: {
     close() {
@@ -32,6 +40,11 @@ export default {
     }
   },
     computed: {
+      bgStyle(): string {
+          // @ts-ignore
+          const shouldBlur = this.$route.path !== "/";
+          return `filter: brightness(0.8) ${shouldBlur ? 'blur(5px)' : ''};`;
+      }
     }
 }
 </script>
@@ -42,9 +55,26 @@ export default {
 
     <nav id="fc_menu-bar"><!-- Hide menu bar in repair view -->
       <!-- Navigation items -->
+      <el-menu
+        :default-active="$route.path"
+        router
+        mode="horizontal"
+        id="fc__menu_items"
+        data-tauri-drag-region
+      >
+        <el-menu-item index="/">{{ $t('menu.play') }}</el-menu-item>
+        <el-menu-item index="/mods">{{ $t('menu.mods') }}</el-menu-item>
+        <el-menu-item index="/changelog">{{ $t('menu.changelog') }}</el-menu-item>
+        <el-menu-item index="/settings">{{ $t('menu.settings') }}</el-menu-item>
+      </el-menu>
+
+      <!-- Window controls -->
+      <div id="fc_window__controls">
+        <NotificationButton />
+        <el-button color="white" icon="SemiSelect" @click="minimize" circle />
+        <el-button color="white" icon="CloseBold" @click="close" circle />
+      </div>
     </nav>
-    <div class="row">
-    </div>
     <p>Click on the Tauri, Vite, and Vue logos to learn more.</p>
 
     <form class="row" @submit.prevent="greet">
