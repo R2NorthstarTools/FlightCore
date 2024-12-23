@@ -3,33 +3,72 @@
   "build": {
     "beforeBuildCommand": "cd src-vue && npm run build",
     "beforeDevCommand": "cd src-vue && npm run dev",
-    "devUrl": "http://localhost:1420/",
+    "devUrl": "http://localhost:5173/",
     "frontendDist": "../src-vue/dist"
-  },
-  "productName": "FlightCore",
-  "version": "2.26.2",
-  "identifier": "com.github.r2northstartools.flightcore",
-  "app": {
-    "windows": [
-      {
-        "title": "FlightCore",
-        "width": 1010,
-        "height": 600
-      }
-    ],
-    "security": {
-      "csp": null
-    }
   },
   "bundle": {
     "active": true,
+    "category": "DeveloperTool",
+    "copyright": "",
     "targets": "all",
+    "externalBin": [],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "windows": {
+      "certificateThumbprint": null,
+      "digestAlgorithm": "sha256",
+      "timestampUrl": ""
+    },
+    "longDescription": "",
+    "macOS": {
+      "entitlements": null,
+      "exceptionDomain": "",
+      "frameworks": [],
+      "providerShortName": null,
+      "signingIdentity": null
+    },
+    "resources": [],
+    "shortDescription": "",
+    "linux": {
+      "deb": {
+        "depends": []
+      }
+    },
+    "createUpdaterArtifacts": "v1Compatible"
+  },
+  "productName": "FlightCore",
+  "mainBinaryName": "FlightCore",
+  "version": "2.26.2",
+  "identifier": "com.github.r2northstartools.flightcore",
+  "plugins": {
+    "updater": {
+      "endpoints": [
+        "https://github.com/R2NorthstarTools/FlightCore/releases/latest/download/latest-release.json"
+      ],
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEVBNjM3NzJGRDgxMTU4NUUKUldSZVdCSFlMM2RqNmdhK3pIZjhEYWg2WnZGSFJqdkhLSHNOSjNhaW5VQVFLaHV3YWFDTnFKWWQK"
+    }
+  },
+  "app": {
+    "windows": [
+      {
+        "fullscreen": false,
+        "resizable": true,
+        "decorations": false,
+        "title": "FlightCore",
+        "height": 600,
+        "minHeight": 300,
+        "width": 1010,
+        "minWidth": 600,
+        "useHttpsScheme": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
   }
 }

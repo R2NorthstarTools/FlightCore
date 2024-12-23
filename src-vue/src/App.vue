@@ -1,151 +1,214 @@
-<script setup lang="ts">
-import { ref } from "vue";
-import { invoke } from "@tauri-apps/api/core";
+<script lang="ts">
+import ChangelogView from './views/ChangelogView.vue';
+import DeveloperView from './views/DeveloperView.vue';
+import PlayView from './views/PlayView.vue';
+import ModsView from './views/ModsView.vue';
+import SettingsView from './views/SettingsView.vue';
+import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow';
+import { store } from './plugins/store';
+import { Store } from '@tauri-apps/plugin-store';
+import { invoke } from "@tauri-apps/api";
+import NotificationButton from "./components/NotificationButton.vue";
+const appWindow = getCurrentWebviewWindow()
 
-const greetMsg = ref("");
-const name = ref("");
+export default {
+  components: {
+      NotificationButton,
+      ChangelogView,
+      DeveloperView,
+      PlayView,
+      SettingsView,
+      ModsView
+  },
+  data() {
+    return {}
+  },
+  mounted: async function() {
+    store.commit('initialize');
 
-async function greet() {
-  // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-  greetMsg.value = await invoke("greet", { name: name.value });
+    // Initialize interface language
+    const persistentStore = new Store('flight-core-settings.json');
+    let lang: string | null = await persistentStore.get('lang');
+    if (lang === null) {
+      lang = navigator.language.substring(0, 2);
+      persistentStore.set('lang', lang);
+      await persistentStore.save();
+    }
+    this.$root!.$i18n.locale = lang;
+  },
+  methods: {
+    minimize() {
+      appWindow.minimize()
+    },
+    close() {
+      invoke("close_application");
+    }
+  },
+    computed: {
+      bgStyle(): string {
+          // @ts-ignore
+          const shouldBlur = this.$route.path !== "/";
+          return `filter: brightness(0.8) ${shouldBlur ? 'blur(5px)' : ''};`;
+      }
+    }
 }
 </script>
 
 <template>
-  <main class="container">
-    <h1>Welcome to Tauri + Vue</h1>
+  <div class="app-inner">
+    <div id="fc_bg__container" :style="bgStyle"/>
 
-    <div class="row">
-    </div>
-    <p>Click on the Tauri, Vite, and Vue logos to learn more.</p>
+    <nav id="fc_menu-bar" v-if="$route.path !== '/repair'"><!-- Hide menu bar in repair view -->
+      <!-- Navigation items -->
+      <el-menu
+        :default-active="$route.path"
+        router
+        mode="horizontal"
+        id="fc__menu_items"
+        data-tauri-drag-region
+      >
+        <el-menu-item index="/">{{ $t('menu.play') }}</el-menu-item>
+        <el-menu-item index="/mods">{{ $t('menu.mods') }}</el-menu-item>
+        <el-menu-item index="/changelog">{{ $t('menu.changelog') }}</el-menu-item>
+        <el-menu-item index="/settings">{{ $t('menu.settings') }}</el-menu-item>
+        <el-menu-item index="/dev" v-if="$store.state.developer_mode">{{ $t('menu.dev') }}</el-menu-item>
+      </el-menu>
 
-    <form class="row" @submit.prevent="greet">
-      <input id="greet-input" v-model="name" placeholder="Enter a name..." />
-      <button type="submit">Greet</button>
-    </form>
-    <p>{{ greetMsg }}</p>
-  </main>
+      <!-- Window controls -->
+      <div id="fc_window__controls">
+        <NotificationButton />
+        <el-button color="white" icon="SemiSelect" @click="minimize" circle />
+        <el-button color="white" icon="CloseBold" @click="close" circle />
+      </div>
+    </nav>
+
+    <router-view></router-view>
+  </div>
 </template>
 
-<style scoped>
-.logo.vite:hover {
-  filter: drop-shadow(0 0 2em #747bff);
-}
-
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #249b73);
-}
-
-</style>
 <style>
-:root {
-  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 400;
-
-  color: #0f0f0f;
-  background-color: #f6f6f6;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
+#fc_menu-bar {
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  width: 100%;
+  height: var(--fc-menu_height);
 }
 
-.container {
-  margin: 0;
-  padding-top: 10vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
+#fc__menu_bar::before {
+    position: absolute;
+    content: "";
+    inset: 0; /* same as { top: 0; right: 0; bottom: 0; left: 0; } */
+    background-image: linear-gradient(to bottom, red, orange);
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 1s linear;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: 0.75s;
+#fc__menu_bar:hover::before {
+    opacity: 1;
 }
 
-.logo.tauri:hover {
-  filter: drop-shadow(0 0 2em #24c8db);
+/* Borders reset */
+#fc__menu_bar, #fc__menu_items {
+    border: none !important;
+}
+.app-inner {
+  height: 100%;
+  width: 100%;
 }
 
-.row {
-  display: flex;
-  justify-content: center;
+/* Header item */
+#fc__menu_items {
+  height: 100%;
+  background-color: transparent;
+  float: left;
+  width: calc(100% - 168px); /* window controls container width */
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+#fc__menu_items .el-menu-item, #fc__menu_items .el-sub-menu__title {
+  color: #b4b6b9;
+  border-color: white;
 }
 
-a:hover {
-  color: #535bf2;
+#fc__menu_items > .el-menu-item {
+  text-transform: uppercase;
+  border: none !important;
+  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+  font-weight: bold;
+  font-size: large;
+  background-color: transparent !important;
+
+  border-width: 2px !important;
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-radius: 10px !important;
+  transition: none;
 }
 
-h1 {
-  text-align: center;
+#fc__menu_items .el-menu-item:hover, #fc__menu_items .el-sub-menu__title {
+  color: #c6c9ce;
+  background-color: transparent;
 }
 
-input,
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  color: #0f0f0f;
-  background-color: #ffffff;
-  transition: border-color 0.25s;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+#fc__menu_items .el-menu-item:focus-visible {
+  border-color: rgb(160, 207, 255) !important;
 }
 
-button {
-  cursor: pointer;
+#fc__menu_items .el-menu-item.is-active, #fc__menu_items .el-sub-menu.is-active > .el-sub-menu__title {
+  color: white !important;
 }
 
-button:hover {
-  border-color: #396cd8;
-}
-button:active {
-  border-color: #396cd8;
-  background-color: #e8e8e8;
+.app-inner > .fc__mods__container {
+  overflow-y: auto;
+  height: calc(100% - var(--fc-menu_height));
 }
 
-input,
-button {
-  outline: none;
+/* Header menu */
+.developer_build {
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(0, 0, 0, 0.2),
+    rgba(0, 0, 0, 0.2) 20px,
+    rgba(0, 0, 0, 0.3) 20px,
+    rgba(0, 0, 0, 0.3) 40px
+  );
 }
 
-#greet-input {
-  margin-right: 5px;
+/* Window controls */
+#fc_window__controls {
+  float: right;
+  height: 100%;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    color: #f6f6f6;
-    background-color: #2f2f2f;
-  }
+#fc_window__controls > button,
+#fc_window__controls > .el-dropdown > button,
+#fc_window__controls > .el-dropdown > .el-badge > button {
+  color: white;
+  font-size: 20px;
+  margin: auto 5px;
+  background: none;
+  border: none;
+  height: 100%;
+}
 
-  a:hover {
-    color: #24c8db;
-  }
+#fc_window__controls > button:hover,
+#fc_window__controls > .el-dropdown > button:hover,
+#fc_window__controls > .el-dropdown > .el-badge > button:hover {
+  color: #c6c9ce;
+}
 
-  input,
-  button {
-    color: #ffffff;
-    background-color: #0f0f0f98;
-  }
-  button:active {
-    background-color: #0f0f0f69;
-  }
+#fc_window__controls > button:active,
+#fc_window__controls > .el-dropdown > button:active {
+  color: #56585a;
+}
+
+#fc_window__controls > button:last-of-type {
+  margin-right: 15px;
+}
+
+sup {
+  border: none !important;
 }
 
 </style>

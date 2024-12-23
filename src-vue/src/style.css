@@ -1,0 +1,56 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+  --fc-menu_height: 50px;
+  user-select: none;
+}
+
+#app {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+#fc_bg__container {
+  background: url(/src/assets/mp_colony020033.jpg) center no-repeat;
+  background-size: cover;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  filter: brightness(0.8);
+  scale: 1.03;
+}
+
+.el-scrollbar {
+  --el-scrollbar-opacity: 0.5;
+  --el-scrollbar-hover-opacity: 0.7;
+}
+
+.fc-container {
+    position: relative;
+    padding-top: var(--fc-menu_height);
+    height: 100%;
+    color: white;
+}
+
+.noModMessage {
+    color: white;
+    margin: 30px 15px;
+}
+
+.fc_popper {
+    width: auto !important;
+}
+
+.el-popconfirm {
+    word-break: break-word;
+}
