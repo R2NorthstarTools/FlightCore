@@ -17,6 +17,8 @@ export default {
     return {}
   },
   mounted: async function() {
+
+    // Initialize interface language
   },
   methods: {
     close() {
@@ -32,6 +34,9 @@ export default {
   <div class="app-inner">
     <div id="fc_bg__container" :style="bgStyle"/>
 
+    <nav id="fc_menu-bar"><!-- Hide menu bar in repair view -->
+      <!-- Navigation items -->
+    </nav>
     <div class="row">
     </div>
     <p>Click on the Tauri, Vite, and Vue logos to learn more.</p>
