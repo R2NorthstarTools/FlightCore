@@ -1,13 +1,12 @@
 [package]
 name = "flightcore"
-version = "2.24.0"
+version = "2.26.2"
 description = "Mod-manager for Northstar"
 authors = ["https://github.com/R2NorthstarTools/FlightCore/graphs/contributors"]
 license = "MIT"
 repository = "https://github.com/R2NorthstarTools/FlightCore"
 default-run = "flightcore"
 edition = "2021"
-rust-version = "1.66"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -39,7 +38,7 @@ zip = "0.6.2"
 # Regex
 regex = "1.10"
 # Read out running application process names
-sysinfo = "0.30.12"
+sysinfo = "0.30.13"
 # HTTP requests
 reqwest = { version = "0.11", features = ["blocking"] }
 # Persistent store for settings
@@ -51,9 +50,9 @@ async-recursion = "1.1.1"
 # For parsing timestamps
 chrono = "0.4.38"
 # TypeScript bindings
-ts-rs = "8.1"
+ts-rs = "10.0"
 # const formatting
-const_format = "0.2.32"
+const_format = "0.2.33"
 # Logging libraries
 pretty_env_logger = "0.5.0"
 log = "0.4"
