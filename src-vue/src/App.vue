@@ -9,6 +9,23 @@ async function greet() {
   // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
   greetMsg.value = await invoke("greet", { name: name.value });
 }
+
+export default {
+  components: {
+  },
+  data() {
+    return {}
+  },
+  mounted: async function() {
+  },
+  methods: {
+    close() {
+      invoke("close_application");
+    }
+  },
+    computed: {
+    }
+}
 </script>
 
 <template>
