@@ -1,5 +1,11 @@
 mod github;
+mod northstar;
+mod platform_specific;
+mod repair_and_verify;
 mod util;
+
+use serde::{Deserialize, Serialize};
+use ts_rs::TS;
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
@@ -15,9 +21,31 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             greet,
             github::release_notes::check_is_flightcore_outdated,
+            northstar::install::find_game_install_location,
             util::get_flightcore_version_number,
             util::is_debug_mode,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+/// Defines how Titanfall2 was installed (Steam, Origin, ...)
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+#[ts(export)]
+pub enum InstallType {
+    STEAM,
+    ORIGIN,
+    EAPLAY,
+    UNKNOWN,
+}
+
+/// Object holding information of the Titanfall2 install, including
+/// - Install path
+/// - Active profile
+/// - Type of installation (Steam, Origin, ...)
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct GameInstall {
+    pub game_path: String,
+    pub profile: String,
+    pub install_type: InstallType,
 }
