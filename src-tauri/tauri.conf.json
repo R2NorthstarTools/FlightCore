@@ -13,6 +13,7 @@
     "windows": [
       {
         "title": "FlightCore",
+        "decorations": false,
         "width": 1010,
         "height": 600
       }
