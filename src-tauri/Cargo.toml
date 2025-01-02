@@ -76,6 +76,7 @@ rand = "0.8.5"
 octocrab = "0.38.0"
 # Library for removing markdown links
 remove-markdown-links = "1.0.0"
+tauri-plugin-store = "2"
 
 
 [target.'cfg(windows)'.dependencies]
