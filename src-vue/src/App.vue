@@ -4,19 +4,10 @@ import DeveloperView from './views/DeveloperView.vue';
 import PlayView from './views/PlayView.vue';
 import ModsView from './views/ModsView.vue';
 import SettingsView from './views/SettingsView.vue';
-import { ref } from "vue";
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { store } from './plugins/store';
 import { invoke } from "@tauri-apps/api/core";
 import NotificationButton from "./components/NotificationButton.vue";
-
-const greetMsg = ref("");
-const name = ref("");
-
-async function greet() {
-  // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-  greetMsg.value = await invoke("greet", { name: name.value });
-}
 
 export default {
   components: {
@@ -79,13 +70,6 @@ export default {
         <el-button color="white" icon="CloseBold" @click="close" circle />
       </div>
     </nav>
-    <p>Click on the Tauri, Vite, and Vue logos to learn more.</p>
-
-    <form class="row" @submit.prevent="greet">
-      <input id="greet-input" v-model="name" placeholder="Enter a name..." />
-      <button type="submit">Greet</button>
-    </form>
-    <p>{{ greetMsg }}</p>
   </div>
 </template>
 
