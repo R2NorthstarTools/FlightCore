@@ -15,6 +15,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             greet,
             github::release_notes::check_is_flightcore_outdated,
+            util::get_flightcore_version_number,
             util::is_debug_mode,
         ])
         .run(tauri::generate_context!())
