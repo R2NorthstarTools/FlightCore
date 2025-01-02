@@ -1,4 +1,15 @@
 
+/// Checks if is valid Titanfall2 install based on certain conditions
+#[tauri::command]
+pub async fn verify_install_location(game_path: String) -> bool {
+    match check_is_valid_game_path(&game_path) {
+        Ok(()) => true,
+        Err(err) => {
+            log::warn!("{}", err);
+            false
+        }
+    }
+}
 
 /// Checks whether the provided path is a valid Titanfall2 gamepath by checking against a certain set of criteria
 pub fn check_is_valid_game_path(game_install_path: &str) -> Result<(), String> {

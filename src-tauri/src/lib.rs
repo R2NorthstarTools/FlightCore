@@ -22,6 +22,7 @@ pub fn run() {
             greet,
             github::release_notes::check_is_flightcore_outdated,
             northstar::install::find_game_install_location,
+            repair_and_verify::verify_install_location,
             util::get_flightcore_version_number,
             util::is_debug_mode,
         ])
