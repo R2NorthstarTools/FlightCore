@@ -61,6 +61,7 @@ export default {
         <el-menu-item index="/mods">{{ $t('menu.mods') }}</el-menu-item>
         <el-menu-item index="/changelog">{{ $t('menu.changelog') }}</el-menu-item>
         <el-menu-item index="/settings">{{ $t('menu.settings') }}</el-menu-item>
+        <el-menu-item index="/dev">{{ $t('menu.dev') }}</el-menu-item>
       </el-menu>
 
       <!-- Window controls -->
