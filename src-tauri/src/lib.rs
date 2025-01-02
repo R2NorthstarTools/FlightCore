@@ -1,3 +1,4 @@
+mod github;
 mod util;
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
@@ -11,7 +12,11 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet, util::is_debug_mode,])
+        .invoke_handler(tauri::generate_handler![
+            greet,
+            github::release_notes::check_is_flightcore_outdated,
+            util::is_debug_mode,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
