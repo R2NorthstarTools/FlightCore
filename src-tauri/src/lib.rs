@@ -1,3 +1,4 @@
+mod constants;
 mod github;
 mod northstar;
 mod platform_specific;
@@ -24,6 +25,7 @@ pub fn run() {
             northstar::install::find_game_install_location,
             repair_and_verify::verify_install_location,
             util::get_flightcore_version_number,
+            util::get_server_player_count,
             util::is_debug_mode,
         ])
         .run(tauri::generate_context!())
