@@ -5,6 +5,7 @@ import PlayView from './views/PlayView.vue';
 import ModsView from './views/ModsView.vue';
 import SettingsView from './views/SettingsView.vue';
 import { ref } from "vue";
+import { getCurrentWindow } from '@tauri-apps/api/window';
 import { store } from './plugins/store';
 import { invoke } from "@tauri-apps/api/core";
 import NotificationButton from "./components/NotificationButton.vue";
@@ -35,6 +36,9 @@ export default {
     this.$root!.$i18n.locale = lang;
   },
   methods: {
+    async minimize() {
+      await getCurrentWindow().minimize();
+    },
     close() {
       invoke("close_application");
     }
