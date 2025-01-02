@@ -71,6 +71,8 @@ export default {
         <el-button color="white" icon="CloseBold" @click="close" circle />
       </div>
     </nav>
+
+    <router-view></router-view>
   </div>
 </template>
 
