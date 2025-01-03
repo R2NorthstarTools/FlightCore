@@ -29,6 +29,7 @@ pub fn run() {
             util::get_flightcore_version_number,
             util::get_server_player_count,
             util::is_debug_mode,
+            util::open_repair_window,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
