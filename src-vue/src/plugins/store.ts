@@ -22,7 +22,7 @@ import { pullRequestModule } from './modules/pull_requests';
 import { showErrorNotification, showNotification } from '../utils/ui';
 import { notificationsModule } from './modules/notifications';
 
-const persistentStore = await load('store.json', { autoSave: false });
+const persistentStore = await load('flight-core-settings.json', { autoSave: false });
 
 
 export interface FlightCoreStore {
