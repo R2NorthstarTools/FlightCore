@@ -10,6 +10,12 @@ pub struct NorthstarServer {
     pub player_count: i32,
 }
 
+/// This function's only use is to force a `panic!()`
+// This must NOT be async to ensure crashing whole application.
+#[tauri::command]
+pub fn force_panic() {
+    panic!("Force panicked!");
+}
 
 /// Returns true if built in debug mode
 #[tauri::command]

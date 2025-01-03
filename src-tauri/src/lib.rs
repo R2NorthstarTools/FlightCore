@@ -25,6 +25,7 @@ pub fn run() {
             github::release_notes::get_northstar_release_notes,
             northstar::install::find_game_install_location,
             repair_and_verify::verify_install_location,
+            util::force_panic,
             util::get_flightcore_version_number,
             util::get_server_player_count,
             util::is_debug_mode,
