@@ -158,6 +158,7 @@ import { Project } from "../../../src-tauri/bindings/Project"
 export default defineComponent({
     name: "DeveloperView",
     components: {
+        PullRequestsSelector
     },
     data() {
         return {
@@ -182,6 +183,185 @@ export default defineComponent({
             ],
         }
     },
+    computed: {
+        firstTag: {
+            get(): TagWrapper {
+                return this.first_tag;
+            },
+            set(value: TagWrapper) {
+                this.first_tag = value;
+            }
+        },
+        secondTag: {
+            get(): TagWrapper {
+                return this.second_tag;
+            },
+            set(value: TagWrapper) {
+                this.second_tag = value;
+            }
+        },
+    },
+    methods: {
+        disableDevMode() {
+            this.$store.commit('toggleDeveloperMode');
+        },
+        async crashApplication() {
+            await invoke("force_panic");
+            showErrorNotification("Never should have been able to get here!");
+        },
+        async launchGameWithoutChecks() {
+            let launch_options: NorthstarLaunchOptions = { bypass_checks: true, launch_via_steam: false };
+            this.$store.commit('launchGame', launch_options);
+        },
+        async launchGameViaSteam() {
+            let launch_options: NorthstarLaunchOptions = { bypass_checks: false, launch_via_steam: true };
+            this.$store.commit('launchGameSteam', launch_options);
+        },
+        async getInstalledMods() {
+            await invoke("get_installed_mods_and_properties", { gameInstall: this.$store.state.game_install }).then((message) => {
+                // Simply console logging for now
+                // In the future we should display the installed mods somewhere
+                console.log(message);
+
+                // Just a visual indicator that it worked
+                showNotification('Success');
+            })
+                .catch((error) => {
+                    showErrorNotification(error);
+                });
+        },
+        async installMod() {
+            let mod_to_install = this.mod_to_install_field_string;
+            await invoke<string>("install_mod_wrapper", { gameInstall: this.$store.state.game_install, thunderstoreModString: mod_to_install }).then((message) => {
+                // Show user notification if mod install completed.
+                showNotification(`Installed ${mod_to_install}`, message);
+            })
+                .catch((error) => {
+                    showErrorNotification(error);
+                });
+        },
+        async getTags() {
+            await invoke<TagWrapper[]>("get_list_of_tags", { project: this.selected_project })
+                .then((message) => {
+                    this.ns_release_tags = message;
+                    showNotification("Done", "Fetched tags");
+                    this.first_tag = this.ns_release_tags[1];
+                    this.second_tag = this.ns_release_tags[0];
+                    this.compareTags();
+                })
+                .catch((error) => {
+                    showErrorNotification(error);
+                });
+        },
+        async compareTags() {
+            await invoke<string>("compare_tags", { project: this.selected_project, firstTag: this.firstTag.value, secondTag: this.secondTag.value })
+                .then((message) => {
+                    this.release_notes_text = message;
+                    showNotification("Done", "Generated release notes");
+                    this.copyReleaseNotesToClipboard();
+                })
+                .catch((error) => {
+                    showErrorNotification(error);
+                });
+        },
+        async installLauncherGitMain() {
+
+            const notification = showNotification(`Installing git main`, 'Please wait', 'info', 0);
+
+            await invoke<string>("install_git_main", { gameInstallPath: this.$store.state.game_install.game_path })
+                .then((message) => {
+                    this.release_notes_text = message;
+                    showNotification("Done", `Installed launcher build from ${message}`);
+                })
+                .catch((error) => {
+                    showErrorNotification(error);
+                })
+                .finally(() => {
+                    // Clear old notification
+                    notification.close();
+                });
+        },
+        async getAvailableNorthstarVersions() {
+            await invoke<NorthstarThunderstoreReleaseWrapper[]>("get_available_northstar_versions")
+                .then((message) => {
+                    this.ns_versions = message;
+                    showNotification("Done", "Fetched all available Northstar versions");
+                })
+                .catch((error) => {
+                    showErrorNotification(error);
+                });
+        },
+        async installNorthstarVersion() {
+            // Send notification telling the user to wait for the process to finish
+            const notification = showNotification(
+                `Installing Northstar version v${this.selected_ns_version.value.version}`,
+                "Please wait",
+                'info',
+                0
+            );
+
+            let install_northstar_result = invoke("install_northstar_wrapper", { gameInstall: this.$store.state.game_install, northstarPackageName: this.selected_ns_version.value.package, versionNumber: this.selected_ns_version.value.version });
+
+            await install_northstar_result
+                .then((message) => {
+                    // Send notification
+                    showNotification(this.$t('generic.done'), this.$t('settings.repair.window.reinstall_success'));
+                    this.$store.commit('checkNorthstarUpdates');
+                })
+                .catch((error) => {
+                    showErrorNotification(error);
+                    console.error(error);
+                })
+                .finally(() => {
+                    // Clear old notification
+                    notification.close();
+                });
+        },
+        async installNSProton() {
+            showNotification(`Started NSProton install`);
+            await invoke("install_northstar_proton_wrapper")
+                .then((message) => { showNotification(`Done`); })
+                .catch((error) => { showNotification(`Error`, error, "error"); })
+        },
+        async uninstallNSProton() {
+            await invoke("uninstall_northstar_proton_wrapper")
+                .then((message) => { showNotification(`Done`); })
+                .catch((error) => { showNotification(`Error`, error, "error"); })
+        },
+        async getLocalNSProtonVersion() {
+            await invoke("get_local_northstar_proton_wrapper_version")
+                .then((message) => { showNotification(`NSProton Version`, message as string); })
+                .catch((error) => { showNotification(`Error`, error, "error"); })
+        },
+        async checkCgnat() {
+            await invoke<string>("check_cgnat")
+                .then((message) => {
+                    showNotification(message);
+                })
+                .catch((error) => {
+                    showErrorNotification(error);
+                });
+        },
+        async copyReleaseNotesToClipboard() {
+            navigator.clipboard.writeText(this.release_notes_text)
+                .then(() => {
+                    showNotification("Copied to clipboard");
+                })
+                .catch(() => {
+                    showErrorNotification("Failed copying to clipboard");
+                });
+        },
+        async generateReleaseAnnouncementMessage() {
+            await invoke<string>("generate_release_note_announcement", { })
+                .then((message) => {
+                    this.discord_release_announcement_text = message;
+                    showNotification("Done", "Generated announcement");
+                })
+                .catch((error) => {
+                    showErrorNotification(error);
+                });
+        },
+    }
 });
 </script>
 
