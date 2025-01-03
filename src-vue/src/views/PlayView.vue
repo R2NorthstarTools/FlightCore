@@ -62,6 +62,7 @@ export default defineComponent({
                 </div>
             </div>
         </div>
+        <InstallProgressBar />
     </div>
 </template>
 
