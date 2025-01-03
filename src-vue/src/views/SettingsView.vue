@@ -143,13 +143,13 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { invoke } from "@tauri-apps/api";
+import { invoke } from "@tauri-apps/api/core";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
-import { Store } from 'tauri-plugin-store-api';
+import { load } from '@tauri-apps/plugin-store';
 import { showErrorNotification, showNotification } from "../utils/ui";
 import LanguageSelector from "../components/LanguageSelector.vue";
-const persistentStore = new Store('flight-core-settings.json');
-import { open } from '@tauri-apps/api/shell';
+const persistentStore = await load('flight-core-settings.json', { autoSave: false });
+import { open } from '@tauri-apps/plugin-shell';
 import { i18n } from '../main';
 import { ElMessageBox } from 'element-plus'
 

@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { appWindow } from '@tauri-apps/api/window';
+import { getCurrentWindow } from '@tauri-apps/api/window';
 import { InstallProgress } from '../../../src-tauri/bindings/InstallProgress';
 
 export default defineComponent({
@@ -43,7 +43,7 @@ export default defineComponent({
         }
     },
     mounted() {
-        appWindow.listen<InstallProgress>(
+        getCurrentWindow().listen<InstallProgress>(
             'northstar-install-download-progress',
             ({ event, payload }) => {
                 this.install_or_update = true;

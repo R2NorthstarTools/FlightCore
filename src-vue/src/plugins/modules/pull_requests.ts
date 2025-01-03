@@ -1,4 +1,4 @@
-import { invoke, shell } from "@tauri-apps/api";
+import { invoke } from "@tauri-apps/api/core";
 import { PullsApiResponseElement } from "../../../../src-tauri/bindings/PullsApiResponseElement";
 import { PullRequestType } from '../../../../src-tauri/bindings/PullRequestType';
 import { store } from "../store";

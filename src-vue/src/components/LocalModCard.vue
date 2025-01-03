@@ -36,7 +36,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { invoke } from "@tauri-apps/api";
+import { invoke } from "@tauri-apps/api/core";
 import { NorthstarMod } from "../../../src-tauri/bindings/NorthstarMod";
 import { showErrorNotification, showNotification } from "../utils/ui";
 

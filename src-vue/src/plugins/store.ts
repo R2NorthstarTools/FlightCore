@@ -2,15 +2,15 @@ import { createStore } from 'vuex';
 import { listen, Event as TauriEvent } from "@tauri-apps/api/event";
 import { Tabs } from "../utils/Tabs";
 import { InstallType } from "../../../src-tauri/bindings/InstallType";
-import { invoke } from "@tauri-apps/api";
+import { invoke } from "@tauri-apps/api/core";
 import { GameInstall } from "../utils/GameInstall";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { FlightCoreVersion } from "../../../src-tauri/bindings/FlightCoreVersion";
 import { NotificationHandle } from 'element-plus';
 import { NorthstarState } from '../utils/NorthstarState';
-import { appDir } from '@tauri-apps/api/path';
-import { open } from '@tauri-apps/api/dialog';
-import { Store } from 'tauri-plugin-store-api';
+import { appDataDir } from '@tauri-apps/api/path';
+import { open } from '@tauri-apps/plugin-dialog';
+import { load } from '@tauri-apps/plugin-store';
 import { router } from "../main";
 import { ReleaseInfo } from "../../../src-tauri/bindings/ReleaseInfo";
 import { ThunderstoreMod } from "../../../src-tauri/bindings/ThunderstoreMod";
@@ -22,7 +22,7 @@ import { pullRequestModule } from './modules/pull_requests';
 import { showErrorNotification, showNotification } from '../utils/ui';
 import { notificationsModule } from './modules/notifications';
 
-const persistentStore = new Store('flight-core-settings.json');
+const persistentStore = await load('flight-core-settings.json', { autoSave: false });
 
 
 export interface FlightCoreStore {
@@ -124,7 +124,7 @@ export const store = createStore<FlightCoreStore>({
             const selected = await open({
                 directory: true,
                 multiple: false,
-                defaultPath: await appDir(),
+                defaultPath: await appDataDir(),
             });
             if (Array.isArray(selected)) {
                 // user selected multiple directories

@@ -147,7 +147,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { invoke } from "@tauri-apps/api";
+import { invoke } from "@tauri-apps/api/core";
 import { NorthstarLaunchOptions } from "../../../src-tauri/bindings/NorthstarLaunchOptions";
 import { TagWrapper } from "../../../src-tauri/bindings/TagWrapper";
 import { NorthstarThunderstoreReleaseWrapper } from "../../../src-tauri/bindings/NorthstarThunderstoreReleaseWrapper";
