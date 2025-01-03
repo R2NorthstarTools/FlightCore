@@ -22,6 +22,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             greet,
             github::release_notes::check_is_flightcore_outdated,
+            github::release_notes::get_northstar_release_notes,
             northstar::install::find_game_install_location,
             repair_and_verify::verify_install_location,
             util::get_flightcore_version_number,
