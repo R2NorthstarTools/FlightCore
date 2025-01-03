@@ -46,6 +46,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 }
 
 // style
+app.use( store, '$store' );
 
 
 // routes
