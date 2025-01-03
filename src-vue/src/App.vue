@@ -6,11 +6,13 @@ import ModsView from './views/ModsView.vue';
 import SettingsView from './views/SettingsView.vue';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { store } from './plugins/store';
+import { load } from '@tauri-apps/plugin-store';
 import { invoke } from "@tauri-apps/api/core";
 import NotificationButton from "./components/NotificationButton.vue";
 
 export default {
   components: {
+      NotificationButton,
       ChangelogView,
       DeveloperView,
       PlayView,
@@ -21,9 +23,16 @@ export default {
     return {}
   },
   mounted: async function() {
+    store.commit('initialize');
 
     // Initialize interface language
-    let lang = "en"
+    const persistentStore = await load('flight-core-settings.json', { autoSave: false });
+    let lang: string | null = await persistentStore.get('lang');
+    if (lang === null) {
+      lang = navigator.language.substring(0, 2);
+      persistentStore.set('lang', lang);
+      await persistentStore.save();
+    }
     this.$root!.$i18n.locale = lang;
   },
   methods: {
@@ -48,7 +57,7 @@ export default {
   <div class="app-inner">
     <div id="fc_bg__container" :style="bgStyle"/>
 
-    <nav id="fc_menu-bar"><!-- Hide menu bar in repair view -->
+    <nav id="fc_menu-bar" v-if="$route.path !== '/repair'"><!-- Hide menu bar in repair view -->
       <!-- Navigation items -->
       <el-menu
         :default-active="$route.path"
@@ -61,7 +70,7 @@ export default {
         <el-menu-item index="/mods">{{ $t('menu.mods') }}</el-menu-item>
         <el-menu-item index="/changelog">{{ $t('menu.changelog') }}</el-menu-item>
         <el-menu-item index="/settings">{{ $t('menu.settings') }}</el-menu-item>
-        <el-menu-item index="/dev">{{ $t('menu.dev') }}</el-menu-item>
+        <el-menu-item index="/dev" v-if="$store.state.developer_mode">{{ $t('menu.dev') }}</el-menu-item>
       </el-menu>
 
       <!-- Window controls -->
