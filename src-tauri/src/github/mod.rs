@@ -55,7 +55,34 @@ struct Comparison {
 /// Get a list of tags on the FlightCore repo
 #[tauri::command]
 pub fn get_list_of_tags(project: Project) -> Result<Vec<TagWrapper>, String> {
-    todo!()
+    // Set the repository name.
+
+    // Create a `reqwest` client with a user agent.
+    let client = reqwest::blocking::Client::builder()
+        .user_agent(APP_USER_AGENT)
+        .build()
+        .unwrap();
+
+    // Switch repo to fetch from based on project
+    let repo_name = match project {
+        Project::FlightCore => FLIGHTCORE_REPO_NAME,
+        Project::Northstar => NORTHSTAR_RELEASE_REPO_NAME,
+    };
+
+    // Fetch the list of tags for the repository as a `Vec<Tag>`.
+    let tags_url = format!("https://api.github.com/repos/{}/tags", repo_name);
+    let tags: Vec<Tag> = client.get(tags_url).send().unwrap().json().unwrap();
+
+    // Map each `Tag` element to a `TagWrapper` element with the desired label and `Tag` value.
+    let tag_wrappers: Vec<TagWrapper> = tags
+        .into_iter()
+        .map(|tag| TagWrapper {
+            label: tag.name.clone(),
+            value: tag,
+        })
+        .collect();
+
+    Ok(tag_wrappers)
 }
 
 /// Use GitHub API to compare two tags of the same repo against each other and get the resulting changes
@@ -68,7 +95,56 @@ pub fn compare_tags(project: Project, first_tag: Tag, second_tag: Tag) -> Result
 }
 
 pub fn compare_tags_flightcore(first_tag: Tag, second_tag: Tag) -> Result<String, String> {
-    todo!()
+    // Fetch the list of commits between the two tags.
+
+    // Create a `reqwest` client with a user agent.
+    let client = reqwest::blocking::Client::builder()
+        .user_agent(APP_USER_AGENT)
+        .build()
+        .unwrap();
+
+    let repo = "R2NorthstarTools/FlightCore";
+
+    let mut full_patch_notes = "".to_string();
+
+    let mut patch_notes: Vec<String> = [].to_vec();
+    println!("{}", repo);
+    // let repo = "R2Northstar/NorthstarLauncher";
+    let comparison_url = format!(
+        "https://api.github.com/repos/{}/compare/{}...{}",
+        repo, first_tag.name, second_tag.name
+    );
+
+    let comparison: Comparison = client.get(comparison_url).send().unwrap().json().unwrap();
+    let commits = comparison.commits;
+
+    // Display the list of commits.
+    println!(
+        "Commits between {} and {}:",
+        first_tag.name, second_tag.name
+    );
+
+    // Iterate over all commits in the diff
+    for commit in commits {
+        println!(
+            "  * {} : {}",
+            commit.sha,
+            commit.commit.message.split('\n').next().unwrap()
+        );
+        patch_notes.push(
+            commit
+                .commit
+                .message
+                .split('\n')
+                .next()
+                .unwrap()
+                .to_string(),
+        );
+    }
+
+    full_patch_notes += &generate_flightcore_release_notes(patch_notes);
+
+    Ok(full_patch_notes.to_string())
 }
 
 /// Generate release notes in the format used for FlightCore
@@ -141,7 +217,80 @@ fn group_commits_by_type(commits: Vec<String>) -> HashMap<String, Vec<String>> {
 /// Compares two tags on Northstar repo and generates release notes over the diff in tags
 /// over the 3 major repos (Northstar, NorthstarLauncher, NorthstarMods)
 pub fn compare_tags_northstar(first_tag: Tag, second_tag: Tag) -> Result<String, String> {
-    todo!()
+    // Fetch the list of commits between the two tags.
+
+    // Create a `reqwest` client with a user agent.
+    let client = reqwest::blocking::Client::builder()
+        .user_agent(APP_USER_AGENT)
+        .build()
+        .unwrap();
+
+    let repos = [
+        "R2Northstar/Northstar",
+        "R2Northstar/NorthstarLauncher",
+        "R2Northstar/NorthstarMods",
+    ];
+
+    let mut full_patch_notes = "".to_string();
+    let mut authors_set = std::collections::HashSet::new();
+
+    for repo in repos {
+        full_patch_notes += &format!("{}\n\n", repo);
+
+        let mut patch_notes: Vec<String> = [].to_vec();
+        println!("{}", repo);
+        // let repo = "R2Northstar/NorthstarLauncher";
+        let comparison_url = format!(
+            "https://api.github.com/repos/{}/compare/{}...{}",
+            repo, first_tag.name, second_tag.name
+        );
+
+        log::info!("Compare URL: {}", comparison_url.clone());
+        let comparison: Comparison = client.get(&comparison_url).send().unwrap().json().unwrap();
+        let commits = comparison.commits;
+
+        // Display the list of commits.
+        println!(
+            "Commits between {} and {}:",
+            first_tag.name, second_tag.name
+        );
+
+        //
+        for commit in commits {
+            println!(
+                "  * {} : {}",
+                commit.sha,
+                turn_pr_number_into_link(commit.commit.message.split('\n').next().unwrap(), repo)
+            );
+            patch_notes.push(turn_pr_number_into_link(
+                commit.commit.message.split('\n').next().unwrap(),
+                repo,
+            ));
+
+            // Store authors in set
+            if commit.author.is_some() {
+                authors_set.insert(commit.author.unwrap().login);
+            }
+        }
+
+        full_patch_notes += &patch_notes.join("\n");
+        full_patch_notes += "\n\n\n";
+    }
+
+    // Convert the set to a sorted vector.
+    let mut sorted_vec: Vec<String> = authors_set.into_iter().collect();
+    sorted_vec.sort_by_key(|a| a.to_lowercase());
+
+    // Define a string to prepend to each element.
+    let prefix = "@";
+
+    // Create a new list with the prefix prepended to each element.
+    let prefixed_list: Vec<String> = sorted_vec.iter().map(|s| prefix.to_owned() + s).collect();
+
+    full_patch_notes += "**Contributors:**\n";
+    full_patch_notes += &prefixed_list.join(" ");
+
+    Ok(full_patch_notes.to_string())
 }
 
 /// Takes the commit title and repo slug and formats it as
