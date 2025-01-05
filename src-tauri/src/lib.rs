@@ -48,7 +48,7 @@ pub fn run() {
         },
     ));
 
-    tauri::Builder::default()
+    let tauri_builder_res = tauri::Builder::default()
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
@@ -98,8 +98,26 @@ pub fn run() {
             util::kill_northstar,
             util::open_repair_window,
         ])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .run(tauri::generate_context!());
+
+    match tauri_builder_res {
+        Ok(()) => (),
+        Err(err) => {
+            // Failed to launch system native web view
+
+            // Log error on Linux
+            #[cfg(not(target_os = "windows"))]
+            {
+                log::error!("{err}");
+            }
+
+            // On Windows we can show an error window using Windows API to show how to install WebView2
+            #[cfg(target_os = "windows")]
+            {
+                log::error!("{err}");
+            }
+        }
+    };
 }
 
 /// Defines how Titanfall2 was installed (Steam, Origin, ...)
