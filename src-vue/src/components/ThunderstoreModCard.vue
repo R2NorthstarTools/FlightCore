@@ -72,7 +72,6 @@ import { invoke } from "@tauri-apps/api/core";
 import { open } from '@tauri-apps/plugin-shell';
 import { ThunderstoreModStatus } from "../utils/thunderstore/ThunderstoreModStatus";
 import { NorthstarMod } from "../../../src-tauri/bindings/NorthstarMod";
-import { NorthstarState } from "../utils/NorthstarState";
 import { ElMessageBox } from "element-plus";
 import { showErrorNotification, showNotification } from "../utils/ui";
 

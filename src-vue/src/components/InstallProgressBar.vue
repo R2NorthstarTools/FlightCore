@@ -46,6 +46,7 @@ export default defineComponent({
         getCurrentWindow().listen<InstallProgress>(
             'northstar-install-download-progress',
             ({ event, payload }) => {
+                event
                 this.install_or_update = true;
                 let progress = payload;
                 this.status = progress.state;

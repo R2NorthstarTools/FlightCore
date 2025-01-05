@@ -1,7 +1,6 @@
 import { createStore } from 'vuex';
 import { listen, Event as TauriEvent } from "@tauri-apps/api/event";
 import { Tabs } from "../utils/Tabs";
-import { InstallType } from "../../../src-tauri/bindings/InstallType";
 import { invoke } from "@tauri-apps/api/core";
 import { GameInstall } from "../utils/GameInstall";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
@@ -90,16 +89,16 @@ export const store = createStore<FlightCoreStore>({
         }
     },
     mutations: {
-        checkNorthstarUpdates(state) {
+        checkNorthstarUpdates(state: FlightCoreStore) {
             _get_northstar_version_number(state);
         },
-        async toggleDebugMode(_state) {
+        async toggleDebugMode(_state: FlightCoreStore) {
             let menu_bar_handle = document.querySelector('#fc_menu-bar');
             if (menu_bar_handle !== null) {
                 menu_bar_handle.classList.toggle('developer_build');
             }
         },
-        async toggleDeveloperMode(state) {
+        async toggleDeveloperMode(state: FlightCoreStore) {
             state.developer_mode = !state.developer_mode;
 
             // Reset tab when closing dev mode.
@@ -111,12 +110,12 @@ export const store = createStore<FlightCoreStore>({
             await persistentStore.set('dev_mode', state.developer_mode);
             await persistentStore.save();
         },
-        initialize(state) {
+        initialize(state: any) {
             _initializeApp(state);
             _checkForFlightCoreUpdates(state);
             _initializeListeners(state);
         },
-        updateCurrentTab(state: any, newTab: Tabs) {
+        updateCurrentTab(_state: any, newTab: Tabs) {
             router.push({ path: newTab });
         },
         async updateGamePath(state: FlightCoreStore) {
@@ -244,7 +243,7 @@ export const store = createStore<FlightCoreStore>({
         },
         async launchGameSteam(state: any, launch_options: NorthstarLaunchOptions = { launch_via_steam: true, bypass_checks: false}) {
             await invoke("launch_northstar", { gameInstall: state.game_install, launchOptions: launch_options })
-                .then((message) => {
+                .then(() => {
                     showNotification('Success');
                 })
                 .catch((error) => {

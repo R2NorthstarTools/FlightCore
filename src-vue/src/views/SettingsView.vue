@@ -243,7 +243,7 @@ export default defineComponent({
         },
         async openRepairWindow() {
             await invoke("open_repair_window")
-                .then((message) => { })
+                .then(() => { })
                 .catch((error) => {
                     showErrorNotification(error);
                 });
@@ -314,7 +314,7 @@ export default defineComponent({
                 gameInstall: store.state.game_install,
                 oldProfile: old_profile,
                 newProfile: new_profile
-            }).then(async (message) => {
+            }).then(async () => {
                 store.commit('fetchProfiles');
                 showNotification('Success');
             }).catch((error) => {
@@ -327,7 +327,7 @@ export default defineComponent({
             await invoke("delete_profile", {
                 gameInstall: store.state.game_install,
                 profile: profile,
-            }).then(async (message) => {
+            }).then(async () => {
                 if (profile == store.state.game_install.profile)
                 {
                     // trying to delete the active profile, lets switch to the default profile
