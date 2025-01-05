@@ -385,13 +385,13 @@ async function _initializeApp(state: any) {
     }
 
     // Grab "Enable releases switching" setting from store if possible
-    const valueFromStore: { value: boolean } | null = await persistentStore.get('northstar-releases-switching');
+    const valueFromStore: { value: boolean } | null | undefined = await persistentStore.get('northstar-releases-switching');
     if (valueFromStore) {
         state.enableReleasesSwitch = valueFromStore.value;
     }
 
     // Grab "Thunderstore mods per page" setting from store if possible
-    const perPageFromStore: { value: number } | null = await persistentStore.get('thunderstore-mods-per-page');
+    const perPageFromStore: { value: number } | null | undefined = await persistentStore.get('thunderstore-mods-per-page');
     if (perPageFromStore && perPageFromStore.value) {
         state.mods_per_page = perPageFromStore.value;
     }
@@ -522,7 +522,7 @@ async function _get_northstar_version_number(state: any) {
                     alert(error);
                 });
         })
-        .catch((error) => {
+        .catch((_error) => {
             state.northstar_state = NorthstarState.INSTALL;
         })
 }
