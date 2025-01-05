@@ -11,6 +11,8 @@ mod thunderstore;
 mod util;
 
 use serde::{Deserialize, Serialize};
+use tauri::Emitter;
+use tokio::time::sleep;
 use ts_rs::TS;
 
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
@@ -51,6 +53,54 @@ pub fn run() {
     let tauri_builder_res = tauri::Builder::default()
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
+        .setup(|app| {
+            let app_handle = app.handle().clone();
+            tauri::async_runtime::spawn(async move {
+                loop {
+                    sleep(Duration::from_millis(2000)).await;
+                    // println!("sending backend ping");
+                    app_handle.emit("backend-ping", "ping").unwrap();
+                }
+            });
+            let app_handle = app.handle().clone();
+            tauri::async_runtime::spawn(async move {
+                loop {
+                    sleep(Duration::from_millis(2000)).await;
+                    app_handle
+                        .emit(
+                            "ea-app-running-ping",
+                            util::check_ea_app_or_origin_running(),
+                        )
+                        .unwrap();
+                }
+            });
+            let app_handle = app.handle().clone();
+            tauri::async_runtime::spawn(async move {
+                loop {
+                    sleep(Duration::from_millis(2000)).await;
+                    app_handle
+                        .emit("northstar-running-ping", util::check_northstar_running())
+                        .unwrap();
+                }
+            });
+
+            // Emit updated player and server count to GUI
+            let app_handle = app.handle().clone();
+            tauri::async_runtime::spawn(async move {
+                loop {
+                    sleep(constants::REFRESH_DELAY).await;
+                    app_handle
+                        .emit(
+                            "northstar-statistics",
+                            util::get_server_player_count().await,
+                        )
+                        .unwrap();
+                }
+            });
+
+            Ok(())
+        })
+        .manage(())
         .invoke_handler(tauri::generate_handler![
             development::install_git_main,
             github::compare_tags,
