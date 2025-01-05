@@ -29,6 +29,14 @@ pub struct NorthstarThunderstoreReleaseWrapper {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    // Setup logger
+    let mut log_builder = pretty_env_logger::formatted_builder();
+    log_builder.parse_filters("info");
+    let logger = sentry_log::SentryLogger::with_dest(log_builder.build());
+
+    log::set_boxed_logger(Box::new(logger)).unwrap();
+    log::set_max_level(log::LevelFilter::Info);
+
     tauri::Builder::default()
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
