@@ -254,7 +254,6 @@ export default defineComponent({
                     this.isBeingUpdated = false;
                     this.$store.commit('loadInstalledMods');
                 });
-            // @ts-ignore
             })(this.$i18n.t);
 
         },
