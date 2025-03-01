@@ -1,4 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
+import { open } from '@tauri-apps/plugin-shell';
 import { PullsApiResponseElement } from "../../../../src-tauri/bindings/PullsApiResponseElement";
 import { PullRequestType } from '../../../../src-tauri/bindings/PullRequestType';
 import { store } from "../store";
@@ -40,7 +41,7 @@ export const pullRequestModule = {
             await invoke<string>("get_launcher_download_link", { commitSha: pull_request.head.sha })
                 .then((url) => {
                     // Open URL in default HTTPS handler (i.e. default browser)
-                    shell.open(url);
+                    open(url);
                 })
                 .catch((error) => {
                     showErrorNotification(error);
@@ -48,7 +49,7 @@ export const pullRequestModule = {
         },
         async downloadModsPR(_state: PullRequestStoreState, pull_request: PullsApiResponseElement) {
             let url = `https://github.com/${pull_request.head.repo.full_name}/archive/refs/heads/${pull_request.head.ref}.zip`
-            shell.open(url);
+            open(url);
         },
         async installLauncherPR(_state: PullRequestStoreState, pull_request: PullsApiResponseElement) {
             // Send notification telling the user to wait for the process to finish
