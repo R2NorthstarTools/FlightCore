@@ -14,11 +14,16 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { load } from '@tauri-apps/plugin-store';
 const persistentStore = await load('flight-core-settings.json', { autoSave: false });
 
 export default defineComponent({
     name: 'LanguageSelector',
+    setup() {
+        const { locale } = useI18n();
+        return { locale };
+    },
     data: () => ({
         value: '',
         options: [
@@ -62,11 +67,11 @@ export default defineComponent({
     }),
     mounted: async function () {
         const lang: string = await persistentStore.get('lang') as string;
-        this.value = lang;
+            this.locale = lang;
     },
     methods: {
         async onChange(value: string) {
-            this.$root!.$i18n.locale = value;
+            this.locale = value;
             persistentStore.set('lang', value);
             await persistentStore.save();
         }
