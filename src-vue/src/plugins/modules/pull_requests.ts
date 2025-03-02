@@ -74,7 +74,7 @@ export const pullRequestModule = {
             const notification = showNotification(`Installing mods PR ${pull_request.number}`, 'Please wait', 'info', 0);
 
             await invoke("apply_mods_pr", { pullRequest: pull_request, gameInstall: store.state.game_install })
-                .then(() => {
+                .then((_message) => {
                     // Show user notification if mod install completed.
                     showNotification(
                         `Done`,
