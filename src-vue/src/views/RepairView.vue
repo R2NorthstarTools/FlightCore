@@ -40,14 +40,13 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { GameInstall } from "../utils/GameInstall";
 import { InstallProgress } from "../../../src-tauri/bindings/InstallProgress";
-import { invoke } from "@tauri-apps/api";
+import { invoke } from "@tauri-apps/api/core";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
-import { Store } from 'tauri-plugin-store-api';
+import { load } from '@tauri-apps/plugin-store';
 import { showErrorNotification, showNotification } from "../utils/ui";
-import { appWindow } from "@tauri-apps/api/window";
-const persistentStore = new Store('flight-core-settings.json');
+import { getCurrentWindow } from "@tauri-apps/api/window";
+const persistentStore = await load('flight-core-settings.json', { autoSave: false });
 
 export default defineComponent({
     name: "RepairView",
@@ -59,7 +58,7 @@ export default defineComponent({
     methods: {
         async disableAllModsButCore() {
             await invoke("disable_all_but_core", { gameInstall: this.$store.state.game_install })
-                .then((message) => {
+                .then((_message) => {
                     showNotification(this.$t('generic.success'), this.$t('settings.repair.window.disable_all_but_core_success'));
                 })
                 .catch((error) => {
@@ -77,9 +76,9 @@ export default defineComponent({
 
             let install_northstar_result = invoke("install_northstar_wrapper", { gameInstall: this.$store.state.game_install, northstarPackageName: ReleaseCanal.RELEASE });
 
-            appWindow.listen<InstallProgress>(
+            getCurrentWindow().listen<InstallProgress>(
                 'northstar-install-download-progress',
-                ({ event, payload }) => {
+                ({ payload }) => {
                     let typed_payload = payload;
                     console.log("current_downloaded:", typed_payload.current_downloaded);
                     console.log("total_size:        ", typed_payload.total_size);
@@ -87,7 +86,7 @@ export default defineComponent({
                 }
             );
             await install_northstar_result
-                .then((message) => {
+                .then((_message) => {
                     // Send notification
                     showNotification(this.$t('generic.done'), this.$t('settings.repair.window.reinstall_success'));
                     this.$store.commit('checkNorthstarUpdates');
@@ -102,7 +101,7 @@ export default defineComponent({
                 });
         },
         async cleanUpDownloadFolder() {
-            await invoke("clean_up_download_folder_wrapper", { gameInstall: this.$store.state.game_install, force: true }).then((message) => {
+            await invoke("clean_up_download_folder_wrapper", { gameInstall: this.$store.state.game_install, force: true }).then((_message) => {
                 // Show user notification if task completed.
                 showNotification(this.$t('generic.done'), this.$t('generic.done'));
             })
@@ -118,7 +117,7 @@ export default defineComponent({
         },
         async disableModsettingsMod() {
             await invoke("set_mod_enabled_status", { gameInstall: this.$store.state.game_install, modName: "Mod Settings", isEnabled: false })
-                .then((message) => {
+                .then((_message) => {
                     showNotification(this.$t('generic.success'), this.$t('settings.repair.window.disable_modsettings_success'));
                 })
                 .catch((error) => {
@@ -127,7 +126,7 @@ export default defineComponent({
         },
         async killNorthstar() {
             await invoke("kill_northstar")
-                .then((message) => {
+                .then((_message) => {
                     // Just a visual indicator that it worked
                     showNotification('Success');
                 })
@@ -136,13 +135,6 @@ export default defineComponent({
                 });
         },
     },
-    watch: {
-        // Lang value is propagated to repair view after it's mounted, so we need to watch
-        // its value, and update window title accordingly.
-        lang(newv: string) {
-            appWindow.setTitle(this.$t('settings.repair.window.title'));
-        }
-    }
 });
 </script>
 
