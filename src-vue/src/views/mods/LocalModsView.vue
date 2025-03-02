@@ -48,7 +48,7 @@ export default defineComponent({
     methods: {
         async disableAllModsButCore() {
             await invoke("disable_all_but_core", { gameInstall: this.$store.state.game_install })
-                .then(() => {
+                .then((_message) => {
                     showNotification(this.$t('generic.success'), this.$t('settings.repair.window.disable_all_but_core_success'));
                     this.$store.commit('loadInstalledMods');
                 })

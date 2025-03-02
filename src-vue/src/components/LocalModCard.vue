@@ -78,7 +78,7 @@ export default defineComponent({
         },
         async deleteMod(mod: NorthstarMod) {
             await invoke("delete_northstar_mod", { gameInstall: this.$store.state.game_install, nsmodName: mod.name })
-                .then(() => {
+                .then((_message) => {
                     // Just a visual indicator that it worked
                     showNotification(this.$t('mods.local.success_deleting', { modName: mod.name }));
                 })

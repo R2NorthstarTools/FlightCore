@@ -302,7 +302,7 @@ export default defineComponent({
             let install_northstar_result = invoke("install_northstar_wrapper", { gameInstall: this.$store.state.game_install, northstarPackageName: this.selected_ns_version.value.package, versionNumber: this.selected_ns_version.value.version });
 
             await install_northstar_result
-                .then(() => {
+                .then((_message) => {
                     // Send notification
                     showNotification(this.$t('generic.done'), this.$t('settings.repair.window.reinstall_success'));
                     this.$store.commit('checkNorthstarUpdates');
@@ -319,12 +319,12 @@ export default defineComponent({
         async installNSProton() {
             showNotification(`Started NSProton install`);
             await invoke("install_northstar_proton_wrapper")
-                .then(() => { showNotification(`Done`); })
+                .then((_message) => { showNotification(`Done`); })
                 .catch((error) => { showNotification(`Error`, error, "error"); })
         },
         async uninstallNSProton() {
             await invoke("uninstall_northstar_proton_wrapper")
-                .then(() => { showNotification(`Done`); })
+                .then((_message) => { showNotification(`Done`); })
                 .catch((error) => { showNotification(`Error`, error, "error"); })
         },
         async getLocalNSProtonVersion() {
