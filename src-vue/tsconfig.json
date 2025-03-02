@@ -6,6 +6,7 @@
     "moduleResolution": "Node",
     "strict": true,
     "jsx": "preserve",
+    "sourceMap": true,
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
