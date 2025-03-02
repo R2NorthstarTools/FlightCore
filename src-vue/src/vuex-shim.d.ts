@@ -5,7 +5,7 @@ declare module '@vue/runtime-core' {
     interface ComponentCustomProperties {
         $i18n: I18n;
         $route: Route;
-        $store: Store<FlightCoreStore>,
+        $store: Store<FlightCoreStore>;
         $t: (key: string, ...params: any[]) => string;
     }
 }
