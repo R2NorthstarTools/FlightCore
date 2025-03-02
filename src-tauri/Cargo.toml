@@ -84,3 +84,6 @@ tauri-plugin-store = "2"
 # Windows API stuff
 winapi = "0.3.9"
 winreg = "0.52.0"
+
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+tauri-plugin-updater = "2"
