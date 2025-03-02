@@ -6,12 +6,6 @@ const host = process.env.TAURI_DEV_HOST;
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
-  plugins: [vue()],
-
-  build: {
-    target: 'esnext', // Needed for top-level await
-  },
-
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
   // 1. prevent vite from obscuring rust errors
@@ -33,4 +27,10 @@ export default defineConfig(async () => ({
       ignored: ["**/src-tauri/**"],
     },
   },
+
+  build: {
+    // Tauri supports es2022
+    target: ['es2022'],
+  },
+  plugins: [vue()]
 }));
