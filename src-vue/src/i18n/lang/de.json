@@ -130,7 +130,8 @@
             },
             "active": "Aktives Profil",
             "edit": "Profile bearbeiten"
-        }
+        },
+        "show_nsfw_mods": "NSFW Thunderstore Mods anzeigen"
     },
     "notification": {
         "game_folder": {
