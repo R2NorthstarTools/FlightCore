@@ -161,7 +161,8 @@ pub fn run() {
                 log::error!("{err}");
             }
 
-            // On Windows we can show an error window using Windows API to show how to install WebView2
+            // Log error on Windows
+            // TODO show error dialog instead
             #[cfg(target_os = "windows")]
             {
                 log::error!("{err}");
