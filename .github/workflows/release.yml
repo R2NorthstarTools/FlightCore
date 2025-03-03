@@ -49,7 +49,7 @@ jobs:
           src-tauri
     - name: install app dependencies and build it
       env:
-        TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+        TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
       run: |
         npm clean-install
         cd src-vue && npm clean-install && cd ..
@@ -57,9 +57,9 @@ jobs:
     - uses: tauri-apps/tauri-action@v0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+        TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
     - name: upload build artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         path: |
           src-tauri/target/release/bundle/appimage/*AppImage*
@@ -90,7 +90,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
     - name: Create release file
       run: |
         python3 scripts/create-release-file.py --version ${{github.ref_name}}
