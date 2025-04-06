@@ -92,10 +92,7 @@ pub fn parse_installed_mods(
             // Attempt legacy method for getting Thunderstore string first
             Some(ts_mod_string) => Some(ts_mod_string),
             // Legacy method failed
-            None => match parse_for_thunderstore_mod_string(&directory_str) {
-                Ok(thunderstore_mod_string) => Some(thunderstore_mod_string),
-                Err(_err) => None,
-            },
+            None => parse_for_thunderstore_mod_string(&directory_str).ok(),
         };
         // Get directory path
         let mod_directory = directory.to_str().unwrap().to_string();
