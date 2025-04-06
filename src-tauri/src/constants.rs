@@ -28,7 +28,8 @@ pub const BLACKLISTED_MODS: [&str; 3] = [
 
 /// List of Thunderstoremods that have some specific install requirements that makes them different from standard mods
 /// Keeping old Vanilla+ name just in case
-pub const MODS_WITH_SPECIAL_REQUIREMENTS: [&str; 2] = ["NanohmProtogen-VanillaPlus", "NachosChipeados-VanillaPlus"];
+pub const MODS_WITH_SPECIAL_REQUIREMENTS: [&str; 2] =
+    ["NanohmProtogen-VanillaPlus", "NachosChipeados-VanillaPlus"];
 
 /// Order in which the sections for release notes should be displayed
 pub const SECTION_ORDER: [&str; 11] = [
