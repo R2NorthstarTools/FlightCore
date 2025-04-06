@@ -61,6 +61,7 @@ jobs:
     - name: upload build artifact
       uses: actions/upload-artifact@v4
       with:
+        overwrite: true
         path: |
           src-tauri/target/release/bundle/appimage/*AppImage*
           src-tauri/target/release/bundle/msi/*msi*
