@@ -130,7 +130,8 @@
                 "create_empty": "nouveau profil",
                 "new_profile_name": "Entrez le nouveau nom du profil"
             }
-        }
+        },
+        "show_nsfw_mods": "Montrer les mods NSFW de Thunderstore"
     },
     "notification": {
         "date_prefix": "à",
