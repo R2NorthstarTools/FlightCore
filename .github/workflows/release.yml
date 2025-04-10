@@ -58,14 +58,21 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
-    - name: upload build artifact
+    - name: upload build artifact (windows)
+      if: matrix.platform == 'windows-latest'
       uses: actions/upload-artifact@v4
       with:
-        overwrite: true
+        name: windows-artifacts 
         path: |
-          src-tauri/target/release/bundle/appimage/*AppImage*
           src-tauri/target/release/bundle/msi/*msi*
           src-tauri/target/release/flightcore.pdb
+    - name: upload build artifact (linux)
+      if: matrix.platform == 'ubuntu-22.04'
+      uses: actions/upload-artifact@v4
+      with:
+        name: linux-artifacts 
+        path: |
+          src-tauri/target/release/bundle/appimage/*AppImage*
     - name: Install sentry-cli (Windows only)
       if: matrix.platform == 'windows-latest'
       run: |
