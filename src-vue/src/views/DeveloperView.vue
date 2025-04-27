@@ -161,6 +161,7 @@ import { showErrorNotification, showNotification } from "../utils/ui";
 import { check } from "@tauri-apps/plugin-updater";
 import { ask } from "@tauri-apps/plugin-dialog";
 import { relaunch } from "@tauri-apps/plugin-process";
+import { NotificationHandle } from "element-plus";
 
 export default defineComponent({
     name: "DeveloperView",
@@ -211,12 +212,11 @@ export default defineComponent({
     methods: {
         async updateCheck() {
             const update = await check();
-            console.log(update);
             if (!update?.available) {
                 console.log("No update available");
             } else if (update?.available) {
                 console.log("Update available!", update.version, update.body);
-                const yes = await ask(
+                const accepted = await ask(
                 `Update to ${update.version} is available!\n\nRelease notes: ${update.body}`,
                 {
                     title: "Update Available",
@@ -225,8 +225,28 @@ export default defineComponent({
                     cancelLabel: "Cancel",
                 },
                 );
-                if (yes) {
-                    await update.downloadAndInstall();
+                if (accepted) {
+                    let notification_handle: NotificationHandle;
+                    let contentLength: number | undefined = 0;
+                    await update.downloadAndInstall((event) => {
+                        switch (event.event) {
+                        case 'Started':
+                            contentLength = event.data.contentLength;
+                            console.log(`started downloading ${event.data.contentLength} bytes`);
+                            notification_handle = showNotification(`Downloading FlightCore update`, "", "info", 0);
+                            break;
+                        case 'Progress':
+                            // downloaded += event.data.chunkLength;
+                            // console.log(`downloaded ${downloaded} from ${contentLength}`);
+                            break;
+                        case 'Finished':
+                            console.log('download finished');
+                            notification_handle.close()
+                            showNotification(`Download finished`, "", "success", 0);
+                            break;
+                        }
+                    });
+                    showNotification(`Update installed`, "", "success");
                     await relaunch();
                 }
             }

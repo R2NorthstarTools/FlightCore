@@ -9,6 +9,7 @@
     "main"
   ],
   "permissions": [
+    "core:window:allow-request-user-attention",
     "dialog:default",
     "dialog:allow-ask",
     "dialog:allow-message",
