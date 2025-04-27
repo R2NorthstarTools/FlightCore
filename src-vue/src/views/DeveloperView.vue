@@ -11,6 +11,11 @@
                 Disable developer mode
             </el-button>
 
+
+            <el-button type="primary" @click="updateCheck">
+                (Temp) Update check
+            </el-button>
+
             <el-button type="primary" @click="crashApplication">
                 Panic button
             </el-button>
@@ -153,6 +158,9 @@ import { TagWrapper } from "../../../src-tauri/bindings/TagWrapper";
 import { NorthstarThunderstoreReleaseWrapper } from "../../../src-tauri/bindings/NorthstarThunderstoreReleaseWrapper";
 import PullRequestsSelector from "../components/PullRequestsSelector.vue";
 import { showErrorNotification, showNotification } from "../utils/ui";
+import { check } from "@tauri-apps/plugin-updater";
+import { ask, message } from "@tauri-apps/plugin-dialog";
+import { relaunch } from "@tauri-apps/plugin-process";
 
 export default defineComponent({
     name: "DeveloperView",
@@ -201,6 +209,28 @@ export default defineComponent({
         },
     },
     methods: {
+        async updateCheck() {
+            const update = await check();
+            console.log(update);
+            if (!update?.available) {
+                console.log("No update available");
+            } else if (update?.available) {
+                console.log("Update available!", update.version, update.body);
+                const yes = await ask(
+                `Update to ${update.version} is available!\n\nRelease notes: ${update.body}`,
+                {
+                    title: "Update Available",
+                    kind: "info",
+                    okLabel: "Update",
+                    cancelLabel: "Cancel",
+                },
+                );
+                if (yes) {
+                    await update.downloadAndInstall();
+                    await relaunch();
+                }
+            }
+        },
         disableDevMode() {
             this.$store.commit('toggleDeveloperMode');
         },
