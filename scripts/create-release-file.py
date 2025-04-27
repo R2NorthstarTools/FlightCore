@@ -8,7 +8,7 @@ assert("--version" in sys.argv)
 version_number = sys.argv[2]
 version_number_stripped_v = version_number.replace("v", "")
 
-PATH_TO_LINUX_SIG = f"./linux-artifacts/bundle/appimage/FlightCore_{version_number_stripped_v}_amd64.AppImage.tar.gz.sig"
+PATH_TO_LINUX_SIG = f"./linux-artifacts/FlightCore_{version_number_stripped_v}_amd64.AppImage.tar.gz.sig"
 PATH_TO_WINDOWS_SIG = f"./windows-artifacts/bundle/msi/FlightCore_{version_number_stripped_v}_x64_en-US.msi.zip.sig"
 
 # Text to show in update notification
