@@ -12,7 +12,7 @@
             </el-button>
 
 
-            <el-button type="primary" @click="updateCheck">
+            <el-button type="primary" @click="flightcoreUpdateCheck">
                 (Temp) Update check
             </el-button>
 
@@ -210,7 +210,7 @@ export default defineComponent({
         },
     },
     methods: {
-        async updateCheck() {
+        async flightcoreUpdateCheck() {
             const update = await check();
             if (!update?.available) {
                 console.log("No update available");
