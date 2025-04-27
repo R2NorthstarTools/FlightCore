@@ -92,6 +92,8 @@ export default {
   top: 0;
   width: 100%;
   height: var(--fc-menu_height);
+  /* Colour header bar to keep text readable */
+  background-color: rgba(0, 0, 0, 0.7);
 }
 
 #fc__menu_bar::before {
