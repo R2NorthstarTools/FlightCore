@@ -101,6 +101,11 @@ jobs:
     - uses: actions/download-artifact@v4
     - name: Create release file
       run: |
+        ls -al
+        ls -al linux-artifacts/
+        ls -al windows-artifacts/
+        ls -al windows-artifacts/bundle/
+        ls -al windows-artifacts/bundle/msi/
         python3 scripts/create-release-file.py --version ${{github.ref_name}}
 
     - name: upload release file
