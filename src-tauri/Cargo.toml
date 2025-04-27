@@ -1,6 +1,6 @@
 [package]
 name = "flightcore"
-version = "3.0.5"
+version = "3.0.6"
 description = "Mod-manager for Northstar"
 authors = ["https://github.com/R2NorthstarTools/FlightCore/graphs/contributors"]
 license = "MIT"
