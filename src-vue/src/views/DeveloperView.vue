@@ -227,20 +227,14 @@ export default defineComponent({
                 );
                 if (accepted) {
                     let notification_handle: NotificationHandle;
-                    let contentLength: number | undefined = 0;
                     await update.downloadAndInstall((event) => {
                         switch (event.event) {
                         case 'Started':
-                            contentLength = event.data.contentLength;
-                            console.log(`started downloading ${event.data.contentLength} bytes`);
                             notification_handle = showNotification(`Downloading FlightCore update`, "", "info", 0);
                             break;
                         case 'Progress':
-                            // downloaded += event.data.chunkLength;
-                            // console.log(`downloaded ${downloaded} from ${contentLength}`);
                             break;
                         case 'Finished':
-                            console.log('download finished');
                             notification_handle.close()
                             showNotification(`Download finished`, "", "success", 0);
                             break;
