@@ -13,7 +13,7 @@
 
 
             <el-button type="primary" @click="flightcoreUpdateCheck">
-                (Temp) Update check
+                Update check
             </el-button>
 
             <el-button type="primary" @click="crashApplication">
@@ -158,10 +158,6 @@ import { TagWrapper } from "../../../src-tauri/bindings/TagWrapper";
 import { NorthstarThunderstoreReleaseWrapper } from "../../../src-tauri/bindings/NorthstarThunderstoreReleaseWrapper";
 import PullRequestsSelector from "../components/PullRequestsSelector.vue";
 import { showErrorNotification, showNotification } from "../utils/ui";
-import { check } from "@tauri-apps/plugin-updater";
-import { ask } from "@tauri-apps/plugin-dialog";
-import { relaunch } from "@tauri-apps/plugin-process";
-import { NotificationHandle } from "element-plus";
 
 export default defineComponent({
     name: "DeveloperView",
@@ -210,40 +206,8 @@ export default defineComponent({
         },
     },
     methods: {
-        async flightcoreUpdateCheck() {
-            const update = await check();
-            if (!update?.available) {
-                console.log("No update available");
-            } else if (update?.available) {
-                console.log("Update available!", update.version, update.body);
-                const accepted = await ask(
-                `Update to ${update.version} is available!\n\nRelease notes: ${update.body}`,
-                {
-                    title: "Update Available",
-                    kind: "info",
-                    okLabel: "Update",
-                    cancelLabel: "Cancel",
-                },
-                );
-                if (accepted) {
-                    let notification_handle: NotificationHandle;
-                    await update.downloadAndInstall((event) => {
-                        switch (event.event) {
-                        case 'Started':
-                            notification_handle = showNotification(`Downloading FlightCore update`, "", "info", 0);
-                            break;
-                        case 'Progress':
-                            break;
-                        case 'Finished':
-                            notification_handle.close()
-                            showNotification(`Download finished`, "", "success", 0);
-                            break;
-                        }
-                    });
-                    showNotification(`Update installed`, "", "success");
-                    await relaunch();
-                }
-            }
+        flightcoreUpdateCheck() {
+            this.$store.commit('checkForUpdates');
         },
         disableDevMode() {
             this.$store.commit('toggleDeveloperMode');

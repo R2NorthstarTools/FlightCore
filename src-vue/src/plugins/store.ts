@@ -20,6 +20,9 @@ import { i18n } from '../main';
 import { pullRequestModule } from './modules/pull_requests';
 import { showErrorNotification, showNotification } from '../utils/ui';
 import { notificationsModule } from './modules/notifications';
+import { check } from "@tauri-apps/plugin-updater";
+import { ask } from "@tauri-apps/plugin-dialog";
+import { relaunch } from "@tauri-apps/plugin-process";
 
 const persistentStore = await load('flight-core-settings.json', { autoSave: false });
 
@@ -112,8 +115,12 @@ export const store = createStore<FlightCoreStore>({
         },
         initialize(state: any) {
             _initializeApp(state);
-            _checkForFlightCoreUpdates(state);
+            //_checkForFlightCoreUpdates(state);
+            flightcoreUpdateCheck();
             _initializeListeners(state);
+        },
+        checkForUpdates(state: any) {
+            flightcoreUpdateCheck();
         },
         updateCurrentTab(_state: any, newTab: Tabs) {
             router.push({ path: newTab });
@@ -464,6 +471,7 @@ async function _initializeApp(state: any) {
         });
 }
 
+/** @deprecated use flightcoreUpdateCheck instead */
 async function _checkForFlightCoreUpdates(state: FlightCoreStore) {
     // Check if FlightCore up-to-date
     let flightcore_is_outdated = await invoke("check_is_flightcore_outdated") as boolean;
@@ -476,6 +484,42 @@ async function _checkForFlightCoreUpdates(state: FlightCoreStore) {
             'warning',
             0 // Duration `0` means the notification will not auto-vanish
         );
+    }
+}
+
+async function flightcoreUpdateCheck() {
+    const update = await check();
+    if (!update?.available) {
+        console.log("No update available");
+    } else if (update?.available) {
+        console.log("Update available!", update.version, update.body);
+        const accepted = await ask(
+        `Update to ${update.version} is available!\n\nRelease notes: ${update.body}`,
+        {
+            title: "Update Available",
+            kind: "info",
+            okLabel: "Update",
+            cancelLabel: "Cancel",
+        },
+        );
+        if (accepted) {
+            let notification_handle: NotificationHandle;
+            await update.downloadAndInstall((event) => {
+                switch (event.event) {
+                case 'Started':
+                    notification_handle = showNotification(`Downloading FlightCore update`, "", "info", 0);
+                    break;
+                case 'Progress':
+                    break;
+                case 'Finished':
+                    notification_handle.close()
+                    showNotification(`Download finished`, "", "success", 0);
+                    break;
+                }
+            });
+            showNotification(`Update installed`, "", "success");
+            await relaunch();
+        }
     }
 }
 
