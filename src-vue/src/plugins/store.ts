@@ -119,7 +119,7 @@ export const store = createStore<FlightCoreStore>({
             flightcoreUpdateCheck();
             _initializeListeners(state);
         },
-        checkForUpdates(state: any) {
+        checkForUpdates(_state: any) {
             flightcoreUpdateCheck();
         },
         updateCurrentTab(_state: any, newTab: Tabs) {
@@ -472,6 +472,7 @@ async function _initializeApp(state: any) {
 }
 
 /** @deprecated use flightcoreUpdateCheck instead */
+//@ts-ignore
 async function _checkForFlightCoreUpdates(state: FlightCoreStore) {
     // Check if FlightCore up-to-date
     let flightcore_is_outdated = await invoke("check_is_flightcore_outdated") as boolean;
