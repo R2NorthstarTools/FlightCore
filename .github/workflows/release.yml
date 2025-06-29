@@ -42,7 +42,7 @@ jobs:
       if: matrix.platform == 'ubuntu-22.04'
       run: |
         sudo apt-get update
-        sudo apt-get install -y libgtk-3-dev webkit2gtk-4.0 libappindicator3-dev librsvg2-dev patchelf
+        sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
     - uses: Swatinem/rust-cache@v2 # Cache Rust build artifacts
       with:
         workspaces: |
@@ -58,13 +58,21 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
-    - name: upload build artifact
+    - name: upload build artifact (windows)
+      if: matrix.platform == 'windows-latest'
       uses: actions/upload-artifact@v4
       with:
+        name: windows-artifacts 
         path: |
-          src-tauri/target/release/bundle/appimage/*AppImage*
           src-tauri/target/release/bundle/msi/*msi*
           src-tauri/target/release/flightcore.pdb
+    - name: upload build artifact (linux)
+      if: matrix.platform == 'ubuntu-22.04'
+      uses: actions/upload-artifact@v4
+      with:
+        name: linux-artifacts 
+        path: |
+          src-tauri/target/release/bundle/appimage/*AppImage*
     - name: Install sentry-cli (Windows only)
       if: matrix.platform == 'windows-latest'
       run: |
@@ -93,6 +101,11 @@ jobs:
     - uses: actions/download-artifact@v4
     - name: Create release file
       run: |
+        ls -al
+        ls -al linux-artifacts/
+        ls -al windows-artifacts/
+        ls -al windows-artifacts/bundle/
+        ls -al windows-artifacts/bundle/msi/
         python3 scripts/create-release-file.py --version ${{github.ref_name}}
 
     - name: upload release file
