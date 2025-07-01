@@ -17,7 +17,7 @@
     "@tauri-apps/plugin-store": "^2.2.0",
     "@tauri-apps/plugin-updater": "^2.5.1",
     "vue": "^3.4.35",
-    "vue-i18n": "^9.13.1",
+    "vue-i18n": "^11.1.7",
     "vue-router": "^4.4.3",
     "vuex": "^4.0.2"
   },
