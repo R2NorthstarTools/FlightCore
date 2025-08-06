@@ -14,7 +14,7 @@ use ts_rs::TS;
 #[ts(export)]
 pub struct NorthstarLaunchOptions {
     launch_via_steam: bool,
-    bypass_checks: bool
+    bypass_checks: bool,
 }
 
 /// Gets list of available Northstar versions from Thunderstore
@@ -160,7 +160,7 @@ pub fn get_northstar_version_number(game_install: GameInstall) -> Result<String,
 pub fn launch_northstar(
     game_install: GameInstall,
     launch_options: NorthstarLaunchOptions,
-    launch_arguments: Vec<&str>
+    launch_arguments: Vec<&str>,
 ) -> Result<String, String> {
     dbg!(game_install.clone());
 
@@ -233,7 +233,10 @@ pub fn launch_northstar(
 }
 
 /// Prepare Northstar and Launch through Steam using the Browser Protocol
-pub fn launch_northstar_steam(game_install: GameInstall, launch_arguments: Vec<&str>) -> Result<String, String> {
+pub fn launch_northstar_steam(
+    game_install: GameInstall,
+    launch_arguments: Vec<&str>,
+) -> Result<String, String> {
     if !matches!(game_install.install_type, InstallType::STEAM) {
         return Err("Titanfall2 was not installed via Steam".to_string());
     }
