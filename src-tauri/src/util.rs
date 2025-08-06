@@ -253,9 +253,8 @@ pub fn convert_release_candidate_number(version_number: String) -> String {
         let trimmed_combined_patch_version = combined_patch_version.trim_start_matches('0');
 
         // Combine all
-        let version_number = format!(
-            "{major_version}.{minor_version}.{trimmed_combined_patch_version}"
-        );
+        let version_number =
+            format!("{major_version}.{minor_version}.{trimmed_combined_patch_version}");
         return version_number;
     }
 

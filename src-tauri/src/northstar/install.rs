@@ -147,9 +147,8 @@ async fn do_install(
 
         // Move DLL into the default R2Northstar Profile
         let old_dll_path = format!("{extract_directory}/{NORTHSTAR_DLL}");
-        let new_dll_path = format!(
-            "{extract_directory}/{NORTHSTAR_DEFAULT_PROFILE}/{NORTHSTAR_DLL}"
-        );
+        let new_dll_path =
+            format!("{extract_directory}/{NORTHSTAR_DEFAULT_PROFILE}/{NORTHSTAR_DLL}");
         std::fs::rename(old_dll_path, new_dll_path)?;
 
         // rename default R2Northstar Profile to the profile we want to use
