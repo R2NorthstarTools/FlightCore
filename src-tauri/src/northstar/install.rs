@@ -84,14 +84,14 @@ async fn do_install(
 ) -> Result<()> {
     let filename = format!("northstar-{}.zip", nmod.version);
     let temp_dir = format!("{}/___flightcore-temp", game_install.game_path);
-    let download_directory = format!("{}/download-dir", temp_dir);
-    let extract_directory = format!("{}/extract-dir", temp_dir);
+    let download_directory = format!("{temp_dir}/download-dir");
+    let extract_directory = format!("{temp_dir}/extract-dir");
 
     log::info!("Attempting to create temporary directory {}", temp_dir);
     std::fs::create_dir_all(download_directory.clone())?;
     std::fs::create_dir_all(extract_directory.clone())?;
 
-    let download_path = format!("{}/{}", download_directory, filename);
+    let download_path = format!("{download_directory}/{filename}");
     log::info!("Download path: {download_path}");
 
     let last_emit = RefCell::new(Instant::now()); // Keep track of the last time a signal was emitted
@@ -146,15 +146,14 @@ async fn do_install(
         // - rename the Profile
 
         // Move DLL into the default R2Northstar Profile
-        let old_dll_path = format!("{}/{}", extract_directory, NORTHSTAR_DLL);
+        let old_dll_path = format!("{extract_directory}/{NORTHSTAR_DLL}");
         let new_dll_path = format!(
-            "{}/{}/{}",
-            extract_directory, NORTHSTAR_DEFAULT_PROFILE, NORTHSTAR_DLL
+            "{extract_directory}/{NORTHSTAR_DEFAULT_PROFILE}/{NORTHSTAR_DLL}"
         );
         std::fs::rename(old_dll_path, new_dll_path)?;
 
         // rename default R2Northstar Profile to the profile we want to use
-        let old_profile_path = format!("{}/{}/", extract_directory, NORTHSTAR_DEFAULT_PROFILE);
+        let old_profile_path = format!("{extract_directory}/{NORTHSTAR_DEFAULT_PROFILE}/");
         let new_profile_path = format!("{}/{}/", extract_directory, game_install.profile);
         std::fs::rename(old_profile_path, new_profile_path)?;
     }
@@ -188,7 +187,7 @@ async fn do_install(
 
         // Safety check for mod.json
         // Just so that we won't ever have a https://github.com/ValveSoftware/steam-for-linux/issues/3671 moment
-        let mod_json_path = format!("{}/mod.json", path_to_delete_string);
+        let mod_json_path = format!("{path_to_delete_string}/mod.json");
         let mod_json_path = std::path::Path::new(&mod_json_path);
 
         if !mod_json_path.exists() {

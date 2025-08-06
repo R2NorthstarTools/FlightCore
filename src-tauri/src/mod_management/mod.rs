@@ -135,7 +135,7 @@ pub fn get_enabled_mods(game_install: &GameInstall) -> Result<serde_json::value:
     // Parse JSON
     let res: serde_json::Value = match serde_json::from_str(&data) {
         Ok(result) => result,
-        Err(err) => return Err(format!("Failed to read JSON due to: {}", err)),
+        Err(err) => return Err(format!("Failed to read JSON due to: {err}")),
     };
 
     // Return parsed data
@@ -255,7 +255,7 @@ pub fn parse_mods_in_package(
     for directory in directories {
         let directory_str = directory.to_str().unwrap().to_string();
         // Check if mod.json exists
-        let mod_json_path = format!("{}/mod.json", directory_str);
+        let mod_json_path = format!("{directory_str}/mod.json");
         if !std::path::Path::new(&mod_json_path).exists() {
             continue;
         }
@@ -613,8 +613,7 @@ pub async fn fc_download_mod_and_install(
     for special_mod in MODS_WITH_SPECIAL_REQUIREMENTS {
         if thunderstore_mod_string.contains(special_mod) {
             return Err(format!(
-                "{} has special install requirements and cannot be installed with FlightCore",
-                thunderstore_mod_string
+                "{thunderstore_mod_string} has special install requirements and cannot be installed with FlightCore"
             ));
         }
     }
@@ -667,7 +666,7 @@ pub async fn fc_download_mod_and_install(
             log::warn!("libthermite couldn't install mod {thunderstore_mod_string} due to {err:?}",);
             return match err {
                 ThermiteError::SanityError(e) => Err(
-                    format!("Mod failed sanity check during install. It's probably not correctly formatted. {}", e)
+                    format!("Mod failed sanity check during install. It's probably not correctly formatted. {e}")
                 ),
                 _ => Err(err.to_string()),
             };
@@ -703,7 +702,7 @@ fn delete_mod_folder(ns_mod_directory: &str) -> Result<(), String> {
     let mod_json_path = ns_mod_dir_path.join("mod.json");
     if !mod_json_path.exists() {
         // If it doesn't exist, return an error
-        return Err(format!("mod.json does not exist in {}", ns_mod_directory));
+        return Err(format!("mod.json does not exist in {ns_mod_directory}"));
     }
 
     match std::fs::remove_dir_all(ns_mod_directory) {
@@ -747,8 +746,7 @@ fn delete_package_folder(ts_package_directory: &str) -> Result<(), String> {
     if !mod_json_path.exists() {
         // If it doesn't exist, return an error
         return Err(format!(
-            "manifest.json does not exist in {}",
-            ts_package_directory
+            "manifest.json does not exist in {ts_package_directory}"
         ));
     }
 
