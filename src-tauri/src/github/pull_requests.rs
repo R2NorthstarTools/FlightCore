@@ -197,13 +197,12 @@ pub async fn get_launcher_download_link(commit_sha: String) -> Result<String, St
     for i in 1..=10 {
         // Crossreference with runs API
         let runs_response: ActionsRunsResponse = match check_github_api(&format!(
-            "https://api.github.com/repos/R2Northstar/NorthstarLauncher/actions/runs?page={}",
-            i
+            "https://api.github.com/repos/R2Northstar/NorthstarLauncher/actions/runs?page={i}"
         ))
         .await
         {
             Ok(result) => serde_json::from_value(result).unwrap(),
-            Err(err) => return Err(format!("{}", err)),
+            Err(err) => return Err(format!("{err}")),
         };
 
         // Cross-reference commit sha against workflow runs
@@ -236,20 +235,19 @@ pub async fn get_launcher_download_link(commit_sha: String) -> Result<String, St
     }
 
     Err(format!(
-        "Couldn't grab download link for \"{}\". Corresponding PR might be too old and therefore no CI build has been detected. Maybe ask author to update?",
-        commit_sha
+        "Couldn't grab download link for \"{commit_sha}\". Corresponding PR might be too old and therefore no CI build has been detected. Maybe ask author to update?"
     ))
 }
 
 /// Adds a batch file that allows for launching Northstar with mods PR profile
 fn add_batch_file(game_install_path: &str) {
-    let batch_path = format!("{}/r2ns-launch-mod-pr-version.bat", game_install_path);
+    let batch_path = format!("{game_install_path}/r2ns-launch-mod-pr-version.bat");
     let path = Path::new(&batch_path);
     let display = path.display();
 
     // Open a file in write-only mode, returns `io::Result<File>`
     let mut file = match File::create(path) {
-        Err(why) => panic!("couldn't create {}: {}", display, why),
+        Err(why) => panic!("couldn't create {display}: {why}"),
         Ok(file) => file,
     };
 
@@ -258,7 +256,7 @@ fn add_batch_file(game_install_path: &str) {
         "NorthstarLauncher.exe -profile=R2Northstar-PR-test-managed-folder\r\n";
 
     match file.write_all(batch_file_content.as_bytes()) {
-        Err(why) => panic!("couldn't write to {}: {}", display, why),
+        Err(why) => panic!("couldn't write to {display}: {why}"),
         Ok(_) => log::info!("successfully wrote to {}", display),
     }
 }
@@ -296,8 +294,7 @@ pub async fn apply_launcher_pr(
         Ok(_) => (),
         Err(err) => {
             return Err(format!(
-                "Failed creating temporary download directory: {}",
-                err
+                "Failed creating temporary download directory: {err}"
             ))
         }
     };
@@ -306,7 +303,7 @@ pub async fn apply_launcher_pr(
     match zip_extract::extract(io::Cursor::new(archive), &target_dir, true) {
         Ok(()) => (),
         Err(err) => {
-            return Err(format!("Failed unzip: {}", err));
+            return Err(format!("Failed unzip: {err}"));
         }
     };
 
@@ -316,14 +313,13 @@ pub async fn apply_launcher_pr(
     // - Northstar.dll
     let files_to_copy = vec!["NorthstarLauncher.exe", "Northstar.dll"];
     for file_name in files_to_copy {
-        let source_file_path = format!("{}/{}", extract_directory, file_name);
+        let source_file_path = format!("{extract_directory}/{file_name}");
         let destination_file_path = format!("{}/{}", game_install.game_path, file_name);
         match std::fs::copy(source_file_path, destination_file_path) {
             Ok(_result) => (),
             Err(err) => {
                 return Err(format!(
-                    "Failed to copy necessary file {} from temp dir: {}",
-                    file_name, err
+                    "Failed to copy necessary file {file_name} from temp dir: {err}"
                 ))
             }
         };
@@ -334,8 +330,7 @@ pub async fn apply_launcher_pr(
         Ok(()) => (),
         Err(err) => {
             return Err(format!(
-                "Failed to delete temporary download directory: {}",
-                err
+                "Failed to delete temporary download directory: {err}"
             ))
         }
     }
@@ -383,11 +378,11 @@ pub async fn apply_mods_pr(
         Err(err) => return Err(err.to_string()),
     }
 
-    let target_dir = std::path::PathBuf::from(format!("{}/mods", profile_folder)); // Doesn't need to exist
+    let target_dir = std::path::PathBuf::from(format!("{profile_folder}/mods")); // Doesn't need to exist
     match zip_extract::extract(io::Cursor::new(archive), &target_dir, true) {
         Ok(()) => (),
         Err(err) => {
-            return Err(format!("Failed unzip: {}", err));
+            return Err(format!("Failed unzip: {err}"));
         }
     };
     // Add batch file to launch right profile

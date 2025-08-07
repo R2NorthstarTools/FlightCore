@@ -20,8 +20,8 @@ pub struct ModJson {
 
 /// Parses `manifest.json` for Thunderstore mod string
 fn parse_for_thunderstore_mod_string(nsmod_path: &str) -> Result<String, anyhow::Error> {
-    let manifest_json_path = format!("{}/manifest.json", nsmod_path);
-    let ts_author_txt_path = format!("{}/thunderstore_author.txt", nsmod_path);
+    let manifest_json_path = format!("{nsmod_path}/manifest.json");
+    let ts_author_txt_path = format!("{nsmod_path}/thunderstore_author.txt");
 
     // Check if `manifest.json` exists and parse
     let data = std::fs::read_to_string(manifest_json_path)?;
@@ -71,7 +71,7 @@ pub fn parse_installed_mods(
     for directory in directories {
         let directory_str = directory.to_str().unwrap().to_string();
         // Check if mod.json exists
-        let mod_json_path = format!("{}/mod.json", directory_str);
+        let mod_json_path = format!("{directory_str}/mod.json");
         if !std::path::Path::new(&mod_json_path).exists() {
             continue;
         }
