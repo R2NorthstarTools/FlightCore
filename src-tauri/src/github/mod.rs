@@ -70,7 +70,7 @@ pub fn get_list_of_tags(project: Project) -> Result<Vec<TagWrapper>, String> {
     };
 
     // Fetch the list of tags for the repository as a `Vec<Tag>`.
-    let tags_url = format!("https://api.github.com/repos/{}/tags", repo_name);
+    let tags_url = format!("https://api.github.com/repos/{repo_name}/tags");
     let tags: Vec<Tag> = client.get(tags_url).send().unwrap().json().unwrap();
 
     // Map each `Tag` element to a `TagWrapper` element with the desired label and `Tag` value.
@@ -108,7 +108,7 @@ pub fn compare_tags_flightcore(first_tag: Tag, second_tag: Tag) -> Result<String
     let mut full_patch_notes = "".to_string();
 
     let mut patch_notes: Vec<String> = [].to_vec();
-    println!("{}", repo);
+    println!("{repo}");
     // let repo = "R2Northstar/NorthstarLauncher";
     let comparison_url = format!(
         "https://api.github.com/repos/{}/compare/{}...{}",
@@ -170,10 +170,10 @@ fn generate_flightcore_release_notes(commits: Vec<String>) -> String {
                     _ => "**Other:**",
                 };
 
-                release_notes.push_str(&format!("{}\n", section_title));
+                release_notes.push_str(&format!("{section_title}\n"));
 
                 for commit_message in commit_list {
-                    release_notes.push_str(&format!("- {}\n", commit_message));
+                    release_notes.push_str(&format!("- {commit_message}\n"));
                 }
 
                 release_notes.push('\n');
@@ -235,10 +235,10 @@ pub fn compare_tags_northstar(first_tag: Tag, second_tag: Tag) -> Result<String,
     let mut authors_set = std::collections::HashSet::new();
 
     for repo in repos {
-        full_patch_notes += &format!("{}\n\n", repo);
+        full_patch_notes += &format!("{repo}\n\n");
 
         let mut patch_notes: Vec<String> = [].to_vec();
-        println!("{}", repo);
+        println!("{repo}");
         // let repo = "R2Northstar/NorthstarLauncher";
         let comparison_url = format!(
             "https://api.github.com/repos/{}/compare/{}...{}",
@@ -306,7 +306,7 @@ fn turn_pr_number_into_link(input: &str, repo: &str) -> String {
     let re = Regex::new(r"#(\d+)").unwrap();
 
     // Generate pull request link
-    let pull_link = format!("https://github.com/{}/pull/", repo);
-    re.replace_all(input, format!("[{}#$1]({}$1)", last_line, pull_link))
+    let pull_link = format!("https://github.com/{repo}/pull/");
+    re.replace_all(input, format!("[{last_line}#$1]({pull_link}$1)"))
         .to_string()
 }
