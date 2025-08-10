@@ -22,7 +22,7 @@
     },
 
     "general":{
-        "update_availabe": "Update available",
+        "update_available": "Update available",
         "update_info_text": "Update to {version} is available!\n\nRelease notes: {notes}",
         "downloading_flightcore_update":"Downloading FlightCore update",
         "update_download_finished":"Download finished",
