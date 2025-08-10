@@ -20,6 +20,9 @@ import { i18n } from '../main';
 import { pullRequestModule } from './modules/pull_requests';
 import { showErrorNotification, showNotification } from '../utils/ui';
 import { notificationsModule } from './modules/notifications';
+import { check } from "@tauri-apps/plugin-updater";
+import { ask } from "@tauri-apps/plugin-dialog";
+import { relaunch } from "@tauri-apps/plugin-process";
 
 const persistentStore = await load('flight-core-settings.json', { autoSave: false });
 
@@ -112,8 +115,12 @@ export const store = createStore<FlightCoreStore>({
         },
         initialize(state: any) {
             _initializeApp(state);
-            _checkForFlightCoreUpdates(state);
+            //_checkForFlightCoreUpdates(state);
+            flightcoreUpdateCheck();
             _initializeListeners(state);
+        },
+        checkForUpdates(_state: any) {
+            flightcoreUpdateCheck();
         },
         updateCurrentTab(_state: any, newTab: Tabs) {
             router.push({ path: newTab });
@@ -464,6 +471,8 @@ async function _initializeApp(state: any) {
         });
 }
 
+/** @deprecated use flightcoreUpdateCheck instead */
+//@ts-ignore
 async function _checkForFlightCoreUpdates(state: FlightCoreStore) {
     // Check if FlightCore up-to-date
     let flightcore_is_outdated = await invoke("check_is_flightcore_outdated") as boolean;
@@ -476,6 +485,42 @@ async function _checkForFlightCoreUpdates(state: FlightCoreStore) {
             'warning',
             0 // Duration `0` means the notification will not auto-vanish
         );
+    }
+}
+
+async function flightcoreUpdateCheck() {
+    const update = await check();
+    if (!update?.available) {
+        console.log("No update available");
+    } else if (update?.available) {
+        console.log("Update available!", update.version, update.body);
+        const accepted = await ask(
+         i18n.global.tc("general.update_info_text", {version: update.version, notes: update.body}),
+        {
+            title: i18n.global.tc("general.update_available"),
+            kind: "info",
+            okLabel: i18n.global.tc("generic.update"),
+            cancelLabel: i18n.global.tc("generic.cancel"),
+        },
+        );
+        if (accepted) {
+            let notification_handle: NotificationHandle;
+            await update.downloadAndInstall((event) => {
+                switch (event.event) {
+                case 'Started':
+                    notification_handle = showNotification(i18n.global.tc("general.downloading_flightcore_update"), "", "info", 0);
+                    break;
+                case 'Progress':
+                    break;
+                case 'Finished':
+                    notification_handle.close()
+                    showNotification(i18n.global.tc("general.update_download_finished"), "", "success", 0);
+                    break;
+                }
+            });
+            showNotification(i18n.global.tc("general.flightcore_update_installed"), "", "success");
+            await relaunch();
+        }
     }
 }
 
