@@ -495,12 +495,12 @@ async function flightcoreUpdateCheck() {
     } else if (update?.available) {
         console.log("Update available!", update.version, update.body);
         const accepted = await ask(
-        `Update to ${update.version} is available!\n\nRelease notes: ${update.body}`,
+         i18n.global.tc("general.update_info_text", {version: update.version, notes: update.body}),
         {
-            title: "Update Available",
+            title: i18n.global.tc("general.update_available"),
             kind: "info",
-            okLabel: "Update",
-            cancelLabel: "Cancel",
+            okLabel: i18n.global.tc("generic.update"),
+            cancelLabel: i18n.global.tc("generic.cancel"),
         },
         );
         if (accepted) {
@@ -508,17 +508,17 @@ async function flightcoreUpdateCheck() {
             await update.downloadAndInstall((event) => {
                 switch (event.event) {
                 case 'Started':
-                    notification_handle = showNotification(`Downloading FlightCore update`, "", "info", 0);
+                    notification_handle = showNotification(i18n.global.tc("general.downloading_flightcore_update"), "", "info", 0);
                     break;
                 case 'Progress':
                     break;
                 case 'Finished':
                     notification_handle.close()
-                    showNotification(`Download finished`, "", "success", 0);
+                    showNotification(i18n.global.tc("general.update_download_finished"), "", "success", 0);
                     break;
                 }
             });
-            showNotification(`Update installed`, "", "success");
+            showNotification(i18n.global.tc("general.flightcore_update_installed"), "", "success");
             await relaunch();
         }
     }

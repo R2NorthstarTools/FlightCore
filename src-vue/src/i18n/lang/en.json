@@ -13,11 +13,20 @@
         "error": "Error",
         "confirm": "Confirm",
         "cancel": "Cancel",
+        "update": "Update",
         "informationShort": "Info",
         "downloading": "Downloading",
         "extracting": "Extracting",
         "done": "Done",
         "success": "Success"
+    },
+
+    "general":{
+        "update_availabe": "Update available",
+        "update_info_text": "Update to {version} is available!\n\nRelease notes: {notes}",
+        "downloading_flightcore_update":"Downloading FlightCore update",
+        "update_download_finished":"Download finished",
+        "flightcore_update_installed":"Update installed"
     },
 
     "play": {
