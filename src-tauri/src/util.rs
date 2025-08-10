@@ -31,10 +31,10 @@ pub async fn get_flightcore_version_number() -> String {
     let version = env!("CARGO_PKG_VERSION");
     if cfg!(debug_assertions) {
         // Debugging enabled
-        format!("v{} (debug mode)", version)
+        format!("v{version} (debug mode)")
     } else {
         // Debugging disabled
-        format!("v{}", version)
+        format!("v{version}")
     }
 }
 
@@ -244,19 +244,17 @@ pub fn convert_release_candidate_number(version_number: String) -> String {
         let release_candidate: u32 = captures[4].parse().unwrap();
 
         // Zero pad
-        let padded_release_candidate = format!("{:02}", release_candidate);
+        let padded_release_candidate = format!("{release_candidate:02}");
 
         // Combine
-        let combined_patch_version = format!("{}{}", patch_version, padded_release_candidate);
+        let combined_patch_version = format!("{patch_version}{padded_release_candidate}");
 
         // Strip leading zeroes
         let trimmed_combined_patch_version = combined_patch_version.trim_start_matches('0');
 
         // Combine all
-        let version_number = format!(
-            "{}.{}.{}",
-            major_version, minor_version, trimmed_combined_patch_version
-        );
+        let version_number =
+            format!("{major_version}.{minor_version}.{trimmed_combined_patch_version}");
         return version_number;
     }
 
