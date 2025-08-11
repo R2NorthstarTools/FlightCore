@@ -1274,7 +1274,7 @@ dependencies = [
 
 [[package]]
 name = "flightcore"
-version = "3.0.6"
+version = "3.1.1"
 dependencies = [
  "anyhow",
  "async-recursion",
@@ -1303,6 +1303,7 @@ dependencies = [
  "tauri-build",
  "tauri-plugin-dialog",
  "tauri-plugin-opener",
+ "tauri-plugin-process",
  "tauri-plugin-store",
  "tauri-plugin-updater",
  "tokio",
@@ -4383,9 +4384,9 @@ dependencies = [
 
 [[package]]
 name = "semver"
-version = "1.0.24"
+version = "1.0.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3cb6eb87a131f756572d7fb904f6e7b68633f09cca868c5df1c4b8d1a694bbba"
+checksum = "56e6fa9c48d24d85fb3de5ad847117517440f6beceb7798af16b4a87d616b8d0"
 dependencies = [
  "serde",
 ]
@@ -5286,6 +5287,16 @@ dependencies = [
  "url",
  "windows 0.58.0",
  "zbus 4.0.1",
+]
+
+[[package]]
+name = "tauri-plugin-process"
+version = "2.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ae06a00087c148962a52814a2d7265b1a0505bced5ffb74f8c284a5f96a4d03d"
+dependencies = [
+ "tauri",
+ "tauri-plugin",
 ]
 
 [[package]]

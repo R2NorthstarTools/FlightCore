@@ -11,6 +11,9 @@
     "core:window:allow-request-user-attention",
     "core:window:allow-start-dragging",
     "core:default",
+    "dialog:default",
+    "dialog:allow-ask",
+    "dialog:allow-message",
     "opener:default",
     "store:default",
     "updater:default"

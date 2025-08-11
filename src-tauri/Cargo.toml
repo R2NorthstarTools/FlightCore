@@ -1,6 +1,6 @@
 [package]
 name = "flightcore"
-version = "3.0.6"
+version = "3.1.1"
 description = "Mod-manager for Northstar"
 authors = ["https://github.com/R2NorthstarTools/FlightCore/graphs/contributors"]
 license = "MIT"
@@ -31,6 +31,7 @@ serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "2", features = [] }
 tauri-plugin-dialog = "2"
 tauri-plugin-opener = "2"
+tauri-plugin-process = "=2.0.1"
 tauri-plugin-store = "2"
 tokio = { version = "1", features = ["full"] }
 # Sentry (crash) logging

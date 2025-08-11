@@ -11,6 +11,11 @@
                 Disable developer mode
             </el-button>
 
+
+            <el-button type="primary" @click="flightcoreUpdateCheck">
+                Update check
+            </el-button>
+
             <el-button type="primary" @click="crashApplication">
                 Panic button
             </el-button>
@@ -201,6 +206,9 @@ export default defineComponent({
         },
     },
     methods: {
+        flightcoreUpdateCheck() {
+            this.$store.commit('checkForUpdates');
+        },
         disableDevMode() {
             this.$store.commit('toggleDeveloperMode');
         },
