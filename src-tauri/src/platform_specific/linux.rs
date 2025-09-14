@@ -65,14 +65,14 @@ pub fn install_ns_proton() -> Result<(), String> {
 /// Remove NS Proton
 pub fn uninstall_ns_proton() -> Result<(), String> {
     let compat_dir = get_proton_dir()?;
-    let pattern = format!("{}/NorthstarProton*", compat_dir);
+    let pattern = format!("{compat_dir}/NorthstarProton*");
     for e in glob::glob(&pattern).expect("Failed to read glob pattern") {
         match e {
             Ok(path) => match std::fs::remove_dir_all(path.clone()) {
                 Ok(_) => {}
                 Err(_) => return Err(format!("Failed to remove {}", path.display())),
             },
-            Err(e) => return Err(format!("Found unprocessable entry {}", e)),
+            Err(e) => return Err(format!("Found unprocessable entry {e}")),
         }
     }
 
@@ -82,7 +82,7 @@ pub fn uninstall_ns_proton() -> Result<(), String> {
 /// Get the latest installed NS Proton version
 pub fn get_local_ns_proton_version() -> Result<String, String> {
     let compat_dir = get_proton_dir().unwrap();
-    let pattern = format!("{}/NorthstarProton*/version", compat_dir);
+    let pattern = format!("{compat_dir}/NorthstarProton*/version");
 
     if let Some(e) = glob::glob(&pattern)
         .expect("Failed to read glob pattern")
