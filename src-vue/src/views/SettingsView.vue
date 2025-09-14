@@ -149,7 +149,7 @@ import { load } from '@tauri-apps/plugin-store';
 import { showErrorNotification, showNotification } from "../utils/ui";
 import LanguageSelector from "../components/LanguageSelector.vue";
 const persistentStore = await load('flight-core-settings.json', { autoSave: false });
-import { open } from '@tauri-apps/plugin-shell';
+import { openPath } from '@tauri-apps/plugin-opener';
 import { i18n } from '../main';
 import { ElMessageBox } from 'element-plus'
 
@@ -259,7 +259,7 @@ export default defineComponent({
             }
 
             // Opens the folder in default file explorer application
-            await open(`${this.$store.state.game_install.game_path}`);
+            await openPath(`${this.$store.state.game_install.game_path}`);
         },
         async switchProfile(value: string) {
             let store = this.$store;

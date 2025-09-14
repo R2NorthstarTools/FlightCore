@@ -15,6 +15,14 @@
     "dialog:allow-ask",
     "dialog:allow-message",
     "opener:default",
+    {
+      "identifier": "opener:allow-open-path",
+      "allow": [
+        {
+          "path": "/**"
+        }
+      ]
+    },
     "store:default",
     "updater:default"
   ]
