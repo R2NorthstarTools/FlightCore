@@ -69,7 +69,7 @@ import { defineComponent } from "vue";
 import { ThunderstoreMod } from "../../../src-tauri/bindings/ThunderstoreMod";
 import { ThunderstoreModVersion } from "../../../src-tauri/bindings/ThunderstoreModVersion";
 import { invoke } from "@tauri-apps/api/core";
-import { open } from '@tauri-apps/plugin-shell';
+import { openUrl } from '@tauri-apps/plugin-opener';
 import { ThunderstoreModStatus } from "../utils/thunderstore/ThunderstoreModStatus";
 import { NorthstarMod } from "../../../src-tauri/bindings/NorthstarMod";
 import { ElMessageBox } from "element-plus";
@@ -190,7 +190,7 @@ export default defineComponent({
          * This is used to open Thunderstore mod pages.
          */
         openURL(url: string): void {
-            open(url);
+            openUrl(url);
         },
 
         /**
