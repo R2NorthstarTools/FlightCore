@@ -16,7 +16,8 @@
         "extracting": "解压中",
         "done": "完成",
         "success": "成功",
-        "confirm": "确认"
+        "confirm": "确认",
+        "update": "更新"
     },
     "play": {
         "button": {
@@ -24,9 +25,9 @@
             "select_game_dir": "选择Titanfall 2游戏目录",
             "install": "安装",
             "installing": "安装中...",
-            "update": "升级",
+            "update": "更新",
             "ready_to_play": "启动游戏",
-            "updating": "升级中..."
+            "updating": "更新中..."
         },
         "unknown_version": "未知版本",
         "see_patch_notes": "参阅相关补丁说明",
@@ -165,5 +166,10 @@
             "NorthstarReleaseCandidate": "Northstar测试版本",
             "Northstar": "Northstar"
         }
+    },
+    "general": {
+        "downloading_flightcore_update": "正在下载 FlightCore 更新",
+        "update_download_finished": "下载完成",
+        "update_available": "检测到新版本"
     }
 }
