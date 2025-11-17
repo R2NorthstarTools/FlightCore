@@ -126,9 +126,12 @@
             "dialog": {
                 "title": "用户配置",
                 "delete_confirm": "你确定要删除此配置文件吗?",
-                "delete": "删除"
+                "delete": "删除",
+                "new_profile_name": "输入新配置文件名称",
+                "create_empty": "新配置文件"
             }
-        }
+        },
+        "show_nsfw_mods": "显示成人Thunderstore模组"
     },
     "notification": {
         "game_folder": {
@@ -154,6 +157,10 @@
                 "title": "无效用户配置",
                 "text": "您尝试切换到的用户配置已失效。"
             }
+        },
+        "no_new": {
+            "title": "已为最新版",
+            "text": "没有可显示的内容！"
         }
     },
     "channels": {
@@ -170,6 +177,8 @@
     "general": {
         "downloading_flightcore_update": "正在下载 FlightCore 更新",
         "update_download_finished": "下载完成",
-        "update_available": "检测到新版本"
+        "update_available": "检测到新版本",
+        "update_info_text": "可升级到 {version}！\n\n更新日志：{notes}",
+        "flightcore_update_installed": "更新已安装"
     }
 }
