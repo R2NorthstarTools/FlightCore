@@ -8,7 +8,7 @@ on:
 jobs:
   # Ensure version numbers in various places match up
   ensure-same-version:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - name: install dependencies
@@ -21,7 +21,7 @@ jobs:
   # Ensure correct Rust code formatting
   formatting:
     name: format-check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -35,7 +35,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [ubuntu-22.04, windows-latest]
+        platform: [ubuntu-24.04, windows-latest]
 
     name: clippy-check
     runs-on: ${{ matrix.platform }}
@@ -46,12 +46,12 @@ jobs:
           toolchain: stable
           components: clippy
       - name: install dependencies (ubuntu only)
-        if: matrix.platform == 'ubuntu-22.04'
+        if: matrix.platform == 'ubuntu-24.04'
         run: |
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
       - name: Create dist folder (Ubuntu only)
-        if: matrix.platform == 'ubuntu-22.04'
+        if: matrix.platform == 'ubuntu-24.04'
         run: mkdir --parent src-vue/dist
       - name: Create dist folder (Windows only)
         if: matrix.platform == 'windows-latest'
@@ -61,7 +61,7 @@ jobs:
 
   # Ensure committed bindings correct
   autogen-ts-bindings-check:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -96,7 +96,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [ubuntu-22.04, windows-latest]
+        platform: [ubuntu-24.04, windows-latest]
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -109,7 +109,7 @@ jobs:
       with:
         toolchain: stable
     - name: install dependencies (ubuntu only)
-      if: matrix.platform == 'ubuntu-22.04'
+      if: matrix.platform == 'ubuntu-24.04'
       run: |
         sudo apt-get update
         sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
@@ -135,14 +135,14 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
     - name: Upload Linux artifact
-      if: matrix.platform == 'ubuntu-22.04'
+      if: matrix.platform == 'ubuntu-24.04'
       uses: actions/upload-artifact@v4
       with:
         name: linux-artifacts
         path: |
           src-tauri/target/release/bundle/appimage/*
     - name: Upload Linux AppImage
-      if: matrix.platform == 'ubuntu-22.04'
+      if: matrix.platform == 'ubuntu-24.04'
       uses: actions/upload-artifact@v4
       with:
         name: linux-appimage
