@@ -133,9 +133,10 @@ jobs:
       env:
         TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
       run: |
+        export NO_STRIP=true
         npm clean-install
         cd src-vue && npm clean-install && cd ..
-        NO_STRIP=true npm run tauri build
+        npm run tauri build
     - name: install app dependencies and build it (windows only)
       if: matrix.platform == 'windows-latest'
       env:
