@@ -123,7 +123,16 @@ jobs:
       with:
         workspaces: |
           src-tauri
-    - name: install app dependencies and build it
+    - name: install app dependencies and build it (ubuntu only)
+      if: matrix.platform == 'ubuntu-24.04'
+      env:
+        TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+      run: |
+        npm clean-install
+        cd src-vue && npm clean-install && cd ..
+        NO_STRIP=true npm run tauri build
+    - name: install app dependencies and build it (windows only)
+      if: matrix.platform == 'windows-latest'
       env:
         TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
       run: |
