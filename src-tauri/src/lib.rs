@@ -50,6 +50,19 @@ pub fn run() {
         },
     ));
 
+    // Potential fix for the EGL_BAD_PARAMETER Linux issue
+    // https://github.com/kanriapp/kanri/commit/be7cc95c65f153b1fb0f3a048fe792bc03ff4156
+    #[cfg(target_os = "linux")]
+    {
+        if std::path::Path::new("/dev/dri").exists()
+            && std::env::var("WAYLAND_DISPLAY").is_err()
+            && std::env::var("XDG_SESSION_TYPE").unwrap_or_default() == "x11"
+        {
+            std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1");
+        }
+        std::env::set_var("WEBKIT_DISABLE_COMPOSITING_MODE", "1");
+    }
+
     let tauri_builder_res = tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_process::init())
