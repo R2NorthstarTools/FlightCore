@@ -8,7 +8,7 @@ on:
 jobs:
   # Ensure version numbers in various places match up
   ensure-same-version:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - name: install dependencies
@@ -21,7 +21,7 @@ jobs:
   # Ensure correct Rust code formatting
   formatting:
     name: format-check
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -61,7 +61,7 @@ jobs:
 
   # Ensure committed bindings correct
   autogen-ts-bindings-check:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -146,14 +146,14 @@ jobs:
         cd src-vue && npm clean-install && cd ..
         npm run tauri build
     - name: Upload Linux artifact
-      if: matrix.platform == 'ubuntu-24.04'
+      if: matrix.platform == 'ubuntu-22.04'
       uses: actions/upload-artifact@v4
       with:
         name: linux-artifacts
         path: |
           src-tauri/target/release/bundle/appimage/*
     - name: Upload Linux AppImage
-      if: matrix.platform == 'ubuntu-24.04'
+      if: matrix.platform == 'ubuntu-22.04'
       uses: actions/upload-artifact@v4
       with:
         name: linux-appimage
