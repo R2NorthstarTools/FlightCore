@@ -262,7 +262,7 @@ For Typescript code outside components, translations are still accessible:
 
 ```javascript
 import { i18n } from '../main';
-i18n.global.tc('notification.game_folder.new.text');
+i18n.global.t('notification.game_folder.new.text');
 ```
 
 ---
