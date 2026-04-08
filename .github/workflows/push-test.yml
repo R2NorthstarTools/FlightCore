@@ -124,6 +124,7 @@ jobs:
         workspaces: |
           src-tauri
     - name: install app dependencies and build it
+      runs-on: ubuntu-24.04
       env:
         TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
       run: |
