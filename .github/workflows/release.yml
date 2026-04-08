@@ -33,7 +33,7 @@ jobs:
     - name: setup node
       uses: actions/setup-node@v4
       with:
-        node-version: 18
+        node-version: 20
     - name: install Rust stable
       uses: dtolnay/rust-toolchain@stable
       with:
@@ -48,7 +48,6 @@ jobs:
         workspaces: |
           src-tauri
     - name: install app dependencies and build it
-      runs-on: ubuntu-24.04
       env:
         TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
       run: |
