@@ -110,6 +110,10 @@
             },
             "title": "Фиксы"
         },
+        "cmd_args": {
+            "title": "Аргументы командной строки Northstar",
+            "placeholder": "-novid"            
+        },
         "nb_ts_mods_per_page_desc1": "Это влияет на производительность при просмотре модов с Thunderstore.",
         "about": "Информация:",
         "nb_ts_mods_per_page": "Количество модов Thunderstore на каждую страницу",

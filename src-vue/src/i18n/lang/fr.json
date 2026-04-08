@@ -116,6 +116,10 @@
                 "kill_northstar_process": "Arrêter le processus en cous de Northstar/Titanfall2"
             }
         },
+        "cmd_args": {
+            "title": "Northstar command line arguments",
+            "placeholder": "-novid"            
+        },
         "show_deprecated_mods": "Montrer les mods Thunderstore dépréciés",
         "show_deprecated_mods_desc1": "Ce paramètre vous permet d'afficher les mods Thunderstore dépréciés dans la collection de mods.",
         "show_deprecated_mods_desc2": "Attention, les mods dépréciés le sont généralement pour une bonne raison.",

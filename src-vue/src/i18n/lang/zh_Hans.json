@@ -101,6 +101,10 @@
         "show_deprecated_mods": "显示已弃用的Thunderstore模组",
         "show_deprecated_mods_desc1": "该选项会使您可以在线上模组合集中看到已弃用的模组。",
         "show_deprecated_mods_desc2": "请注意，这类模组被弃用一般是有原因的。",
+        "cmd_args": {
+            "title": "Northstar 命令行参数",
+            "placeholder": "-novid"            
+        },
         "repair": {
             "title": "修复",
             "window": {

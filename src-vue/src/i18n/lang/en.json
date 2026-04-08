@@ -121,6 +121,11 @@
         "show_deprecated_mods_desc2": "Watch out, such mods are usually deprecated for a good reason.",
         "show_nsfw_mods": "Show NSFW Thunderstore mods",
 
+        "cmd_args": {
+            "title": "Northstar command line arguments",
+            "placeholder": "-novid"            
+        },
+
         "profile": {
             "active": "Active Profile",
             "edit": "Edit Profiles",

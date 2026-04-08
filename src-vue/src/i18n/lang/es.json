@@ -108,6 +108,10 @@
                 "clone": "Duplicar"
             }
         },
+        "cmd_args": {
+            "title": "Northstar command line argumentos",
+            "placeholder": "-novid"            
+        },
         "repair": {
             "title": "Reparar",
             "window": {

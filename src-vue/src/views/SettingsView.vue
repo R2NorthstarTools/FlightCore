@@ -51,6 +51,12 @@
                     </el-input>
                 </div>
 
+                <!-- Northstar Command Line Arguments -->
+                <div class="fc_parameter__panel">
+                    <h3>{{$t('settings.cmd_args.title')}}</h3>
+                    <el-input v-model="commandLineArgs" :placeholder="$t('settings.cmd_args.placeholder')" clearable />
+                </div>
+
                 <!-- Northstar Active Profile -->
                 <div class="fc_parameter__panel" v-if="$store.state.developer_mode">
                     <h3>{{ $t('settings.profile.active') }}</h3>
@@ -208,6 +214,16 @@ export default defineComponent({
                 this.$store.state.mods_per_page = value;
                 persistentStore.set('thunderstore-mods-per-page', { value });
                 await persistentStore.save(); // explicit save to disk
+            }
+        },
+        commandLineArgs: {
+            get(): String {
+                return this.$store.state.command_line_args;
+            },
+            async set(value: String) {
+                this.$store.state.command_line_args = value;
+                persistentStore.set('northstar-command-line-args', { value });
+                await persistentStore.save();
             }
         },
         activeProfile(): String {

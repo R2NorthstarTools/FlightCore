@@ -15,6 +15,7 @@ use ts_rs::TS;
 pub struct NorthstarLaunchOptions {
     launch_via_steam: bool,
     bypass_checks: bool,
+    cmd_args: String,
 }
 
 /// Gets list of available Northstar versions from Thunderstore
@@ -215,7 +216,7 @@ pub fn launch_northstar(
         let ns_profile_arg = format!("-profile={}", game_install.profile);
 
         let mut output = std::process::Command::new("C:\\Windows\\System32\\cmd.exe")
-            .args(["/C", "start", "", &ns_exe_path, &ns_profile_arg])
+            .args(["/C", "start", "", &ns_exe_path, &ns_profile_arg]).args(launch_options.cmd_args.split(" ").map(|a| a.trim()))
             .spawn()
             .expect("failed to execute process");
         output.wait().expect("failed waiting on child process");

@@ -147,6 +147,10 @@
                 "disable_modsettings": "Disabilita la mod ModSettings"
             }
         },
+        "cmd_args": {
+            "title": "Northstar command line argomenti",
+            "placeholder": "-novid"            
+        },
         "profile": {
             "active": "Profilo attivo",
             "dialog": {

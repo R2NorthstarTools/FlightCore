@@ -179,7 +179,7 @@ export const store = createStore<FlightCoreStore>({
                 }
             }
         },
-        async launchGame(state: any, launch_options: NorthstarLaunchOptions = { launch_via_steam: false, bypass_checks: false}) {
+        async launchGame(state: any, launch_options: NorthstarLaunchOptions = { launch_via_steam: false, bypass_checks: false, cmd_args: state.command_line_args }) {
 
             if (launch_options.bypass_checks) {
                 await invoke("launch_northstar", { gameInstall: state.game_install, launchOptions: launch_options })
@@ -248,7 +248,7 @@ export const store = createStore<FlightCoreStore>({
                     break;
             }
         },
-        async launchGameSteam(state: any, launch_options: NorthstarLaunchOptions = { launch_via_steam: true, bypass_checks: false}) {
+        async launchGameSteam(state: any, launch_options: NorthstarLaunchOptions = { launch_via_steam: true, bypass_checks: false, cmd_args: state.command_line_args }) {
             await invoke("launch_northstar", { gameInstall: state.game_install, launchOptions: launch_options })
                 .then((_message) => {
                     showNotification('Success');
@@ -401,6 +401,12 @@ async function _initializeApp(state: any) {
     const perPageFromStore: { value: number } | null | undefined = await persistentStore.get('thunderstore-mods-per-page');
     if (perPageFromStore && perPageFromStore.value) {
         state.mods_per_page = perPageFromStore.value;
+    }
+
+    // Grab "Northstar command line arguments" setting from store if possible
+    const commandLineArgs: { value: String } | null | undefined = await persistentStore.get('northstar-command-line-args');
+    if (commandLineArgs) {
+        state.command_line_args = commandLineArgs.value;
     }
 
     // Get FlightCore version number

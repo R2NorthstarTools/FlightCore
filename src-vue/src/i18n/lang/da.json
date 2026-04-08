@@ -103,6 +103,10 @@
                 "title": "Profiler"
             }
         },
+        "cmd_args": {
+            "title": "Northstar command line argumenter",
+            "placeholder": "-novid"            
+        },
         "repair": {
             "title": "Reparere",
             "open_window": "Åbn reparationsvinduet",
