@@ -156,7 +156,7 @@ import { showErrorNotification, showNotification } from "../utils/ui";
 import LanguageSelector from "../components/LanguageSelector.vue";
 import LaunchArgumentsSelector from "../components/LaunchArgumentsSelector.vue";
 const persistentStore = await load('flight-core-settings.json', { autoSave: false });
-import { open } from '@tauri-apps/plugin-shell';
+import { openPath } from '@tauri-apps/plugin-opener';
 import { i18n } from '../main';
 import { ElMessageBox } from 'element-plus'
 
@@ -260,14 +260,14 @@ export default defineComponent({
             // Verify the game path is actually set
             if (!this.$store.state.game_install.game_path) {
                 showErrorNotification(
-                    i18n.global.tc('notification.game_folder.not_found.text'),
-                    i18n.global.tc('notification.game_folder.not_found.title')
+                    i18n.global.t('notification.game_folder.not_found.text'),
+                    i18n.global.t('notification.game_folder.not_found.title')
                 );
                 return;
             }
 
             // Opens the folder in default file explorer application
-            await open(`${this.$store.state.game_install.game_path}`);
+            await openPath(`${this.$store.state.game_install.game_path}`);
         },
         async switchProfile(value: string) {
             let store = this.$store;
@@ -279,8 +279,8 @@ export default defineComponent({
                     {
                         // Profile is no longer valid, inform the user...
                         showErrorNotification(
-                            i18n.global.tc('notification.profile.invalid.text'),
-                            i18n.global.tc('notification.profile.invalid.title')
+                            i18n.global.t('notification.profile.invalid.text'),
+                            i18n.global.t('notification.profile.invalid.title')
                         );
 
                         // ...and refresh
@@ -304,11 +304,11 @@ export default defineComponent({
         },
         async cloneProfileDialog(profile: string) {
             ElMessageBox.prompt(
-                i18n.global.tc("settings.profile.dialog.new_profile_name"),
-                i18n.global.tc("settings.profile.dialog.title"),
+                i18n.global.t("settings.profile.dialog.new_profile_name"),
+                i18n.global.t("settings.profile.dialog.title"),
                 {
-                    confirmButtonText: i18n.global.tc("generic.confirm"),
-                    cancelButtonText: i18n.global.tc("generic.cancel"),
+                    confirmButtonText: i18n.global.t("generic.confirm"),
+                    cancelButtonText: i18n.global.t("generic.cancel"),
                 }
             ).then(async ({ value }) => {
                 await this.cloneProfile(profile, value);

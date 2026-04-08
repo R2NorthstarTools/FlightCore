@@ -268,8 +268,8 @@ pub fn compare_tags_northstar(first_tag: Tag, second_tag: Tag) -> Result<String,
             ));
 
             // Store authors in set
-            if commit.author.is_some() {
-                authors_set.insert(commit.author.unwrap().login);
+            if let Some(author) = commit.author {
+                authors_set.insert(author.login);
             }
         }
 

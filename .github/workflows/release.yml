@@ -10,7 +10,7 @@ permissions:
 jobs:
   # Ensure version numbers in various places match up
   ensure-same-version:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - name: install dependencies
@@ -25,7 +25,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [ubuntu-22.04, windows-latest]
+        platform: [ubuntu-24.04, windows-latest]
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -33,13 +33,13 @@ jobs:
     - name: setup node
       uses: actions/setup-node@v4
       with:
-        node-version: 18
+        node-version: 20
     - name: install Rust stable
       uses: dtolnay/rust-toolchain@stable
       with:
         toolchain: stable
     - name: install dependencies (ubuntu only)
-      if: matrix.platform == 'ubuntu-22.04'
+      if: matrix.platform == 'ubuntu-24.04'
       run: |
         sudo apt-get update
         sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
@@ -67,7 +67,7 @@ jobs:
           src-tauri/target/release/bundle/msi/*msi*
           src-tauri/target/release/flightcore.pdb
     - name: upload build artifact (linux)
-      if: matrix.platform == 'ubuntu-22.04'
+      if: matrix.platform == 'ubuntu-24.04'
       uses: actions/upload-artifact@v4
       with:
         name: linux-artifacts 
@@ -95,7 +95,7 @@ jobs:
 
   create-release-file:
     needs: build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v4
     - uses: actions/download-artifact@v4

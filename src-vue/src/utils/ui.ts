@@ -15,7 +15,7 @@ function showNotification(
 ): NotificationHandle {
     if (!document.hasFocus()) {
         const date = new Date();
-        const titleWithDate = `${title} (${i18n.global.tc('notification.date_prefix')} ${('0' + date.getHours()).slice(-2)}:${('0' + date.getMinutes()).slice(-2)})`;
+        const titleWithDate = `${title} (${i18n.global.t('notification.date_prefix')} ${('0' + date.getHours()).slice(-2)}:${('0' + date.getMinutes()).slice(-2)})`;
         store.commit('addNotification', {title: titleWithDate, text: message, type});
         getCurrentWindow().requestUserAttention(UserAttentionType.Informational);
     }
@@ -31,7 +31,7 @@ function showNotification(
  **/
 function showErrorNotification(
     error: string,
-    title: string = i18n.global.tc('generic.error')
+    title: string = i18n.global.t('generic.error')
 ): NotificationHandle {
     return showNotification(title, error, 'error');
 }
