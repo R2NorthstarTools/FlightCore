@@ -145,8 +145,8 @@ export const store = createStore<FlightCoreStore>({
                 if (is_valid_titanfall2_install) {
                     state.game_install.game_path = selected;
                     showNotification(
-                        i18n.global.tc('notification.game_folder.new.title'),
-                        i18n.global.tc('notification.game_folder.new.text')
+                        i18n.global.t('notification.game_folder.new.title'),
+                        i18n.global.t('notification.game_folder.new.text')
                     );
                     try {
                         notification_handle.close();
@@ -173,8 +173,8 @@ export const store = createStore<FlightCoreStore>({
                 else {
                     // Not valid Titanfall2 install
                     showErrorNotification(
-                        i18n.global.tc('notification.game_folder.wrong.text'),
-                        i18n.global.tc('notification.game_folder.wrong.title')
+                        i18n.global.t('notification.game_folder.wrong.text'),
+                        i18n.global.t('notification.game_folder.wrong.title')
                     );
                 }
             }
@@ -338,8 +338,8 @@ export const store = createStore<FlightCoreStore>({
 
             // Display notification to highlight change
             showNotification(
-                i18n.global.tc(`channels.names.${state.northstar_release_canal}`),
-                i18n.global.tc('channels.release.switch.text', {canal: state.northstar_release_canal}),
+                i18n.global.t(`channels.names.${state.northstar_release_canal}`),
+                i18n.global.t('channels.release.switch.text', {canal: state.northstar_release_canal}),
             );
         },
         async fetchProfiles(state: FlightCoreStore) {
@@ -437,8 +437,8 @@ async function _initializeApp(state: any) {
                 // Gamepath not found or other error
                 console.error(err);
                 notification_handle = showNotification(
-                    i18n.global.tc('notification.game_folder.not_found.title'),
-                    i18n.global.tc('notification.game_folder.not_found.text'),
+                    i18n.global.t('notification.game_folder.not_found.title'),
+                    i18n.global.t('notification.game_folder.not_found.text'),
                     'error',
                     0   // Duration `0` means the notification will not auto-vanish
                 );
@@ -480,8 +480,8 @@ async function _checkForFlightCoreUpdates(state: FlightCoreStore) {
     if (flightcore_is_outdated) {
         let newest_flightcore_version = await invoke("get_newest_flightcore_version") as FlightCoreVersion;
         showNotification(
-            i18n.global.tc('notification.flightcore_outdated.title'),
-            i18n.global.tc('notification.flightcore_outdated.text', {oldVersion: state.flightcore_version, newVersion: newest_flightcore_version.tag_name}),
+            i18n.global.t('notification.flightcore_outdated.title'),
+            i18n.global.t('notification.flightcore_outdated.text', {oldVersion: state.flightcore_version, newVersion: newest_flightcore_version.tag_name}),
             'warning',
             0 // Duration `0` means the notification will not auto-vanish
         );
@@ -495,12 +495,12 @@ async function flightcoreUpdateCheck() {
     } else if (update?.available) {
         console.log("Update available!", update.version, update.body);
         const accepted = await ask(
-         i18n.global.tc("general.update_info_text", {version: update.version, notes: update.body}),
+         i18n.global.t("general.update_info_text", {version: update.version, notes: update.body}),
         {
-            title: i18n.global.tc("general.update_available"),
+            title: i18n.global.t("general.update_available"),
             kind: "info",
-            okLabel: i18n.global.tc("generic.update"),
-            cancelLabel: i18n.global.tc("generic.cancel"),
+            okLabel: i18n.global.t("generic.update"),
+            cancelLabel: i18n.global.t("generic.cancel"),
         },
         );
         if (accepted) {
@@ -508,17 +508,17 @@ async function flightcoreUpdateCheck() {
             await update.downloadAndInstall((event) => {
                 switch (event.event) {
                 case 'Started':
-                    notification_handle = showNotification(i18n.global.tc("general.downloading_flightcore_update"), "", "info", 0);
+                    notification_handle = showNotification(i18n.global.t("general.downloading_flightcore_update"), "", "info", 0);
                     break;
                 case 'Progress':
                     break;
                 case 'Finished':
                     notification_handle.close()
-                    showNotification(i18n.global.tc("general.update_download_finished"), "", "success", 0);
+                    showNotification(i18n.global.t("general.update_download_finished"), "", "success", 0);
                     break;
                 }
             });
-            showNotification(i18n.global.tc("general.flightcore_update_installed"), "", "success");
+            showNotification(i18n.global.t("general.flightcore_update_installed"), "", "success");
             await relaunch();
         }
     }

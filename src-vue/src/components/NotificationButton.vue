@@ -20,8 +20,8 @@
                 <el-result
                     v-else
                     icon="success"
-                    :title="i18n.global.tc('notification.no_new.title')"
-                    :sub-title="i18n.global.tc('notification.no_new.text')"
+                    :title="i18n.global.t('notification.no_new.title')"
+                    :sub-title="i18n.global.t('notification.no_new.text')"
                 >
                     <template #icon>
                     </template>

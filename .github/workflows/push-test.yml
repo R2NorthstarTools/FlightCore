@@ -104,7 +104,7 @@ jobs:
     - name: setup node
       uses: actions/setup-node@v4
       with:
-        node-version: 18
+        node-version: 20
     - uses: dtolnay/rust-toolchain@stable
       with:
         toolchain: stable
@@ -116,7 +116,7 @@ jobs:
     - name: Disable self-updater
       shell: bash
       run: |
-        jq 'del(.plugins.updater)' src-tauri/tauri.conf.json | jq 'del(.bundle.createUpdaterArtifacts)' > src-tauri/tauri.conf.json.new
+        less src-tauri/tauri.conf.json | jq '.plugins.updater.active = false' | jq 'del(.bundle.createUpdaterArtifacts)' > src-tauri/tauri.conf.json.new
         rm src-tauri/tauri.conf.json
         mv src-tauri/tauri.conf.json.new src-tauri/tauri.conf.json
     - uses: Swatinem/rust-cache@v2 # Cache Rust build artifacts

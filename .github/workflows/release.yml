@@ -33,7 +33,7 @@ jobs:
     - name: setup node
       uses: actions/setup-node@v4
       with:
-        node-version: 18
+        node-version: 20
     - name: install Rust stable
       uses: dtolnay/rust-toolchain@stable
       with:
@@ -53,7 +53,7 @@ jobs:
       run: |
         npm clean-install
         cd src-vue && npm clean-install && cd ..
-        NO_STRIP=true npm run tauri build
+        npm run tauri build
     - uses: tauri-apps/tauri-action@v0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
