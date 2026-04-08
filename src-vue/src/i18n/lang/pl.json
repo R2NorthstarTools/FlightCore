@@ -16,7 +16,8 @@
         "done": "Gotowe",
         "success": "Sukces",
         "informationShort": "Informacja",
-        "confirm": "Potwierdź"
+        "confirm": "Potwierdź",
+        "update": "Zaktualizuj"
     },
     "play": {
         "button": {
@@ -130,7 +131,8 @@
                 "delete_confirm": "Czy na pewno chcesz usunąć ten profil?"
             },
             "edit": "Edytuj profile"
-        }
+        },
+        "show_nsfw_mods": "Pokaż mody NSFW z Thunderstore"
     },
     "notification": {
         "game_folder": {
@@ -173,5 +175,12 @@
             "Northstar": "Northstar",
             "NorthstarReleaseCandidate": "Kandydat do wydania Northstar"
         }
+    },
+    "general": {
+        "update_available": "Dostępna aktualizacja",
+        "downloading_flightcore_update": "Pobieranie aktualizacji FlightCore",
+        "update_download_finished": "Pobieranie zakończone",
+        "flightcore_update_installed": "Zainstalowano aktualizację",
+        "update_info_text": "Aktualizacja do wersji {version} jest dostępna!\n\nLista zmian: {notes}"
     }
 }
