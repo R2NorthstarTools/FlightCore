@@ -160,11 +160,12 @@ pub fn get_northstar_version_number(game_install: GameInstall) -> Result<String,
 pub fn launch_northstar(
     game_install: GameInstall,
     launch_options: NorthstarLaunchOptions,
+    launch_arguments: Vec<&str>,
 ) -> Result<String, String> {
     dbg!(game_install.clone());
 
     if launch_options.launch_via_steam {
-        return launch_northstar_steam(game_install);
+        return launch_northstar_steam(game_install, launch_arguments);
     }
 
     let host_os = get_host_os();
@@ -179,7 +180,7 @@ pub fn launch_northstar(
             ));
         }
 
-        return launch_northstar_steam(game_install);
+        return launch_northstar_steam(game_install, launch_arguments);
     }
 
     // Only check guards if bypassing checks is not enabled
@@ -213,9 +214,11 @@ pub fn launch_northstar(
     {
         let ns_exe_path = format!("{}/NorthstarLauncher.exe", game_install.game_path);
         let ns_profile_arg = format!("-profile={}", game_install.profile);
+        let mut arguments = vec!["/C", "start", "", &ns_exe_path, &ns_profile_arg];
+        arguments.extend(launch_arguments);
 
         let mut output = std::process::Command::new("C:\\Windows\\System32\\cmd.exe")
-            .args(["/C", "start", "", &ns_exe_path, &ns_profile_arg])
+            .args(arguments)
             .spawn()
             .expect("failed to execute process");
         output.wait().expect("failed waiting on child process");
@@ -230,7 +233,10 @@ pub fn launch_northstar(
 }
 
 /// Prepare Northstar and Launch through Steam using the Browser Protocol
-pub fn launch_northstar_steam(game_install: GameInstall) -> Result<String, String> {
+pub fn launch_northstar_steam(
+    game_install: GameInstall,
+    launch_arguments: Vec<&str>,
+) -> Result<String, String> {
     if !matches!(game_install.install_type, InstallType::STEAM) {
         return Err("Titanfall2 was not installed via Steam".to_string());
     }
@@ -266,9 +272,10 @@ pub fn launch_northstar_steam(game_install: GameInstall) -> Result<String, Strin
     }
 
     match open::that(format!(
-        "steam://run/{}//-profile={} --northstar/",
+        "steam://run/{}//-profile={} --northstar {}/",
         thermite::TITANFALL2_STEAM_ID,
-        game_install.profile
+        game_install.profile,
+        &launch_arguments.join(" ") // Pass launch arguments to Steam
     )) {
         Ok(()) => Ok("Started game".to_string()),
         Err(_err) => Err("Failed to launch Titanfall 2 via Steam".to_string()),

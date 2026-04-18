@@ -67,6 +67,12 @@
                     </el-dropdown>
                 </div>
 
+                <!-- Launch arguments selection -->
+                <div class="fc_parameter__panel">
+                    <h3>{{ $t('settings.launch_args.title') }}</h3>
+                    <launch-arguments-selector/>
+                </div>
+
                 <!-- Thunderstore mods per page configuration -->
                 <div class="fc_parameter__panel">
                     <h3>{{ $t('settings.nb_ts_mods_per_page') }}</h3>
@@ -148,6 +154,7 @@ import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { load } from '@tauri-apps/plugin-store';
 import { showErrorNotification, showNotification } from "../utils/ui";
 import LanguageSelector from "../components/LanguageSelector.vue";
+import LaunchArgumentsSelector from "../components/LaunchArgumentsSelector.vue";
 const persistentStore = await load('flight-core-settings.json', { autoSave: false });
 import { openPath } from '@tauri-apps/plugin-opener';
 import { i18n } from '../main';
@@ -156,7 +163,8 @@ import { ElMessageBox } from 'element-plus'
 export default defineComponent({
     name: "SettingsView",
     components: {
-        LanguageSelector
+        LanguageSelector,
+        LaunchArgumentsSelector
     },
     data() {
         return {
