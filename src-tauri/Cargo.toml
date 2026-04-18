@@ -56,7 +56,7 @@ json5 = "0.4.1"
 # Async recursion for recursive mod install
 async-recursion = "1.1.1"
 # For parsing timestamps
-chrono = "0.4.38"
+chrono = "0.4.42"
 # TypeScript bindings
 ts-rs = "10.0"
 # const formatting
