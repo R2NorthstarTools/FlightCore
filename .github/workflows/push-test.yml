@@ -123,7 +123,7 @@ jobs:
         mv src-tauri/tauri.conf.json.new src-tauri/tauri.conf.json
   
     - name: Install frontend dependencies
-      run: npm install
+      run: npm install && cd src-vue && npm install && cd ..
 
     - name: Compile and upload app
       uses: tauri-apps/tauri-action@v1
