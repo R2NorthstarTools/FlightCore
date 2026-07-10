@@ -584,7 +584,7 @@ fn delete_older_versions(
     // Get folders in packages dir
     let paths = match std::fs::read_dir(&packages_folder) {
         Ok(paths) => paths,
-        Err(_err) => return Err(format!("Failed to read directory {}", &packages_folder)),
+        Err(_err) => return Err(format!("Failed to read directory {}", packages_folder)),
     };
 
     let mut directories: Vec<PathBuf> = Vec::new();
