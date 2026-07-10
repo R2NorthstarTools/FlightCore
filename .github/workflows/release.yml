@@ -39,6 +39,11 @@ jobs:
       with:
         toolchain: stable
 
+    - uses: Swatinem/rust-cache@v2 # Cache Rust build artifacts
+      with:
+        workspaces: |
+          src-tauri
+
     - name: Install dependencies (ubuntu only)
       if: matrix.platform == 'ubuntu-24.04'
       run: |
