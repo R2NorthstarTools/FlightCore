@@ -60,7 +60,7 @@ jobs:
         TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
     - name: upload build artifact (windows)
       if: matrix.platform == 'windows-latest'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: windows-artifacts 
         path: |
@@ -68,7 +68,7 @@ jobs:
           src-tauri/target/release/flightcore.pdb
     - name: upload build artifact (linux)
       if: matrix.platform == 'ubuntu-24.04'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: linux-artifacts 
         path: |
