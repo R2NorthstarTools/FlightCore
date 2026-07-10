@@ -125,6 +125,7 @@ jobs:
     - name: Install frontend dependencies
       run: npm install
 
+    - name: Compile and upload app
     - uses: tauri-apps/tauri-action@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
