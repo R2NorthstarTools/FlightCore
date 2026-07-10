@@ -42,7 +42,7 @@ Installation steps can be found
 ## Building from source
 
 Steps for building FlightCore from source can be found in 
-[docs/DEVELOPMENT.md](docs/DEVELOPMENT.md#setup).
+[docs/DEVELOPMENT.md](DEVELOPMENT.md#setup).
 
 ### Creating a desktop entry
 
