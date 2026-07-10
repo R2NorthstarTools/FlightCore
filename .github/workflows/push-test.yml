@@ -108,58 +108,26 @@ jobs:
     - uses: dtolnay/rust-toolchain@stable
       with:
         toolchain: stable
+
     - name: install dependencies (ubuntu only)
       if: matrix.platform == 'ubuntu-24.04'
       run: |
         sudo apt-get update
-        sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
+        sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf xdg-utils
+
     - name: Disable self-updater
       shell: bash
       run: |
         less src-tauri/tauri.conf.json | jq '.plugins.updater.active = false' | jq 'del(.bundle.createUpdaterArtifacts)' > src-tauri/tauri.conf.json.new
         rm src-tauri/tauri.conf.json
         mv src-tauri/tauri.conf.json.new src-tauri/tauri.conf.json
-    - uses: Swatinem/rust-cache@v2 # Cache Rust build artifacts
-      with:
-        workspaces: |
-          src-tauri
-    - name: install app dependencies and build it
-      env:
-        TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
-      run: |
-        npm clean-install
-        cd src-vue && npm clean-install && cd ..
-        npm run tauri build
+  
+    - name: Install frontend dependencies
+      run: npm install && cd src-vue && npm install && cd ..
+
     - uses: tauri-apps/tauri-action@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
-    - name: Upload Linux artifact
-      if: matrix.platform == 'ubuntu-24.04'
-      uses: actions/upload-artifact@v6
       with:
-        name: linux-artifacts
-        path: |
-          src-tauri/target/release/bundle/appimage/*
-    - name: Upload Linux AppImage
-      if: matrix.platform == 'ubuntu-24.04'
-      uses: actions/upload-artifact@v6
-      with:
-        name: linux-appimage
-        path: |
-          src-tauri/target/release/bundle/appimage/*.AppImage
-    - name: Upload Windows artifact
-      if: matrix.platform == 'windows-latest'
-      uses: actions/upload-artifact@v6
-      with:
-        name: windows-artifacts
-        path: |
-          src-tauri/target/release/bundle/msi/*
-          src-tauri/target/release/app.pdb
-    - name: Additionally upload Windows installer separately
-      if: matrix.platform == 'windows-latest'
-      uses: actions/upload-artifact@v6
-      with:
-        name: windows-msi
-        path: |
-          src-tauri/target/release/bundle/msi/*.msi
+        uploadWorkflowArtifacts: true
