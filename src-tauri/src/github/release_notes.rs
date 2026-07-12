@@ -1,4 +1,4 @@
-use rand::prelude::SliceRandom;
+use rand::seq::IndexedRandom;
 use serde::{Deserialize, Serialize};
 use std::vec::Vec;
 use ts_rs::TS;
@@ -169,7 +169,7 @@ pub async fn generate_release_note_announcement() -> Result<String, String> {
     let modders_info = "Mod compatibility should not be impacted";
     let server_hosters_info = "REPLACE ME";
 
-    let mut rng = rand::thread_rng();
+    let mut rng = rand::rng();
     let attributes = vec![
         "adorable",
         "amazing",
@@ -209,7 +209,7 @@ pub async fn generate_release_note_announcement() -> Result<String, String> {
         "zestful",
     ];
 
-    let selected_attribute = attributes.choose(&mut rng).unwrap();
+    let selected_attribute = attributes.choose_iter(&mut rng).unwrap().last().unwrap();
 
     // Build announcement string
     let return_string = format!(

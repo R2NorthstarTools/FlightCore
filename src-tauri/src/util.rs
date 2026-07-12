@@ -114,12 +114,12 @@ pub async fn kill_northstar() -> Result<(), String> {
 
     let s = sysinfo::System::new_all();
 
-    for process in s.processes_by_exact_name("Titanfall2.exe") {
+    for process in s.processes_by_exact_name("Titanfall2.exe".as_ref()) {
         log::info!("Killing Process {}", process.pid());
         process.kill();
     }
 
-    for process in s.processes_by_exact_name("NorthstarLauncher.exe") {
+    for process in s.processes_by_exact_name("NorthstarLauncher.exe".as_ref()) {
         log::info!("Killing Process {}", process.pid());
         process.kill();
     }
@@ -170,8 +170,8 @@ pub fn extract(zip_file: std::fs::File, target: &std::path::Path) -> Result<()> 
 
 pub fn check_ea_app_or_origin_running() -> bool {
     let s = sysinfo::System::new_all();
-    let x = s.processes_by_name("Origin.exe").next().is_some()
-        || s.processes_by_name("EADesktop.exe").next().is_some();
+    let x = s.processes_by_name("Origin.exe".as_ref()).next().is_some()
+        || s.processes_by_name("EADesktop.exe".as_ref()).next().is_some();
     x
 }
 
@@ -179,10 +179,10 @@ pub fn check_ea_app_or_origin_running() -> bool {
 pub fn check_northstar_running() -> bool {
     let s = sysinfo::System::new_all();
     let x = s
-        .processes_by_name("NorthstarLauncher.exe")
+        .processes_by_name("NorthstarLauncher.exe".as_ref())
         .next()
         .is_some()
-        || s.processes_by_name("Titanfall2.exe").next().is_some();
+        || s.processes_by_name("Titanfall2.exe".as_ref()).next().is_some();
     x
 }
 
