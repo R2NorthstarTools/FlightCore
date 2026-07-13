@@ -171,7 +171,9 @@ pub fn extract(zip_file: std::fs::File, target: &std::path::Path) -> Result<()> 
 pub fn check_ea_app_or_origin_running() -> bool {
     let s = sysinfo::System::new_all();
     let x = s.processes_by_name("Origin.exe".as_ref()).next().is_some()
-        || s.processes_by_name("EADesktop.exe".as_ref()).next().is_some();
+        || s.processes_by_name("EADesktop.exe".as_ref())
+            .next()
+            .is_some();
     x
 }
 
@@ -182,7 +184,9 @@ pub fn check_northstar_running() -> bool {
         .processes_by_name("NorthstarLauncher.exe".as_ref())
         .next()
         .is_some()
-        || s.processes_by_name("Titanfall2.exe".as_ref()).next().is_some();
+        || s.processes_by_name("Titanfall2.exe".as_ref())
+            .next()
+            .is_some();
     x
 }
 
