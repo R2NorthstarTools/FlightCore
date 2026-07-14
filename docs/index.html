@@ -1,0 +1,64 @@
+<script>
+// with this we can very easily fetch the latest version of FlightCore
+// and redirect to it, without having to update any version numbers on
+// every release, simply change the search query to either "win-setup"
+// or "appimage", without a query you will be redirect to the release
+// page instead of the download
+//
+// so generally a request would look like this:
+// 
+//    r2northstartools.github.io/FlightCore/index.html?win-setup
+//
+// or
+//
+//    r2northstartools.github.io/FlightCore/index.html?appimage
+//
+// and to redirect to the release page:
+//
+//    r2northstartools.github.io/FlightCore/index.html
+
+(async () => {
+	// configuration of repo URL
+	let repo = "FlightCore";
+	let author = "R2NorthstarTools";
+	let api = "https://api.github.com/repos";
+
+	// actual API request
+	let release = await (await fetch(`${api}/${author}/${repo}/releases/latest`)).json();
+	let assets = release.assets;
+
+	// this takes in a regEx and if something matches in the release's
+	// files, it'll return the download link to it
+	let get = (asset) => {
+		for (let i in assets) {
+			if (assets[i].name.match(asset)) {
+				return assets[i].browser_download_url;
+			}
+		}
+	}
+
+	let url;
+
+	// this refers to the actual search query, i.e "<page>?appimage"
+	let search = location.search.replace(/^\?/, "");
+	switch(search) {
+		case "win-zip": // FlightCore_<version>_x64_en-US.zip
+			url = get(/FlightCore_.*\.zip$/);
+			break;
+		case "win-setup": // FlightCore_<version>_x64_en-US.msi
+			url = get(/FlightCore_.*\.msi$/);
+			break;
+
+		case "appimage": // flight-core_<version>_amd64.AppImage
+			url = get(/flight-core_.*\.AppImage$/);
+			break;
+
+		default: // default to release page
+			url = release.html_url;
+			break;
+	}
+
+	// redirect to page
+	location.replace(url);
+})()
+</script>

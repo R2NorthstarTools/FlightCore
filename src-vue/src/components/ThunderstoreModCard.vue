@@ -1,5 +1,5 @@
 <template>
-    <el-card :body-style="{ padding: '0px' }">
+    <el-card :body-style="getBodyStyle" :style="getCardStyle">
         <img
             :src="latestVersion.icon"
             class="image"
@@ -18,10 +18,10 @@
                     <Star />
                 </el-icon>
             </span>
-            <br/>
+            <br />
 
             <div class="name hide-text-overflow">{{ mod.name }}</div>
-            <div class="author hide-text-overflow">by {{ mod.owner }}</div>
+            <div class="author hide-text-overflow">{{ $t('mods.card.by') }} {{ mod.owner }}</div>
             <div class="desc">
                 {{ latestVersion.description }}
             </div>
@@ -33,7 +33,7 @@
                     :loading="isBeingInstalled || isBeingUpdated"
                     @click.stop="installMod(mod)"
                 >
-                    {{ modButtonText }}
+                    {{ $t(modButtonText) }}
                 </el-button>
 
                 <!-- Information dropdown menu -->
@@ -51,10 +51,10 @@
                     <template #dropdown>
                         <el-dropdown-menu>
                             <el-dropdown-item @click="openURL(mod.package_url)">
-                                More info
+                                {{ $t('mods.card.more_info') }}
                             </el-dropdown-item>
-                            <el-dropdown-item  @click="deleteMod(mod)">
-                                Remove mod
+                            <el-dropdown-item @click="deleteMod(mod)">
+                                {{ $t('mods.card.remove') }}
                             </el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
@@ -65,16 +65,15 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
-import {ThunderstoreMod} from "../utils/thunderstore/ThunderstoreMod";
-import {ThunderstoreModVersion} from "../utils/thunderstore/ThunderstoreModVersion";
-import {invoke, shell} from "@tauri-apps/api";
-import {ThunderstoreModStatus} from "../utils/thunderstore/ThunderstoreModStatus";
-import {NorthstarMod} from "../utils/NorthstarMod";
-import {GameInstall} from "../utils/GameInstall";
-import {ElNotification} from "element-plus";
-import { NorthstarState } from "../utils/NorthstarState";
+import { defineComponent } from "vue";
+import { ThunderstoreMod } from "../../../src-tauri/bindings/ThunderstoreMod";
+import { ThunderstoreModVersion } from "../../../src-tauri/bindings/ThunderstoreModVersion";
+import { invoke } from "@tauri-apps/api/core";
+import { openUrl } from '@tauri-apps/plugin-opener';
+import { ThunderstoreModStatus } from "../utils/thunderstore/ThunderstoreModStatus";
+import { NorthstarMod } from "../../../src-tauri/bindings/NorthstarMod";
 import { ElMessageBox } from "element-plus";
+import { showErrorNotification, showNotification } from "../utils/ui";
 
 export default defineComponent({
     name: "ThunderstoreModCard",
@@ -89,7 +88,15 @@ export default defineComponent({
         isBeingUpdated: false
     }),
     computed: {
-        latestVersion (): ThunderstoreModVersion {
+        getBodyStyle(): Object {
+            return this.mod.is_deprecated ? { 'background-color': 'rgba(255, 0, 0, 0.42)' } : {};
+        },
+
+        getCardStyle(): Object {
+            return this.mod.is_deprecated ? { 'border': '1px solid red' } : {};
+        },
+
+        latestVersion(): ThunderstoreModVersion {
             return this.mod.versions[0];
         },
 
@@ -129,15 +136,15 @@ export default defineComponent({
         modButtonText(): string {
             switch (this.modStatus) {
                 case ThunderstoreModStatus.BEING_INSTALLED:
-                    return "Installing...";
+                    return "mods.card.button.being_installed";
                 case ThunderstoreModStatus.BEING_UPDATED:
-                    return "Updating...";
+                    return "mods.card.button.being_updated";
                 case ThunderstoreModStatus.INSTALLED:
-                    return "Installed";
+                    return "mods.card.button.installed";
                 case ThunderstoreModStatus.NOT_INSTALLED:
-                    return "Install";
+                    return "mods.card.button.install";
                 case ThunderstoreModStatus.OUTDATED:
-                    return "Update";
+                    return "mods.card.button.outdated";
             }
         },
 
@@ -183,7 +190,7 @@ export default defineComponent({
          * This is used to open Thunderstore mod pages.
          */
         openURL(url: string): void {
-            shell.open(url);
+            openUrl(url);
         },
 
         /**
@@ -191,7 +198,7 @@ export default defineComponent({
          * (e.g. "taskinoz-WallrunningTitans-1.0.0" to
          * "taskinoz-WallrunningTitans").
          */
-        getThunderstoreDependencyStringPrefix (dependency: string): string {
+        getThunderstoreDependencyStringPrefix(dependency: string): string {
             const dependencyStringMembers = dependency.split('-');
             return `${dependencyStringMembers[0]}-${dependencyStringMembers[1]}`;
         },
@@ -200,36 +207,21 @@ export default defineComponent({
 
             // Show pop-up to confirm delete
             ElMessageBox.confirm(
-                'Delete Thunderstore mod?',
-                'Warning',
+                this.$t('mods.card.remove_dialog_text'),
+                this.$t('mods.card.remove_dialog_title'),
                 {
-                    confirmButtonText: 'OK',
-                    cancelButtonText: 'Cancel',
+                    confirmButtonText: this.$t('generic.yes'),
+                    cancelButtonText: this.$t('generic.cancel'),
                     type: 'warning',
                 }
             )
                 .then(async () => { // Deletion confirmed
-                    let game_install = {
-                        game_path: this.$store.state.game_path,
-                        install_type: this.$store.state.install_type
-                    } as GameInstall;
-
-                    await invoke("delete_thunderstore_mod", { gameInstall: game_install, thunderstoreModString: this.latestVersion.full_name })
+                    await invoke<string>("delete_thunderstore_mod", { gameInstall: this.$store.state.game_install, thunderstoreModString: this.latestVersion.full_name })
                         .then((message) => {
-                            ElNotification({
-                                title: `Removed ${mod.name}`,
-                                message: message as string,
-                                type: 'success',
-                                position: 'bottom-right'
-                            });
+                            showNotification(this.$t('mods.card.remove_success', { modName: mod.name }), message);
                         })
                         .catch((error) => {
-                            ElNotification({
-                                title: 'Error',
-                                message: error,
-                                type: 'error',
-                                position: 'bottom-right'
-                            });
+                            showErrorNotification(error);
                         })
                         .finally(() => {
                             this.$store.commit('loadInstalledMods');
@@ -240,12 +232,7 @@ export default defineComponent({
                 })
         },
 
-        async installMod (mod: ThunderstoreMod) {
-            let game_install = {
-                game_path: this.$store.state.game_path,
-                install_type: this.$store.state.install_type
-            } as GameInstall;
-
+        async installMod(mod: ThunderstoreMod) {
             // set internal state according to current installation state
             if (this.modStatus === ThunderstoreModStatus.OUTDATED) {
                 this.isBeingUpdated = true;
@@ -253,27 +240,22 @@ export default defineComponent({
                 this.isBeingInstalled = true;
             }
 
-            await invoke("install_mod_caller", { gameInstall: game_install, thunderstoreModString: this.latestVersion.full_name }).then((message) => {
-                ElNotification({
-                    title: `Installed ${mod.name}`,
-                    message: message as string,
-                    type: 'success',
-                    position: 'bottom-right'
-                });
+            // Capture translation method in a context, so it can be used outside Vue component context.
+            // (see https://github.com/R2NorthstarTools/FlightCore/issues/384)
+            (async (translate: Function) => {
+                await invoke<string>("install_mod_wrapper", { gameInstall: this.$store.state.game_install, thunderstoreModString: this.latestVersion.full_name }).then((message) => {
+                showNotification(translate('mods.card.install_success', { modName: mod.name }), message);
             })
                 .catch((error) => {
-                    ElNotification({
-                        title: 'Error',
-                        message: error,
-                        type: 'error',
-                        position: 'bottom-right'
-                    });
+                    showErrorNotification(error);
                 })
                 .finally(() => {
                     this.isBeingInstalled = false;
                     this.isBeingUpdated = false;
                     this.$store.commit('loadInstalledMods');
                 });
+            })(this.$i18n.t);
+
         },
     }
 });
@@ -284,6 +266,11 @@ export default defineComponent({
     display: inline-block;
     max-width: 178px;
     margin: 5px;
+    --el-card-padding: 0;
+}
+
+.deprecated {
+    background-color: red !important;
 }
 
 .author {
@@ -323,5 +310,9 @@ export default defineComponent({
 .moreBtn {
     margin-left: 10px;
     height: auto;
+}
+
+.image {
+    background-color: lightgray;
 }
 </style>

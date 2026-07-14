@@ -16,6 +16,10 @@ You use it to do stuff like
 - [or this](https://www.youtube.com/watch?v=suhBGqzDbNA)
 - [or this](https://www.youtube.com/watch?v=vyUxAwobY60)
 
+## I have an issue with FlightCore, where do I go?
+
+Check [TROUBLESHOOTING.md](TROUBLESHOOTING.md).
+
 ## Why yet another Northstar intaller/updater/mod-manager instead of contributing to an existing one?
 
 The 3 main GUI tools for handling such tasks with Norhtstar are

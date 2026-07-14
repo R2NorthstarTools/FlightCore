@@ -8,6 +8,8 @@ export const searchModule = {
         searchValue: '',
         // Selected mod categories
         selectedCategories: [],
+        showDeprecatedMods: false,
+        showNsfwMods: false,
         sortValue: {label: '', value: ''}
     }),
     getters: {
@@ -16,4 +18,3 @@ export const searchModule = {
         }
     }
   }
-  

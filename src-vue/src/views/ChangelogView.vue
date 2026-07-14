@@ -11,10 +11,10 @@
                     :timestamp="formatDate(release.published_at)"
                     placement="top"
                 >
-                <el-card>
-                    <h4>{{ release.name }}</h4>
-                    <p v-html="formatRelease(release.body)"></p>
-                </el-card>
+                    <el-card>
+                        <h4>{{ release.name }}</h4>
+                        <p v-html="formatRelease(release.body)"></p>
+                    </el-card>
                 </el-timeline-item>
             </el-timeline>
         </el-scrollbar>
@@ -23,7 +23,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import ReleaseInfo from '../utils/ReleaseInfo';
+import { ReleaseInfo } from "../../../src-tauri/bindings/ReleaseInfo";
 import { marked } from "marked";
 
 
@@ -46,9 +46,9 @@ export default defineComponent({
             let content: string = releaseBody.replaceAll(/\@(\S+)/g, `<a target="_blank" href="https://github.com/$1">@$1</a>`);
 
             // PR's links formatting
-            content = content.replaceAll(/\[\#(\S+)\]\(([^)]+)\)/g, `<a target="_blank" href="$2">#$1</a>`);
+            content = content.replaceAll(/\[(\S*)\#(\S+)\]\(([^)]+)\)/g, `<a target="_blank" href="$3">$1#$2</a>`);
 
-            return marked.parse(content, {breaks: true});
+            return marked.parse(content, { breaks: true });
         },
         // Formats an ISO-formatted date into a human-readable string.
         formatDate(timestamp: string): string {
@@ -61,6 +61,10 @@ export default defineComponent({
 <style>
 .el-scrollbar__view {
     padding: 20px 30px;
+}
+
+.el-table .el-scrollbar__view {
+    padding: 0;
 }
 
 .fc__changelog__container {

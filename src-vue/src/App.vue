@@ -4,12 +4,15 @@ import DeveloperView from './views/DeveloperView.vue';
 import PlayView from './views/PlayView.vue';
 import ModsView from './views/ModsView.vue';
 import SettingsView from './views/SettingsView.vue';
-import { appWindow } from '@tauri-apps/api/window';
+import { getCurrentWindow } from '@tauri-apps/api/window';
 import { store } from './plugins/store';
-import { window as tauriWindow } from "@tauri-apps/api";
+import { load } from '@tauri-apps/plugin-store';
+import { invoke } from "@tauri-apps/api/core";
+import NotificationButton from "./components/NotificationButton.vue";
 
 export default {
   components: {
+      NotificationButton,
       ChangelogView,
       DeveloperView,
       PlayView,
@@ -19,18 +22,28 @@ export default {
   data() {
     return {}
   },
-  mounted: () => {
+  mounted: async function() {
     store.commit('initialize');
+
+    // Initialize interface language
+    const persistentStore = await load('flight-core-settings.json', {
+      autoSave: false,
+      defaults: {}
+    });
+    let lang: string | null | undefined = await persistentStore.get('lang');
+    if (lang === null || lang == undefined) {
+      lang = navigator.language.substring(0, 2);
+      persistentStore.set('lang', lang);
+      await persistentStore.save();
+    }
+    this.$root!.$i18n.locale = lang;
   },
   methods: {
-    async toggleMaximize() {
-      await appWindow.toggleMaximize();
-    },
-    minimize() {
-      appWindow.minimize()
+    async minimize() {
+      await getCurrentWindow().minimize();
     },
     close() {
-      appWindow.close()
+      invoke("close_application");
     }
   },
     computed: {
@@ -47,7 +60,7 @@ export default {
   <div class="app-inner">
     <div id="fc_bg__container" :style="bgStyle"/>
 
-    <nav id="fc_menu-bar">
+    <nav id="fc_menu-bar" v-if="$route.path !== '/repair'"><!-- Hide menu bar in repair view -->
       <!-- Navigation items -->
       <el-menu
         :default-active="$route.path"
@@ -56,17 +69,17 @@ export default {
         id="fc__menu_items"
         data-tauri-drag-region
       >
-        <el-menu-item index="/">Play</el-menu-item>
-        <el-menu-item index="/changelog">Changelog</el-menu-item>
-        <el-menu-item index="/mods">Mods</el-menu-item>
-        <el-menu-item index="/settings">Settings</el-menu-item>
-        <el-menu-item index="/dev" v-if="$store.state.developer_mode">Dev</el-menu-item>
+        <el-menu-item index="/">{{ $t('menu.play') }}</el-menu-item>
+        <el-menu-item index="/mods">{{ $t('menu.mods') }}</el-menu-item>
+        <el-menu-item index="/changelog">{{ $t('menu.changelog') }}</el-menu-item>
+        <el-menu-item index="/settings">{{ $t('menu.settings') }}</el-menu-item>
+        <el-menu-item index="/dev" v-if="$store.state.developer_mode">{{ $t('menu.dev') }}</el-menu-item>
       </el-menu>
 
       <!-- Window controls -->
       <div id="fc_window__controls">
+        <NotificationButton />
         <el-button color="white" icon="SemiSelect" @click="minimize" circle />
-        <el-button color="white" icon="FullScreen" @click="toggleMaximize" circle />
         <el-button color="white" icon="CloseBold" @click="close" circle />
       </div>
     </nav>
@@ -82,8 +95,22 @@ export default {
   top: 0;
   width: 100%;
   height: var(--fc-menu_height);
-  background-image: radial-gradient(transparent 1px);
-  backdrop-filter: saturate(50%) blur(4px);
+  /* Colour header bar to keep text readable */
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+#fc__menu_bar::before {
+    position: absolute;
+    content: "";
+    inset: 0; /* same as { top: 0; right: 0; bottom: 0; left: 0; } */
+    background-image: linear-gradient(to bottom, red, orange);
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 1s linear;
+}
+
+#fc__menu_bar:hover::before {
+    opacity: 1;
 }
 
 /* Borders reset */
@@ -100,7 +127,7 @@ export default {
   height: 100%;
   background-color: transparent;
   float: left;
-  width: calc(100% - 148px); /* window controls container width */
+  width: calc(100% - 168px); /* window controls container width */
 }
 
 #fc__menu_items .el-menu-item, #fc__menu_items .el-sub-menu__title {
@@ -115,11 +142,21 @@ export default {
   font-weight: bold;
   font-size: large;
   background-color: transparent !important;
+
+  border-width: 2px !important;
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-radius: 10px !important;
+  transition: none;
 }
 
 #fc__menu_items .el-menu-item:hover, #fc__menu_items .el-sub-menu__title {
   color: #c6c9ce;
   background-color: transparent;
+}
+
+#fc__menu_items .el-menu-item:focus-visible {
+  border-color: rgb(160, 207, 255) !important;
 }
 
 #fc__menu_items .el-menu-item.is-active, #fc__menu_items .el-sub-menu.is-active > .el-sub-menu__title {
@@ -148,7 +185,9 @@ export default {
   height: 100%;
 }
 
-#fc_window__controls > button {
+#fc_window__controls > button,
+#fc_window__controls > .el-dropdown > button,
+#fc_window__controls > .el-dropdown > .el-badge > button {
   color: white;
   font-size: 20px;
   margin: auto 5px;
@@ -157,16 +196,23 @@ export default {
   height: 100%;
 }
 
-#fc_window__controls > button:hover {
+#fc_window__controls > button:hover,
+#fc_window__controls > .el-dropdown > button:hover,
+#fc_window__controls > .el-dropdown > .el-badge > button:hover {
   color: #c6c9ce;
 }
 
-#fc_window__controls > button:active {
+#fc_window__controls > button:active,
+#fc_window__controls > .el-dropdown > button:active {
   color: #56585a;
 }
 
 #fc_window__controls > button:last-of-type {
   margin-right: 15px;
+}
+
+sup {
+  border: none !important;
 }
 
 </style>

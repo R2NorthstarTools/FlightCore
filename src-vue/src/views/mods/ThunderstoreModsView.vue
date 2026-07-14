@@ -3,23 +3,23 @@
         <div v-if="mods.length === 0" class="fc__changelog__container">
             <el-progress :show-text="false" :percentage="50" :indeterminate="true" />
         </div>
+
+        <!-- Message displayed if no mod matched searched words -->
+        <div v-else-if="filteredMods.length === 0" class="noModMessage">
+            {{ $t('mods.online.no_match') }}<br/>
+            {{ $t('mods.online.try_another_search') }}
+        </div>
+
         <el-scrollbar v-else class="container" ref="scrollbar">
             <div class="card-container">
-                <div class="pagination_container">
+                <div class="pagination_container" v-if="shouldDisplayPagination">
                     <el-pagination
-                        v-if="shouldDisplayPagination"
                         :currentPage="currentPageIndex + 1"
                         layout="prev, pager, next"
                         :page-size="modsPerPage"
                         :total="modsList.length"
-                        @current-change="(e: number) => currentPageIndex = e - 1"
+                        @update:current-page="onPaginationChange"
                     />
-                </div>
-
-                <!-- Message displayed if no mod matched searched words -->
-                <div v-if="filteredMods.length === 0" class="modMessage">
-                    No matching mod has been found.<br/>
-                    Try another search!
                 </div>
 
                 <!-- Mod cards -->
@@ -36,7 +36,8 @@
                         layout="prev, pager, next"
                         :page-size="modsPerPage"
                         :total="modsList.length"
-                        @current-change="onBottomPaginationChange"
+                        @update:current-page="onPaginationChange"
+                        @current-change="scrollTop"
                     />
                 </div>
             </div>
@@ -45,20 +46,29 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
-import { ThunderstoreMod } from "../../utils/thunderstore/ThunderstoreMod";
+import { defineComponent } from 'vue';
+import { ThunderstoreMod } from "../../../../src-tauri/bindings/ThunderstoreMod";
 import ThunderstoreModCard from "../../components/ThunderstoreModCard.vue";
-import { ElScrollbar, ScrollbarInstance } from "element-plus";
+import { ScrollbarInstance } from "element-plus";
 import { SortOptions } from "../../utils/SortOptions.d";
-import { ThunderstoreModVersion } from '../../utils/thunderstore/ThunderstoreModVersion';
+import { ThunderstoreModVersion } from "../../../../src-tauri/bindings/ThunderstoreModVersion";
+import { fuzzy_filter } from "../../utils/filter";
+import { isThunderstoreModOutdated } from "../../utils/thunderstore/version";
+
 
 export default defineComponent({
     name: "ThunderstoreModsView",
-    components: {ThunderstoreModCard},
+    components: { ThunderstoreModCard },
     async mounted() {
         this.$store.commit('fetchThunderstoreMods');
     },
     computed: {
+        showDeprecatedMods(): boolean {
+            return this.$store.state.search.showDeprecatedMods;
+        },
+        showNsfwMods(): boolean {
+            return this.$store.state.search.showNsfwMods;
+        },
         searchValue(): string {
             return this.$store.getters.searchWords;
         },
@@ -79,9 +89,17 @@ export default defineComponent({
             return this.mods.filter((mod: ThunderstoreMod) => {
                 // Filter with search words (only if search field isn't empty)
                 const inputMatches: boolean = this.searchValue.length === 0
-                    || (mod.name.toLowerCase().includes(this.searchValue)
-                        || mod.owner.toLowerCase().includes(this.searchValue)
-                        || mod.versions[0].description.toLowerCase().includes(this.searchValue));
+                    || (
+                        fuzzy_filter(mod.name, this.searchValue) ||
+                        fuzzy_filter(mod.owner, this.searchValue) ||
+                        mod.versions[0].description.toLowerCase().includes(this.searchValue)
+                    );
+
+                // Filter out deprecated mods
+                const showDeprecated = !mod.is_deprecated || this.showDeprecatedMods;
+
+                // Filter out NSFW mods
+                const showNsfw = !mod.has_nsfw_content || this.showNsfwMods;
 
                 // Filter with categories (only if some categories are selected)
                 const categoriesMatch: boolean = this.selectedCategories.length === 0
@@ -89,18 +107,20 @@ export default defineComponent({
                         .filter((category: string) => this.selectedCategories.includes(category))
                         .length === this.selectedCategories.length;
 
-                return inputMatches && categoriesMatch;
+                return inputMatches && categoriesMatch && showDeprecated && showNsfw;
             });
         },
         modsList(): ThunderstoreMod[] {
             // Use filtered mods if user is searching, vanilla list otherwise.
             const mods: ThunderstoreMod[] = this.searchValue.length !== 0 || this.selectedCategories.length !== 0
                 ? this.filteredMods
-                : this.mods;
+                : this.mods
+                    .filter(mod => this.showDeprecatedMods || !mod.is_deprecated)
+                    .filter(mod => this.showNsfwMods || !mod.has_nsfw_content);
 
             // Sort mods regarding user selected algorithm.
             let compare: (a: ThunderstoreMod, b: ThunderstoreMod) => number;
-            switch(this.modSorting) {
+            switch (this.modSorting) {
                 case SortOptions.NAME_ASC:
                     compare = (a: ThunderstoreMod, b: ThunderstoreMod) => a.name.localeCompare(b.name);
                     break;
@@ -116,10 +136,10 @@ export default defineComponent({
                 case SortOptions.MOST_DOWNLOADED:
                     compare = (a: ThunderstoreMod, b: ThunderstoreMod) => {
                         const aTotal = a.versions.reduce((prev, next) => {
-                            return {downloads: prev.downloads + next.downloads} as ThunderstoreModVersion;
+                            return { downloads: prev.downloads + next.downloads } as ThunderstoreModVersion;
                         }).downloads;
                         const bTotal = b.versions.reduce((prev, next) => {
-                            return {downloads: prev.downloads + next.downloads} as ThunderstoreModVersion;
+                            return { downloads: prev.downloads + next.downloads } as ThunderstoreModVersion;
                         }).downloads;
                         return -1 * (aTotal - bTotal);
                     };
@@ -131,7 +151,18 @@ export default defineComponent({
                     throw new Error('Unknown mod sorting.');
             }
 
-            return mods.sort(compare);
+            // Always display outdated mods first
+            // (regardless of actual sort order)
+            const sortedMods = mods.sort(compare);
+            return sortedMods.sort((a, b) => {
+                if (isThunderstoreModOutdated(a)) {
+                    return -1;
+                } else if (isThunderstoreModOutdated(b)) {
+                    return 1;
+                } else {
+                    return compare(a, b);
+                }
+            })
         },
         modsPerPage(): number {
             return parseInt(this.$store.state.mods_per_page);
@@ -142,7 +173,7 @@ export default defineComponent({
 
             const startIndex = this.currentPageIndex * perPageValue;
             const endIndexCandidate = startIndex + perPageValue;
-            const endIndex =  endIndexCandidate > this.modsList.length ? this.modsList.length : endIndexCandidate;
+            const endIndex = endIndexCandidate > this.modsList.length ? this.modsList.length : endIndexCandidate;
             return this.modsList.slice(startIndex, endIndex);
         },
         shouldDisplayPagination(): boolean {
@@ -159,9 +190,13 @@ export default defineComponent({
         /**
          * This updates current pagination and scrolls view to the top.
          */
-        onBottomPaginationChange(index: number) {
+        onPaginationChange(index: number) {
             this.currentPageIndex = index - 1;
-            (this.$refs.scrollbar as ScrollbarInstance).scrollTo({ top: 0, behavior: 'smooth' });
+        },
+        scrollTop() {
+            setTimeout(() => {
+                (this.$refs.scrollbar as ScrollbarInstance).scrollTo({ top: 0, behavior: 'smooth' });
+            }, 100)
         }
     },
     watch: {
@@ -199,11 +234,6 @@ export default defineComponent({
     margin: 0 0 0 10px !important;
 }
 
-.modMessage {
-    color: white;
-    margin: 20px 5px;
-}
-
 .card-container {
     margin: 0 auto;
 }
@@ -234,36 +264,43 @@ export default defineComponent({
 
     width: calc(var(--thunderstore-mod-card-width) * var(--thunderstore-mod-card-columns-count) + var(--thunderstore-mod-card-margin) * 2 * var(--thunderstore-mod-card-columns-count));
 }
+
 @media (min-width: 628px) {
     .card-container {
         --thunderstore-mod-card-columns-count: 2;
     }
 }
+
 @media (min-width: 836px) {
     .card-container {
         --thunderstore-mod-card-columns-count: 3;
     }
 }
+
 @media (min-width: 1006px) {
     .card-container {
         --thunderstore-mod-card-columns-count: 4;
     }
 }
+
 @media (min-width: 1196px) {
     .card-container {
         --thunderstore-mod-card-columns-count: 5;
     }
 }
+
 @media (min-width: 1386px) {
     .card-container {
         --thunderstore-mod-card-columns-count: 6;
     }
 }
+
 @media (min-width: 1576px) {
     .card-container {
         --thunderstore-mod-card-columns-count: 7;
     }
 }
+
 @media (min-width: 1766px) {
     .card-container {
         --thunderstore-mod-card-columns-count: 8;

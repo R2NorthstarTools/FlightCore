@@ -4,23 +4,31 @@
             default-active="1"
             text-color="#fff"
         >
-            <h5>Mods</h5>
+            <h5>{{ $t('menu.mods') }}</h5>
             <el-menu-item index="1" @click="$emit('showLocalMods', true)">
                 <el-icon><Folder /></el-icon>
-                <span>Local</span>
+                <span>{{ $t('mods.menu.local') }}</span>
             </el-menu-item>
-            <el-menu-item index="2" @click="$emit('showLocalMods', false)">
+
+            <!-- Display a badge if there are some outdated Thunderstore mods -->
+            <el-menu-item v-if="outdatedThunderstoreModsCount !== 0" index="2" @click="$emit('showLocalMods', false)">
+                <el-badge :value="outdatedThunderstoreModsCount" class="item" type="warning">
+                    <el-icon><Connection /></el-icon>
+                    <span>{{ $t('mods.menu.online') }}</span>
+                </el-badge>
+            </el-menu-item>
+            <el-menu-item v-else index="2" @click="$emit('showLocalMods', false)">
                 <el-icon><Connection /></el-icon>
-                <span>Online</span>
+                <span>{{ $t('mods.menu.online') }}</span>
             </el-menu-item>
 
             <!-- Search inputs -->
-            <h5>Filter</h5>
-            <el-input v-model="$store.state.search.searchValue" placeholder="Search" clearable />
+            <h5>{{ $t('mods.menu.filter') }}</h5>
+            <el-input v-model="$store.state.search.searchValue" :placeholder="$t('mods.menu.search')" clearable />
             <el-select
                 v-if="!showingLocalMods"
-                v-model="$store.state.search.sortValue" 
-                placeholder="Sort mods"
+                v-model="$store.state.search.sortValue"
+                :placeholder="$t('mods.menu.sort_mods')"
             >
                 <el-option
                     v-for="item of sortValues"
@@ -33,7 +41,7 @@
                 v-if="!showingLocalMods"
                 v-model="$store.state.search.selectedCategories"
                 multiple
-                placeholder="Select categories"
+                :placeholder="$t('mods.menu.select_categories')"
             >
                 <el-option
                     v-for="item in $store.state.thunderstoreModsCategories"
@@ -50,6 +58,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { SortOptions } from '../utils/SortOptions.d';
+import { isThunderstoreModOutdated } from "../utils/thunderstore/version";
+import { ThunderstoreMod } from "../../../src-tauri/bindings/ThunderstoreMod";
 
 export default defineComponent({
     name: 'ModsMenu',
@@ -63,10 +73,15 @@ export default defineComponent({
         this.$store.state.search.sortValue = this.sortValues[3].value;
     },
     computed: {
-        sortValues(): {label: string, value: string}[] {
+        outdatedThunderstoreModsCount(): number {
+            return this.$store.state.thunderstoreMods
+                .filter((mod: ThunderstoreMod) => isThunderstoreModOutdated(mod))
+                .length;
+        },
+        sortValues(): { label: string, value: string }[] {
             return Object.keys(SortOptions).map((key: string) => ({
                 value: key,
-                label: Object.values(SortOptions)[Object.keys(SortOptions).indexOf(key)]
+                label: this.$t('mods.menu.sort.' + Object.values(SortOptions)[Object.keys(SortOptions).indexOf(key)])
             }));
         }
     }
@@ -85,7 +100,7 @@ export default defineComponent({
     margin: 8px 0 16px 5px;
 }
 
-.fc_mods__menu h5:not(:first-child){
+.fc_mods__menu h5:not(:first-child) {
     margin-top: 32px;
 }
 
@@ -114,5 +129,13 @@ export default defineComponent({
 .el-select {
     width: 100%;
     margin-top: 5px;
+}
+
+/* Outdated thunderstore mods count */
+.el-badge {
+    width: 100%;
+}
+.el-badge:deep(.el-badge__content) {
+    top: 28px !important;
 }
 </style>
