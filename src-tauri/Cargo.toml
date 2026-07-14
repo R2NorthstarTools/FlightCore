@@ -65,8 +65,6 @@ const_format = "0.2.36"
 # Logging libraries
 pretty_env_logger = "0.5.0"
 log = "0.4.33"
-# Extracting zip files easily
-zip-extract = "0.4.1"
 # open urls
 open = "5.3.6"
 semver = "1.0.28"
