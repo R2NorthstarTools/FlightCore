@@ -26,7 +26,10 @@ export default {
     store.commit('initialize');
 
     // Initialize interface language
-    const persistentStore = await load('flight-core-settings.json', { autoSave: false });
+    const persistentStore = await load('flight-core-settings.json', {
+      autoSave: false,
+      defaults: {}
+    });
     let lang: string | null | undefined = await persistentStore.get('lang');
     if (lang === null || lang == undefined) {
       lang = navigator.language.substring(0, 2);

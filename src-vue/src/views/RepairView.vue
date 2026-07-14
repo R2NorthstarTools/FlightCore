@@ -46,7 +46,10 @@ import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { load } from '@tauri-apps/plugin-store';
 import { showErrorNotification, showNotification } from "../utils/ui";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-const persistentStore = await load('flight-core-settings.json', { autoSave: false });
+const persistentStore = await load('flight-core-settings.json', {
+    autoSave: false,
+    defaults: {}
+});
 
 export default defineComponent({
     name: "RepairView",

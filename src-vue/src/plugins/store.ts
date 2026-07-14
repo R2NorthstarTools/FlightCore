@@ -24,7 +24,10 @@ import { check } from "@tauri-apps/plugin-updater";
 import { ask } from "@tauri-apps/plugin-dialog";
 import { relaunch } from "@tauri-apps/plugin-process";
 
-const persistentStore = await load('flight-core-settings.json', { autoSave: false });
+const persistentStore = await load('flight-core-settings.json', {
+    autoSave: false,
+    defaults: {}
+});
 
 
 export interface FlightCoreStore {

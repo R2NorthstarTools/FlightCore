@@ -29,54 +29,53 @@ tauri-build = { version = "2", features = [] }
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "2", features = [] }
-tauri-plugin-dialog = "2"
-tauri-plugin-opener = "2"
-tauri-plugin-process = "=2.0.1"
-tauri-plugin-store = "2"
-tokio = { version = "1", features = ["full"] }
+tauri-plugin-dialog = "2.7.1"
+tauri-plugin-opener = "2.5.4"
+tauri-plugin-process = "2.3.1"
+tauri-plugin-store = "2.4.3"
+tokio = { version = "1.52.3", features = ["full"] }
 # Sentry (crash) logging
-sentry = "0.32"
-sentry-log = "0.34"
+sentry = "0.48.4"
+sentry-log = "0.48.4"
 # Find steam games
-steamlocate = "2.0.0-beta.2"
+steamlocate = "2.1.0"
 # Error messages
-anyhow = "1.0"
+anyhow = "1.0.103"
 # libthermite for Northstar/mod install handling
 libthermite = { version = "0.8.1", features = ["proton"] }
 # zip stuff
-zip = "0.6.2"
+zip = "8.6.0"
+tempfile = "3.27.0"
 # Regex
-regex = "1.10"
+regex = "1.13.0"
 # Read out running application process names
-sysinfo = "0.30.13"
+sysinfo = "0.39.6"
 # HTTP requests
-reqwest = { version = "0.12", features = ["blocking", "json"] }
+reqwest = { version = "0.13.4", features = ["blocking", "json"] }
 # JSON5 parsing support (allows comments in JSON)
-json5 = "0.4.1"
+json5 = "1.3.1"
 # Async recursion for recursive mod install
 async-recursion = "1.1.1"
 # For parsing timestamps
-chrono = "0.4.38"
+chrono = "0.4.45"
 # TypeScript bindings
-ts-rs = "10.0"
+ts-rs = "12.0.1"
 # const formatting
-const_format = "0.2.33"
+const_format = "0.2.36"
 # Logging libraries
 pretty_env_logger = "0.5.0"
-log = "0.4"
-# Extracting zip files easily
-zip-extract = "0.1.3"
+log = "0.4.33"
 # open urls
-open = "5.3.2"
-semver = "1.0"
+open = "5.3.6"
+semver = "1.0.28"
 # simplified filesystem access
-glob = "0.3.1"
-dirs = "5"
+glob = "0.3.3"
+dirs = "6.0.0"
 # Random number stuff
-rand = "0.8.5"
+rand = "0.10.2"
 
 # Interacting with GitHub
-octocrab = "0.38.0"
+octocrab = "0.54.0"
 # Library for removing markdown links
 remove-markdown-links = "1.0.0"
 
@@ -84,7 +83,7 @@ remove-markdown-links = "1.0.0"
 [target.'cfg(windows)'.dependencies]
 # Windows API stuff
 winapi = "0.3.9"
-winreg = "0.52.0"
+winreg = "0.56.0"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
-tauri-plugin-updater = "2"
+tauri-plugin-updater = "2.10.1"

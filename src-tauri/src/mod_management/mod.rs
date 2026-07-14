@@ -363,7 +363,7 @@ pub fn parse_mods_in_package(
         let parsed_mod_json: ModJson = match json5::from_str(&data) {
             Ok(parsed_json) => parsed_json,
             Err(err) => {
-                log::warn!("Failed parsing {} with {}", mod_json_path, err.to_string());
+                log::warn!("Failed parsing {} with {}", mod_json_path, err);
                 continue;
             }
         };
@@ -572,10 +572,7 @@ fn delete_older_versions(
 ) -> Result<(), String> {
     let thunderstore_mod_string: ParsedThunderstoreModString =
         thunderstore_mod_string.parse().unwrap();
-    log::info!(
-        "Deleting other versions of {}",
-        thunderstore_mod_string.to_string()
-    );
+    log::info!("Deleting other versions of {}", thunderstore_mod_string);
     let packages_folder = format!(
         "{}/{}/packages",
         game_install.game_path, game_install.profile
