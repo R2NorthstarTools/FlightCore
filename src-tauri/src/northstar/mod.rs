@@ -275,7 +275,7 @@ pub fn launch_northstar_steam(
         "steam://run/{}//-profile={} --northstar {}/",
         thermite::TITANFALL2_STEAM_ID,
         game_install.profile,
-        &launch_arguments.join(" ") // Pass launch arguments to Steam
+        launch_arguments.join(" ") // Pass launch arguments to Steam
     )) {
         Ok(()) => Ok("Started game".to_string()),
         Err(_err) => Err("Failed to launch Titanfall 2 via Steam".to_string()),
