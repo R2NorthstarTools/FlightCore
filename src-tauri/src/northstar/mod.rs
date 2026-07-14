@@ -30,7 +30,7 @@ pub async fn get_available_northstar_versions(
         .unwrap();
 
     let mut releases: Vec<NorthstarThunderstoreReleaseWrapper> = vec![];
-    for (_version_string, nsmod_version_obj) in nsmod.versions.iter() {
+    for nsmod_version_obj in nsmod.versions.values() {
         let current_elem = NorthstarThunderstoreRelease {
             package: nsmod_version_obj.name.clone(),
             version: nsmod_version_obj.version.clone(),

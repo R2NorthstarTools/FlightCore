@@ -3,11 +3,12 @@ use crate::repair_and_verify::check_is_valid_game_path;
 use crate::GameInstall;
 use anyhow::anyhow;
 use serde::{Deserialize, Serialize};
-use std::fs::File;
+use std::fs::{self, File};
 use std::io;
 use std::io::prelude::*;
 use std::path::Path;
 use ts_rs::TS;
+use zip::read::root_dir_common_filter;
 
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
 #[ts(export)]
@@ -286,26 +287,13 @@ pub async fn apply_launcher_pr(
         Err(err) => return Err(err.to_string()),
     };
 
-    let extract_directory = format!(
-        "{}/___flightcore-temp/download-dir/launcher-pr-{}",
-        game_install.game_path, pull_request.number
-    );
-    match std::fs::create_dir_all(extract_directory.clone()) {
+    // Use a temp file to store archive
+    let mut tmpfile = tempfile::tempfile().unwrap();
+    match tmpfile.write_all(&archive) {
         Ok(_) => (),
-        Err(err) => {
-            return Err(format!(
-                "Failed creating temporary download directory: {err}"
-            ))
-        }
-    };
-
-    let target_dir = std::path::PathBuf::from(extract_directory.clone()); // Doesn't need to exist
-    match zip_extract::extract(io::Cursor::new(archive), &target_dir, true) {
-        Ok(()) => (),
-        Err(err) => {
-            return Err(format!("Failed unzip: {err}"));
-        }
-    };
+        Err(err) => return Err(err.to_string()),
+    }
+    let mut zip = zip::ZipArchive::new(tmpfile).unwrap();
 
     // Copy only necessary files from temp dir
     // Copy:
@@ -313,26 +301,19 @@ pub async fn apply_launcher_pr(
     // - Northstar.dll
     let files_to_copy = vec!["NorthstarLauncher.exe", "Northstar.dll"];
     for file_name in files_to_copy {
-        let source_file_path = format!("{extract_directory}/{file_name}");
-        let destination_file_path = format!("{}/{}", game_install.game_path, file_name);
-        match std::fs::copy(source_file_path, destination_file_path) {
-            Ok(_result) => (),
-            Err(err) => {
-                return Err(format!(
-                    "Failed to copy necessary file {file_name} from temp dir: {err}"
-                ))
-            }
+        let mut zip_file = match zip.by_name(file_name) {
+            Ok(file) => file,
+            Err(err) => return Err(err.to_string()),
         };
-    }
-
-    // delete extract directory
-    match std::fs::remove_dir_all(&extract_directory) {
-        Ok(()) => (),
-        Err(err) => {
-            return Err(format!(
-                "Failed to delete temporary download directory: {err}"
-            ))
-        }
+        let destination_file_path = format!("{}/{}", game_install.game_path, file_name);
+        let mut file = match fs::File::create(Path::new(&destination_file_path)) {
+            Ok(f) => f,
+            Err(err) => return Err(err.to_string()),
+        };
+        match io::copy(&mut zip_file, &mut file) {
+            Ok(_) => (),
+            Err(err) => return Err(err.to_string()),
+        };
     }
 
     log::info!("All done with installing launcher PR");
@@ -379,12 +360,21 @@ pub async fn apply_mods_pr(
     }
 
     let target_dir = std::path::PathBuf::from(format!("{profile_folder}/mods")); // Doesn't need to exist
-    match zip_extract::extract(io::Cursor::new(archive), &target_dir, true) {
+
+    // Use a temp file to store archive
+    let mut tmpfile = tempfile::tempfile().unwrap();
+    match tmpfile.write_all(&archive) {
+        Ok(_) => (),
+        Err(err) => return Err(err.to_string()),
+    }
+
+    // Extract the archive to game profile
+    let mut zip = zip::ZipArchive::new(tmpfile).unwrap();
+    match zip.extract_unwrapped_root_dir(&target_dir, root_dir_common_filter) {
         Ok(()) => (),
-        Err(err) => {
-            return Err(format!("Failed unzip: {err}"));
-        }
-    };
+        Err(err) => return Err(err.to_string()),
+    }
+
     // Add batch file to launch right profile
     add_batch_file(&game_install.game_path);
 

@@ -155,7 +155,10 @@ import { load } from '@tauri-apps/plugin-store';
 import { showErrorNotification, showNotification } from "../utils/ui";
 import LanguageSelector from "../components/LanguageSelector.vue";
 import LaunchArgumentsSelector from "../components/LaunchArgumentsSelector.vue";
-const persistentStore = await load('flight-core-settings.json', { autoSave: false });
+const persistentStore = await load('flight-core-settings.json', {
+    autoSave: false,
+    defaults: {}
+});
 import { openPath } from '@tauri-apps/plugin-opener';
 import { i18n } from '../main';
 import { ElMessageBox } from 'element-plus'

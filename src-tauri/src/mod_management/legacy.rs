@@ -83,7 +83,7 @@ pub fn parse_installed_mods(
         let parsed_mod_json: ModJson = match json5::from_str(&data) {
             Ok(parsed_json) => parsed_json,
             Err(err) => {
-                log::warn!("Failed parsing {} with {}", mod_json_path, err.to_string());
+                log::warn!("Failed parsing {} with {}", mod_json_path, err);
                 continue;
             }
         };

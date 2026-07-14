@@ -3,7 +3,7 @@
         <!-- Local mods/Thunderstore mods menu -->
         <mods-menu
             :showingLocalMods="show_local_mods"
-            @showLocalMods="(v) => show_local_mods = v"
+            @showLocalMods="(v: boolean) => show_local_mods = v"
         />
 
         <!-- Mods content -->
