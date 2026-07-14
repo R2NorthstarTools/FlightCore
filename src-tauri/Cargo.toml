@@ -44,7 +44,8 @@ anyhow = "1.0.103"
 # libthermite for Northstar/mod install handling
 libthermite = { version = "0.8.1", features = ["proton"] }
 # zip stuff
-zip = "0.6.2"
+zip = "8.6.0"
+tempfile = "3.27.0"
 # Regex
 regex = "1.13.0"
 # Read out running application process names

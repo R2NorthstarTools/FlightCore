@@ -4,6 +4,7 @@ use crate::GameInstall;
 use crate::util::extract;
 use anyhow::anyhow;
 use serde::{Deserialize, Serialize};
+use zip::read::root_dir_common_filter;
 use std::fs::File;
 use std::io;
 use std::io::prelude::*;
@@ -380,12 +381,21 @@ pub async fn apply_mods_pr(
     }
 
     let target_dir = std::path::PathBuf::from(format!("{profile_folder}/mods")); // Doesn't need to exist
-    match zip_extract::extract(io::Cursor::new(archive), &target_dir, true) {
+
+    // Use a temp file to store archive
+    let mut tmpfile = tempfile::tempfile().unwrap();
+    match tmpfile.write_all(&archive) {
+        Ok(_) => (),
+        Err(err) => return Err(err.to_string()),
+    }
+
+    // Extract the archive to game profile
+    let mut zip = zip::ZipArchive::new(tmpfile).unwrap();
+    match zip.extract_unwrapped_root_dir(&target_dir, root_dir_common_filter) {
         Ok(()) => (),
-        Err(err) => {
-            return Err(format!("Failed unzip: {err}"));
-        }
-    };
+        Err(err) => return Err(err.to_string()),
+    }
+
     // Add batch file to launch right profile
     add_batch_file(&game_install.game_path);
 
