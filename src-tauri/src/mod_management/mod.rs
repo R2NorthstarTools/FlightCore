@@ -572,10 +572,7 @@ fn delete_older_versions(
 ) -> Result<(), String> {
     let thunderstore_mod_string: ParsedThunderstoreModString =
         thunderstore_mod_string.parse().unwrap();
-    log::info!(
-        "Deleting other versions of {}",
-        thunderstore_mod_string
-    );
+    log::info!("Deleting other versions of {}", thunderstore_mod_string);
     let packages_folder = format!(
         "{}/{}/packages",
         game_install.game_path, game_install.profile

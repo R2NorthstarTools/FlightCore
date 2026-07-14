@@ -3,12 +3,12 @@ use crate::repair_and_verify::check_is_valid_game_path;
 use crate::GameInstall;
 use anyhow::anyhow;
 use serde::{Deserialize, Serialize};
-use zip::read::root_dir_common_filter;
 use std::fs::{self, File};
 use std::io;
 use std::io::prelude::*;
 use std::path::Path;
 use ts_rs::TS;
+use zip::read::root_dir_common_filter;
 
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
 #[ts(export)]
