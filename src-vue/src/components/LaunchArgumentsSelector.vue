@@ -72,7 +72,10 @@ import { NorthstarState } from '../utils/NorthstarState';
 import { showErrorNotification } from '../utils/ui';
 import {argumentsStoreKey} from "../main";
 import { load } from '@tauri-apps/plugin-store';
-const persistentStore = await load('flight-core-settings.json', { autoSave: false });
+const persistentStore = await load('flight-core-settings.json', {
+    autoSave: false,
+    defaults: {}
+});
 export default defineComponent({
     name: 'LaunchArgumentsSelector',
     computed: {
