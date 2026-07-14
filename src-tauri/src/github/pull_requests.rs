@@ -1,6 +1,7 @@
 use crate::constants::{APP_USER_AGENT, NORTHSTAR_LAUNCHER_REPO_NAME, NORTHSTAR_MODS_REPO_NAME};
 use crate::repair_and_verify::check_is_valid_game_path;
 use crate::GameInstall;
+use crate::util::extract;
 use anyhow::anyhow;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
