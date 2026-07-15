@@ -9,20 +9,24 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@element-plus/icons-vue": "^2.0.9",
-    "element-plus": "^2.7.8",
-    "marked": "^13.0.2",
-    "tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store#v1",
-    "vue": "^3.4.35",
-    "vue-i18n": "^9.13.1",
-    "vue-router": "^4.4.2",
+    "@element-plus/icons-vue": "^2.3.2",
+    "@tauri-apps/plugin-dialog": "^2.7.1",
+    "@tauri-apps/plugin-opener": "^2.5.4",
+    "@tauri-apps/plugin-process": "^2.3.1",
+    "@tauri-apps/plugin-shell": "^2.3.5",
+    "@tauri-apps/plugin-store": "^2.4.3",
+    "@tauri-apps/plugin-updater": "^2.10.1",
+    "element-plus": "^2.14.3",
+    "marked": "^18.0.6",
+    "vue": "^3.5.39",
+    "vue-i18n": "^11.4.6",
+    "vue-router": "^5.1.0",
     "vuex": "^4.0.2"
   },
   "devDependencies": {
-    "@types/marked": "^6.0.0",
-    "@vitejs/plugin-vue": "^3.1.0",
-    "typescript": "^5.5.4",
-    "vite": "^3.1.0",
-    "vue-tsc": "^2.0.29"
+    "@vitejs/plugin-vue": "^6.0.7",
+    "typescript": "^6.0.3",
+    "vite": "^8.1.4",
+    "vue-tsc": "^3.3.7"
   }
 }

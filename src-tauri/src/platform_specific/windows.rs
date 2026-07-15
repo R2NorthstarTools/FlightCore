@@ -42,11 +42,11 @@ pub async fn check_cgnat() -> Result<String, String> {
 
     // Check if valid IPv4 address and return early if not
     if response.parse::<Ipv4Addr>().is_err() {
-        return Err(format!("Not valid IPv4 address: {}", response));
+        return Err(format!("Not valid IPv4 address: {response}"));
     }
 
     let hops_count = run_tracert(&response)?;
-    Ok(format!("Counted {} hops to {}", hops_count, response))
+    Ok(format!("Counted {hops_count} hops to {response}"))
 }
 
 /// Count number of hops in tracert output
@@ -82,7 +82,7 @@ fn run_tracert(target_ip: &str) -> Result<usize, String> {
         .output()
     {
         Ok(res) => res,
-        Err(err) => return Err(format!("Failed running tracert: {}", err)),
+        Err(err) => return Err(format!("Failed running tracert: {err}")),
     };
 
     // Check if the command was successful
@@ -90,7 +90,7 @@ fn run_tracert(target_ip: &str) -> Result<usize, String> {
         // Convert the output to a string
         let stdout =
             std::str::from_utf8(&output.stdout).expect("Invalid UTF-8 sequence in command output");
-        println!("{}", stdout);
+        println!("{stdout}");
 
         // Count the number of hops
         let hop_count = count_hops(stdout);
@@ -98,7 +98,7 @@ fn run_tracert(target_ip: &str) -> Result<usize, String> {
     } else {
         let stderr = std::str::from_utf8(&output.stderr)
             .expect("Invalid UTF-8 sequence in command error output");
-        println!("{}", stderr);
-        Err(format!("Failed collecting tracert output: {}", stderr))
+        println!("{stderr}");
+        Err(format!("Failed collecting tracert output: {stderr}"))
     }
 }

@@ -31,10 +31,10 @@ pub async fn get_flightcore_version_number() -> String {
     let version = env!("CARGO_PKG_VERSION");
     if cfg!(debug_assertions) {
         // Debugging enabled
-        format!("v{} (debug mode)", version)
+        format!("v{version} (debug mode)")
     } else {
         // Debugging disabled
-        format!("v{}", version)
+        format!("v{version}")
     }
 }
 
@@ -42,10 +42,10 @@ pub async fn get_flightcore_version_number() -> String {
 #[tauri::command]
 pub async fn open_repair_window(handle: tauri::AppHandle) -> Result<(), String> {
     // Spawn new window
-    let repair_window = match tauri::WindowBuilder::new(
+    let repair_window = match tauri::WebviewWindowBuilder::new(
         &handle,
         "RepairWindow",
-        tauri::WindowUrl::App("/#/repair".into()),
+        tauri::WebviewUrl::App("/#/repair".into()),
     )
     .build()
     {
@@ -114,12 +114,12 @@ pub async fn kill_northstar() -> Result<(), String> {
 
     let s = sysinfo::System::new_all();
 
-    for process in s.processes_by_exact_name("Titanfall2.exe") {
+    for process in s.processes_by_exact_name("Titanfall2.exe".as_ref()) {
         log::info!("Killing Process {}", process.pid());
         process.kill();
     }
 
-    for process in s.processes_by_exact_name("NorthstarLauncher.exe") {
+    for process in s.processes_by_exact_name("NorthstarLauncher.exe".as_ref()) {
         log::info!("Killing Process {}", process.pid());
         process.kill();
     }
@@ -170,8 +170,10 @@ pub fn extract(zip_file: std::fs::File, target: &std::path::Path) -> Result<()> 
 
 pub fn check_ea_app_or_origin_running() -> bool {
     let s = sysinfo::System::new_all();
-    let x = s.processes_by_name("Origin.exe").next().is_some()
-        || s.processes_by_name("EADesktop.exe").next().is_some();
+    let x = s.processes_by_name("Origin.exe".as_ref()).next().is_some()
+        || s.processes_by_name("EADesktop.exe".as_ref())
+            .next()
+            .is_some();
     x
 }
 
@@ -179,10 +181,12 @@ pub fn check_ea_app_or_origin_running() -> bool {
 pub fn check_northstar_running() -> bool {
     let s = sysinfo::System::new_all();
     let x = s
-        .processes_by_name("NorthstarLauncher.exe")
+        .processes_by_name("NorthstarLauncher.exe".as_ref())
         .next()
         .is_some()
-        || s.processes_by_name("Titanfall2.exe").next().is_some();
+        || s.processes_by_name("Titanfall2.exe".as_ref())
+            .next()
+            .is_some();
     x
 }
 
@@ -244,19 +248,17 @@ pub fn convert_release_candidate_number(version_number: String) -> String {
         let release_candidate: u32 = captures[4].parse().unwrap();
 
         // Zero pad
-        let padded_release_candidate = format!("{:02}", release_candidate);
+        let padded_release_candidate = format!("{release_candidate:02}");
 
         // Combine
-        let combined_patch_version = format!("{}{}", patch_version, padded_release_candidate);
+        let combined_patch_version = format!("{patch_version}{padded_release_candidate}");
 
         // Strip leading zeroes
         let trimmed_combined_patch_version = combined_patch_version.trim_start_matches('0');
 
         // Combine all
-        let version_number = format!(
-            "{}.{}.{}",
-            major_version, minor_version, trimmed_combined_patch_version
-        );
+        let version_number =
+            format!("{major_version}.{minor_version}.{trimmed_combined_patch_version}");
         return version_number;
     }
 

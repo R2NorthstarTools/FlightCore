@@ -1,3 +1,5 @@
+use std::io::{self, Write};
+
 use crate::constants::NS_LAUNCHER_COMMITS_API_URL;
 use crate::github::{
     pull_requests::{check_github_api, download_zip_into_memory, get_launcher_download_link},
@@ -24,27 +26,13 @@ pub async fn install_git_main(game_install_path: &str) -> Result<String, String>
         Err(err) => return Err(err.to_string()),
     };
 
-    let extract_directory = format!(
-        "{}/___flightcore-temp/download-dir/launcher-pr-{}",
-        game_install_path, latest_commit_sha
-    );
-    match std::fs::create_dir_all(extract_directory.clone()) {
+    // Use a temp file to store archive
+    let mut tmpfile = tempfile::tempfile().unwrap();
+    match tmpfile.write_all(&archive) {
         Ok(_) => (),
-        Err(err) => {
-            return Err(format!(
-                "Failed creating temporary download directory: {}",
-                err
-            ))
-        }
-    };
-
-    let target_dir = std::path::PathBuf::from(extract_directory.clone()); // Doesn't need to exist
-    match zip_extract::extract(std::io::Cursor::new(archive), &target_dir, true) {
-        Ok(()) => (),
-        Err(err) => {
-            return Err(format!("Failed unzip: {}", err));
-        }
-    };
+        Err(err) => return Err(err.to_string()),
+    }
+    let mut zip = zip::ZipArchive::new(tmpfile).unwrap();
 
     // Copy only necessary files from temp dir
     // Copy:
@@ -52,28 +40,19 @@ pub async fn install_git_main(game_install_path: &str) -> Result<String, String>
     // - Northstar.dll
     let files_to_copy = vec!["NorthstarLauncher.exe", "Northstar.dll"];
     for file_name in files_to_copy {
-        let source_file_path = format!("{}/{}", extract_directory, file_name);
-        let destination_file_path = format!("{}/{}", game_install_path, file_name);
-        match std::fs::copy(source_file_path, destination_file_path) {
-            Ok(_result) => (),
-            Err(err) => {
-                return Err(format!(
-                    "Failed to copy necessary file {} from temp dir: {}",
-                    file_name, err
-                ))
-            }
+        let mut zip_file = match zip.by_name(file_name) {
+            Ok(file) => file,
+            Err(err) => return Err(err.to_string()),
         };
-    }
-
-    // delete extract directory
-    match std::fs::remove_dir_all(&extract_directory) {
-        Ok(()) => (),
-        Err(err) => {
-            return Err(format!(
-                "Failed to delete temporary download directory: {}",
-                err
-            ))
-        }
+        let destination_file_path = format!("{}/{}", game_install_path, file_name);
+        let mut file = match std::fs::File::create(std::path::Path::new(&destination_file_path)) {
+            Ok(f) => f,
+            Err(err) => return Err(err.to_string()),
+        };
+        match io::copy(&mut zip_file, &mut file) {
+            Ok(_) => (),
+            Err(err) => return Err(err.to_string()),
+        };
     }
 
     log::info!(

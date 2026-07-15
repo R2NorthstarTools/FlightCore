@@ -80,7 +80,7 @@ pub fn validate_profile(game_install: GameInstall, profile: String) -> bool {
 pub fn delete_profile(game_install: GameInstall, profile: String) -> Result<(), String> {
     // Check if the Profile actually exists
     if !validate_profile(game_install.clone(), profile.clone()) {
-        return Err(format!("{} is not a valid Profile", profile));
+        return Err(format!("{profile} is not a valid Profile"));
     }
 
     log::info!("Deleting Profile {}", profile);
@@ -89,7 +89,7 @@ pub fn delete_profile(game_install: GameInstall, profile: String) -> Result<(), 
 
     match std::fs::remove_dir_all(profile_path) {
         Ok(()) => Ok(()),
-        Err(err) => Err(format!("Failed to delete Profile: {}", err)),
+        Err(err) => Err(format!("Failed to delete Profile: {err}")),
     }
 }
 
@@ -102,12 +102,12 @@ pub fn clone_profile(
 ) -> Result<(), String> {
     // Check if the old Profile already exists
     if !validate_profile(game_install.clone(), old_profile.clone()) {
-        return Err(format!("{} is not a valid Profile", old_profile));
+        return Err(format!("{old_profile} is not a valid Profile"));
     }
 
     // Check that new Profile does not already exist
     if validate_profile(game_install.clone(), new_profile.clone()) {
-        return Err(format!("{} already exists", new_profile));
+        return Err(format!("{new_profile} already exists"));
     }
 
     log::info!("Cloning Profile {} to {}", old_profile, new_profile);

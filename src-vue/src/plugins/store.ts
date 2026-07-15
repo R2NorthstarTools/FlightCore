@@ -1,16 +1,15 @@
 import { createStore } from 'vuex';
 import { listen, Event as TauriEvent } from "@tauri-apps/api/event";
 import { Tabs } from "../utils/Tabs";
-import { InstallType } from "../../../src-tauri/bindings/InstallType";
-import { invoke } from "@tauri-apps/api";
+import { invoke } from "@tauri-apps/api/core";
 import { GameInstall } from "../utils/GameInstall";
 import { ReleaseCanal } from "../utils/ReleaseCanal";
 import { FlightCoreVersion } from "../../../src-tauri/bindings/FlightCoreVersion";
 import { NotificationHandle } from 'element-plus';
 import { NorthstarState } from '../utils/NorthstarState';
-import { appDir } from '@tauri-apps/api/path';
-import { open } from '@tauri-apps/api/dialog';
-import { Store } from 'tauri-plugin-store-api';
+import { appDataDir } from '@tauri-apps/api/path';
+import { open } from '@tauri-apps/plugin-dialog';
+import { load } from '@tauri-apps/plugin-store';
 import { router } from "../main";
 import { ReleaseInfo } from "../../../src-tauri/bindings/ReleaseInfo";
 import { ThunderstoreMod } from "../../../src-tauri/bindings/ThunderstoreMod";
@@ -21,8 +20,14 @@ import { i18n } from '../main';
 import { pullRequestModule } from './modules/pull_requests';
 import { showErrorNotification, showNotification } from '../utils/ui';
 import { notificationsModule } from './modules/notifications';
+import { check } from "@tauri-apps/plugin-updater";
+import { ask } from "@tauri-apps/plugin-dialog";
+import { relaunch } from "@tauri-apps/plugin-process";
 
-const persistentStore = new Store('flight-core-settings.json');
+const persistentStore = await load('flight-core-settings.json', {
+    autoSave: false,
+    defaults: {}
+});
 
 
 export interface FlightCoreStore {
@@ -90,16 +95,16 @@ export const store = createStore<FlightCoreStore>({
         }
     },
     mutations: {
-        checkNorthstarUpdates(state) {
+        checkNorthstarUpdates(state: FlightCoreStore) {
             _get_northstar_version_number(state);
         },
-        async toggleDebugMode(_state) {
+        async toggleDebugMode(_state: FlightCoreStore) {
             let menu_bar_handle = document.querySelector('#fc_menu-bar');
             if (menu_bar_handle !== null) {
                 menu_bar_handle.classList.toggle('developer_build');
             }
         },
-        async toggleDeveloperMode(state) {
+        async toggleDeveloperMode(state: FlightCoreStore) {
             state.developer_mode = !state.developer_mode;
 
             // Reset tab when closing dev mode.
@@ -111,12 +116,16 @@ export const store = createStore<FlightCoreStore>({
             await persistentStore.set('dev_mode', state.developer_mode);
             await persistentStore.save();
         },
-        initialize(state) {
+        initialize(state: any) {
             _initializeApp(state);
-            _checkForFlightCoreUpdates(state);
+            //_checkForFlightCoreUpdates(state);
+            flightcoreUpdateCheck();
             _initializeListeners(state);
         },
-        updateCurrentTab(state: any, newTab: Tabs) {
+        checkForUpdates(_state: any) {
+            flightcoreUpdateCheck();
+        },
+        updateCurrentTab(_state: any, newTab: Tabs) {
             router.push({ path: newTab });
         },
         async updateGamePath(state: FlightCoreStore) {
@@ -124,7 +133,7 @@ export const store = createStore<FlightCoreStore>({
             const selected = await open({
                 directory: true,
                 multiple: false,
-                defaultPath: await appDir(),
+                defaultPath: await appDataDir(),
             });
             if (Array.isArray(selected)) {
                 // user selected multiple directories
@@ -139,8 +148,8 @@ export const store = createStore<FlightCoreStore>({
                 if (is_valid_titanfall2_install) {
                     state.game_install.game_path = selected;
                     showNotification(
-                        i18n.global.tc('notification.game_folder.new.title'),
-                        i18n.global.tc('notification.game_folder.new.text')
+                        i18n.global.t('notification.game_folder.new.title'),
+                        i18n.global.t('notification.game_folder.new.text')
                     );
                     try {
                         notification_handle.close();
@@ -167,8 +176,8 @@ export const store = createStore<FlightCoreStore>({
                 else {
                     // Not valid Titanfall2 install
                     showErrorNotification(
-                        i18n.global.tc('notification.game_folder.wrong.text'),
-                        i18n.global.tc('notification.game_folder.wrong.title')
+                        i18n.global.t('notification.game_folder.wrong.text'),
+                        i18n.global.t('notification.game_folder.wrong.title')
                     );
                 }
             }
@@ -244,7 +253,7 @@ export const store = createStore<FlightCoreStore>({
         },
         async launchGameSteam(state: any, launch_options: NorthstarLaunchOptions = { launch_via_steam: true, bypass_checks: false}) {
             await invoke("launch_northstar", { gameInstall: state.game_install, launchOptions: launch_options })
-                .then((message) => {
+                .then((_message) => {
                     showNotification('Success');
                 })
                 .catch((error) => {
@@ -332,8 +341,8 @@ export const store = createStore<FlightCoreStore>({
 
             // Display notification to highlight change
             showNotification(
-                i18n.global.tc(`channels.names.${state.northstar_release_canal}`),
-                i18n.global.tc('channels.release.switch.text', {canal: state.northstar_release_canal}),
+                i18n.global.t(`channels.names.${state.northstar_release_canal}`),
+                i18n.global.t('channels.release.switch.text', {canal: state.northstar_release_canal}),
             );
         },
         async fetchProfiles(state: FlightCoreStore) {
@@ -386,13 +395,13 @@ async function _initializeApp(state: any) {
     }
 
     // Grab "Enable releases switching" setting from store if possible
-    const valueFromStore: { value: boolean } | null = await persistentStore.get('northstar-releases-switching');
+    const valueFromStore: { value: boolean } | null | undefined = await persistentStore.get('northstar-releases-switching');
     if (valueFromStore) {
         state.enableReleasesSwitch = valueFromStore.value;
     }
 
     // Grab "Thunderstore mods per page" setting from store if possible
-    const perPageFromStore: { value: number } | null = await persistentStore.get('thunderstore-mods-per-page');
+    const perPageFromStore: { value: number } | null | undefined = await persistentStore.get('thunderstore-mods-per-page');
     if (perPageFromStore && perPageFromStore.value) {
         state.mods_per_page = perPageFromStore.value;
     }
@@ -431,8 +440,8 @@ async function _initializeApp(state: any) {
                 // Gamepath not found or other error
                 console.error(err);
                 notification_handle = showNotification(
-                    i18n.global.tc('notification.game_folder.not_found.title'),
-                    i18n.global.tc('notification.game_folder.not_found.text'),
+                    i18n.global.t('notification.game_folder.not_found.title'),
+                    i18n.global.t('notification.game_folder.not_found.text'),
                     'error',
                     0   // Duration `0` means the notification will not auto-vanish
                 );
@@ -465,6 +474,8 @@ async function _initializeApp(state: any) {
         });
 }
 
+/** @deprecated use flightcoreUpdateCheck instead */
+//@ts-ignore
 async function _checkForFlightCoreUpdates(state: FlightCoreStore) {
     // Check if FlightCore up-to-date
     let flightcore_is_outdated = await invoke("check_is_flightcore_outdated") as boolean;
@@ -472,11 +483,47 @@ async function _checkForFlightCoreUpdates(state: FlightCoreStore) {
     if (flightcore_is_outdated) {
         let newest_flightcore_version = await invoke("get_newest_flightcore_version") as FlightCoreVersion;
         showNotification(
-            i18n.global.tc('notification.flightcore_outdated.title'),
-            i18n.global.tc('notification.flightcore_outdated.text', {oldVersion: state.flightcore_version, newVersion: newest_flightcore_version.tag_name}),
+            i18n.global.t('notification.flightcore_outdated.title'),
+            i18n.global.t('notification.flightcore_outdated.text', {oldVersion: state.flightcore_version, newVersion: newest_flightcore_version.tag_name}),
             'warning',
             0 // Duration `0` means the notification will not auto-vanish
         );
+    }
+}
+
+async function flightcoreUpdateCheck() {
+    const update = await check();
+    if (!update?.available) {
+        console.log("No update available");
+    } else if (update?.available) {
+        console.log("Update available!", update.version, update.body);
+        const accepted = await ask(
+         i18n.global.t("general.update_info_text", {version: update.version, notes: update.body}),
+        {
+            title: i18n.global.t("general.update_available"),
+            kind: "info",
+            okLabel: i18n.global.t("generic.update"),
+            cancelLabel: i18n.global.t("generic.cancel"),
+        },
+        );
+        if (accepted) {
+            let notification_handle: NotificationHandle;
+            await update.downloadAndInstall((event) => {
+                switch (event.event) {
+                case 'Started':
+                    notification_handle = showNotification(i18n.global.t("general.downloading_flightcore_update"), "", "info", 0);
+                    break;
+                case 'Progress':
+                    break;
+                case 'Finished':
+                    notification_handle.close()
+                    showNotification(i18n.global.t("general.update_download_finished"), "", "success", 0);
+                    break;
+                }
+            });
+            showNotification(i18n.global.t("general.flightcore_update_installed"), "", "success");
+            await relaunch();
+        }
     }
 }
 
@@ -523,7 +570,7 @@ async function _get_northstar_version_number(state: any) {
                     alert(error);
                 });
         })
-        .catch((error) => {
+        .catch((_error) => {
             state.northstar_state = NorthstarState.INSTALL;
         })
 }

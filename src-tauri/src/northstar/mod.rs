@@ -30,7 +30,7 @@ pub async fn get_available_northstar_versions(
         .unwrap();
 
     let mut releases: Vec<NorthstarThunderstoreReleaseWrapper> = vec![];
-    for (_version_string, nsmod_version_obj) in nsmod.versions.iter() {
+    for nsmod_version_obj in nsmod.versions.values() {
         let current_elem = NorthstarThunderstoreRelease {
             package: nsmod_version_obj.name.clone(),
             version: nsmod_version_obj.version.clone(),
@@ -214,10 +214,11 @@ pub fn launch_northstar(
         let ns_exe_path = format!("{}/NorthstarLauncher.exe", game_install.game_path);
         let ns_profile_arg = format!("-profile={}", game_install.profile);
 
-        let _output = std::process::Command::new("C:\\Windows\\System32\\cmd.exe")
+        let mut output = std::process::Command::new("C:\\Windows\\System32\\cmd.exe")
             .args(["/C", "start", "", &ns_exe_path, &ns_profile_arg])
             .spawn()
             .expect("failed to execute process");
+        output.wait().expect("failed waiting on child process");
         return Ok("Launched game".to_string());
     }
 
