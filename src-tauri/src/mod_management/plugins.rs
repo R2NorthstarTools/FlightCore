@@ -1,9 +1,13 @@
-/// Prompt on plugin
-/// Returns:
-/// - true: user accepted plugin install
-/// - false: user denied plugin install
-pub fn plugin_prompt() -> bool {
-    log::error!("Plugin install cancelled");
-    // TODO handle plugin installation again
-    false
+use tauri_plugin_dialog::{DialogExt, MessageDialogButtons, MessageDialogKind};
+
+pub fn plugin_prompt(app: &tauri::AppHandle, plugin_paths: &[String]) -> bool {
+    app.dialog()
+        .message(plugin_paths.join("\n"))
+        .title("Install native plugins?")
+        .kind(MessageDialogKind::Warning)
+        .buttons(MessageDialogButtons::OkCancelCustom(
+            "Install".into(),
+            "Cancel".into(),
+        ))
+        .blocking_show()
 }

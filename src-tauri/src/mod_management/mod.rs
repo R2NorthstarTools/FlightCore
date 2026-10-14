@@ -15,6 +15,8 @@ use std::string::ToString;
 use std::{fs, path::PathBuf};
 
 mod legacy;
+#[cfg(test)]
+mod native_plugin_install_tests;
 mod plugins;
 use crate::GameInstall;
 
@@ -95,10 +97,11 @@ impl std::ops::Deref for TempFile {
 /// Installs the specified mod
 #[tauri::command]
 pub async fn install_mod_wrapper(
+    app: tauri::AppHandle,
     game_install: GameInstall,
     thunderstore_mod_string: String,
 ) -> Result<(), String> {
-    match fc_download_mod_and_install(&game_install, &thunderstore_mod_string).await {
+    match fc_download_mod_and_install(&app, &game_install, &thunderstore_mod_string).await {
         Ok(()) => (),
         Err(err) => {
             log::warn!("{err}");
@@ -624,7 +627,13 @@ fn delete_older_versions(
 /// Checks whether some mod is correctly formatted
 /// Currently checks whether
 /// - Some `mod.json` exists under `mods/*/mod.json`
-fn fc_sanity_check(input: &&fs::File) -> Result<(), Box<dyn Error + Send + Sync + 'static>> {
+fn fc_sanity_check<F>(
+    input: &&fs::File,
+    mut approve_plugins: F,
+) -> Result<(), Box<dyn Error + Send + Sync + 'static>>
+where
+    F: FnMut(&[String]) -> bool,
+{
     let mut archive = match zip::read::ZipArchive::new(*input) {
         Ok(archive) => archive,
         Err(_) => {
@@ -636,6 +645,7 @@ fn fc_sanity_check(input: &&fs::File) -> Result<(), Box<dyn Error + Send + Sync 
 
     let mut has_mods = false;
     let mut mod_json_exists = false;
+    let mut plugin_paths = Vec::new();
 
     // Checks for `mods/*/mod.json`
     for i in 0..archive.len() {
@@ -659,19 +669,20 @@ fn fc_sanity_check(input: &&fs::File) -> Result<(), Box<dyn Error + Send + Sync 
         if file_path.starts_with("plugins/") {
             if let Some(name) = file_path.file_name() {
                 if name.to_str().unwrap().contains(".dll") {
-                    log::warn!("Plugin detected, prompting user");
-                    if !plugins::plugin_prompt() {
-                        return Err(Box::new(ThermiteError::UnknownError(
-                            "Plugin detected and install denied".into(),
-                        )));
-                    }
+                    plugin_paths.push(file_path.display().to_string());
                 }
             }
         }
     }
 
     if has_mods && mod_json_exists {
-        Ok(())
+        if plugin_paths.is_empty() || approve_plugins(&plugin_paths) {
+            Ok(())
+        } else {
+            Err(Box::new(ThermiteError::UnknownError(
+                "Plugin detected and install denied".into(),
+            )))
+        }
     } else {
         Err(Box::new(ThermiteError::UnknownError(
             "Mod not correctly formatted".into(),
@@ -684,6 +695,7 @@ fn fc_sanity_check(input: &&fs::File) -> Result<(), Box<dyn Error + Send + Sync 
 /// Download and install mod to the specified target.
 #[async_recursion]
 pub async fn fc_download_mod_and_install(
+    app: &tauri::AppHandle,
     game_install: &GameInstall,
     thunderstore_mod_string: &str,
 ) -> Result<(), String> {
@@ -707,7 +719,7 @@ pub async fn fc_download_mod_and_install(
 
     // Recursively install dependencies
     for dep in deps {
-        match fc_download_mod_and_install(game_install, &dep).await {
+        match fc_download_mod_and_install(app, game_install, &dep).await {
             Ok(()) => (),
             Err(err) => {
                 if err == "Cannot install Northstar as a mod!" {
@@ -777,7 +789,11 @@ pub async fn fc_download_mod_and_install(
         thunderstore_mod_string,
         temp_file.file(),
         std::path::Path::new(&install_directory),
-        fc_sanity_check,
+        |input| {
+            fc_sanity_check(input, |plugin_paths| {
+                plugins::plugin_prompt(app, plugin_paths)
+            })
+        },
     ) {
         Ok(_) => (),
         Err(err) => {
