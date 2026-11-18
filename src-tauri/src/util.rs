@@ -1,6 +1,6 @@
 //! This module contains various utility/helper functions that do not fit into any other module
 
-use anyhow::{Context, Result};
+use anyhow::{anyhow, Context, Result};
 use serde::{Deserialize, Serialize};
 use zip::ZipArchive;
 
@@ -133,36 +133,42 @@ pub async fn kill_northstar() -> Result<(), String> {
 pub fn extract(zip_file: std::fs::File, target: &std::path::Path) -> Result<()> {
     let mut archive = ZipArchive::new(&zip_file).context("Unable to open zip archive")?;
     for i in 0..archive.len() {
-        let mut f = archive.by_index(i).unwrap();
+        let mut f = archive
+            .by_index(i)
+            .with_context(|| format!("Unable to read entry {i} from zip archive"))?;
+        let enclosed_name = f
+            .enclosed_name()
+            .ok_or_else(|| anyhow!("Zip entry has an unsafe path: {}", f.name()))?;
+        let Ok(relative_path) = enclosed_name.strip_prefix("Northstar") else {
+            continue;
+        };
 
-        //This should work fine for N* because the dir structure *should* always be the same
-        if f.enclosed_name().unwrap().starts_with("Northstar") {
-            let out = target.join(
-                f.enclosed_name()
-                    .unwrap()
-                    .strip_prefix("Northstar")
-                    .unwrap(),
-            );
-
-            if (*f.name()).ends_with('/') {
-                log::info!("Create directory {}", f.name());
-                std::fs::create_dir_all(target.join(f.name()))
-                    .context("Unable to create directory")?;
-                continue;
-            } else if let Some(p) = out.parent() {
-                std::fs::create_dir_all(p).context("Unable to create directory")?;
-            }
-
-            let mut outfile = std::fs::OpenOptions::new()
-                .create(true)
-                .write(true)
-                .truncate(true)
-                .open(&out)?;
-
-            log::info!("Write file {}", out.display());
-
-            std::io::copy(&mut f, &mut outfile).context("Unable to write to file")?;
+        if relative_path.as_os_str().is_empty() {
+            continue;
         }
+
+        let out = target.join(relative_path);
+        if f.is_dir() {
+            log::info!("Create directory {}", f.name());
+            std::fs::create_dir_all(&out).context("Unable to create directory")?;
+            continue;
+        }
+
+        if let Some(p) = out.parent() {
+            std::fs::create_dir_all(p).context("Unable to create directory")?;
+        }
+
+        let mut outfile = std::fs::OpenOptions::new()
+            .create(true)
+            .write(true)
+            .truncate(true)
+            .open(&out)
+            .with_context(|| format!("Unable to create file {}", out.display()))?;
+
+        log::info!("Write file {}", out.display());
+
+        std::io::copy(&mut f, &mut outfile)
+            .with_context(|| format!("Unable to write to file {}", out.display()))?;
     }
 
     Ok(())
