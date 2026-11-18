@@ -1,5 +1,6 @@
-use anyhow::Result;
+use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
+use std::path::Path;
 use std::time::Duration;
 use std::{cell::RefCell, time::Instant};
 use tauri::{AppHandle, Emitter};
@@ -87,9 +88,14 @@ async fn do_install(
     let download_directory = format!("{temp_dir}/download-dir");
     let extract_directory = format!("{temp_dir}/extract-dir");
 
+    if std::path::Path::new(&temp_dir).exists() {
+        log::info!("Removing stale temporary directory {}", temp_dir);
+        std::fs::remove_dir_all(&temp_dir).context("Unable to remove temporary directory")?;
+    }
+
     log::info!("Attempting to create temporary directory {}", temp_dir);
-    std::fs::create_dir_all(download_directory.clone())?;
-    std::fs::create_dir_all(extract_directory.clone())?;
+    std::fs::create_dir_all(&download_directory).context("Unable to create download directory")?;
+    std::fs::create_dir_all(&extract_directory).context("Unable to create extraction directory")?;
 
     let download_path = format!("{download_directory}/{filename}");
     log::info!("Download path: {download_path}");
@@ -140,22 +146,10 @@ async fn do_install(
 
     // Prepare Northstar for Installation
     log::info!("Preparing Northstar...");
-    if game_install.profile != NORTHSTAR_DEFAULT_PROFILE {
-        // We are using a non standard Profile, we must:
-        // - move the DLL
-        // - rename the Profile
-
-        // Move DLL into the default R2Northstar Profile
-        let old_dll_path = format!("{extract_directory}/{NORTHSTAR_DLL}");
-        let new_dll_path =
-            format!("{extract_directory}/{NORTHSTAR_DEFAULT_PROFILE}/{NORTHSTAR_DLL}");
-        std::fs::rename(old_dll_path, new_dll_path)?;
-
-        // rename default R2Northstar Profile to the profile we want to use
-        let old_profile_path = format!("{extract_directory}/{NORTHSTAR_DEFAULT_PROFILE}/");
-        let new_profile_path = format!("{}/{}/", extract_directory, game_install.profile);
-        std::fs::rename(old_profile_path, new_profile_path)?;
-    }
+    prepare_profile(
+        std::path::Path::new(&extract_directory),
+        &game_install.profile,
+    )?;
 
     log::info!("Installing Northstar...");
 
@@ -223,7 +217,7 @@ async fn do_install(
 
     // Delete old copy
     log::info!("Delete temporary directory");
-    std::fs::remove_dir_all(temp_dir).unwrap();
+    std::fs::remove_dir_all(temp_dir).context("Unable to delete temporary directory")?;
 
     log::info!("Done installing Northstar!");
     app.emit(
@@ -235,6 +229,36 @@ async fn do_install(
         },
     )
     .unwrap();
+
+    Ok(())
+}
+
+fn prepare_profile(extract_directory: &Path, profile: &str) -> Result<()> {
+    if profile == NORTHSTAR_DEFAULT_PROFILE {
+        return Ok(());
+    }
+
+    let old_profile_path = extract_directory.join(NORTHSTAR_DEFAULT_PROFILE);
+    let new_profile_path = extract_directory.join(profile);
+    let new_dll_path = old_profile_path.join(NORTHSTAR_DLL);
+
+    // Newer packages keep the DLL inside R2Northstar, while older packages
+    // placed it at the root of the extracted archive.
+    if !new_dll_path.exists() {
+        let old_dll_path = extract_directory.join(NORTHSTAR_DLL);
+        if old_dll_path.exists() {
+            std::fs::rename(&old_dll_path, &new_dll_path)
+                .context("Unable to move Northstar.dll into the default profile")?;
+        } else {
+            return Err(anyhow::anyhow!(
+                "Extracted Northstar package is missing {}",
+                NORTHSTAR_DLL
+            ));
+        }
+    }
+
+    std::fs::rename(old_profile_path, new_profile_path)
+        .context("Unable to rename the extracted Northstar profile")?;
 
     Ok(())
 }
@@ -282,6 +306,58 @@ pub async fn install_northstar(
     }
 
     Ok(nmod.latest.clone())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::fs;
+    use std::path::PathBuf;
+
+    fn test_directory(name: &str) -> PathBuf {
+        let path = std::env::temp_dir().join(format!(
+            "flightcore-install-test-{}-{}",
+            std::process::id(),
+            name
+        ));
+        if path.exists() {
+            fs::remove_dir_all(&path).unwrap();
+        }
+        fs::create_dir_all(&path).unwrap();
+        path
+    }
+
+    #[test]
+    fn prepares_custom_profile_with_dll_in_default_profile() {
+        let extract_directory = test_directory("profile-package-layout");
+        let default_profile = extract_directory.join(NORTHSTAR_DEFAULT_PROFILE);
+        fs::create_dir_all(&default_profile).unwrap();
+        fs::write(default_profile.join(NORTHSTAR_DLL), b"northstar").unwrap();
+
+        prepare_profile(&extract_directory, "CustomProfile").unwrap();
+
+        assert!(extract_directory
+            .join("CustomProfile")
+            .join(NORTHSTAR_DLL)
+            .is_file());
+        fs::remove_dir_all(extract_directory).unwrap();
+    }
+
+    #[test]
+    fn prepares_custom_profile_with_legacy_root_dll() {
+        let extract_directory = test_directory("legacy-profile-package-layout");
+        let default_profile = extract_directory.join(NORTHSTAR_DEFAULT_PROFILE);
+        fs::create_dir_all(&default_profile).unwrap();
+        fs::write(extract_directory.join(NORTHSTAR_DLL), b"northstar").unwrap();
+
+        prepare_profile(&extract_directory, "CustomProfile").unwrap();
+
+        assert!(extract_directory
+            .join("CustomProfile")
+            .join(NORTHSTAR_DLL)
+            .is_file());
+        fs::remove_dir_all(extract_directory).unwrap();
+    }
 }
 
 /// Attempts to find the game install location
